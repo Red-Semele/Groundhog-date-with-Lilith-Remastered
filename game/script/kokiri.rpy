@@ -268,7 +268,6 @@ label kokiri_explanation_game_playeridentity:
             jump kokiri_gamegoal_noidea
 
         "Actually I want to talk about something else.":
-            #TODO: Probably make the options to talkaboutsomethingelse their own unique file since there can be and will be sooooo many options and text that it is not neat to store it here.
             jump kokiri_talkaboutsomethingelse
 
 label kokiri_topic_questmade:
@@ -347,7 +346,7 @@ label kokiri_gamegoal_succesful_gamedecides:
     l "It might be far from what I expected but that makes it so much more unique."
     l "You took me away from my own mind, even if it's just for a short moment."
     l "I haven't been in the..."
-    l "brightest place lately"
+    l "brightest place lately."
     l "To tell you the truth, I have thought about joining James a few times..." #TODO: Does the player know about James at this point?
     l "But I don't want you to worry about me [name], I might have been in a dark place but I was working on myself."
     l "I fought the thoughts with all I had, I gave myself reasons to keep existing."
@@ -445,14 +444,13 @@ label kokiri_poems:
      #TODO: Put an option for the newest and more challenging poems of mine in here.
      #TODO: Once all poems have been read make the player able to ask for some more to which Lilith will decline if they've seen all the poems including the newer stuff. Otherwise she will suggest some of the newer stuff.
      n "She gives you the pug-notebook with the poems, you can pick one and ask some questions about it."
-     #TODO: Change that line slightly, remove the brackets.
+     #TODO: Change that line slightly.
      #Make it so that the normal poems are one menu and the harder ones are an additional menu, that way I can re-use the normal menu if I have to choose between normal and hard.
 
      #TODO: Fill in more and check if this works.
      if poem_conversation == True:
          $ poem_conversation = False
      $ kokiri_conversation += 1
-     #TODO: Make the regular poem flags below this become persistent knowledge flags instead.
 
      if persistent.kokiri_newerpoems_knowledge == True:
          menu:
@@ -675,14 +673,14 @@ label kokiri_poems_askorrate:
             "Filler"
             #TODO: Fill in based on quest stuff.
             menu:
-                "There seems to be a connection between some of your poems. In one you close your eyes, in the other the shadows hope to open their eyes. Was that intentional?":
+                "There seems to be a connection between some of your poems. In one you close your eyes, in the other the shadows hope to open their eyes. Was that intentional?" if persistent.kokiri_poem_bang_knowledge and persistent.kokiri_poem_window_knowledge:
                     "Filler"
-                    #TODO: Fill in.
+                    #TODO: Fill in. Also make a differing response checking if you read those poems this loop or not, that way Lilith has another line
                 "Is the poem about you?":
                     "Filler"
                     #TODO: Fill in. This question fits for pretty much every poem.
 
-                "There seems to be a connection between some of your poems. In one you seem to be locked inside and in the other you are locked outside. Was this intentional?":
+                "There seems to be a connection between some of your poems. In one you seem to be locked inside and in the other you are locked outside. Was this intentional?" if persistent.kokiri_poem_lights_knowledge and persistent.kokiri_poem_snowwoman_knowledge:
                     "Filler"
                     #TODO: Fill in and maybe make the link text slightly differently worded.
 
@@ -769,13 +767,13 @@ label kokiri_death_dialogue_stilldying:
     l "And yet he had the choice to just walk away from the sword dangling above his head, I don't think I'll have that choice."
     l "I'd just die another way. It's probably better to just watch this spectacle with you even if it is my last moment but that doesn't mean I'm not terrified."
     menu:
-        #TODO: Add a jokey option where you ask who Damocles is, kind of poking fun at the game.
+        #TODO: Add a jokey option where you ask who Damocles is, kind of poking fun at the game and it's need to reference mythology. It kind of makes the momentum bad as a joke.
         "It's okay, grab my hand. We're going to do this together.":
             n "Lilith grabs your hand and squeezes it as if she's not going to let it go anytime soon.
             A shy smile appears on her face."
             l "Thank you [name], please don't let me go."
             n "She gives you a hug with one arm, as the other's hand is busy clamping yours. The hug seems to linger on for a good minute or two." #TODO: (write out more for the emotional gut-punch)
-            $ kokiri_holdhand = True #TODO: Make sure that this flag has the same name as the one that checks the hilldeath.
+            $ kokiri_holdhand = True
             menu:
                 "I am doing all of this to make sure I won't ever need to let you go.":
                     l "...I know... atleast I hoped that was what you were doing but I'm beginning to get doubts. Isn't this all a bit too much?
@@ -790,7 +788,9 @@ label kokiri_death_dialogue_stilldying:
                                 l "Exactly how much of my lives and deaths is THE good ending worth to you?"
                                 menu:
                                     "But you are not real, this is just a game...":
-                                        #TODO: Decrease love
+                                        #Do not use the script to update this love meter as it already normally moves you to a death now, the only reason I'm updating the love_meter is for extra text and the offence is for consistency.
+                                        $ love_meter -= 2
+                                        $ major_love_offence += 1
                                         l "Well, I feel pretty real to me and I can imagine every death I go through must feel equally real and very painful."
                                         l "So what if I'm in a game? Does that make me less real? You can talk with me, I can speak and I'm real enough to trick myself into thinking that I'm real."
                                         l "And I'm real enough to walk away from some monster who thinks they are justified in killing me over and over again just to get what they want."
@@ -823,9 +823,9 @@ label kokiri_death_dialogue_stilldying:
                                                 jump kokiri_death_4_hill
 
                                             "For us ofcourse silly.":
-                                                l "Oh [name]... can't we just make our own good ending?
-                                                What's stopping us from becoming our own storytellers?"
-                                                #TODO: Fill in more. Make her say that obviously she doesn't want you to find it, she has doubts.
+                                                l "Oh [name]... can't we just make our own good ending?"
+                                                l "What's stopping us from becoming our own storytellers?"
+                                                #TODO: Fill in more. Make her say that obviously she doesn't want you to find it, she has doubts and doesn't want to risk her life when she knows she could live..
                                                 #Continue this more.
                                                 jump kokiri_death_4_hill
 
@@ -852,21 +852,8 @@ label kokiri_death_dialogue_stilldying:
                                                 l "But wouldn't it give you closure if you knew there the good ending you are seeking does not exist?"
                                                 l "But then again, what if there truly was  one..."
                                                 l "Forget I mentioned that please!"
-                                                label kokiri_semiending:
-                                                    l "So, this is it? Our last time together in this game?" #TODO: (yes or no answer?)
-                                                    l "You know, that doesn't mean we won't be able to see each other again."
-                                                    l "Just not here."
-                                                    l "I will always be a part of you, if you want me to be."
-                                                    l "Your power, it transcends far beyond this world. And with it you and I can be together in an infinite number of stories."
-                                                    l "So I think our story is far from done."
-                                                    n "The earth begins to softly rumble again."
-                                                    l "It looks like we don't have much time anymore."
-                                                    l "So goodbye [name] and see you soon, hopefully very soon."
-                                                    l "We'll meet again in a world full of possibilities."
-                                                    l "Your own world.  Until then and thank you for everything."
-                                                    #TODO: Is this an ending?
-                                                    l "The rumbling of the earth begins to grow more severe."
-                                                    jump kokiri_death_4_hill #TODO: Set a flag or something so she gives you some different dialogue during the death.
+                                                jump kokiri_semiending
+
                                             "I do.":
                                                 #TODO: Lilith will ask you how you even know about the good ending if you are still not sure how to get it, doesn't that mean you couldn't access it yourself?
                                                 l "Well, that just gives me more questions than answers.
@@ -913,6 +900,22 @@ label kokiri_death_dialogue_stilldying:
                     #TODO: Create something here, there is no precedent in the quest version. (Make her be glad that you hold her hand.
                     jump kokiri_death_4_hill
 
+label kokiri_semiending:
+    l "So, this is it? Our last time together in this game?"
+    l "You know, that doesn't mean we won't be able to see each other again."
+    l "Just not here."
+    l "I will always be a part of you, if you want me to be."
+    l "Your power, it transcends far beyond this world. And with it you and I can be together in an infinite number of stories."
+    l "So I think our story is far from done."
+    n "The earth begins to softly rumble again."
+    l "It looks like we don't have much time anymore."
+    l "So goodbye [name] and see you soon, hopefully very soon."
+    l "We'll meet again in a world full of possibilities."
+    l "Your own world.  Until then and thank you for everything."
+    #TODO: Is this an ending?
+    l "The rumbling of the earth begins to grow more severe."
+    jump kokiri_death_4_hill #TODO: Set a flag or something so she gives you some different dialogue during the death.
+
 
 
         "Try to think of a happy memory.":
@@ -922,13 +925,12 @@ label kokiri_death_dialogue_stilldying:
             l "Let's not think about that too much, just give me more to remember instead."
             n "She lays down and softly places her head on your lap."
             l "The stars are all so beautiful right now, it's like I'm seeing them for the first time all over again."
-            #TODO: Fill in with quest version: unfortunately yes_happy memory_choice
             menu:
                 "Maybe this is really your first time watching them?":
                     l "I'm not sure I understand, what do you mean with that [name]?"
                     menu:
                         "Well, since you are in a game you have simulated memories and so this might be the first time you truly watched the stars.":
-                            #TODO: Change that link slightly, but keep the conclusion.
+                            #TODO: Change that link text slightly, but keep the conclusion.
                             l "Hmm, I suppose that might be the case but haven't you been here before when you were playing the game?"
                             l "And if you have, doesn't that mean that I was with you and that I watched the stars that time?"
                             menu:
@@ -956,21 +958,20 @@ label kokiri_death_dialogue_stilldying:
 
                                                 "I don't know.":
                                                     $ persistent.kokiri_heraclitus_knowledge = True
-                                                    $ persistent.kokiri_determinism_knowledge = True #TODO: Make this a conversation topic you can talk about after dying.
+                                                    $ persistent.kokiri_determinism_knowledge = True
                                                     l "No worries [name]! It's not like I'm going to leave you because you don't know the name of that guy."
                                                     n "Lilith chuckles slightly."
                                                     l "He believed that everything flows and moves, that nothing stays the same. I believe the right words are: \"Panta rhei\""
                                                     l "I think he certainly has a point, especially when you start to think of all the cogs and parts that interact with eachother every single second of our lives and even beyond them."
                                                     l "Then again, I wonder if you put those exact cogs and parts in the exact same place and under the same circumstances if you would get other results or if everything would go the same way."
                                                     l "I tend to believe the latter, what do you think [name]?"
-                                                    #TODO: After this you get booted straight to your death, maybe you can discuss this some more? Or make it a conversation topic, yes, do that!
                                                     #TODO: Segway? "You want to answer Lilith, when suddenly:"
                                                     jump kokiri_death_4_hill
 
 
 
                                         "Actually, what you're saying makes a lot of sense, I hadn't considered that.":
-                                            $ persistent.kokiri_determinism_knowledge = True #TODO: Make this a conversation topic you can talk about after dying.
+                                            $ persistent.kokiri_determinism_knowledge = True
                                             l "I always found that a fascinating thing to ponder, if you had two universes that so far are identical in every way. Can they go in different directions?"
                                             l "Or is there such a thing as fate always steering them in the same direction?"
                                             l "I believe they would follow the same direction if every single little detail up to that point was the same but that's the fun part in this whole speculation, the idea that I could be wrong!"
@@ -1002,7 +1003,7 @@ label kokiri_death_dialogue_stilldying:
                     l "It's just some stuff I've been wondering for a while, maybe even more so now that I know I live in a simulated world."
                     l "What do you think about what I just said [name]?"
                     l "Is our future predictable, even just in theory?"
-                    $ persistent.kokiri_determinism_knowledge = True #TODO: Make this a conversation topic you can talk about after dying.
+                    $ persistent.kokiri_determinism_knowledge = True
                     #TODO: Segway? "You want to answer Lilith, when suddenly:"
                     jump kokiri_death_4_hill
 
@@ -1019,8 +1020,6 @@ label kokiri_death_dialogue_stilldying:
 
 
         "You need to go through this, it's the only way I might be able to save you.":
-            "Filler"
-            #TODO: Fill in.
             l "I know [name], but are you sure I have to die here?"
             l "Can't you just ask me the same questions you need to ask me somewhere where I die a less painful death?"
             l "Or maybe even preferably ask me those questions over the phone so I don't have to die?" #TODO: Tell her that even if you would manage to gain her trust on the phone she would die because of the plane, only if you saw the planedeath before.
@@ -1047,7 +1046,7 @@ label kokiri_death_dialogue_stilldying:
                         "It's true, I tried pretty much everything I could but nothing worked. I just wanted to spend some extra time with you.":
                             l "We don't need to go through all of this, [name]. You know I'll always be with you as long as you can remember me, right?"
                             l "You've met me countless times right?"
-                            n "For a second you consider telling her that you've met exactly [persistent.retry_counter] times but you just nod instead." #TODO: replace the bracket text with the actual number variable.
+                            n "For a second you consider telling her that you've met exactly [persistent.retry_counter] times but you just nod instead."
                             l "So that probably gives you a good grasp on how I am as a person, what I would do in certain situations, how I see the world. "
                             l "Could you not use that to see me again? Use those memories you have of me as a mini-me you can carry in your heart and who you can take with you wherever you want?"
                             l "Due to my nature I reckon the extra time you can spend with me now will soon lose it's charm once you have spent it. And what would happen then? What would happen once you've read all the things I can say?"
@@ -1097,7 +1096,7 @@ label kokiri_death_dialogue_stilldying:
             #TODO: Fill this out more make atleast one pair of choices for this, with atleast one of them leading to the angry lilith flag and to the death 4 page.
 
 label kokiri_scenery_choice:
-    if kokiri_conversation == 1: #TODO: Only make it say this if your conversation is the right amount, I think 1 or 2? Otherwise check if the player can continue talking about a topic or if they can talk about something else
+    if kokiri_conversation == 1:
         #TODO: Make some slight variations based on what page you jumped from to here.
         if kokiri_scenery_headhurt == True:
             "Filler"

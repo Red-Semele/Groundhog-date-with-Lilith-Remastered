@@ -20,6 +20,10 @@ label kokiri_talkaboutsomethingelse:
                         #TODO: (Put this somewhere else that better fits it. The link text.)
                         $ kokiri_conversation_silent()
 
+            "Do you believe in determinism?" if persistent.kokiri_determinism_knowledge:
+                "Filler"
+                #TODO: Fill in, here you can have a chat about determinism.
+
 
 
             "*Tell her about the mayo easteregg*":
