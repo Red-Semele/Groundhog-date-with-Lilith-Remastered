@@ -147,6 +147,8 @@ label start:
          $ persistent.kokiri_meteoritedistraction_knowledge = False
          $ persistent.kokiri_call_death = False
          $ persistent.restrainingorderfamily_violation_counter = 0
+         $ persistent.kokiri_tellnolies_knowledge = False
+
          #Kokiri poems
          $ persistent.kokiri_poem_window_knowledge = False
          $ persistent.kokiri_poem_bang_knowledge = False

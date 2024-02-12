@@ -163,7 +163,11 @@ label kokiri_explanation_game:
 
 label kokiri_explanation_game_playeridentity:
     l "It's pretty strange to be told that you're in a game but I'm glad you are the player, you seem more than capable enough to do what you need to do."
-    #TODO: Make her mention that she doesn't want you to lie if you lied in the explanation + Also make her say that an example of how capable you are is you knowing about the kokiri forest.
+    if kokiri_psychic_lie or kokiri_groundhog_lie == True:
+        l "Although I'd like to ask you to not lie to me too much alright? Only if it is absolutely necessary and even then I won't be a fan of it happening."
+        l "We are in this together, and together we will try to achieve our goal!"
+        $ persistent.kokiri_tellnolies_knowledge = True
+    #TODO: Make her say that an example of how capable you are is you knowing about the kokiri forest.
     l "She pauses for a moment and then continues."
     n "Now that I think about it, what is it you've got to do in this game?"
     $ kokiri_path1 = True

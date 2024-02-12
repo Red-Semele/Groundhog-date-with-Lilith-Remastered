@@ -12,12 +12,9 @@ label restaurant_deaths:
             if burger == True:
                 #Burgerscene here
                 n "Now the screaming is also paired with hellish sounds, just great. You look at Lilith and tell her to hide under the table."
-                #Use typewriter effect below:
                 l "I..."
                 play music "gameover.mp3"
-
                 n "Lilith seems to be frozen, on her face you can clearly see a mixture of fear and confusion. It takes you a moment to notice the steadily increasing red stains on Lilith's clothes."
-                #Typewirter effect below once again:
                 l "I've been shot?"
                 n "She falls of her chair, you crawl towards her and try to call an ambulance."
                 n "With trembling hands you type the emergency-number and beg for help."
@@ -387,7 +384,6 @@ label kokiri_deaths:
                                         menu:
                                             "Absolutely!":
                                                 n "Just as you said that something kills Lilith since you lied to her and were actually still in the game that has a habbit of killing her of." #TODO: Link to the right death and also change this line.
-                                                #TODO: There is a flag "tellnoliesknowledge" in the quest version, check if that does anything and if not don't put it in here.
                 "Am I really helping you though? One of the things I saw while playing the game is that if we didn't date anymore you would keep being alive and find happiness with a nice guy called Ron." if persistent.ron_knowledge:
                     jump kokiri_death_2_prevented_youwerehappywithron
 
