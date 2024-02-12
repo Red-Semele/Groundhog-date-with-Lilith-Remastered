@@ -90,14 +90,15 @@ label kokiri_explanation_game:
 
 
                 "No, that's not my real name.":
-                    #TODO: Convert this quest code into renpy.
                     label kokiri_explanation_game_notrealname:
                         if norealname == 0:
                           $ conversationtracker_norealname = True
                           $ kokiri_norealname = 1
                           $ kokiri_realname = True
                           l "Oh, so what is your real name then?" #TODO: Change this line up slightly.
-                          #TODO: Add input box here.
+                          $ name_real = renpy.input("What is your real name?")
+                          $  name_real = name_real.strip() or "Max"
+                          $ name_real = name_real.capitalize()
                           l "Well, it's nice to finally meet you for real [name_real]!"
                           l "Lilith gives you a big smile."
                           l "Although, haven't I met you for real already?"
@@ -109,14 +110,13 @@ label kokiri_explanation_game:
                           l "That's why it might feel scary to some if they catch a glimpse of themselves in the reflection of their screen. Because it's someone they don't recognise.<br/>Do you ever feel like that, {player.real}?..."
                           l "All these different roles form a web of half-truths and lies, and in the center of it all you can find our true self."
                           l "Not the self we think we are, not the self others see us as, but the self we inevitably are."
-                          #TODO: put in the next part of "Kak_what do you do for a living" quest version.
                           l "Speaking about that self, what do you really do for a living? I'd like to get to know you better, the one playing this game."
                           #TODO: Get input via box and check if it contains the word "teach"
                           #If it does:
                           l "Ah so you are also a teacher? That's really cool! "
                           #TODO: Add some more dialogue.
                           #If it doesn't:
-                          l "Ah so you {player.job} for a living? That's interesting!" #Convert player.job to a working variable.
+                          l "Ah so you [player_job] for a living? That's interesting!" #TODO: Use player_job in that input box.
                           l "Have I ever mentioned what I do for a living? "
                           menu:
                                 "No, not yet.":
@@ -133,7 +133,8 @@ label kokiri_explanation_game:
 
                                 "You have mentioned you teach the first year of elementary when we had this talk before actually." if persistent.kokiri_teacher_knowledge:
                                     l "Oh I see, so you have already spoken to me here?" #TODO: Change this line slightly.
-                                    #TODO: Make this an alternate way to talk about her no being the same etc, there is already a label in the game like that, just jump to that one. (If it is not yet in the game it IS in the quest version)
+                                    #TODO: Make this an alternate way to talk about her not being the same etc, there is already a label in the game like that, just jump to that one. (If it is not yet in the game it IS in the quest version)
+                                    #It's the one that mentions Heraclitus Iirc
                         else:
                           $ kokiri_norealname += 1
                           if kokiri_norealname == 2:

@@ -392,7 +392,7 @@ label askaboutdavid_tellmeabout:
     if kokiri_chatchar_david == False:
         $ kokiri_chatchar_david = True
         $ kokiri_chatchar_david_counter = 1
-        $ conversationtracker_david = True #TODO: Is this the right flag?
+        $ conversationtracker_david = True
     else:
         $ kokiri_chatchar_david_counter += 1
 
@@ -423,15 +423,12 @@ label askaboutdavid_tellmeabout_1:
             $ kokiri_conversation_silent()
 
 label askaboutdavid_tellmeabout_2:
-            "Filler"
-            #TODO: Fill in (Cryptography with codes on birthday-cards)
             l "My father loves all things related to cryptography."
             l "When he still lived with us he would give me a a postcard for every birthday."
             l "That postcard had an encode message on it."
             l "Then I had to decipher the code to reveal a list of cryptic instructions that would lead me to a gift."
             l "Sort of like a scavenger hunt I suppose."
             l "I liked it a lot to be honest. It felt as if we had a sort of hidden language to communicate in with eachother."
-            #TODO: Make the text below linked to a choice where you ask Lilith how she feels telling that story since you usually only hear bad stories about her dad from her.
             menu:
                 "I haven't heard you talk about a lot of happy memories with your father, how does sharing that story make you feel?":
                     l "I was a bit hesitant to tell this story because of the pain it might make me feel but I'm actually glad I told it."
@@ -466,7 +463,7 @@ label askaboutjames_tellmeabout:
     if kokiri_chatchar_james == False:
         $ kokiri_chatchar_james = True
         $ kokiri_chatchar_james_counter = 1
-        $ conversationtracker_james = True #TODO: Is this the right flag?
+        $ conversationtracker_james = True
     else:
         $ kokiri_chatchar_james_counter += 1
     $ family_curiosity_checker()
@@ -505,25 +502,7 @@ label askaboutjames_tellmeabout_1:
     #You know, he always was so full of live.
     #It was weird but everything he did made him seem like he had some grasp on life that few people had.
     #He was going to do big things, I'm sure of it.
-    #(The stuff that comes next are puzzle pieces that you need to fit together)
-    #(What were his hobbies?-> Photography, he and Lilith were into photography)
-    #James used to love photography and everything that came with it. So did I actually.
-    #Our father used to be a fan of photography and I think he passed that over to us.
-    #Well nowadays I don't really take pictures anymore. Everythime I tried to pick up a camera I just get reminded of both James and my fath- and David.
-    #I have dropped quite a few camera's when I tried to continue. I think it's for the best if I just stop for now.
-    #But James was extremely good for his age, he always was a quick learner but something about photography just seemed to click fantastically with him.
-    #It was almost as if you could just jump into his pictures and live inside of them.
-    #He used to tell me that a good picture should not just let the person watching it see a moment caught in time but it should also make them envision the future.
-    #In other words, a good picture should almost become a video with the picture as it's first frame.
-    #Personally I aways thought the oposite, a good picture makes you remember the lead-up to that picture, so in a way a good picture is a video with the picture as it's last frame.
-    #I think that's the only reason I can look at a picture of James without tearing up completely. I just see the lead-up to the picture and not the horifying aftermath of it all.
-    #However badly the memory of the aftermath still haunts me, I can't let that be the only part of his life I remember. I want to make sure all the beautiful memories we made throughout all the years will live on as long as possible. (Use that as a framing device for her telling you a few stories about him.)
-    #So you wanted to hear about James right?
-    #I'll tell you some stories if you'd like, since if the stories only stay in my memories they can only exist for one more day. (rewrite this line)
-    #TODO: (Maybe rewrite this a bit becomes he comes of as too idealised)
-    #1: (Hide and seek in corn fields) (Add some links to this story for different paths of info)
-    #TODO: 2. (Code/cipher breaker on birthday cards.) (Don't do this one, scrap it.) NO, USE THIS FOR DAVID
-    #1: The house we grew up in had a field that mostly grew corn on the opposite side. We used to have a game where one of us would enter the field and crawl around in it while the other person tried to find them. Usually the hider has to say something every minute so that it's a bit more doable to find them. Well one day he was the hider and I was the searcher. He hadn't said anything for the entire time and so I had no idea where he could possibly be.The tension was high. (Continue this story and expand it a bit more) Suddenly James popped out of the corn and picked me up while he spun around. He then put me down and layed down between the corn. I layed down beside him and we just looked at the sky while talking about all sorts of things. (What kind of things? Needs more fleshing out.)
+
 
 label askaboutjames_tellmeabout_2:
 
@@ -537,8 +516,7 @@ label askaboutjames_tellmeabout_2:
    l "In other words, a good picture should almost become a video with the picture as it's first frame."
    l "Personally I aways thought the oposite, a good picture makes you remember the lead-up to that picture, so in a way a good picture is a video with the picture as it's last frame."
    l "I think that's the only reason I can look at a picture of James without tearing up completely. I just see the lead-up to the picture and not the horifying aftermath of it all."
-   l "However badly the memory of the aftermath still haunts me, I can't let that be the only part of his life I remember. I want to make sure all the beautiful memories we made throughout all the years will live on as long as possible." #TODO: (Use that as a framing device for her telling you a few stories about him.)
-   #TODO: Add some choice(s) here.
+   l "However badly the memory of the aftermath still haunts me, I can't let that be the only part of his life I remember. I want to make sure all the beautiful memories we made throughout all the years will live on as long as possible."
    menu:
        "I think that is beautiful, I will make sure that James and the stories you two shared won't go forgotten.":
            n "Lilith gives you a sincere smile."
@@ -564,8 +542,6 @@ label askaboutjames_tellmeabout_3:
      l "I layed down beside him and we just looked at the sky while talking about all sorts of things."
      #TODO: (What kind of things? Needs more fleshing out.)
      #TODO: (Continue this story and expand it a bit more)
-     #TODO: Fill in.
-     #TODO: Fill in.
      $ kokiri_conversation_silent()
 
 label askaboutlila_tellmeabout:
@@ -573,7 +549,7 @@ label askaboutlila_tellmeabout:
     if kokiri_chatchar_lila == False:
         $ kokiri_chatchar_lila = True
         $ kokiri_chatchar_lila_counter = 1
-        $ conversationtracker_lila = True #TODO: Is this the right flag?
+        $ conversationtracker_lila = True
     else:
         $ kokiri_chatchar_lila_counter += 1
 
@@ -601,7 +577,6 @@ label askaboutlila_tellmeabout_1:
            #TODO: Write out this conversation a bit more and rewrite it slightly.
            menu:
                 "You might want to call her.":
-                    $ kokiri_meteoritewarn() #TODO: Remove this after testing
                     if kokiri_conversation == 1:
                         $ kokiri_call = True
                         $ kokiri_chatchar_lila_called = True
@@ -619,8 +594,7 @@ label askaboutlila_tellmeabout_1:
                         l "The stress you felt..."
                         l "Why did you never tell us?"
                         li "You two were never a burden on me and never will be alright? Try to remember that very well please."
-                        li "And what would I have needed to tell you two? That I was barely scraping by?" #TODO: To have the dad still send checks, make the mom not accept them because she is hurt that he left.
-                        #Make the todo be something you can learn and can ask David about.
+                        li "And what would I have needed to tell you two? That I was barely scraping by?" #TODO: To have the dad still send checks, make the mom not accept them because she is hurt that he left. She doesn't tell this directly but the dad does when confronted. #Make the todo be something you can learn and can ask David about.
                         li "That I felt like I was living three lives and neither of them were mine?"
                         li "That I felt abandoned by your father?"
                         l "You should have told us, we could have-"
@@ -638,7 +612,7 @@ label askaboutlila_tellmeabout_1:
                         li "I loved going on our little trips together, the memories still make me feel warm and fuzzy if I try to recall them."
                         $ kokiri_call_potentialdeathcheck()
                         #Put that in this version of the game.
-                        #TODO: Write a little bit extra conversation between these two grene blocks
+                        #TODO: Write a little bit extra conversation between these two green blocks
                         li "I'm very sorry to hear that you've been carying this sort of guilt with you for so long sweetie."
                         li "I wanted to prevent that exact thing from happening, that's why I tried to not show the stress I'd feel."
                         li "But you were always quite good at figuring people out, I guess it was silly of me to think that shielding you from my stress would work."
@@ -680,15 +654,10 @@ label askaboutlila_tellmeabout_1:
 
 
                 "Go back":
-                    #TODO: Remove this
+                    #TODO: Remove this after testing.
                     jump kokiri_talkaboutsomethingelse
 
-
-
-        #TODO: Rewrite this dialogue a bit more.
-
 label askaboutlila_tellmeabout_2:
-     #Make this a story about how she is pretty naive. Let Lilith tell a story about a scamcaller that almost tricked her mom before James helped them.
      #TODO: Rewrite this story eventually once it is finished. Especially don't make it start with "you know"
      l "You know, my mom is actually quite naive."
      l "Abby and I like to make fun of her for being too trusting."

@@ -45,7 +45,7 @@ label gdwl_functions:
             global lila_obsession
             global abigail_interest
             global abigail_obsession
-            global fam_obsession   #TODO: This variable throws a keyerror down this code.
+            global fam_obsession
             global fam_pronoun
             global no_fam_obsession
             global james_involved
@@ -116,7 +116,7 @@ label gdwl_functions:
                     renpy.say(l, "You haven't been using info about him to try to \"win\" the game, right?")
 
                   else:
-                      renpy.say(l, "You haven't involved [fam_pronoun] in all of this yet, right?")    #TODO: (change this line) THIS THROWS A KEYEROR SO FAR
+                      renpy.say(l, "You haven't involved [fam_pronoun] in all of this yet, right?")    #TODO: (change this line)
 
 
                 else:
@@ -147,7 +147,6 @@ label gdwl_functions:
                     renpy.say (l, "You haven't involved them yet.... have you?")
                 else:
                     if james_involved:
-                        #TODO: Make sure james_involved is set previously.
                         if fam_obsession == "James":
                             renpy.say(l, "Although I am fine with sharing stories about James I don't want you to use any memories of him to further benefit you.")
                             renpy.say (l, "It already hurts enough just to have to live with these memories.")
@@ -180,8 +179,6 @@ label gdwl_functions:
                 renpy.jump("askaboutlila_tellmeabout_" + str(kokiri_chatchar_lila_counter))
 
         def kokiri_conversation_silent():
-            #TODO: Add the cardeath to here aswell? Not sure if that's a thing.
-            #
             if kokiri_conversation == 2:
                 if kokiri_meteorite_alert or kokiri_alternateplace == True: #The meteorite doesn't hit Lilith.
                     if car_caught == True:
@@ -201,10 +198,7 @@ label gdwl_functions:
         def kokiri_call_potentialdeathcheck():
             global kokiri_call_death_1_check
             global kokiri_call_death_2_check
-            #TODO: Do I still need this line of code? #if persistent.kokiri_call_death == False:
             persistent.kokiri_call_death = True
-            #TODO: Check for the flag where you have prevented the meteorite death and make it set another flag that gives permission to the next part of the call to play.
-            #TODO: Otherwise it doesn't play and instead cuts to a slightly special meteorite death.
             if kokiri_alternateplace == True:
               #The meteorite death check is not needed here, it is very far from her.
               #The car one does happen though.
@@ -217,11 +211,10 @@ label gdwl_functions:
               if car_caught == True:
                  renpy.say (n, "While Lilith is engrossed in her conversation you notice the Red-Sedan isn't showing up. Looks like your call to the police worked wonderfully.")
               else:
-                  #TODO: Move this to the car death instead and set a flag to trigger it. Leave the code as it is so I don't have to keep using renpy.say
                 kokiri_call_death_2_check = True
                 renpy.jump("kokiri_death_2")
             else:
-              if kokiri_meteorite_alert == True: #TODO: For some reason this doesn't trigger and yet the flag gets set correctly.
+              if kokiri_meteorite_alert == True:
                 renpy.say (n, "The meteorite breaks into many different parts that spread all around the forest. One of them lands right where Lilith was sitting.")
                 renpy.say (n, "For a brief moment you are reminded of the horible state she was in when it hit her head.")
                 renpy.say (n, "You try to shake the feeling it gives you away and you half-succeed.")
@@ -242,7 +235,7 @@ label gdwl_functions:
                     renpy.jump("kokiri_death_2")
               else:
                   kokiri_call_death_1_check = True
-                  renpy.jump("kokiri_death_1") #TODO: Check the flag to make sure it says the right stuff
+                  renpy.jump("kokiri_death_1")
 
 
         def kokiri_meteoritewarn():
@@ -256,7 +249,7 @@ label gdwl_functions:
                 if persistent.kokiri_death_1 == True:
                     if kokiri_alternateplace == False:
                         renpy.say(n, "You remember that it's almost the moment when a fragment from the meteorite would threaten to hit Lilith if she doesn't move out of the way.", interact=False) #TODO: Rewrite this line a bit.
-                        met_check = renpy.display_menu([("You might want to sit on my right instead of my left first. Something's coming soon.","meteorite_warn"),("*Don't warn her.*","no_meteorite_warn")]) #TODO: Find out how to return meteorite_warn as a true value if you choose the first option.
+                        met_check = renpy.display_menu([("You might want to sit on my right instead of my left first. Something's coming soon.","meteorite_warn"),("*Don't warn her.*","no_meteorite_warn")])
                         if met_check == "meteorite_warn":
                             renpy.say (n, "Lilith gives you a nod as she moves to the other side of the blanket, to your left.")
                             renpy.say (l, "That's a bit of an odd request but I guess I will see why I needed to do that soon enough, right?")

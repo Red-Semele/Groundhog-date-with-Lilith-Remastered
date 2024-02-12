@@ -315,7 +315,7 @@ label after_setup:
     python:
         name = renpy.input("What is your name?")
 
-        name = name.strip() or "Sam"
+        name = name.strip() or "Max"
         name = name.capitalize()
         #TODO: Add the different easter eggs with names here.
         #TODO: Also make the names persistent so you don't have to keep inputting the name each time.
