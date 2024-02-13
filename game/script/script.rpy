@@ -1712,9 +1712,7 @@ label ufo_talk_favouritefirstdate:
     ship "Brace yourself."
     ship "Brace yourself."
     ship "Brace yourself."
-    #TODO: Smaller font size
-    ship "All hope is lost."
-    #TODO: Normal font size
+    ship "{size=*0.5}All hope is lost.{/size}"
     ship "Brace yourse-"
     jump ufo_crash
 

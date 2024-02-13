@@ -581,11 +581,8 @@ label other_deaths:
 label gameover:
     $ persistent.lildeaths += 1
     $ persistent.retry_counter += 1
-    #Font size 29
     n "{size=*2.5}Game over{/size}"
-    #Font size 13
     n "Your date surely didn't go as planned."
     menu :
-
         "Retry.":
             jump game_start
