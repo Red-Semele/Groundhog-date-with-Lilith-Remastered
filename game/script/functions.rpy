@@ -6,8 +6,7 @@ label gdwl_functions:
             if love_meter <= 0:
                 #Check for the location to send to the right place.
                 if kokiri == True:
-                    "Filler"
-                    #TODO: Move to angry lilith kokiri.
+                    renpy.jump("kokiri_angrylilith")
                 elif beach == True:
                     "Filler"
                     #TODO: Make an angry Lilith beach part once you start working on the beach.

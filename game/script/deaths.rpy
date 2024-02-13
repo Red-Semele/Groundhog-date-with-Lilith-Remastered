@@ -1,7 +1,7 @@
 #Put all the deaths in here as a way to clean up all the other files and also just make this way easier to find deaths to rewrite etc.
 #TODO: Give all menu's sublabels to clean things up.
 
-#TODO: Convert this code into renpy code.
+
 
 
 
@@ -167,9 +167,7 @@ label restaurant_deaths:
         play music "gameover.mp3"
         if car_caught == True:
             "Filler for now..."
-            #TODO: Create this from the quest page.
         else:
-            #TODO: This is a sort of code for how to properly use easy flags.
             if burger == True:
                 $ resname = "burger restaurant"
                 $ resname2 = "burger"
@@ -204,32 +202,32 @@ label restaurant_deaths:
                     This time there is no red Sedan in sight, it seems as if the cops handled it well." #TODO: Only make that line about the red sedan show up if you've seen her get hit by it here.
                     l "Why are you following me [name]? I want to be alone." #TODO: Make this a different line if she is angry.
                     n "And with that Lilith leaves, you never saw her again. Not this time anyway. Atleast she didn't seem to get killed by anything on her way back home."
-                    n "You should probably get her to trust you somehow." #TODO: Make this line more properly showcase what went wrong, where you silent to her, did you anger her etc.
+                    n "You should probably get her to trust you somehow." #TODO: Make this line more properly showcase what went wrong, were you silent to her, did you anger her etc.
                     jump gameover
 
 
 
             else:
-                if currentcar == True: #This gives me problems, it doesn't yet work properly but the idea is decent
+                if currentcar == True:
                     n "Lilith leaves the [resname], you can not bare seeing what happens next so you decide to stay inside.
         Even from inside you can still hear the car crash into her."
-                    #Account for the notangry flag in the original here:
+                    #TODO:Account for the notangry flag in the original here:
 
                 else:
-                    $ currentcar = True #This gives me problems, it doesn't yet work properly but the idea is decent
+                    $ currentcar = True
                     n "Lilith leaves the [resname], you rush after her in an effort to calm her down.
         When you set one foot outside of the doorframe a red Sedan drives head first into the both of you."
                     n "Luckily you managed to get flung to the side somehow. Lilith however was not so lucky."
                     n "She died on impact when the speeding car hit her."
-                    #TODO: Properly use car_knowledge and also add something that checks the currentcar variable.
             jump gameover
 
 label kokiri_deaths:
     label kokiri_angrylilith:
-        #TODO: Convert this into renpy code and link it up to a function that each time it decreases her love checks if it is zero, if it is zero in kokiri this triggers. Also make something similair for the main restaurants.
+
         # Lilith leaves angrily and trips over a branch, her head hits against a big rock.
         #TODO: Make the events of this death play out slightly differently based on if you pissed her off in one big mistake or multiple small ones."
-        n "Lilith jumps up from where she was lying mere moments ago, on her face is a visible layer of anger or is it... dissapointment?<br/>You're not sure which one would sting more, probably a combination of the two."
+        n "Lilith jumps up from where she was lying mere moments ago, on her face is a visible layer of anger or is it... dissapointment?"
+        n "You're not sure which one would sting more, probably a combination of the two."
         n "She wipes the crumbs on her clothes away with a frightening speed and angrily storms down the hill."
         l "Goodbye [name], we are done here."
         l "Do not come back if you have even the slightest slither of respect for me." #TODO: (Make this only appear if you made one really big mistake)
@@ -349,7 +347,7 @@ label kokiri_deaths:
                         l "You know, I've been thinking..."
                         l "If I'm going to die soon then what's stopping you from quitting this game? Or would I just lose consciousnes, like I'm dying?"
                         l "I'm not sure if there's a way to tell. What do you think?"
-                        $ persistent.game_credits = True #TODO: Set this flag to true after every semiending
+                        $ persistent.game_credits = True #TODO: Set this flag to true after every semiending/ending
                         menu:
                             "I believe that you would still live on.":
                                 l "That's rather reassuring."
@@ -497,7 +495,7 @@ label kokiri_deaths:
                 #TODO: Add the angry lilith flag and part. #kokiri_angrylilith #Make her not ask you for help but just accept her death.
                 #The part below is not that part.
                 l "What is happening [name]?"
-                n "The fear in her voice is (palpapble?)." #TODO: Is that the right word?
+                n "The fear in her voice is palpable."
                 "Suddenly you feel the hill shooting upwards. The increased force of the gravity is pinning you against the hill but not for long, you begin to roll off the hill and fall down in the middle of a lake close to where the hill used to sit. "
                 p "Lilith, it's safe in here, jump down!"
                 l "I.... I can't... it's already too high..."
@@ -511,9 +509,7 @@ label kokiri_deaths:
             Suddenly you feel the hill shooting upwards. The increased force of the gravity is pinning you against the hill but not for long, you begin start to slide off the hill."
             n "You would probably have fallen if Lilith wasn't holding your hand with all of her strength. She pulls you up slowly, while she does so she has to look down at the rapidly shrinking forest and you can see the fear in her eyes."
             l "Hold on [name], I got you and I'm not letting you go."
-            #TODO: Smaller fontsize
-            l "Phew, we 're really high... I'm getting dizzy but I must keep going... just a little bit longer..."
-            #TODO: Normal fontsize
+            l "{size=*0.5}Phew, we 're really high... I'm getting dizzy but I must keep going... just a little bit longer...{/size}"
             n "She has managed to pull you up but it costed a lot of her strength."
             n "The both of you flop down on the hill like a few moments ago, the only difference being that the hill is now soaring in the sky, oh and also that two of you are still holding hands."
             l "You know what's funny [name]?
@@ -528,7 +524,6 @@ label kokiri_deaths:
             n "Lilith shudders as she speaks those words but when you look at her she tries her best to give you a smile."
             n "Lilith was right, the hill flew up into space itself, probably to some far-off stars, not that the two of you would know as after fifteen seconds everything went black.
             You can only imagine the gruesome death the two of you suffered, that is if you weren't unconcious."
-            #TODO: Make the player able to comment that she probably lost her consciousness before she could feel the pain too much. Use the flag below to do that.
             $ persistent.kokiri_death_4_hill_holdhand = True
             jump gameover
         label kokiri_death_4_nohill:
@@ -587,7 +582,7 @@ label gameover:
     $ persistent.lildeaths += 1
     $ persistent.retry_counter += 1
     #Font size 29
-    n "Game over"
+    n "{size=*2.5}Game over{/size}"
     #Font size 13
     n "Your date surely didn't go as planned."
     menu :
