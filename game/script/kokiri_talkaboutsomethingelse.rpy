@@ -82,7 +82,6 @@ label kokiri_talkaboutsomethingelse:
 
 
                                "Do you blame your father for what happened to James?" if persistent.david_blame_knowledge and not conversationtracker_blamedavid:
-                                   #TODO: Check if these are real flags
                                     $ conversationtracker_blamedavid = True
                                     l "What? That's absurd."
                                     l "I have never blamed him for James'... passing."
@@ -139,7 +138,6 @@ label kokiri_talkaboutsomethingelse:
 
 
     else:
-        #TODO: Make this function as sort of a emergency railroad to move you back to the kokiri death.
         jump kokiri_death_3_death_dialogue
 
 label telllilithaboutnar:
@@ -181,9 +179,7 @@ label telllilithaboutnar_neveraskedbefore:
 
 label telllilithaboutnar_goodandbusy:
         l "That's good to hear and wow that's really cool! "
-        #TODO: SetFontSize (6)
-        l "Even though technically you are now narrating him [name]."
-        #TODO: SetFontSize (12)
+        l "{size=*0.5} Even though technically you are now narrating him [name].{/size}"
         l "So do you control where our story leads Nar?"
         l "Yeah, I basically steer the story in the right direction and when we are off track I try my best to get us back on track." #TODO: This is not entirely true, the dev controls the story, the narrator controls the flow.
         menu:
@@ -267,7 +263,7 @@ label askaboutabigail_tellmeabout:
       if kokiri_chatchar_abigail == False:
           $ kokiri_chatchar_abigail = True
           $ kokiri_chatchar_abigail_counter = 1
-          $ conversationtracker_abigail = True #TODO: Is this the right flag?
+          $ conversationtracker_abigail = True
       else:
           $ kokiri_chatchar_abigail_counter += 1
 
@@ -307,8 +303,7 @@ label askaboutabigail_tellmeabout_1:
                           a "I see, no worries Lilly!"
                           a "Is your phone on speaker currently?"
                           l "Yes it is, why?"
-                          a "Heya [name], treat my sis nicely will you?" #TODO: Do this line in a bigger font.
-                          #TODO: Revert to normal size afterwards.
+                          a "{size=*2}Heya [name], treat my sis nicely will you?{/size}"
                           l "Abby, you're going to scare [name] off like that."
                           a "Good, then you'll have to give me all of your attention again!"
                           a "I'm kidding, I'm kidding, I hope you're having fun on your date so far."
@@ -324,11 +319,11 @@ label askaboutabigail_tellmeabout_1:
                           l "Because I care about you of course! You are and always will be my sister Abby, don't you ever forget that."
                           $ kokiri_call_potentialdeathcheck() #This serves as a break in the call if you have never seen the meteorite, if you have you should have been able to warn her beforehand.
                           a "That's really sweet of you Lilly! But I actually mean why are you asking me that now, during your date with [name]?"
-                          l "Well, I sort of will die during this date." #TODO: "(Make this one of two reactions possible) " What did past me mean by that?
+                          l "Well, I sort of will die during this date." #TODO: "(Make this one of two reactions possible) " What did past me mean by that? Future me here, I figured it out, I mean that you can either support Lilith to tell her sis this or something else.
                           a "... What?..."
                           a "Is this a joke?"
                           a "Was this [name] their idea?"
-                          a "This is not funny [name]" #TODO: Increase fonsize again
+                          a "{size=*2}This is not funny [name]!{/size}"
                           l "Abby, please, stop yelling..."
                           l "It's not a joke."
                           l "It's kind of hard to tell you why we think I will die but [name] has made it clear that there is atleast something strange going on."
@@ -602,8 +597,7 @@ label askaboutlila_tellmeabout_1:
                         li "That I felt like I was living three lives and neither of them were mine?"
                         li "That I felt abandoned by your father?"
                         l "You should have told us, we could have-"
-                        #TODO: Increase fontsize for next line and then revert to normal.
-                        li "Could have done what?"
+                        li "{size=*2}Could have done what?{/size}"
                         li "The two of you were just two little girls."
                         li "I didn't want to burden any of you with growing up too fast."
                         li "So I guess I grew older twice as fast so both of you could stay young."
