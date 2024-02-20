@@ -18,6 +18,7 @@ define j = Character("James")
 define li = Character("Lila")
 define q = Character("???")
 define p = Character("[name]")
+define dev = Character("Developer")
 
 
 
@@ -148,6 +149,7 @@ label start:
          $ persistent.kokiri_call_death = False
          $ persistent.restrainingorderfamily_violation_counter = 0
          $ persistent.kokiri_tellnolies_knowledge = False
+         $ persistent.fakeoutnar_tip = False
 
          #Kokiri poems
          $ persistent.kokiri_poem_window_knowledge = False
@@ -311,6 +313,19 @@ label after_setup:
     # These display lines of dialogue.
 
     #Add the page before this that sets all the extra flags and asks you for your name
+
+    if persistent.fakeoutnar_tip == True:
+        dev "My excuses [name]. I didn't want to throw you out of the game, out of the story so abruptly."
+        dev "I will admit it was quite an impulsive action..."
+        dev "I just think it's important that the narrator doesn't spoil my story."
+        dev "But don't fret [name]!"
+        dev "If you are so eager to find the point of this game here are quite a few ways for you to do so."
+        dev "And yet, I wonder, would that point be what you are looking for?"
+        dev "Would the meaning of this game that you might have formulated in your mind be better than the one it has?"
+        dev "I guess there's only one way to find out [name]."
+        dev "I wish you the best of luck one can find in a place like this..."
+        $ persistent.fakeoutnar_tip = False
+
 
 
 

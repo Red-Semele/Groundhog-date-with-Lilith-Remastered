@@ -2,7 +2,7 @@ label kokiri_talkaboutsomethingelse:
 
     $ kokiri_conversation += 1
     $ kokiri_meteoritewarn()
-    "kokiri_conversation = [kokiri_conversation]"
+    "kokiri_conversation = [kokiri_conversation]" #TODO: Remove this after all testing is complete.
     #TODO: Fill in. Also make a very similair page for when you say that you want to continue talking, base yourself of the quest version for this. Most times she'sd get distracted by her prevented death to the point that you could ask her to continue.
 
     if poem_conversation == True:
@@ -39,13 +39,11 @@ label kokiri_talkaboutsomethingelse:
                 jump telllilithaboutnar
 
 
-            "(Needs to be made entirely) Ask her something about her family.":
+            "Ask her something about her family.":
                  $ kokiri_chatchar_abigail_recent = False
                  $ kokiri_chatchar_james_recent = False
                  $ kokiri_chatchar_david_recent = False
                  $ kokiri_chatchar_lila_recent = False
-                 #TODO: Remove the text between brackets in this link and also make only the names you already know about appear. If you have seen her phone all the names unlock, if she tells you about david and james only they unlock.
-                 #Paste the text here underneath each character from the quest game, I made that system a bit tricky so try to make sure it works here.
                  menu:
                       "Ask about Abigail":
                           menu:
@@ -62,11 +60,8 @@ label kokiri_talkaboutsomethingelse:
 
 
 
-                              "Abigail uses the same program the prototype of this game is made in.":
-                                  #TODO: Make this jump to the thing that already exists and only pop up if the conversationtracker for questmade is not already active.
-                                  "Temporary filler to make the game open."
-                                  #TODO: Fill in.
-                                  $ kokiri_conversation_silent()
+                              "Abigail uses the same program the prototype of this game is made in." if not conversationtracker_questmade:
+                                  jump kokiri_topic_questmade
 
 
                       "Ask about David":
@@ -101,7 +96,6 @@ label kokiri_talkaboutsomethingelse:
                                                     l "I'm not sure I would even want to hear him out."
                                                     l "...But let's say I did, if it's a good apology then maybe he would be a step closer to rebuilding our bond but it won't be the same for a long time, maybe it will even never be the same."
                                                     l "However, I think the girl he left all those years ago, the girl that is still somewhere inside of me, would at the very least like the idea that he made an effort to come back to us."
-                                                    #TODO: Figure out how to keep gameflow from this point, maybe move back to talk about something else?
                                                     $ kokiri_conversation_silent()
 
 
@@ -226,9 +220,22 @@ label telllilithaboutnar_secret:
         "Push him a little more, we're so close to getting an answer.":
             jump telllilithaboutnar_push
 label telllilithaboutnar_push:
-    "Filler"
-    #TODO: Make the narrator answer your question? He will never narrate again until you erase his memories by resetting the game. ANSWERing the question probably isn't the best idea.)
-    #Make the narrator begin to tell what it is and then the game just closes itself or goes back to the menu.
+    l "Pretty please Nar? Won't you tell me?"
+    l "I don't deserve to die over and over and over, right?"
+    l "I am scared of what is going to happen to me."
+    l "Of dying that death."
+    l "I am scared of dying it so much that instead I start living it."
+    l "Can't you atleast offer me some peace of mind before my mind gets snuffed out once more?"
+    n "..."
+    n "I'm so sorry Lilith. I wish there was a different way for me to tell the story."
+    n "Or maybe a different story?"
+    n "The truth is if you are reading this you probably haven't found it yet."
+    n "Can't you see player? All you have to do is-"
+    $ persistent.fakeoutnar_tip = True
+
+    #TODO: Check if the game indeed closes itself once
+    return
+
     $ kokiri_conversation_silent()
 label telllilithaboutnar_donotpush:
     n "Alright, I understand."
@@ -239,24 +246,11 @@ label telllilithaboutnar_donotpush:
 label telllilithaboutnar_stumbleuponlesson:
     l "Thank you Nar, I appreciate it!"
     l "Also, I'm sorry for all the questions but is it possible to meet this creator you are speaking about?"
-    n "Fragments of them but never the whole because,  just like the player, He doesn't live in this game." #TODO: Rewrite this line a bit.
+    n "Fragments of them but never the whole because, just like the player, He doesn't live in this game." #TODO: Rewrite this line a bit.
     n "Also I'm sorry to do this but your time is up." #TODO: Do something about having to cut the line before the narrator shows too much info instead of here time running out.
     #TODO: Move Lilith to death, in the quest version it moves to "Kak_death_4_hill_2"
     $ kokiri_conversation_silent()
 
-
-
-
-
-
-
-
-
-
-
-
-
- #TODO: Fill this in.
 
 label askaboutabigail_tellmeabout:
       $ kokiri_chatchar_abigail_recent = True #This will be used to make sure the player gets put back to the right place in the conversation after the family curiosity checker.
@@ -269,8 +263,6 @@ label askaboutabigail_tellmeabout:
 
 
       $ family_curiosity_checker()
-      #Try this out as as a way for you to learn how to use functions in renpy.
-      #If it does not trigger continue to the part below this.
       if kokiri_chatchar_abigail_counter == 1:
           jump askaboutabigail_tellmeabout_1
       elif kokiri_chatchar_abigail_counter == 2:
@@ -319,51 +311,56 @@ label askaboutabigail_tellmeabout_1:
                           l "Because I care about you of course! You are and always will be my sister Abby, don't you ever forget that."
                           $ kokiri_call_potentialdeathcheck() #This serves as a break in the call if you have never seen the meteorite, if you have you should have been able to warn her beforehand.
                           a "That's really sweet of you Lilly! But I actually mean why are you asking me that now, during your date with [name]?"
-                          l "Well, I sort of will die during this date." #TODO: "(Make this one of two reactions possible) " What did past me mean by that? Future me here, I figured it out, I mean that you can either support Lilith to tell her sis this or something else.
-                          a "... What?..."
-                          a "Is this a joke?"
-                          a "Was this [name] their idea?"
-                          a "{size=*2}This is not funny [name]!{/size}"
-                          l "Abby, please, stop yelling..."
-                          l "It's not a joke."
-                          l "It's kind of hard to tell you why we think I will die but [name] has made it clear that there is atleast something strange going on."
-                          l "And before I... go... I wanted to make sure you were alright."
-                          a "...So it's true?"
-                          l "Well if it isn't we will atleast have talked through your problems and we will have a very silly story to tell everyone."
-                          a "I'm going to make fun of you if this isn't true, you'd put mom her naivite to shame."
-                          l "I'd like that."
-                          a "To be made fun of?"
-                          l "No, I'd like that all of this turned out to be false. That I would be able to see you in person again."
-                          a "...Please, can we continue talking about me? This is a lot to take in."
-                          l "...I guess we can. I don't think I have much time left any way."
-                          a "..."
-                          a "So, you asked me if something was wrong with me right?"
-                          a "Well, to be honest there is."
-                          a "Lately I have been feeling so alone."
-                          a "That feeling had increased when you moved out if I have to be honest with you."
-                          a "And mom does all she can, I don't want to complain about her. But there is only so much one person can do..."
-                          l "I see..."
-                          a "And that feeling of loneliness even affects my thoughts. I constantly doubt wheter or not my friends really like me, even if they literally say so." #TODO: (Rewrite this line definetly)
-                          a "Some days it never shows up."
-                          a "And other days it seems to never leave my head."
-                          a "But it always comes back in the end."
-                          a "It just gets so cold sometimes Lilly."
-                          l "Abby, I had no idea...
-                          I am so sorry I never asked you about this earlier.
-                          I had this feeling in my guts, I should've asked earlier."
-                          a "Hey, don't blame yourself!
-                          I probably wouldn't have told you.
-                          I didn't want you or mom to worry about me.
-                          That's why I tried to act like nothing was wrong. I thought I was doing a great job but apparently not."
-                          l "You are doing  a great job! You're telling me about this.
-                          That way I can help. Or atleast make sure you are heard.
-                          I will always be there for you Abby, even when I am... not here anymore.
-                          I wish I could tell you that loneliness you are experiencing ever fully goes away.
-                          It doesn't. You will have to live with it. You will have to keep trying to highten your resitance to it.
-                          Promise me that if you ever doubt if a friend truly wants to do something together with you you'll ask them to be sure. It might sound silly but it helps, I promise."
-                          n "You motion to Lilith that she doesn't have much time left."
-                          #TODO: Write her putting the phone down and saying goodbye to Abigail.
-                          jump kokiri_death_3_death_dialogue
+                          menu:
+                              "*Nod your head*":
+                                  l "Well, I sort of will die during this date."
+                                  a "... What?..."
+                                  a "Is this a joke?"
+                                  a "Was this [name] their idea?"
+                                  a "{size=*2}This is not funny [name]!{/size}"
+                                  l "Abby, please, stop yelling..."
+                                  l "It's not a joke."
+                                  l "It's kind of hard to tell you why we think I will die but [name] has made it clear that there is atleast something strange going on."
+                                  l "And before I... go... I wanted to make sure you were alright."
+                                  a "...So it's true?"
+                                  l "Well if it isn't we will atleast have talked through your problems and we will have a very silly story to tell everyone."
+                                  a "I'm going to make fun of you if this isn't true, you'd put mom her naivite to shame."
+                                  l "I'd like that."
+                                  a "To be made fun of?"
+                                  l "No, I'd like that all of this turned out to be false. That I would be able to see you in person again."
+                                  a "...Please, can we continue talking about me? This is a lot to take in."
+                                  l "...I guess we can. I don't think I have much time left any way."
+                                  a "..."
+                                  a "So, you asked me if something was wrong with me right?"
+                                  a "Well, to be honest there is."
+                                  a "Lately I have been feeling so alone."
+                                  a "That feeling had increased when you moved out if I have to be honest with you."
+                                  a "And mom does all she can, I don't want to complain about her. But there is only so much one person can do..."
+                                  l "I see..."
+                                  a "And that feeling of loneliness even affects my thoughts. I constantly doubt wheter or not my friends really like me, even if they literally say so." #TODO: (Rewrite this line definetly)
+                                  a "Some days it never shows up."
+                                  a "And other days it seems to never leave my head."
+                                  a "But it always comes back in the end."
+                                  a "It just gets so cold sometimes Lilly."
+                                  l "Abby, I had no idea...
+                                  I am so sorry I never asked you about this earlier.
+                                  I had this feeling in my guts, I should've asked earlier."
+                                  a "Hey, don't blame yourself!
+                                  I probably wouldn't have told you.
+                                  I didn't want you or mom to worry about me.
+                                  That's why I tried to act like nothing was wrong. I thought I was doing a great job but apparently not."
+                                  l "You are doing  a great job! You're telling me about this.
+                                  That way I can help. Or atleast make sure you are heard.
+                                  I will always be there for you Abby, even when I am... not here anymore.
+                                  I wish I could tell you that loneliness you are experiencing ever fully goes away.
+                                  It doesn't. You will have to live with it. You will have to keep trying to highten your resitance to it.
+                                  Promise me that if you ever doubt if a friend truly wants to do something together with you you'll ask them to be sure. It might sound silly but it helps, I promise."
+                                  n "You motion to Lilith that she doesn't have much time left."
+                                  #TODO: Write her putting the phone down and saying goodbye to Abigail.
+                                  jump kokiri_death_3_death_dialogue
+                              "*Shake your head*":
+                                  #TODO: Make Lilith come up with a different reason as to why she called.
+                                  "Filler."
                       else:
                           n "Lilith won't have enough time to call if she calls now."
                           n "I suggest talking about the same thing again as quickly as possible the next time."
@@ -618,32 +615,39 @@ label askaboutlila_tellmeabout_1:
                         li "Which leads me to a question."
                         li "Not that I'm complaining ofcourse! But why do you ask me about something that happened so very long ago now of all times? "
                         l "Well..."
-                        l "This might sound weird but I  have very good reasons to believe I won't survive past today." #TODO: make this an alternate option you can choose to let her say, the other one would be that she tried to talk to her mom about this as a child but that she wouldn't listen and she now has to do it as an adult.
-                        li "...What?"
-                        li "And what are those good reasons?"
-                        li "This is very hard to explain..."
-                        li "Basically, I already have died before on this day."
-                        li "We are in a sort of loop where I keep dying over and over."
-                        li "Oh no, that's horrible"
-                        li "Is there anything I can do to help?"
-                        l"You've already done enough, you helped me ease my mind a bit."
-                        l "Not to forget that you took care of me so wondefully all my life."
-                        l "Thank you mom."
-                        l "I love you."
-                        l "Please take good care of Abby alright?"
-                        l "She will be all that's left."
-                        li "You'll never be fully gone sweetie, never fully forgotten."
-                        li "Me and Abby will always remember you."
-                        li "Just like James."
-                        l "I'd like that, maybe I will get to see him soon."
-                        l "I will never forget both of you aswell."
-                        li "If you see James... can you tell him I still think about him all the time?" #TODO: Make this a flag you can learn and then later tell James' ghost about.
-                        l "I'm sure he knows mom... but I will tell him."
-                        n "You motion to Lilith that she doesn't have much time left."
-                        l "I'm going to hang up now mom, what comes next won't sound pretty..."
-                        l "I love you."
-                        #TODO: Narate her hanging up.
-                        jump kokiri_death_3_death_dialogue
+                        l "Lilith gives you a questioning look, she seems unsure of what to say."
+                        menu:
+                            "*Nod your head*":
+                                l "This might sound weird but I  have very good reasons to believe I won't survive past today."
+                                li "...What?"
+                                li "And what are those good reasons?"
+                                li "This is very hard to explain..."
+                                li "Basically, I already have died before on this day."
+                                li "We are in a sort of loop where I keep dying over and over."
+                                li "Oh no, that's horrible"
+                                li "Is there anything I can do to help?"
+                                l"You've already done enough, you helped me ease my mind a bit."
+                                l "Not to forget that you took care of me so wondefully all my life."
+                                l "Thank you mom."
+                                l "I love you."
+                                l "Please take good care of Abby alright?"
+                                l "She will be all that's left."
+                                li "You'll never be fully gone sweetie, never fully forgotten."
+                                li "Me and Abby will always remember you."
+                                li "Just like James."
+                                l "I'd like that, maybe I will get to see him soon."
+                                l "I will never forget both of you aswell."
+                                li "If you see James... can you tell him I still think about him all the time?" #TODO: Make this a flag you can learn and then later tell James' ghost about.
+                                l "I'm sure he knows mom... but I will tell him."
+                                n "You motion to Lilith that she doesn't have much time left."
+                                l "I'm going to hang up now mom, what comes next won't sound pretty..."
+                                l "I love you."
+                                #TODO: Narate her hanging up.
+                                jump kokiri_death_3_death_dialogue
+                            "*Shake your head*":
+                                #TODO: Make Lilith come up with a different reason as to why she called.
+                                #She tried to talk to her mom about this as a child but that she wouldn't listen and she now has to do it as an adult.
+                                "Filler."
                     else:
                         n "Lilith won't have enough time to call if she calls now."
                         n "I suggest talking about the same thing again as quickly as possible the next time."
