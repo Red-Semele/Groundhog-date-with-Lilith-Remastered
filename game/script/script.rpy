@@ -191,6 +191,7 @@ label start:
      # Locations:
      $ burger_poem_cleancheck = False
      $ burger = False
+     $ burger_alt = False
      $ cafe = False
      $ kokiri = False
      $ brotherasked = 0

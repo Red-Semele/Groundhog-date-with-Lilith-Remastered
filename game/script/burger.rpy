@@ -38,6 +38,26 @@ label burger_start:
          "Sorry, traffic was quite bad.":
              jump burger_start_choice3
 
+         "Hey glad to be here. Could we sit somewhere else though?" if persistent.burger_death_1:
+            $ burger_alt = True
+            n "Lilith gives you a smile and a thumbs up."
+            l "Sure, where would you like to sit?"
+            n "You quickly point to a table, it doesn't really matter which one, as long as she isn't sitting where she got shot before."
+            l "Alright, that table it is then!"
+            n "Lilith takes her handbag and follows you as you wander to the table."
+            n "You feel relieved, knowing what horrors you just escaped from."
+            n "The image of her laying there, on the brink of life and death, is burned into your mind."
+            n "You shudder."
+            n "It's probably best to try and focus on the present, not the past."
+            l "Are you alright [name]?"
+            l "You look like you have just seen a ghost."
+            n "She's not far off."
+            menu:
+                "Oh yeah, I am fine, I was just thinking about the traffic jam I was stuck in.":
+                    jump burger_start_choice3
+
+
+
 
 label burger_start_choice1:
     n "Lilith chuckles."
@@ -102,7 +122,6 @@ label burger_start_choice2:
     l "Awwe, I'm flattered you are so happy to see me. Or is it the burgers you don't want to miss?"
     l "Lilith chuckles slightly."
     l "Sorry, I'm just messing with you."
-    #TODO: Is she messing with you? Or is she sincere?
     l "So, what do you want to order of the menu?  I think I am going to go with a juicy cheesburger."
     jump burger_start_menu
 
@@ -139,8 +158,8 @@ label burger_start_menu:
 
 
 label burger_ordering:
-  n "Lilith and you go to order the burgers. "
-  #TODO: Narrate you ordering the burgers, make Rose say "A juicy cheeseburger and a [burger_choice] coming up! I'll bring them to you when they are done alright? That way you two can get to know each other some more. (She gives a wink and Lilith blushes)
+  n "Lilith and you go to order the burgers."
+
   if persistent.burgerwent == 0:
       n "You were expecting having to order them from a screen most fastfood places tend to have but as you looked around you couldn't spot any. Instead Lilith walks to a counter.
       You decide to follow her."
@@ -150,7 +169,8 @@ label burger_ordering:
       n "An old lady smiles at the both of you."
   #TODO: Find the way to properly replicate this effect from quest. (No linebreak if else statement. Find a way to properly do this, I can just use an if else to create two sepearate lines but I want to join the second line into the first one if you remember her name.
   #Also find a way to make rose her name be "???" instead of Rose if you do not yet know her name.
-  r "Hey Lilith, glad to see you here once more! "
+  r "Hey Lilith, glad to see you here once more!"
+  r "I'm almost surprised to see you here, it's been quite a while hasn't it?"
   if persistent.rosename_knowledge == True:
        n "Rose looks at you for a brief moment and continues."
   else:
@@ -162,9 +182,17 @@ label burger_ordering:
   n "Rose gives you a sincere smile."
   r "Nice to meet you [name]."
   r "So, what can I get the two of you?"
-  n "You tell her what you ordered and follow Lilith back to the table."
-  #The food stuff needs more detail
-
+  n "You and Lilith tell her your choices."
+  r "A juicy cheeseburger and a [burger_choice] coming up! I'll bring them to you when they are done alright?"
+  r "That way you two can get to know each other some more."
+  n "She gives Lilith a quick wink that you just barely manage to catch."
+  n "Lilith's face turning beetred is a lot easier to notice."
+  l "{size=*0.5)Uhm, thank you Rose... we uhm have to get back to our table now.{/size}"
+  n "You can't help but chuckle to yourself as Lilith pratically darts back to the table."
+  n "By the time you've reached the table she is already sitting down, still as red as she possibly could be."
+  n "She quickly brushes one hand over her left cheek and somehow manages to turn even more red at the realisation that she is still blusing." #TODO: Rewrite this line a bit more, it feels kind of dumb.
+  n "Right then she lets out a few small coughs as she tries to somehow divert attention from what just happened."
+  #TODO: Add a better segway?
 
   l "Thank you for choosing this place [name].
   It has been too long since I've been here, to tell you the truth I actually was avoiding this place.
@@ -180,14 +208,24 @@ label burger_ordering:
       "What was his name?":
           jump burger_brother_question
 
+      "Are you alright Lilith? You don't need to share this story if it hurts you too much.":
+          $ love_points += 1
+          $ love_meter_updater()
+          l "Honestly I'm not sure if I'll ever be fully alright because of what happened."
+          l "And I think telling that story will always hurt."
+          l "But that doesn't mean I wouldn't like to tell you about it."
+          l "In fact, I think it might be good for me to eventually tell you."
+          l "Just..."
+          l "I just would like to wait a little before I do that, maybe some other time [name]?"
+          l "I do really appreciate your concern for me though!"
+          #TODO: Talk about something slightly different after this and then move back to the main path so that everything goes smoothly again.
+
+
+
 label burger_brother_question:
 
     $ askedbrother = True
     n "Lilith tries to compose herself as well as she can but from the look in her eyes you can tell this is all a bit much for her."
-
-    $ brotherasked = 0
-    #TODO: Make this use the love meter instead of the brotherasked one because that way I can use one less variable than normal.
-    #It's quite simple anyway, if your love is above a certain threshold you should be able to cut to the scene where she talks about him.
 
 
     menu:
@@ -392,7 +430,8 @@ label burger_living_writer_thanktip_sorryhobbylost:
 
 label burger_brotherasked:
     if askedbrother == True:
-        if brotherasked == 0:
+        if love_meter == 3:
+            #TODO: Does this love meter trigger the text?
             $ persistent.brother_knowledge = True
             n "Lilith pauses for a moment."
             l "You asked what my brother's name was, right?
@@ -416,9 +455,10 @@ label burger_brotherasked:
             l "Mom really tried her best to fill the void left by them but the presence of their absence has always haunted us since that horrible day."
             if persistent.joke_knowledge == True:
                 l "My sister, Abigail, the one from the joke you just told, is 5 years younger than me so she doesn't really remember much of what happened."
-                #TODO Make this a flag. Also rewrite that line slightly.
+
             else:
                 l "My sister, Abigail, is 5 years younger than me so she doesn't really remember much of what happened."
+            #TODO Make this a flag. Also rewrite that line slightly.
             n "She lets out a sigh of relief."
             l "As much as it hurts me to talk about James it feels good to finally let it all out once again.
             Thank you for listening to me ramble on [name]."
@@ -429,19 +469,38 @@ label burger_deathbuildup:
  l "What was that?"
 
 menu:
-    #TODO:if burger_alt = true (Make this code then hide the duck option since you sit somewhere else.)
     "It's probably not our concern.":
         jump burger_deathbuildup_choice1
 
     "Maybe there is a sale going on somewhere?":
         jump burger_deathbuildup_choice2
 
-    "This is important, duck now." if persistent.burger_death_1:
+    "This is important, duck now." if persistent.burger_death_1 and not burger_alt:
         jump restaurant_death_1_prevented
 label burger_deathbuildup_choice1:
-    l "You're probably right, it's probably not even a big deal anywa-"
-    jump restaurant_death_1
+    if burger_alt == False:
+        l "You're probably right, it's probably not even a big deal anywa-"
+        jump restaurant_death_1
+
+
 
 label burger_deathbuildup_choice2:
     l "Let's hope it's just that."
     jump restaurant_death_1
+
+label burger_alt_askheraquestion:
+
+     $ burger_alt = False
+     menu:
+         "*Ask her a question.*":
+             menu:
+                 "So you mentioned that you really like music. Which music do you listen to?" if musiclover and musiclovertalked:
+                     "Filler"
+                 "Which music do you like to listen to?" if musiclover and not musiclovertalked:
+                     "Filler"
+                 "So you mentioned that you like writing. That made me curious, which books do you like to read?" if booklover and booklovertalked:
+                     "Filler"
+                 "Which books do you like to read?" if booklover and not booklovertalked:
+                     "Filler"
+             #TODO: Convert musiclover, musiclovertalked, booklover and booklovertalked to correct flags.
+             #Make the flags activate in the burger path based on where they activate in the quest version, check that to make sure.
