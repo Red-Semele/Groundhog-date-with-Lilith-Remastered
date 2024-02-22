@@ -284,8 +284,8 @@ label burger_joke_response:
 label burger_living:
     l "So, what do you do for a living?"
 
-    $ Booklover = True
-    $ Booklovertalked = True
+    $ persistent.booklover_knowledge = True
+    $ booklovertalked = True
 
     menu:
         "I'm an aspiring writer looking for a golden opportunity.":
@@ -491,16 +491,50 @@ label burger_deathbuildup_choice2:
 label burger_alt_askheraquestion:
 
      $ burger_alt = False
+
      menu:
          "*Ask her a question.*":
              menu:
-                 "So you mentioned that you really like music. Which music do you listen to?" if musiclover and musiclovertalked:
-                     "Filler"
-                 "Which music do you like to listen to?" if musiclover and not musiclovertalked:
-                     "Filler"
-                 "So you mentioned that you like writing. That made me curious, which books do you like to read?" if booklover and booklovertalked:
-                     "Filler"
-                 "Which books do you like to read?" if booklover and not booklovertalked:
-                     "Filler"
-             #TODO: Convert musiclover, musiclovertalked, booklover and booklovertalked to correct flags.
-             #Make the flags activate in the burger path based on where they activate in the quest version, check that to make sure.
+                 "So you mentioned that you really like music. Which music do you listen to?" if persistent.musiclover_knowledge and musiclovertalked:
+                     jump burger_alt_askheraquestion_musiclover
+                 "Which music do you like to listen to?" if persistent.musiclover_knowledge and not musiclovertalked:
+                     jump burger_alt_askheraquestion_musiclover
+                 "So you mentioned that you like writing. That made me curious, which books do you like to read?" if persistent.booklover_knowledge and booklovertalked:
+                     jump burger_alt_askheraquestion_booklover
+                 "Which books do you like to read?" if persistent.booklover_knowledge and not booklovertalked:
+                     jump burger_alt_askheraquestion_booklover
+
+label burger_alt_askheraquestion_musiclover:
+    l "Oh, I'm glad you asked [name]!"
+    l "I like quite a few genres and bands, it mostly depends on how I am feeling at the time."
+    l "The genres I tend to listen to the most are jazz, rock, and heavy metal."
+    l "My favourite bands shift around all of the time but for this moment I think King Crimson, I Monster and Smashing Pumpkins are in my top three."
+    l "I think that the reason they are in my top three is how much they tend to innovate with every song they make."
+    l "Now that I think about it, Kishi Bashi is also excellent at innovating, he's definetly also worth checking out!"
+    l "It's very hard to keep adding to something like an album with song after song and still make it as special as the first one someone has heard."
+    l "After a while it might seem like some artists are just going through the motions of pumping out song after song that they know will do great, but that they aren't happy with."
+    l "And their fans will be going through the motions of listening to each and every single song to relive that sense of wonder they had at first, but it is never going to be the same."
+    #TODO: Add some choices about what she said here, before she asks you what your favourite band is.
+    l "What are your favourite bands and genres of music? "
+    menu:
+        "My favourite band is-":
+            jump restaurant_death_2
+
+
+label burger_alt_askheraquestion_booklover:
+    $ persistent.bookpreference_knowledge = True
+    l "Oh, that's a very good question."
+    l "Well, to begin I always liked reading about mythology."
+    l "It started when I was about ten years old and got the Percy Jackson books as a gift."
+    l "They sucked me into the world of Greek and Roman myths, they are essentially the reason I studied Latin in my high-school."
+    l "During that time, probably in my first or second year I got this lovely book with a collection of a ton of Greek and Roman myths."
+    l "I have read that thing so many times that you can see the wear and tear of pretty much every page."
+    l "Recently I've been expanding my reach by learning about Finnish mythology, I picked up the Kalevala and haven't been to put it down until I finished it."
+    l "I am less familiar with those myths since I picked it up for the first time about a week ago but I'd love t read it again for quite a few times until I'm as familiar with it as the Roman myths.")
+    l "I also really enjoy to read Haruki Murakami's works, an old friend of mine introduced me to them and since then I've read 'First person singular', 'After dark' and '1q94'."
+    l "He has a hauntingly beautiful way of describing even the most mundane things. It's like I can see the world for the first time again but not through my eyes, through his instead."
+    l "I love it when someone can make me look at mundane things in a whole new perspective."
+    l "So, which books do you like to read [name]?"
+    menu:
+        "I really like-":
+            jump restaurant_death_2

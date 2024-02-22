@@ -100,6 +100,9 @@ label start:
          $ persistent.ron_knowledge = False
          $ persistent.quest_knowledge = False #TODO: Maybe change the Quest flag since it now has less use.
          $ persistent.reality_knowledge = False
+         $ persistent.bookpreference_knowledge = False #This will basically help you pick a book for Lilith she likes in the beach-bookstore.
+         $ persistent.booklover_knowledge = False
+         $ persistent.musiclover_knowledge = False
          #Phone-numbers
          $ persistent.david_call_knowledge = False
          $ persistent.abigail_call_knowledge = False
@@ -288,6 +291,8 @@ label start:
      $ major_love_offence = 0
      $ minor_love_comfort = 0
      $ major_love_comfort = 0
+     $ booklovertalked = False
+     $ musiclovertalked = False
      #QOL-settings:
      $ no_nightmare = False
      $ perm_nightmare = False
