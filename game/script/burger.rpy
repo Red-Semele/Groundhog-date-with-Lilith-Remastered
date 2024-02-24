@@ -1,4 +1,4 @@
-#TODO: Implement the option to sit somewhere else into this restaurant. It's already in the quest version. I also need to implement the one extra conversation you can have if you sit somewhere else.
+
 #TODO: Play through burger-path to be sure it's semi-bug free and also add the nightmare scenario to it etc.
 label burger_start:
     if persistent.lildeaths > 0:

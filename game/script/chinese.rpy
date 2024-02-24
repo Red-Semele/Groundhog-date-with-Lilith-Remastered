@@ -51,7 +51,7 @@ label chinese_menu_result:
     if peking == True:
         l "That's a good choice!
         So good in fact that I was thinking about picking the same thing."
-    #Elif line lijkt niet te kloppen voor de een of andere reden.
+    #TODO:Elif line lijkt niet te kloppen voor de een of andere reden. Is this still the case?
     elif orange == True:
         l "That's a good choice!
         I've had my fair share of orange chicken already throughout my life, so I think I'm going for something else."
@@ -161,7 +161,6 @@ label chinese_riddle_accept:
                                 l "The answer is Orpheus."
                                 l "That was the final riddle!"
                                 jump chinese_riddle_evaluation
-                        #TODO: Copy the code above this and create this part.
                 label riddle_tryagain_loop:
                     if riddle_loop == 0:
                         if demetrius == True:
@@ -270,6 +269,7 @@ if dem_talk "there's not a chance, besides, in it's state I think it's going to 
 
         l "What did you think of my riddles [name]?"
         #TODO: Make these only appear at certain points. Add some extra text on each path to make for better segways.
+        #Also change the text between brackets.
         menu:
             "They were pretty easy actually. (Rude version)" if rw_total == 0:
                 $ easy_rude = True
