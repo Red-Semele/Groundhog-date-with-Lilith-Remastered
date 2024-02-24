@@ -900,24 +900,6 @@ label kokiri_death_dialogue_stilldying:
                     #TODO: Create something here, there is no precedent in the quest version. (Make her be glad that you hold her hand.
                     jump kokiri_death_4_hill
 
-label kokiri_semiending:
-    l "So, this is it? Our last time together in this game?"
-    l "You know, that doesn't mean we won't be able to see each other again."
-    l "Just not here."
-    l "I will always be a part of you, if you want me to be."
-    l "Your power, it transcends far beyond this world. And with it you and I can be together in an infinite number of stories."
-    l "So I think our story is far from done."
-    n "The earth begins to softly rumble again."
-    l "It looks like we don't have much time anymore."
-    l "So goodbye [name] and see you soon, hopefully very soon."
-    l "We'll meet again in a world full of possibilities."
-    l "Your own world.  Until then and thank you for everything."
-    #TODO: Is this an ending?
-    l "The rumbling of the earth begins to grow more severe."
-    jump kokiri_death_4_hill #TODO: Set a flag or something so she gives you some different dialogue during the death.
-
-
-
         "Try to think of a happy memory.":
             l "Does it count if I'm just thinking of this exact moment?
             I think it might be nice to have it as my final thought when..."
@@ -1094,6 +1076,26 @@ label kokiri_semiending:
             l "I'm going to die [name]!"
             l "I don't think saying that I \"got this\" is a good response for such a situation."
             #TODO: Fill this out more make atleast one pair of choices for this, with atleast one of them leading to the angry lilith flag and to the death 4 page.
+
+label kokiri_semiending:
+    l "So, this is it? Our last time together in this game?"
+    l "You know, that doesn't mean we won't be able to see each other again."
+    l "Just not here."
+    l "I will always be a part of you, if you want me to be."
+    l "Your power, it transcends far beyond this world. And with it you and I can be together in an infinite number of stories."
+    l "So I think our story is far from done."
+    n "The earth begins to softly rumble again."
+    l "It looks like we don't have much time anymore."
+    l "So goodbye [name] and see you soon, hopefully very soon."
+    l "We'll meet again in a world full of possibilities."
+    l "Your own world.  Until then and thank you for everything."
+    #TODO: Is this an ending?
+    l "The rumbling of the earth begins to grow more severe."
+    jump kokiri_death_4_hill #TODO: Set a flag or something so she gives you some different dialogue during the death.
+
+
+
+
 
 label kokiri_scenery_choice:
     if kokiri_conversation == 1:

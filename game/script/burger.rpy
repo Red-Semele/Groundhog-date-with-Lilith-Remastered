@@ -530,7 +530,7 @@ label burger_alt_askheraquestion_booklover:
     l "During that time, probably in my first or second year I got this lovely book with a collection of a ton of Greek and Roman myths."
     l "I have read that thing so many times that you can see the wear and tear of pretty much every page."
     l "Recently I've been expanding my reach by learning about Finnish mythology, I picked up the Kalevala and haven't been to put it down until I finished it."
-    l "I am less familiar with those myths since I picked it up for the first time about a week ago but I'd love t read it again for quite a few times until I'm as familiar with it as the Roman myths.")
+    l "I am less familiar with those myths since I picked it up for the first time about a week ago but I'd love to read it again for quite a few times until I'm as familiar with it as the Roman myths."
     l "I also really enjoy to read Haruki Murakami's works, an old friend of mine introduced me to them and since then I've read 'First person singular', 'After dark' and '1q94'."
     l "He has a hauntingly beautiful way of describing even the most mundane things. It's like I can see the world for the first time again but not through my eyes, through his instead."
     l "I love it when someone can make me look at mundane things in a whole new perspective."
