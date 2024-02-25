@@ -820,7 +820,6 @@ label phone_call_abigail:
 
 
                                             "I spoke to David in a previous cycle. He told me that no one loves or misses him after what he did." if persistent.david_nolove_knowledge:
-                                                #TODO: Probably change this flag to something with knowledge in the title.
                                                 a "That's absurd! I still love him... I also still miss him."
                                                 a "I mean, a daughter needs her dad, right?"
                                                 a "Mom and Lilly are pretty mad because he left us but honestly I'm more sad because of it."
@@ -1017,21 +1016,27 @@ label donotpickupthephone:
         #Ending
         "The quitter ending."
         $ persistent.ending_quitter = True
-    #TODO: Add an ending for when you have 2-9 deaths, the narrator tells you that you are so close to a breakthrough.
 
     elif persistent.lildeaths <= 20:
+        if persistent.kokiri_knowledge == True:
 
-        n "Maybe it's for the best..."
-        n "But is it really?..."
-        #Ending
-        "An ending."
-        $ persistent.ending_anending = True
+            n "Maybe it's for the best..."
+            n "But is it really?..."
+            #Ending
+            "An ending."
+            $ persistent.ending_anending = True
+
+        else:
+            n "You are very close to a breakthrough player!"
+            #TODO: check here wheter or not you know the full untold story, if you have already heard a part of it and if you've already visited kokiri forest once, make these all give a different tip/line on how to get further in the game.
+            n "Maybe all you need is a change of scenery for your date to finally succeed?"
+            #TODO: Add an ending flag here.
 
     elif persistent.lildeaths > 20:
 
         n "Letting go is never easy."
         n "You had at least [persistent.lildeaths] opportunities."
-        n "It's good to take it after all this time [name]"
+        n "It's good to take it after all this time player."
         #Make the line below this only appear if she discussed this with you and make it less certain.
         n "At the very least you know Lilith will be fine."
         n "At the very least you still have all of your memories of the times you spent together."
@@ -1069,7 +1074,7 @@ label restaurant_death_1_prevented_explanation:
             jump prevented_silent
 
 label prevented_joking:
-    #TODO:Make her react weirded out by this, she leaves the restaurant.
+    #TODO:Make her react weirded out by this, she loses two love points.
     "Filler"
 
 label prevented_groundhog:
@@ -1323,7 +1328,6 @@ label loopgone_happyforyou:
     l "Then come dance with me!"
     n "Lilith gets up and beckons you closer with a wide smile."
     n "The two of you begin to move around with all kinds of limb-shaking that probably could be considered dancing by some."
-    #TODO: These death flags should be persistent ones.
     if burger == True:
         if persistent.burger_death_2 == True:
             jump loopgone_happyforyou_real
@@ -1475,7 +1479,6 @@ label didnottryyet_nevermeet:
     l "You know, I got a feeling that won't be the case so you can always give it a shot if you want."
     n "She grows slilent for a moment."
     l "But just in case something does end up happening and causes you to never be able to see me again."
-    #TODO: Do the text below in a typewriter effect:
     l "I want you to know that I really liked our time together..."
     jump restaurant_death_2
 
