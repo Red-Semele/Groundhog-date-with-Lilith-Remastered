@@ -1119,7 +1119,7 @@ label kokiri_scenery_choice:
                 l "The stars look beautiful don't they? Would you like to do some stargazing with me?" #TODO: Check that line and eventually change it a little.
 
         menu:
-            #TODO: Add a response where you tell Lilith you already watched the scenery.
+            #TODO: Add a response where you tell Lilith you already watched the scenery. Add an option to convince her that you did by going over what exactly happened right at the moment it does. (This also is one extra turn that you lose just like the scenery.)
             "Yes. (placeholder)":
                 jump kokiri_scenery
                 #TODO: Change placeholder and put in more soul.

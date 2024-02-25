@@ -128,7 +128,7 @@ label start:
          $ persistent.song_knowledge
 
          #Chinese flags
-         $ persistent.chinese_phone_noretry = False #TODO: These flags (the "noretry" ones) will be able to check wheter or not the player retries after being told not to.
+         $ persistent.chinese_phone_noretry = False #The noretry flags are meant to check if you replay the game after being asked not to do it.
          $ persistent.pass_knowledge = False
          $ persistent.need_pass_knowledge = True
          $ persistent.peeked_phone = False
@@ -143,7 +143,7 @@ label start:
 
 
 
-         $ persistent.car_knowledge = False #TODO: check if this flag is converted everywhere.
+         $ persistent.car_knowledge = False
 
          $ persistent.ron_knowledge = False
          $ persistent.kokiri_knowledge = False
@@ -160,6 +160,7 @@ label start:
          $ persistent.kokiri_poem_lights_knowledge = False
          $ persistent.kokiri_poem_snowwoman_knowledge = False
          $ persistent.kokiri_poem_shadowman_knowledge = False
+         $ persistent.rp_detect = False #This flag will be used to try to check if a player is returning to the game after erasing their save-file.
 
 
 
@@ -229,13 +230,13 @@ label start:
 
      $ kokiri_call_death_2_check = False
      $ kokiri_call_death_1_check = False
-     #TODO: Add the other recent poem checkers below here.
+     #TODO: Add the other recent poem checkers below here. (The ones for the newer poems that I still have to add.)
      $ kokiri_poem_snowwoman_recent = False
      $ kokiri_poem_shadowman_recent = False
      $ kokiri_poem_lights_recent = False
      $ kokiri_poem_bang_recent = False
      $ kokiri_poem_window_recent = False
-     #TODO: Talk about family kokiri:
+     #Talk about family kokiri:
      $ family_ask = 0
 
      $ kokiri_chatchar_abigail = False
@@ -273,12 +274,11 @@ label start:
      $ conversationtracker_poem_shadowman = True
      $ conversationtracker_poem_lights = True
      $ conversationtracker_poem_bang = True
-     #TODO: Put all conversationtracker flags here.
+     #TODO: Put all conversationtracker flags here. (Check if the flags are all here once I've implemented all conversationtrackers
 
 
      #Other flags
-     $ NMdetect = False #TODO: Is the flag and the Mdetect one lowercase or not? Make them lowercase everywhere if not.
-     $ Mdetect = False
+
      $ hard_rude = False
      $ easy_rude = False
      $ tracker = 0
@@ -347,7 +347,7 @@ label after_setup:
 
 label game_start:
     $ renpy.save_persistent() #This should save the persistent data.
-    #TODO: Put some of the variables that need to be turned off each loop here, check if they are true before you set them to false.
+    #TODO: Put some of the variables that need to be turned off each loop here, check if they are true before you set them to false. Make this a function.
     $ called_phone = False
     $ burger = False
     $ cafe = False
@@ -472,15 +472,15 @@ label Game_start2:
 
 
 label phone_start_choices:
-
-
-    #TODO: Properly align all these links of the menu once you are done with the code.
     menu:
 
         "How do burgers sound?" if not persistent.restaurant_subfolder:
              jump burger_start
 
-        "I heard the cafe has many exotic fish that swim around in aquariums. You'll absolutely love them!" if not persistent.restaurant_subfolder: #TODO: Make this the one that shows up if you know she'll love it, use Quest to look at the text. So set both that alternate.
+        "I heard the cafe has many exotic fish that swim around in aquariums. You'll absolutely love them!" if not persistent.restaurant_subfolder and persistent.cafe_taste_knowledge:
+             jump cafe_start
+
+        "I heard the cafe has many exotic fish that swim around in aquariums. I'd like to go there to see them." if not persistent.restaurant_subfolder and not persistent.cafe_taste_knowledge:
              jump cafe_start
 
         "I'd like to go to the Chinese restaurant." if not persistent.restaurant_subfolder:
@@ -508,9 +508,11 @@ label phone_start_choices:
                      "How do burgers sound?":
                           jump burger_start
 
-                     "I heard the cafe has many exotic fish that swim around in aquariums. You'll absolutely love them!":
-                         #TODO: Only make it this version if you know she loves the fish.
+                     "I heard the cafe has many exotic fish that swim around in aquariums. You'll absolutely love them!" if persistent.cafe_taste_knowledge:
                           jump cafe_start
+
+                     "I heard the cafe has many exotic fish that swim around in aquariums. I'd like to go there to see them." if not persistent.cafe_taste_knowledge:
+                         jump cafe_start
 
                      "I'd like to go to the Chinese restaurant.":
                           jump chinese_start
@@ -546,12 +548,13 @@ label phone_otherplans:
     #TODO: When you flee the restaurant the player can say that they are going for a walk if they have seen this path.
     menu:
         "Sure, that sounds like a great idea!":
-            "Filler"
-            #TODO: Fill in. Use the quest precedent.
+            l "Alrighty, that's a deal then!"
+            l "So, where would you like to go for our date [name]?"
+            jump phone_start_choices #TODO: Set a flag when you jump or something like that so that you can't ask to not go on the date two times in a row.
+
         "No, we can't go to a restaurant.":
             l "Hmm what are you saying? Why are you so concerned with us going to a restaurant, it's not like it's going to kill us silly."
             $ persistent.needproof_knowledge = True
-            #TODO: Continue work on these choices properly.
             #Seperate them into two parts, one where you tell her that you've already seen her die or know about it and after choosing that you can offer proof in the second part.
             menu:
                 "Actually it will, or it will kill you atleast.":
@@ -560,8 +563,6 @@ label phone_otherplans:
                     l "Do you have any proof?"
 
                     label phone_lilith_convincetonotgo:
-
-
                         menu:
 
                             "I know about that one time when you thought you were Dumbo while suffering an allergic reaction." if persistent.dumbo_knowledge:
@@ -592,7 +593,7 @@ label phone_otherplans:
                                 l "That story, I've never told it to anyone, I haven't even written that down, I just kept repeating it over and over in my mind."
                                 l "I created it for my brother but he never came home since then. You see, a car and..."
                                 n "She begins to sob again, this time louder."
-                                l "I'm sorry, I can't say it, eve after all those years I just can't."
+                                l "I'm sorry, I can't say it, even after all those years I just can't."
                                 l "How did you even know that story? Like I said earlier, I haven't shared it with anyone else and never wrote it down, it exist solely in my mind and I guess yours aswell now."
                                 n "You tell Lilith about the groundhog-esque scenario you are trapped in and the many dates you've had together."
                                 n "You also tell her about a few of the different deaths she's suffered but try to not make your descriptions too gruesome."
@@ -611,9 +612,14 @@ label phone_otherplans:
 
 
                 "Sorry, I was just messing with you.":
-                    l "Oh, I thought you were serious for a second, you sure got me!" #TODO: Make her ask once again which restaurant you want to go to.
-                    #This is a really strange reaction to be honest. Atleast deduct one love point.
-                    jump Game_start2
+                    l "Oh, I thought you were serious for a second..."
+                    l "Still, that is a really weird thing to joke about [name]..."
+                    l "{size=*0.5}Maybe they didn't mean for it to be so weird? I kind of promised to myself that I would do this.{/size}" #TODO This is kind of a weird line, change it slightly.
+                    l "Anyway, which restaurant would you like to go to [name]?"
+                    $ love_points -= 1
+                    $ love_meter_updater()
+                    jump phone_start_choices
+                    #TODO: Set a flag so you can't do extra strange stuff, you can just pick from the restaurants or other locations.
 
 
 
@@ -678,15 +684,15 @@ label phone_call_police:
         "*Tell the police about the car crashing in against the burger restaurant's doors*":
             #TODO: Some more text?
             $ car_free = True #This will tell you the car hasn't been caught.
-            jump Game_start2
+            jump phone_start_choices
         "*Tell the police about the car crashing in against the cafe's doors*":
             #TODO: Some more text?
             $ car_caught = True #This will tell you the car has been caught.
-            jump Game_start2
+            jump phone_start_choices
         "*Tell the police about the car crashing in against the Chinese restaurant's doors*":
             #TODO: Some more text?
             $ car_free = True #This will tell you the car hasn't been caught.
-            jump Game_start2
+            jump phone_start_choices
     #TODO: Add response by Lilith saying something like: "So, where do you want to go now?"
 
 label phone_call_abigail:
@@ -719,7 +725,7 @@ label phone_call_abigail:
                         $ persistent.drownraven_knowledge = True
                         a "I'm going to hang up now. If you ever want to call me again do it before this moment and not after it. Hopefully I won't hear from you, otherwise that means Lilith is truly in danger."
                         n "She hung up the phone."
-                        jump Game_start2
+                        jump phone_start_choices
 
 
 
@@ -731,126 +737,130 @@ label phone_call_abigail:
                         else:
                             a "Two pieces of proof already? Nothing that isn't logically explainable but who knows, this might just be real."
                             a "Do you have any proof left to really make me believe you [name]?"
-                        menu:
+                        label phone_call_Abigail_convinceher_menu:
+                            menu:
 
-                            #TODO: Make her emotional mask a subject once you get Lilith to call her in the Kokiri forest.
+                                #TODO: Make her emotional mask a subject once you get Lilith to call her in the Kokiri forest.
 
-                            "Alright, think of a random number." if not abigail_numberfakeout:
-                                "Filler"
-                                #TODO: Add the fake number thing that doesn't work on abigail, after that she asks you for better proof.
+                                "Alright, think of a random number." if not abigail_numberfakeout:
+                                    $ abigail_numberfakeout = True
+                                    a "...What?"
+                                    a "Listen, you came to me with that absurd story and then you somehow expect me to believe you because you guessed a number I was thinking of?<br/>I don't even want to test if you'd get it right, because I'm sure there's some trick for that or something."
+                                    a "So now, either you give me some real proof or I'm hanging up."
+                                    jump phone_call_Abigail_convinceher_menu
 
-                            "If you can't tell her anything else and can't say three things, press this link to go back. (testing, remove this after and replace it by something more elegant.)" if abigail_numberfakeout:
-                                "Filler"
-                                #TODO: Replace that text slightly.
-
-
-                            "So a priest, a monk and a rabbit enter a bar. Says the rabbit :\"Whoops, did you slip your tongue there [name]?\"" if abigail_numberfakeout and persistent.joke_knowledge and not abby_phone_joke :
-                                a "You tell her about how Lilith was laughing for almost a full hour because of that joke when Abigail told it to her."
-                                a "I mean, I just found that joke on the internet..."
-                                a "Maybe you just got lucky and found it aswell, or you somehow managed to check my browser history wich would be really weird."
-                                a "Although I got to admit that her laughing for about an hour at my joke is a pretty specific detail... "
-                                $ abby_phone_counter -= 1
-                                $ abby_phone_joke = True #I'll use this to make sure that you can't select the same choice two times.
-                                jump phone_call_Abigail_convinceher
+                                "If you can't tell her anything else and can't say three things, press this link to go back. (testing, remove this after and replace it by something more elegant.)" if abigail_numberfakeout:
+                                    "Filler"
+                                    #TODO: Replace that text slightly.
 
 
-
-                            "I know about Mr. Bunfluff the pink bear and the time he scared both you and Lilith in the middle of the night." if abigail_numberfakeout and persistent.bedcheck_knowledge and not abby_phone_bunfluff:
-                                a "I mean Lilith could have told that story to one of her friends and they could have then told it to you."
-                                a "It's not impossible for you to know about Mr. Bunfluff."
-                                a "Although Lilith is not someone who would tell a story like that to a lot of people... "
-                                $ abby_phone_counter -= 1
-                                $ abby_phone_bunfluff = True #I'll use this to make sure that you can't select the same choice two times.
-                                jump phone_call_Abigail_convinceher
-
-
-                            "I know about your Quest games. *Describe plot*" if abigail_numberfakeout and persistent.quest_knowledge and not abby_phone_games:
-                                a "That's weird, I didn't think Lilith mentioned my games to anyone."
-                                a "Maybe she did after all, there is no way to really know..."
-                                a "Although Lilith is not someone who would tell someone about something as personal as my games..."
-
-                                a "You'll need more proof than that to convince me [name], do you have any extra proof?"
-                                $ abby_phone_counter -= 1
-                                $ abby_phone_games = True #I'll use this to make sure that you can't select the same choice two times.
-                                jump phone_call_Abigail_convinceher
-
-                            "Drown the raven that never burns." if abigail_numberfakeout and persistent.drown_raven_knowledge:
-                                a "Did... did you really say that?"
-                                a "So it is actually true?"
-                                if abby_phone_counter > 0:
-                                    a "Why did you bother with that flimsy proof if you could have just said that phrase?"
-                                    a "Actually, forget about that, we don't have any time to waste."
-                                a "What can I do to help?"
-                                label phone_call_Abigail_convinced:
-                                    #TODO: Probably make different jump-paths for this so it looks a bit more neat.
-                                    #TODO: Maybe let the player ask about her games if they have heard about Lilith's worries about the games.
-                                    menu:
-                                        "Could you come up with something so she doesn't go on this date with me and also doesn't go to her house?":
-                                            a "Sure I can but why can't she go back to her house?"
-                                            #TODO: Make this only known if you have seen the plane-death.
-                                            n "You inform Abigail about the plane that has crashed into Lilith's house before and that it will crash into her house again and again."
-                                            a "..."
-                                            a "I see, this is too ridiculous to even make up."
-                                            #Make this slightly smaller text, the one below.
-                                            a "What have you gotten yourself into Lilly?... "
-                                            a "I don't like to lie to her but if it saves Lilly I suppose I could act like I was rejected by a girl I liked and just need some support from her.
-                                            I'm sure that will trigger her \"Big sis mode\" and then she will come rushing to me."
-                                            a "She has a problem of almost never putting herself first but I guess this time that's pretty handy for us."
-                                            a "Of course that will mean that your date won't go as planned.
-                                            Knowing her she will promise to have the date at another time but she'll forget it after a while."
-                                            menu:
-                                                "Maybe it's for the best, atleast then she will be safe.":
-                                                    a "Thank you, [name], I'll try my best not to let your sacrifice go to waste."
-                                                    a "I got to call her now, goodbye and take care."
-                                                    menu:
-                                                        "Take care aswell, bye.":
-                                                            n "She hung up."
-                                                            $ big_sis_mode = True
-                                                            jump Game_start2
+                                "So a priest, a monk and a rabbit enter a bar. Says the rabbit :\"Whoops, did you slip your tongue there [name]?\"" if abigail_numberfakeout and persistent.joke_knowledge and not abby_phone_joke :
+                                    a "You tell her about how Lilith was laughing for almost a full hour because of that joke when Abigail told it to her."
+                                    a "I mean, I just found that joke on the internet..."
+                                    a "Maybe you just got lucky and found it aswell, or you somehow managed to check my browser history wich would be really weird."
+                                    a "Although I got to admit that her laughing for about an hour at my joke is a pretty specific detail... "
+                                    $ abby_phone_counter -= 1
+                                    $ abby_phone_joke = True #I'll use this to make sure that you can't select the same choice two times.
+                                    jump phone_call_Abigail_convinceher
 
 
-                                        "I spoke to David in a previous cycle. He told me that no one loves or misses him after what he did." if persistent.david_nolove_knowledge:
-                                            #TODO: Probably change this flag to something with knowledge in the title.
-                                            a "That's absurd! I still love him... I also still miss him."
-                                            a "I mean, a daughter needs her dad, right?"
-                                            a "Mom and Lilly are pretty mad because he left us but honestly I'm more sad because of it."
-                                            a "I was seven when he left..."
-                                            a "There were so many things I needed help with that he couldn't teach me."
-                                            a "I can't even fully remember him, just small bits and pieces. I'd like to make new memories of him."
-                                            a "It has been ten years and honestly I still need him. I don't hold a grudge against him or anything, I'd even be happy if he decided to come back."
-                                            n "Abigail pauses for a moment."
-                                            a "Could you maybe tell him that the next time you relive this day? "
-                                            $ persistent.david_love_knowledge = True
-                                            menu:
-                                                "I will.":
-                                                    a "Thank you [name]."
-                                                    a "We probably shouldn't leave Lilith waiting any longer though. Good luck trying to save her and also don't forget to have fun alright?"
-                                                    n "She hung up."
-                                                    jump Game_start2
+
+                                "I know about Mr. Bunfluff the pink bear and the time he scared both you and Lilith in the middle of the night." if abigail_numberfakeout and persistent.bedcheck_knowledge and not abby_phone_bunfluff:
+                                    a "I mean Lilith could have told that story to one of her friends and they could have then told it to you."
+                                    a "It's not impossible for you to know about Mr. Bunfluff."
+                                    a "Although Lilith is not someone who would tell a story like that to a lot of people... "
+                                    $ abby_phone_counter -= 1
+                                    $ abby_phone_bunfluff = True #I'll use this to make sure that you can't select the same choice two times.
+                                    jump phone_call_Abigail_convinceher
 
 
-                                        "I spoke to David in a previous cycle. He told me he blames himself for James' death and thinks Lilith and Lisa do aswell." if persistent.david_blame_knowledge:
-                                            a "That's ridiculous!"
-                                            a "No one blames him for James' death."
-                                            a "Mom and Lilly mad at him because he left us, not because of James death."
-                                            a "He couldn't possibly have predicted what happened. I'm sure he has wished that he could, so he had a chance to prevent it."
-                                            a "Could you tell him that I don't blame him and that I'm sure mom and Lilly don't either?"
-                                            menu:
-                                                "I will.":
-                                                    a "Thank you [name]."
-                                                    a "We probably shouldn't leave Lilith waiting any longer though. Good luck trying to save her and also don't forget to have fun alright?"
-                                                    n "She hung up."
-                                                    jump Game_start2
+                                "I know about your Quest games. *Describe plot*" if abigail_numberfakeout and persistent.quest_knowledge and not abby_phone_games:
+                                    a "That's weird, I didn't think Lilith mentioned my games to anyone."
+                                    a "Maybe she did after all, there is no way to really know..."
+                                    a "Although Lilith is not someone who would tell someone about something as personal as my games..."
 
-                                        "*Talk about something else*":
-                                            "Filler"
-                                            #TODO: Talk about her masking, ask about her games etc. This is the place where you can get a bit more info about her.
+                                    a "You'll need more proof than that to convince me [name], do you have any extra proof?"
+                                    $ abby_phone_counter -= 1
+                                    $ abby_phone_games = True #I'll use this to make sure that you can't select the same choice two times.
+                                    jump phone_call_Abigail_convinceher
+
+                                "Drown the raven that never burns." if abigail_numberfakeout and persistent.drown_raven_knowledge:
+                                    a "Did... did you really say that?"
+                                    a "So it is actually true?"
+                                    if abby_phone_counter > 0:
+                                        a "Why did you bother with that flimsy proof if you could have just said that phrase?"
+                                        a "Actually, forget about that, we don't have any time to waste."
+                                    a "What can I do to help?"
+                                    label phone_call_Abigail_convinced:
+                                        #TODO: Probably make different jump-paths for this so it looks a bit more neat.
+                                        #TODO: Maybe let the player ask about her games if they have heard about Lilith's worries about the games.
+                                        menu:
+                                            "Could you come up with something so she doesn't go on this date with me and also doesn't go to her house?":
+                                                a "Sure I can but why can't she go back to her house?"
+                                                #TODO: Make this only known if you have seen the plane-death.
+                                                n "You inform Abigail about the plane that has crashed into Lilith's house before and that it will crash into her house again and again."
+                                                a "..."
+                                                a "I see, this is too ridiculous to even make up."
+                                                #Make this slightly smaller text, the one below.
+                                                a "What have you gotten yourself into Lilly?... "
+                                                a "I don't like to lie to her but if it saves Lilly I suppose I could act like I was rejected by a girl I liked and just need some support from her.
+                                                I'm sure that will trigger her \"Big sis mode\" and then she will come rushing to me."
+                                                a "She has a problem of almost never putting herself first but I guess this time that's pretty handy for us."
+                                                a "Of course that will mean that your date won't go as planned.
+                                                Knowing her she will promise to have the date at another time but she'll forget it after a while."
+                                                menu:
+                                                    "Maybe it's for the best, atleast then she will be safe.":
+                                                        a "Thank you, [name], I'll try my best not to let your sacrifice go to waste."
+                                                        a "I got to call her now, goodbye and take care."
+                                                        menu:
+                                                            "Take care aswell, bye.":
+                                                                n "She hung up."
+                                                                $ big_sis_mode = True
+                                                                jump Game_start2
+
+
+                                            "I spoke to David in a previous cycle. He told me that no one loves or misses him after what he did." if persistent.david_nolove_knowledge:
+                                                #TODO: Probably change this flag to something with knowledge in the title.
+                                                a "That's absurd! I still love him... I also still miss him."
+                                                a "I mean, a daughter needs her dad, right?"
+                                                a "Mom and Lilly are pretty mad because he left us but honestly I'm more sad because of it."
+                                                a "I was seven when he left..."
+                                                a "There were so many things I needed help with that he couldn't teach me."
+                                                a "I can't even fully remember him, just small bits and pieces. I'd like to make new memories of him."
+                                                a "It has been ten years and honestly I still need him. I don't hold a grudge against him or anything, I'd even be happy if he decided to come back."
+                                                n "Abigail pauses for a moment."
+                                                a "Could you maybe tell him that the next time you relive this day? "
+                                                $ persistent.david_love_knowledge = True
+                                                menu:
+                                                    "I will.":
+                                                        a "Thank you [name]."
+                                                        a "We probably shouldn't leave Lilith waiting any longer though. Good luck trying to save her and also don't forget to have fun alright?"
+                                                        n "She hung up."
+                                                        jump phone_start_choices
+
+
+                                            "I spoke to David in a previous cycle. He told me he blames himself for James' death and thinks Lilith and Lisa do aswell." if persistent.david_blame_knowledge:
+                                                a "That's ridiculous!"
+                                                a "No one blames him for James' death."
+                                                a "Mom and Lilly mad at him because he left us, not because of James death."
+                                                a "He couldn't possibly have predicted what happened. I'm sure he has wished that he could, so he had a chance to prevent it."
+                                                a "Could you tell him that I don't blame him and that I'm sure mom and Lilly don't either?"
+                                                menu:
+                                                    "I will.":
+                                                        a "Thank you [name]."
+                                                        a "We probably shouldn't leave Lilith waiting any longer though. Good luck trying to save her and also don't forget to have fun alright?"
+                                                        n "She hung up."
+                                                        jump phone_start_choices
+
+                                            "*Talk about something else*":
+                                                "Filler"
+                                                #TODO: Talk about her masking, ask about her games etc. This is the place where you can get a bit more info about her.
 
 
     else:
         a "[phone_caller]? That doesn't sound familiar, sorry."
         "Filler, she hangs up."
-        jump Game_start2
+        jump phone_start_choices
         #TODO: Add more text here and make her hang up.
 
 
@@ -868,7 +878,7 @@ label phone_call_david:
             d "Now I'm going to hang up. Goodbye [phone_caller]"
             n "True to his world David hung up."
             $ persistent.david_nolove_knowledge = True
-            jump Game_start2
+            jump phone_start_choices
 
         "Abigail still loves and misses you. She would be happy if you come back." if persistent.david_love_knowledge:
             n "You hear the man sigh."
@@ -895,7 +905,7 @@ label phone_call_david:
                             d "Now, this is getting a bit too much for me so I'm going to have to hang up the phone."
                             d "Goodbye [name]."
                             n "David hung up."
-                            jump Game_start2
+                            jump phone_start_choices
 
 
         "Lilith is not mad for what happened with James, she's just mad at you for leaving your family. She might even consider forgiving you if you give a good apology." if persistent.david_apology_knowledge:
@@ -921,13 +931,13 @@ label phone_call_james:
                 q "This happens a lot for some reason, but usually the number that calls me hangs up before I can even say anything." #TODO: Make it so that that number is Lilith, she is trying to remember her brother like this.
                 #TODO: Add slightly more dialogue here.
                 n "He hung up."
-                jump Game_start2
+                jump phone_start_choices
             "James? Aren't you supposed to be dead?": #TODO: This should only be an option if you think he is dead.
                 q "Well I'm not James man and last time I checked I sure as hell wasn't dead."
                 q "You're freaking me out, I'm going to hang up now."
                 n "The person, who you now know isn't James indeed hung up."
                 #TODO: Set a knowledge flag about this and the fact that Lilith kept her brother's number after he died. It might be good enough to convince her about the Kokiri forest.
-                jump Game_start2
+                jump phone_start_choices
     else:
         j "Ah, welcome [name]. I see you have managed to get my number?"
         j "Well it used to be my number anyway but you can still reach me through it."
@@ -954,7 +964,7 @@ label phone_call_james:
                 $ persistent.james_story_knowledge = True
                 d "I have to go now, keeping up this connection asks a lot of energy from me."
                 n "James hung up."
-                jump Game_start2
+                jump phone_start_choices
 
 label phone_call_lila:
     li "Hello, are you Sam, Abbigail's teacher? " #(The teacher likes being talked to with just their first name, this makes it eassier for them to be both a guy and a girl if the player is a guy or a girl.)
