@@ -767,7 +767,7 @@ label kokiri_death_dialogue_stilldying:
     l "And yet he had the choice to just walk away from the sword dangling above his head, I don't think I'll have that choice."
     l "I'd just die another way. It's probably better to just watch this spectacle with you even if it is my last moment but that doesn't mean I'm not terrified."
     menu:
-        #TODO: Add a jokey option where you ask who Damocles is, kind of poking fun at the game and it's need to reference mythology. It kind of makes the momentum bad as a joke.
+
         "It's okay, grab my hand. We're going to do this together.":
             n "Lilith grabs your hand and squeezes it as if she's not going to let it go anytime soon.
             A shy smile appears on her face."
@@ -1076,7 +1076,10 @@ label kokiri_death_dialogue_stilldying:
             l "I'm going to die [name]!"
             l "I don't think saying that I \"got this\" is a good response for such a situation."
             #TODO: Fill this out more make atleast one pair of choices for this, with atleast one of them leading to the angry lilith flag and to the death 4 page.
-
+        "Who is Damocles?":
+            #TODO: Jokey option where you ask who Damocles is, kind of poking fun at the game and it's need to reference mythology. It kind of makes the momentum bad as a joke.
+            #Fill further in.
+            "Filler"
 label kokiri_semiending:
     l "So, this is it? Our last time together in this game?"
     l "You know, that doesn't mean we won't be able to see each other again."
@@ -1099,7 +1102,7 @@ label kokiri_semiending:
 
 label kokiri_scenery_choice:
     if kokiri_conversation == 1:
-        #TODO: Make some slight variations based on what page you jumped from to here.
+        #Underneath this are some other lines that lead to the scenery question as a way to have a more thematicly fitting segway between the previous part and the scenery.
         if kokiri_scenery_headhurt == True:
             "Filler"
             #TODO: Place a line here.
@@ -1124,8 +1127,38 @@ label kokiri_scenery_choice:
             "No. (Placeholder":
                 "Filler"
                 #TODO: Add something else to do when you decline, talking about something else would be a good idea, make this more adaptive based on what you were talking about so you get a few extra things for declining to watch the scenery.
-                #This should be slightly dynamic, if her head is hurting she will suggest to talk about something else.
+                #This should be slightly dynamic, if her head is hurting she will suggest to talk about something else. Check if there are any other options where it would make sense that you are first asked to talk about something else.
+                #You can decline but it will cost you a love_point.
                 #Otherwise she will ask you what to do and you can continue talking about a topic if it's available or you can talk about something else.
+                if kokiri_scenery_headhurt == True:
+                    l "I see, that's totally fine [name]!"
+                    l "Would you like to talk about something else instead then?"
+                    l "My head kind of still hurts too much to continue talking about the same topic." #TODO: What topic was it again? Are there multiple that make her headhurt?
+                    menu:
+                        "Sure, that sounds like a good idea!":
+                            l "Thanks [name]! So, what would you like to talk about?"
+                            jump kokiri_talkaboutsomethingelse
+                        "Actually I'd like to continue talking about it. We have very little time to waste.":
+                            l "Oh I see..."
+                            l "I'll try my best to ignore my headache for a little longer [name]."
+                            l "{size=*0.5}Would you consider our time wasted if it didn't go the way you'd like?{/size}" #TODO: Change this line slightly.
+                            n "Lilith looks quite saddened for a moment. She tries to plaster a fake smile over her sad expression and half-succeeds."
+                            $ love_points -= 1
+                            $ love_meter_updater()
+                            #TODO: Jump back to the part she didn't want to continue talking about with a small segway as it will increase the counter and lead to the next part.
+                else:
+                    l "I see, that's totally fine [name]!"
+                    l "Is there anything else you'd like to do in that case?"
+                    menu:
+                        "I'd like to continue talking about something.":
+                            #TODO: Be specific with what if it's the only thing the player has talked about this time, or just have it be this line if they talked about multiple things already.
+                            jump kokiri_continue_talking
+                        "I'd like to talk about something else":
+                            jump kokiri_talkaboutsomethingelse
+
+
+
+
 
         #TODO: Add a choice here where yes jumps you to scenery and no jumps to something else.
 
