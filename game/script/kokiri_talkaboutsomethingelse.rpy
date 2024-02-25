@@ -126,6 +126,19 @@ label kokiri_talkaboutsomethingelse:
                              "Can you tell me about Lila?":
                                  jump askaboutlila_tellmeabout
 
+            "*Ask her what she thinks about James' words about finding an ending that does not exist.*" if persistent.jamesconversation_becomethegame_knowledge :
+                n "Would you mention it was James who told you?"
+                menu:
+                    "*Mention it*":
+                        "Filler"
+                        #TODO: Let this first lead to the talked to james path and then back to here, it wastes one extra conversation turn.
+                    "*Don't mention it*":
+                        "Filler"
+                        #TODO: Make Lilith talk about thse things below with her own suggestions, she thinks it means you will have to somehow create your own medium to tell the story through.
+                         #j "They made you search for an ending that doesn't exist."
+                         #j "If you want to find it within yourself you'll need to become your own creator, become your own narrator."
+                         #j "The only way to win an unwinnable game is by becoming the game."
+
 
 
 

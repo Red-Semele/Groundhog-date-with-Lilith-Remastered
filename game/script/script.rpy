@@ -161,6 +161,7 @@ label start:
          $ persistent.kokiri_poem_snowwoman_knowledge = False
          $ persistent.kokiri_poem_shadowman_knowledge = False
          $ persistent.rp_detect = False #This flag will be used to try to check if a player is returning to the game after erasing their save-file.
+         $ persistent.met_james = False
 
 
 
@@ -917,7 +918,7 @@ label phone_call_david:
 
 
 label phone_call_james:
-    if persistent.met_james = False:
+    if persistent.met_james == False:
         #TODO: Make it be said by j (james) if you don't know he is dead, otherwise it's said by q.
         q "Yo, who is this?"
         $ phone_caller = renpy.input("Enter your name.")
@@ -1754,10 +1755,10 @@ label ufo_crash:
     #TODO: Have it only be your soul and not body that survived the crash.
     #TODO: Reality is glitching so that you won't have to draw every picture.
     n "After awakening from the dark slumber your eyelids are still shut close as if they want to go back to sleep."
-    n "You feel like you need to go back to sleep. Nothing makes sense anymore. <br/>Probably the result of the entire universe literally collapsing in on you."
+    n "You feel like you need to go back to sleep. Nothing makes sense anymore."
+    n "Probably the result of the entire universe literally collapsing in on you."
     n "On you and on..."
     n "On Lilith"
-    #TODO: The text above this is unscrambled in the quest version but I'm not sure how to do that here.
     n "The thought of Lilith takes you out of this confused state of mind in an instant."
     n "You open your eyes and get back up."
     n "You look around in search of her but all you can find is bright white emptiness."
@@ -1809,18 +1810,19 @@ label ufo_crash_polaroids_James:
     menu:
         "Yes, you must be James. Lilith told me about you before.":
             #TODO: Only make this popup if she really told you about him before.
-            $ met_james = True #TODO: Check if this is the right flag. Also make it a persistent flag.
+            $ persistent.met_james = True #TODO: Check if this is the right flag. Also make it a persistent flag.
             j "Ah, I thought she might have mentioned me eventually."
             j "What are your thoughts  on Lilith [name]?" #TODO: Maybe don't make this so sudden.
             n "You are pretty surprised by that question."
             menu:
                 "I really love her.":
-                    "If that's the case then this talk might be easier then I thought."
-                    "You have seen Lilith die about [persistent.lildeaths] times, right?"
-                    "You nod, you can still remember all the times she died.<br/>That doesn't stop you from wishing you could forget though."
-                    "And you are trying to keep her safe so that she will not die, right?"
+                    j "If that's the case then this talk might be easier then I thought."
+                    j "You have seen Lilith die about [persistent.lildeaths] times, right?"
+                    "You nod, you can still remember all the times she died."
+                    "That doesn't stop you from wishing you could forget though."
+                    j "And you are trying to keep her safe so that she will not die, right?"
                     "You nod."
-                    "And yet you came back after she didn't die, why?" #TODO: Check to see if you have seen any ending where she lives
+                    j "And yet you came back after she didn't die, why?" #TODO: Check to see if you have seen any ending where she lives. (Make this a function that checks for a flag and then sets that flag if it is not set and the player saw an ending where she is alive.
                     $ persistent_jamestalk_iloveher_knowledge = True
                     jump jameschat_whydidyoureturn
 
@@ -1942,7 +1944,7 @@ label jameschat_whydidyoureturn_tobetogether_choices:
                           j "It's no use..."
                           j "If those words come from me they won't impact you that much."
                           j "Why don't you ask Lillith to explain them where three become one?"
-                          $ becomethegame = True #TODO: Convert this to a proper flag format.
+                          $ persistent.jamesconversation_becomethegame_knowledge = True #TODO: Convert this to a proper flag format.
                           #TODO: This path is not finished in the quest version, continue working on it.
 
 
