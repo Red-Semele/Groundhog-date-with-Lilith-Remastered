@@ -270,14 +270,14 @@ label kokiri_deaths:
                 n "The sky now is completly filled with falling stars, you've never seen so many falling stars in your entire life, let alone all together."
                 n "However, one point seems to be getting bigger and bigger, it doesn't seem to be a star as it's not sending out any light."
                 if kokiri_alternateplace == False:
-                       #TODO: check to see if the flag above is the right one, it's for when you sit somewhere else.
-                       #TODO: Play gameover music
+                    #TODO: check to see if the flag above is the right one, it's for when you sit somewhere else.
+                    #TODO: Play gameover music
 
-                       n "The both of you watch in absolute terror as the thing only starts to get closer, becoming larger, in an alarming rate. "
-                       n "Before you can move away the meteorite smashes Lilith like a newspaper would smash a fly, miraculously it didn't even hit you." #TODO: change this, make it so that the meteorite splinters and one piece hits Lilith.
+                    n "The both of you watch in absolute terror as the thing only starts to get closer, becoming larger, in an alarming rate. "
+                    n "Before you can move away the meteorite smashes Lilith like a newspaper would smash a fly, miraculously it didn't even hit you." #TODO: change this, make it so that the meteorite splinters and one piece hits Lilith.
 
-                       $ persistent.kokiri_death_1 = True #TODO: Make sure this is the proper flag.
-                       jump gameover
+                    $ persistent.kokiri_death_1 = True #TODO: Make sure this is the proper flag.
+                    jump gameover
 
                 else:
                         "The meteorite can't kill her because she is sitting somewhere else, FILLER"

@@ -46,260 +46,260 @@ label start:
 
 
 
-     play music "gameover.mp3"
+    play music "gameover.mp3"
 
-     if persistent.firstboot == None: #This line ensures all flags that don't need constant resetting get reset only the first time the player boots the game.
-         $ persistent.firstboot = True
-
-
-
-         #Deaths:
-         $ persistent.lildeaths = 0
-         $ persistent.retry_counter = 0
-         #Main restaurant deaths:
-         $ persistent.chinese_death_1 = False
-         $ persistent.cafe_death_1 = False
-         $ persistent.burger_death_1 = False
-         $ persistent.chinese_death_2 = False
-         $ persistent.cafe_death_2 = False
-         $ persistent.burger_death_2 = False
-         #Car deaths under here:
-         $ persistent.chinese_car_death = False
-         $ persistent.cafe_car_death = False
-         $ persistent.burger_car_death = False
-         # Kokiri deaths under here:
-         $ persistent.kokiri_death_1 = False
-         $ persistent.kokiri_death_2 = False
-         $ persistent.kokiri_death_3 = False
-         $ persistent.kokiri_death_4 = False
-         $ persistent.kokiri_death_4_hill = False
-         $ persistent.kokiri_death_4_no_hill = False
-         #Beach deaths under here:
-         $ persistent.beach_jelly_death = False
-         $ persistent.beach_hole_death = False
-         $ persistent. beach_pot_death = False
-         $ persistent.beach_slip_death = False
-
-         #Knowledge:
-         #Untold story knowledge:
-         $ persistent.story_start_knowledge = False
-         $ persistent.story_medium_knowledge = False
-         $ persistent.story_end_knowledge = False
-         #Preventdeath explanation.
-         $ persistent.psychic_answer_right_knowledge = False
-         $ persistent.groundhog_answer_right_knowledge = False
-         # Other knowledge
-         $ persistent.brother_knowledge = False
-         $ persistent.kokiri_abigailhidessomething_knowledge = False
-         $ persistent.kokiri_knowledge = False
-         $ persistent.joke_knowledge = False
-         $ persistent.car_knowledge = False
-         $ persistent.bedcheck_knowledge = False
-         $ persistent.kokiri_knowledge = False
-         $ persistent.ron_knowledge = False
-         $ persistent.quest_knowledge = False #TODO: Maybe change the Quest flag since it now has less use.
-         $ persistent.reality_knowledge = False
-         $ persistent.bookpreference_knowledge = False #This will basically help you pick a book for Lilith she likes in the beach-bookstore.
-         $ persistent.booklover_knowledge = False
-         $ persistent.musiclover_knowledge = False
-         #Phone-numbers
-         $ persistent.david_call_knowledge = False
-         $ persistent.abigail_call_knowledge = False
-         $ persistent.james_call_knowledge = False
-         $ persistent.lila_call_knowledge = False
-         #Beach flags.
-         $ persistent.beach_knowledge = False
-
-         #Burger related flags and counters
-         $ persistent.burger_poem_knowledge = False
-         $ persistent.rosename_knowledge = False
-         $ persistent.burgerwent = 0
-         $ persistent.burgerstart = False
-
-
-         #Cafe related flags and counters
-
-
-         $ persistent.cafe_taste_knowledge = False
-         $ persistent.dice_knowledge = False
-
-         $ persistent.joke_knowledge = False
-         $ persistent.song_knowledge
-
-         #Chinese flags
-         $ persistent.chinese_phone_noretry = False #The noretry flags are meant to check if you replay the game after being asked not to do it.
-         $ persistent.pass_knowledge = False
-         $ persistent.need_pass_knowledge = True
-         $ persistent.peeked_phone = False
-         $ persistent.bedcheck_knowledge = False
-         #Chinese riddle flags
-
-         $ persistent.r1_knowledge = False
-         $ persistent.r2_knowledge = False
-         $ persistent.r3_knowledge = False
-
-         #Kokiri flags
+    if persistent.firstboot == None: #This line ensures all flags that don't need constant resetting get reset only the first time the player boots the game.
+        $ persistent.firstboot = True
 
 
 
-         $ persistent.car_knowledge = False
+        #Deaths:
+        $ persistent.lildeaths = 0
+        $ persistent.retry_counter = 0
+        #Main restaurant deaths:
+        $ persistent.chinese_death_1 = False
+        $ persistent.cafe_death_1 = False
+        $ persistent.burger_death_1 = False
+        $ persistent.chinese_death_2 = False
+        $ persistent.cafe_death_2 = False
+        $ persistent.burger_death_2 = False
+        #Car deaths under here:
+        $ persistent.chinese_car_death = False
+        $ persistent.cafe_car_death = False
+        $ persistent.burger_car_death = False
+        # Kokiri deaths under here:
+        $ persistent.kokiri_death_1 = False
+        $ persistent.kokiri_death_2 = False
+        $ persistent.kokiri_death_3 = False
+        $ persistent.kokiri_death_4 = False
+        $ persistent.kokiri_death_4_hill = False
+        $ persistent.kokiri_death_4_no_hill = False
+        #Beach deaths under here:
+        $ persistent.beach_jelly_death = False
+        $ persistent.beach_hole_death = False
+        $ persistent. beach_pot_death = False
+        $ persistent.beach_slip_death = False
 
-         $ persistent.ron_knowledge = False
-         $ persistent.kokiri_knowledge = False
-         $ persistent.kokiri_teacher_knowledge = False
-         $ persistent.kokiri_meteoritedistraction_knowledge = False
-         $ persistent.kokiri_call_death = False
-         $ persistent.restrainingorderfamily_violation_counter = 0
-         $ persistent.kokiri_tellnolies_knowledge = False
-         $ persistent.fakeoutnar_tip = False
+        #Knowledge:
+        #Untold story knowledge:
+        $ persistent.story_start_knowledge = False
+        $ persistent.story_medium_knowledge = False
+        $ persistent.story_end_knowledge = False
+        #Preventdeath explanation.
+        $ persistent.psychic_answer_right_knowledge = False
+        $ persistent.groundhog_answer_right_knowledge = False
+        # Other knowledge
+        $ persistent.brother_knowledge = False
+        $ persistent.kokiri_abigailhidessomething_knowledge = False
+        $ persistent.kokiri_knowledge = False
+        $ persistent.joke_knowledge = False
+        $ persistent.car_knowledge = False
+        $ persistent.bedcheck_knowledge = False
+        $ persistent.kokiri_knowledge = False
+        $ persistent.ron_knowledge = False
+        $ persistent.quest_knowledge = False #TODO: Maybe change the Quest flag since it now has less use.
+        $ persistent.reality_knowledge = False
+        $ persistent.bookpreference_knowledge = False #This will basically help you pick a book for Lilith she likes in the beach-bookstore.
+        $ persistent.booklover_knowledge = False
+        $ persistent.musiclover_knowledge = False
+        #Phone-numbers
+        $ persistent.david_call_knowledge = False
+        $ persistent.abigail_call_knowledge = False
+        $ persistent.james_call_knowledge = False
+        $ persistent.lila_call_knowledge = False
+        #Beach flags.
+        $ persistent.beach_knowledge = False
 
-         #Kokiri poems
-         $ persistent.kokiri_poem_window_knowledge = False
-         $ persistent.kokiri_poem_bang_knowledge = False
-         $ persistent.kokiri_poem_lights_knowledge = False
-         $ persistent.kokiri_poem_snowwoman_knowledge = False
-         $ persistent.kokiri_poem_shadowman_knowledge = False
-         $ persistent.rp_detect = False #This flag will be used to try to check if a player is returning to the game after erasing their save-file.
-         $ persistent.met_james = False
-
-
-
-
-         #Phone_menu sortring related stuff:
-         $ persistent.amount_of_folder_links = 0 #This checks how many sub links I created in the phone menu to avoid clutter.
-         n "[persistent.amount_of_folder_links]"
-
-         $ persistent.restaurant_subfolder = False
-         $ persistent.other_subfolder = False
-         $ persistent.locations_subfolder = False
-         $ persistent.kokiri_unlock = False
-         $ persistent.beach_unlock = False
-         $ persistent.otherplans_unlock = False
-         $ persistent.breakup_unlock = False
-         $ persistent.call_unlock = False
-         $ persistent.amount_of_normal_links = 0 #This checks how many non-sub links there are.
-         $ persistent.amount_of_normal_location_links = 0
-         $ persistent.amount_of_normal_other_links = 0
-         $ persistent.links_phone = 0
-         $ persistent.times_phone_declined = 0
-
-
-         #TODO:Add the extra stuff on this page that is in the original.
-
-     #NON-PERSISTENT FLAGS
-     #Other:
-     $ car_caught = False
-     $ car_free = False
-     $ groundhog = False
-     $ psychic = False
-     # Locations:
-     $ burger_poem_cleancheck = False
-     $ burger = False
-     $ burger_alt = False
-     $ cafe = False
-     $ kokiri = False
-     $ brotherasked = 0
-     $ dicenumber = 0
-     $ dicenumber2 = 0
-     $ cafedicecheat = False
-     $ cafe_badlove_lowbar = False
-     $ cafe_badlove_justafeeling = False
-     $ chinese = False
-     $ peking = False
-     $ orange = False
-     $ rw1 = 0
-     $ rw2 = 0
-     $ rw3 = 0
-     $ rw_total = 0
-     $ riddle_loop = False
-     $ kokiri = False
-     $ kokiri_groundhog_lie = False
-     $ kokiri_psychic_lie = False
-     $ family_ask = 0
-     $ poem_conversation = False
-
-     $ kokiri_poems_rated_once = False
-     $ kokiri_poems_rateblock = False
-     $ kokiri_alternateplace = False
-     $ kokiri_holdhand = False
-     $ kokiri_scenery_headhurt = False
-     $ kokiri_scenery_breakfrombreakingyourhead = False
-     $ kokiri_scenery_gamegoal = False
-     $ kokiri_meteorite_alert = False
-     $ kokiri_meteorite_no_alert = False
-
-     $ kokiri_call_death_2_check = False
-     $ kokiri_call_death_1_check = False
-     #TODO: Add the other recent poem checkers below here. (The ones for the newer poems that I still have to add.)
-     $ kokiri_poem_snowwoman_recent = False
-     $ kokiri_poem_shadowman_recent = False
-     $ kokiri_poem_lights_recent = False
-     $ kokiri_poem_bang_recent = False
-     $ kokiri_poem_window_recent = False
-     #Talk about family kokiri:
-     $ family_ask = 0
-
-     $ kokiri_chatchar_abigail = False
-     $ kokiri_chatchar_james = False
-     $ kokiri_chatchar_lila = False
-     $ kokiri_chatchar_david = False
-     $ kokiri_call = False
-     $ james_interest = False
-     $ abigail_interest = False
-     $ david_interest = False
-     $ lila_interest = False
-     $ james_obsession = False
-     $ abigail_obsession = False
-     $ david_obsession = False
-     $ lila_obsession = False
-     $ no_fam_obsession = False
-     $ james_involved = False
-     $ kokiri_chatchar_abigail_recent = False
-     $ kokiri_chatchar_james_recent = False
-     $ kokiri_chatchar_david_recent = False
-     $ kokiri_chatchar_lila_recent = False
-     #CONVERSATION TRACKERS
-     $ conversationtracker_morepoems = False
-     $ conversationtracker_tellheraboutnarrator = False
-     $ conversationtracker_questmade = False
-     $ questmade = 0
-     $ conversationtracker_abigail = False
-     $ conversationtracker_david = False
-     $ conversationtracker_james = False
-     $ conversationtracker_lila = False
-     $ conversationtracker_blamedavid = False
-     $ conversationtracker_poem_window = True
-     $ conversationtracker_poem_snowwoman = True
-     $ conversationtracker_poem_window = True
-     $ conversationtracker_poem_shadowman = True
-     $ conversationtracker_poem_lights = True
-     $ conversationtracker_poem_bang = True
-     #TODO: Put all conversationtracker flags here. (Check if the flags are all here once I've implemented all conversationtrackers
+        #Burger related flags and counters
+        $ persistent.burger_poem_knowledge = False
+        $ persistent.rosename_knowledge = False
+        $ persistent.burgerwent = 0
+        $ persistent.burgerstart = False
 
 
-     #Other flags
+        #Cafe related flags and counters
 
-     $ hard_rude = False
-     $ easy_rude = False
-     $ tracker = 0
-     $ demetrius = False
-     $ adriel = False
-     $ currentcar = False
-     $ love_meter = 3
-     $ love_points = 0
-     $ minor_love_offence = 0
-     $ major_love_offence = 0
-     $ minor_love_comfort = 0
-     $ major_love_comfort = 0
-     $ booklovertalked = False
-     $ musiclovertalked = False
-     #QOL-settings:
-     $ no_nightmare = False
-     $ perm_nightmare = False
-     $ other_phone = 0
 
-     #FUNCTIONS:
-     jump gdwl_functions
+        $ persistent.cafe_taste_knowledge = False
+        $ persistent.dice_knowledge = False
+
+        $ persistent.joke_knowledge = False
+        $ persistent.song_knowledge
+
+        #Chinese flags
+        $ persistent.chinese_phone_noretry = False #The noretry flags are meant to check if you replay the game after being asked not to do it.
+        $ persistent.pass_knowledge = False
+        $ persistent.need_pass_knowledge = True
+        $ persistent.peeked_phone = False
+        $ persistent.bedcheck_knowledge = False
+        #Chinese riddle flags
+
+        $ persistent.r1_knowledge = False
+        $ persistent.r2_knowledge = False
+        $ persistent.r3_knowledge = False
+
+        #Kokiri flags
+
+
+
+        $ persistent.car_knowledge = False
+
+        $ persistent.ron_knowledge = False
+        $ persistent.kokiri_knowledge = False
+        $ persistent.kokiri_teacher_knowledge = False
+        $ persistent.kokiri_meteoritedistraction_knowledge = False
+        $ persistent.kokiri_call_death = False
+        $ persistent.restrainingorderfamily_violation_counter = 0
+        $ persistent.kokiri_tellnolies_knowledge = False
+        $ persistent.fakeoutnar_tip = False
+
+        #Kokiri poems
+        $ persistent.kokiri_poem_window_knowledge = False
+        $ persistent.kokiri_poem_bang_knowledge = False
+        $ persistent.kokiri_poem_lights_knowledge = False
+        $ persistent.kokiri_poem_snowwoman_knowledge = False
+        $ persistent.kokiri_poem_shadowman_knowledge = False
+        $ persistent.rp_detect = False #This flag will be used to try to check if a player is returning to the game after erasing their save-file.
+        $ persistent.met_james = False
+
+
+
+
+        #Phone_menu sortring related stuff:
+        $ persistent.amount_of_folder_links = 0 #This checks how many sub links I created in the phone menu to avoid clutter.
+        n "[persistent.amount_of_folder_links]"
+
+        $ persistent.restaurant_subfolder = False
+        $ persistent.other_subfolder = False
+        $ persistent.locations_subfolder = False
+        $ persistent.kokiri_unlock = False
+        $ persistent.beach_unlock = False
+        $ persistent.otherplans_unlock = False
+        $ persistent.breakup_unlock = False
+        $ persistent.call_unlock = False
+        $ persistent.amount_of_normal_links = 0 #This checks how many non-sub links there are.
+        $ persistent.amount_of_normal_location_links = 0
+        $ persistent.amount_of_normal_other_links = 0
+        $ persistent.links_phone = 0
+        $ persistent.times_phone_declined = 0
+
+
+        #TODO:Add the extra stuff on this page that is in the original.
+
+    #NON-PERSISTENT FLAGS
+    #Other:
+    $ car_caught = False
+    $ car_free = False
+    $ groundhog = False
+    $ psychic = False
+    # Locations:
+    $ burger_poem_cleancheck = False
+    $ burger = False
+    $ burger_alt = False
+    $ cafe = False
+    $ kokiri = False
+    $ brotherasked = 0
+    $ dicenumber = 0
+    $ dicenumber2 = 0
+    $ cafedicecheat = False
+    $ cafe_badlove_lowbar = False
+    $ cafe_badlove_justafeeling = False
+    $ chinese = False
+    $ peking = False
+    $ orange = False
+    $ rw1 = 0
+    $ rw2 = 0
+    $ rw3 = 0
+    $ rw_total = 0
+    $ riddle_loop = False
+    $ kokiri = False
+    $ kokiri_groundhog_lie = False
+    $ kokiri_psychic_lie = False
+    $ family_ask = 0
+    $ poem_conversation = False
+
+    $ kokiri_poems_rated_once = False
+    $ kokiri_poems_rateblock = False
+    $ kokiri_alternateplace = False
+    $ kokiri_holdhand = False
+    $ kokiri_scenery_headhurt = False
+    $ kokiri_scenery_breakfrombreakingyourhead = False
+    $ kokiri_scenery_gamegoal = False
+    $ kokiri_meteorite_alert = False
+    $ kokiri_meteorite_no_alert = False
+
+    $ kokiri_call_death_2_check = False
+    $ kokiri_call_death_1_check = False
+    #TODO: Add the other recent poem checkers below here. (The ones for the newer poems that I still have to add.)
+    $ kokiri_poem_snowwoman_recent = False
+    $ kokiri_poem_shadowman_recent = False
+    $ kokiri_poem_lights_recent = False
+    $ kokiri_poem_bang_recent = False
+    $ kokiri_poem_window_recent = False
+    #Talk about family kokiri:
+    $ family_ask = 0
+
+    $ kokiri_chatchar_abigail = False
+    $ kokiri_chatchar_james = False
+    $ kokiri_chatchar_lila = False
+    $ kokiri_chatchar_david = False
+    $ kokiri_call = False
+    $ james_interest = False
+    $ abigail_interest = False
+    $ david_interest = False
+    $ lila_interest = False
+    $ james_obsession = False
+    $ abigail_obsession = False
+    $ david_obsession = False
+    $ lila_obsession = False
+    $ no_fam_obsession = False
+    $ james_involved = False
+    $ kokiri_chatchar_abigail_recent = False
+    $ kokiri_chatchar_james_recent = False
+    $ kokiri_chatchar_david_recent = False
+    $ kokiri_chatchar_lila_recent = False
+    #CONVERSATION TRACKERS
+    $ conversationtracker_morepoems = False
+    $ conversationtracker_tellheraboutnarrator = False
+    $ conversationtracker_questmade = False
+    $ questmade = 0
+    $ conversationtracker_abigail = False
+    $ conversationtracker_david = False
+    $ conversationtracker_james = False
+    $ conversationtracker_lila = False
+    $ conversationtracker_blamedavid = False
+    $ conversationtracker_poem_window = True
+    $ conversationtracker_poem_snowwoman = True
+    $ conversationtracker_poem_window = True
+    $ conversationtracker_poem_shadowman = True
+    $ conversationtracker_poem_lights = True
+    $ conversationtracker_poem_bang = True
+    #TODO: Put all conversationtracker flags here. (Check if the flags are all here once I've implemented all conversationtrackers
+
+
+    #Other flags
+
+    $ hard_rude = False
+    $ easy_rude = False
+    $ tracker = 0
+    $ demetrius = False
+    $ adriel = False
+    $ currentcar = False
+    $ love_meter = 3
+    $ love_points = 0
+    $ minor_love_offence = 0
+    $ major_love_offence = 0
+    $ minor_love_comfort = 0
+    $ major_love_comfort = 0
+    $ booklovertalked = False
+    $ musiclovertalked = False
+    #QOL-settings:
+    $ no_nightmare = False
+    $ perm_nightmare = False
+    $ other_phone = 0
+
+    #FUNCTIONS:
+    jump gdwl_functions
 
 
 
@@ -475,47 +475,47 @@ label phone_start_choices:
     menu:
 
         "How do burgers sound?" if not persistent.restaurant_subfolder:
-             jump burger_start
+            jump burger_start
 
         "I heard the cafe has many exotic fish that swim around in aquariums. You'll absolutely love them!" if not persistent.restaurant_subfolder and persistent.cafe_taste_knowledge:
-             jump cafe_start
+            jump cafe_start
 
         "I heard the cafe has many exotic fish that swim around in aquariums. I'd like to go there to see them." if not persistent.restaurant_subfolder and not persistent.cafe_taste_knowledge:
-             jump cafe_start
+            jump cafe_start
 
         "I'd like to go to the Chinese restaurant." if not persistent.restaurant_subfolder:
-             jump chinese_start
+            jump chinese_start
 
         "You know, I have changed my mind, can't we just go take a walk in the park or something?" if persistent.burger_death_1 and persistent.cafe_death_1 and persistent.chinese_death_1 and not persistent.locations_subfolder:
-                jump phone_otherplans
+            jump phone_otherplans
 
         "I think it would be better if we didn't go on this date, for both of our sakes." if persistent.burger_death_2 and persistent.cafe_death_2 and persistent.chinese_death_2 and not persistent.other_subfolder:
-             jump phone_breakup
+            jump phone_breakup
 
         "Actually, could we meet in the Kokiri forest?" if persistent.kokiri_knowledge and not persistent.locations_subfolder:
-             jump kokiri_start
+            jump kokiri_start
 
         "Hang on, I just need to make another quick call and then I'll be right back." if persistent.peeked_phone or persistent.kokiri_death_2 and not called_phone and not persistent.other_subfolder:
             #TODO: For some reason this doesn't clear when you have called already. Fix that.
-             jump phone_callmenu
+            jump phone_callmenu
 
         "Would you like to go to the beach instead?" if persistent.beach_knowledge and not persistent.locations_subfolder:
-             jump beach_start
+            jump beach_start
 
 
         "Placeholder: Three main restaurants." if persistent.restaurant_subfolder:
-                 menu:
-                     "How do burgers sound?":
-                          jump burger_start
+            menu:
+                "How do burgers sound?":
+                    jump burger_start
 
-                     "I heard the cafe has many exotic fish that swim around in aquariums. You'll absolutely love them!" if persistent.cafe_taste_knowledge:
-                          jump cafe_start
+                "I heard the cafe has many exotic fish that swim around in aquariums. You'll absolutely love them!" if persistent.cafe_taste_knowledge:
+                    jump cafe_start
 
-                     "I heard the cafe has many exotic fish that swim around in aquariums. I'd like to go there to see them." if not persistent.cafe_taste_knowledge:
-                         jump cafe_start
+                "I heard the cafe has many exotic fish that swim around in aquariums. I'd like to go there to see them." if not persistent.cafe_taste_knowledge:
+                    jump cafe_start
 
-                     "I'd like to go to the Chinese restaurant.":
-                          jump chinese_start
+                "I'd like to go to the Chinese restaurant.":
+                    jump chinese_start
         #Subfolders for the menu are below this line (Make them jump to the normal code to make sure I don't need to copy-paste complex code over and over:
 
         "Placeholder: Other locations." if persistent.locations_subfolder:
@@ -1292,12 +1292,12 @@ label groundhog_breakingloop:
     l "You mean that I have died multiple times in here and that every time I do so you get sent back in time?"
     l "So does you saving me just now mean that we are save? That your whole looping problem is able to stop?"
     menu:
-         #Make this a lie based on if the player has already seen the second death in the restaurant they are currently in.
-         "Yup, I broke the loop for once and all.":
-             jump groundhog_breakingloop_loopgone
-          #Make this be a different text based on how she will die.
-         "Actually you are still going to die.":
-             jump groundhog_breakingloop_loopstillexists
+        #Make this a lie based on if the player has already seen the second death in the restaurant they are currently in.
+        "Yup, I broke the loop for once and all.":
+            jump groundhog_breakingloop_loopgone
+        #Make this be a different text based on how she will die.
+        "Actually you are still going to die.":
+            jump groundhog_breakingloop_loopstillexists
 label groundhog_breakingloop_loopgone:
 
     # if the second death is seen then:
@@ -1521,7 +1521,7 @@ label explanation_stoppeddeath:
     n "Lilith gives you a wide smile, you feel like you could beat the universe itself."
     menu:
         "We actually did it, I still can't believe it!":
-         #TODO: Set a flag here that makes the narrator saying "well maybe you shouldn't believe it" possible.
+        #TODO: Set a flag here that makes the narrator saying "well maybe you shouldn't believe it" possible.
             jump restaurant_death_2
 
 
@@ -1558,21 +1558,21 @@ label psychic_datetosave_youwouldnotbelieveme:
     l "It still sounds like there were better, less convoluted ways to keep me from dying but I'm still really thankfull that you saved my life."
     l "We actually cheated death itself, take that death!"
     menu:
-         "I think it may not be really wise to tease death itself. ":
-             jump youwouldntbelieveme_donotteasedeath
+        "I think it may not be really wise to tease death itself. ":
+            jump youwouldntbelieveme_donotteasedeath
 
-         "Take that death, we've won, woohoo!":
-             jump youwouldntbelieveme_teasedeath
-
-
+        "Take that death, we've won, woohoo!":
+            jump youwouldntbelieveme_teasedeath
 
 
-         "Actually you are still going to die if we keep sitting here, this time it'll be a gas explosion." if burger and burger_death_2:
-             jump explanation_stilldying
-         "Actually you're still going to die if we keep sitting here, this time by an army of angry geese." if chinese and chinese_death_2:
-             jump explanation_stilldying
-         "Actually you are still going to drown, this time by drowning." if cafe and cafe_death_2:
-             jump explanation_stilldying
+
+
+        "Actually you are still going to die if we keep sitting here, this time it'll be a gas explosion." if burger and burger_death_2:
+            jump explanation_stilldying
+        "Actually you're still going to die if we keep sitting here, this time by an army of angry geese." if chinese and chinese_death_2:
+            jump explanation_stilldying
+        "Actually you are still going to drown, this time by drowning." if cafe and cafe_death_2:
+            jump explanation_stilldying
 
 label youwouldntbelieveme_donotteasedeath:
     l "Common, let's celibrate. We just escaped death!
@@ -1591,8 +1591,8 @@ label psychic_justhelpingout:
     l "Wow, that's quite the story. Luckily you somehow felt that because otherwise I'd be dead!"
     l "So am I in the clear now?"
     menu:
-         "Yup, you are completly safe now!":
-             jump psychic_justhelpingout_totallysafe
+        "Yup, you are completly safe now!":
+            jump psychic_justhelpingout_totallysafe
 
 label psychic_justhelpingout_totallysafe:
 n "Lilith gives you a thumbs up and plays a few notes on an air gitar."
@@ -1882,18 +1882,18 @@ label jameschat_whydidyoureturn:
             if justgame == True:
                 #TODO: Check if that flag is right.
 
-              j "..."
-              j "That doesn't really surprise me."
-              j "But who do you want to reach the ending for?"  #TODO: (Make this check if the player has answered that question before but to Lilith to see if they would change their answer.)
-              j "You just take whatever you want to mold it into whichever way you please."
-              j "Don't you think you are being unfair to Lilith? Don't you think she has the right to die only once?"
-              j "I also don't like to see her die but you are just making things worse."
-              j "Can't you just break the cycle? Can't you just stop playing this game?"
-              j "You won't find what you are looking for in here."
-              j "Every time you retry you get transported to a parallel instance of this world with the new knowledge you gained."
-              j "You can however only do so much in those parallel versions of the world as they are copies, they don't tend to vary much."
-              j "To get more variation, limitless and controlable variation even, you would need to not be bound to <u>them</u>.anymore."
-              jump jameschat_whydidyoureturn_tobetogether_choices
+                j "..."
+                j "That doesn't really surprise me."
+                j "But who do you want to reach the ending for?"  #TODO: (Make this check if the player has answered that question before but to Lilith to see if they would change their answer.)
+                j "You just take whatever you want to mold it into whichever way you please."
+                j "Don't you think you are being unfair to Lilith? Don't you think she has the right to die only once?"
+                j "I also don't like to see her die but you are just making things worse."
+                j "Can't you just break the cycle? Can't you just stop playing this game?"
+                j "You won't find what you are looking for in here."
+                j "Every time you retry you get transported to a parallel instance of this world with the new knowledge you gained."
+                j "You can however only do so much in those parallel versions of the world as they are copies, they don't tend to vary much."
+                j "To get more variation, limitless and controlable variation even, you would need to not be bound to <u>them</u>.anymore."
+                jump jameschat_whydidyoureturn_tobetogether_choices
 
             elif loveher == True:
                 #TODO: Check if that flag is right.
@@ -1923,15 +1923,15 @@ label jameschat_whydidyoureturn:
             menu:
                 "I do not trust you.":
                     if justgame = True:
-                      j "I see, you think I'm defending Lilith by lying about it?"
-                      j "Well, maybe I am or maybe I am not."
-                      j "In the first case I am so desperate to not let you destroy her once again that I am lying to your face and in the other case there is truly no other ending here."
-                      j "In both options it would be wise to reconsider before you move further towards a path you wouldn't like, right?"
-                      #TODO: Continue writing this text.
+                        j "I see, you think I'm defending Lilith by lying about it?"
+                        j "Well, maybe I am or maybe I am not."
+                        j "In the first case I am so desperate to not let you destroy her once again that I am lying to your face and in the other case there is truly no other ending here."
+                        j "In both options it would be wise to reconsider before you move further towards a path you wouldn't like, right?"
+                        #TODO: Continue writing this text.
 
                     else:
-                      j "Oh [name], why don't you trust me? We both care for Lilith right? So you can rest assured that I only want the best for her."
-                      #TODO: Continue writing this text, maybe add some slight variations if the player treated Lilith badly.
+                        j "Oh [name], why don't you trust me? We both care for Lilith right? So you can rest assured that I only want the best for her."
+                        #TODO: Continue writing this text, maybe add some slight variations if the player treated Lilith badly.
 
 
                 "I just had to make sure, this seems like a place where the developper would be able to hide some stuff.":
@@ -1949,24 +1949,24 @@ label jameschat_whydidyoureturn:
                     #After it has been answered let James reask the question.
 
 label jameschat_whydidyoureturn_tobetogether_choices:
-  menu:
-      "Who are they?":
-          j "The first one you probably haven't met, not for long anyway. He is the one that created this world, gave you acces to it and made the second one.
-          The second one you might know actually, the jester that controls the flow and direction of our story. He even controls the deaths Lilith suffered and yet you rely on him to fight him, that might be his biggest joke yet."
-          menu:
-              "Alright mister purple prose. So the \"they\" you were talking about are the game developper and the narrator?":
-                  j "Purple prose? I'll try to keep it a bit more straight-forward."
-                  j "Yes, they are them."
-                  j "They made you search for an ending that doesn't exist."
-                  j "If you want to find it within yourself you'll need to become your own creator, become your own narrator."
-                  j "The only way to win an unwinnable game is by becoming the game."
-                  menu:
-                      "... what?":
-                          j "It's no use..."
-                          j "If those words come from me they won't impact you that much."
-                          j "Why don't you ask Lillith to explain them where three become one?"
-                          $ persistent.jamesconversation_becomethegame_knowledge = True #TODO: Convert this to a proper flag format.
-                          #TODO: This path is not finished in the quest version, continue working on it.
+    menu:
+        "Who are they?":
+            j "The first one you probably haven't met, not for long anyway. He is the one that created this world, gave you acces to it and made the second one.
+            The second one you might know actually, the jester that controls the flow and direction of our story. He even controls the deaths Lilith suffered and yet you rely on him to fight him, that might be his biggest joke yet."
+            menu:
+                "Alright mister purple prose. So the \"they\" you were talking about are the game developper and the narrator?":
+                    j "Purple prose? I'll try to keep it a bit more straight-forward."
+                    j "Yes, they are them."
+                    j "They made you search for an ending that doesn't exist."
+                    j "If you want to find it within yourself you'll need to become your own creator, become your own narrator."
+                    j "The only way to win an unwinnable game is by becoming the game."
+                    menu:
+                        "... what?":
+                            j "It's no use..."
+                            j "If those words come from me they won't impact you that much."
+                            j "Why don't you ask Lillith to explain them where three become one?"
+                            $ persistent.jamesconversation_becomethegame_knowledge = True #TODO: Convert this to a proper flag format.
+                            #TODO: This path is not finished in the quest version, continue working on it.
 
 
 
