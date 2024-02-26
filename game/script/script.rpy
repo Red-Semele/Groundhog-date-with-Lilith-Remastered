@@ -1,5 +1,4 @@
 ﻿# The script of the game goes in this file.
-#TODO: global "x" should turn the "x" variable into a global one.
 #TODO: Add a morality counter you can use for a system where the player gets judged on their actions.
 #TODO: Make all mentions of the car reflect that you've already seen it if that's the case.
 
@@ -792,65 +791,22 @@ label phone_call_abigail:
                                         a "Why did you bother with that flimsy proof if you could have just said that phrase?"
                                         a "Actually, forget about that, we don't have any time to waste."
                                     a "What can I do to help?"
-                                    label phone_call_Abigail_convinced:
-                                        #TODO: Probably make different jump-paths for this so it looks a bit more neat.
+                                    label phone_call_abigail_convinced:
                                         #TODO: Maybe let the player ask about her games if they have heard about Lilith's worries about the games.
                                         menu:
                                             "Could you come up with something so she doesn't go on this date with me and also doesn't go to her house?":
-                                                a "Sure I can but why can't she go back to her house?"
-                                                #TODO: Make this only known if you have seen the plane-death.
-                                                n "You inform Abigail about the plane that has crashed into Lilith's house before and that it will crash into her house again and again."
-                                                a "..."
-                                                a "I see, this is too ridiculous to even make up."
-                                                #Make this slightly smaller text, the one below.
-                                                a "What have you gotten yourself into Lilly?... "
-                                                a "I don't like to lie to her but if it saves Lilly I suppose I could act like I was rejected by a girl I liked and just need some support from her.
-                                                I'm sure that will trigger her \"Big sis mode\" and then she will come rushing to me."
-                                                a "She has a problem of almost never putting herself first but I guess this time that's pretty handy for us."
-                                                a "Of course that will mean that your date won't go as planned.
-                                                Knowing her she will promise to have the date at another time but she'll forget it after a while."
-                                                menu:
-                                                    "Maybe it's for the best, atleast then she will be safe.":
-                                                        a "Thank you, [name], I'll try my best not to let your sacrifice go to waste."
-                                                        a "I got to call her now, goodbye and take care."
-                                                        menu:
-                                                            "Take care aswell, bye.":
-                                                                n "She hung up."
-                                                                $ big_sis_mode = True
-                                                                jump Game_start2
+                                                jump phone_call_abigail_topics_distractionforlilith
+
 
 
                                             "I spoke to David in a previous cycle. He told me that no one loves or misses him after what he did." if persistent.david_nolove_knowledge:
-                                                a "That's absurd! I still love him... I also still miss him."
-                                                a "I mean, a daughter needs her dad, right?"
-                                                a "Mom and Lilly are pretty mad because he left us but honestly I'm more sad because of it."
-                                                a "I was seven when he left..."
-                                                a "There were so many things I needed help with that he couldn't teach me."
-                                                a "I can't even fully remember him, just small bits and pieces. I'd like to make new memories of him."
-                                                a "It has been ten years and honestly I still need him. I don't hold a grudge against him or anything, I'd even be happy if he decided to come back."
-                                                n "Abigail pauses for a moment."
-                                                a "Could you maybe tell him that the next time you relive this day? "
-                                                $ persistent.david_love_knowledge = True
-                                                menu:
-                                                    "I will.":
-                                                        a "Thank you [name]."
-                                                        a "We probably shouldn't leave Lilith waiting any longer though. Good luck trying to save her and also don't forget to have fun alright?"
-                                                        n "She hung up."
-                                                        jump phone_start_choices
+                                                jump phone_call_abigail_topics_spoketodavid_noonelovesdavid
+
 
 
                                             "I spoke to David in a previous cycle. He told me he blames himself for James' death and thinks Lilith and Lisa do aswell." if persistent.david_blame_knowledge:
-                                                a "That's ridiculous!"
-                                                a "No one blames him for James' death."
-                                                a "Mom and Lilly mad at him because he left us, not because of James death."
-                                                a "He couldn't possibly have predicted what happened. I'm sure he has wished that he could, so he had a chance to prevent it."
-                                                a "Could you tell him that I don't blame him and that I'm sure mom and Lilly don't either?"
-                                                menu:
-                                                    "I will.":
-                                                        a "Thank you [name]."
-                                                        a "We probably shouldn't leave Lilith waiting any longer though. Good luck trying to save her and also don't forget to have fun alright?"
-                                                        n "She hung up."
-                                                        jump phone_start_choices
+                                                jump phone_call_abigail_topics_spoketodavid_davidblameshimself
+
 
                                             "*Talk about something else*":
                                                 "Filler"
@@ -862,6 +818,62 @@ label phone_call_abigail:
         "Filler, she hangs up."
         jump phone_start_choices
         #TODO: Add more text here and make her hang up.
+
+    label phone_call_abigail_topics_distractionforlilith:
+        a "Sure I can but why can't she go back to her house?"
+        #TODO: Make this only known if you have seen the plane-death.
+        n "You inform Abigail about the plane that has crashed into Lilith's house before and that it will crash into her house again and again."
+        a "..."
+        a "I see, this is too ridiculous to even make up."
+        a "{size=*0.5}What have you gotten yourself into Lilly?...{/size}"
+        a "I don't like to lie to her but if it saves Lilly I suppose I could act like I was rejected by a girl I liked and just need some support from her.
+        I'm sure that will trigger her \"Big sis mode\" and then she will come rushing to me."
+        a "She has a problem of almost never putting herself first but I guess this time that's pretty handy for us."
+        a "Of course that will mean that your date won't go as planned."
+        a "Knowing her she will promise to have the date at another time but she'll forget it after a while."
+        menu:
+            "Maybe it's for the best, atleast then she will be safe.":
+                #TODO: Change the link above this text slightly to make it feel more like a sacrifice.
+                a "Thank you, [name], I'll try my best not to let your sacrifice go to waste."
+                a "I got to call her now, goodbye and take care."
+                menu:
+                    "Take care aswell, bye.":
+                        n "She hung up."
+                        $ big_sis_mode = True
+                        jump Game_start2
+
+    #TODO: Make the two spoketodavid labels be accessible from "I spoke to David in a previous cycle..." and then you can click on the proper link. This way things are sorted a bit more neatly.
+
+    label phone_call_abigail_topics_spoketodavid_noonelovesdavid:
+        a "That's absurd! I still love him... I also still miss him."
+        a "I mean, a daughter needs her dad, right?"
+        a "Mom and Lilly are pretty mad because he left us but honestly I'm more sad because of it."
+        a "I was seven when he left..."
+        a "There were so many things I needed help with that he couldn't teach me."
+        a "I can't even fully remember him, just small bits and pieces. I'd like to make new memories of him."
+        a "It has been ten years and honestly I still need him. I don't hold a grudge against him or anything, I'd even be happy if he decided to come back."
+        n "Abigail pauses for a moment."
+        a "Could you maybe tell him that the next time you relive this day? "
+        $ persistent.david_love_knowledge = True
+        menu:
+            "I will.":
+                a "Thank you [name]."
+                a "We probably shouldn't leave Lilith waiting any longer though. Good luck trying to save her and also don't forget to have fun alright?"
+                n "She hung up."
+                jump phone_start_choices
+
+    label phone_call_abigail_topics_spoketodavid_davidblameshimself:
+        a "That's ridiculous!"
+        a "No one blames him for James' death."
+        a "Mom and Lilly mad at him because he left us, not because of James death."
+        a "He couldn't possibly have predicted what happened. I'm sure he has wished that he could, so he had a chance to prevent it."
+        a "Could you tell him that I don't blame him and that I'm sure mom and Lilly don't either?"
+        menu:
+            "I will.":
+                a "Thank you [name]."
+                a "We probably shouldn't leave Lilith waiting any longer though. Good luck trying to save her and also don't forget to have fun alright?"
+                n "She hung up."
+                jump phone_start_choices
 
 
 label phone_call_david:
@@ -1498,9 +1510,9 @@ label psychic_auraofdeath:
         "I sure did!":
             jump explanation_stoppeddeath
 
-        "Actually you're still dying.":
+        "Actually you're still dying." #TODO Make it only visible if you have seen that death before.
             jump explanation_stilldying
-            #TODO:Make this one adapt based on the restaurant you are in. (You're still dying to X)
+
 
 label explanation_stoppeddeath:
     #TODO: Add different dialogue based on if you know that was a lie or not.
@@ -1515,7 +1527,16 @@ label explanation_stoppeddeath:
 
 label explanation_stilldying:
     #TODO: Add some extra dialogue here.
-    "Filler"
+    l "I am? What am I going to die to [name]?"
+    #TODO:Fill in the fillers below.
+    menu:
+        "This time it is going to be a gasexplosion." if burger:
+            "Filler"
+
+        "This time it is going to be drowning." if cafe:
+            "Filler"
+        "This time it is going to be a geese-attack" if chinese:
+            "Filler"
     jump restaurant_death_2
 
 label psychic_datetosave:
