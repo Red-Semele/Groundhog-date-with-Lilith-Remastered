@@ -7,15 +7,15 @@ label burger_start:
                 #Set the nightmare flag always since perm_nightmare is true.
                 $ burger_nightmare = True #The flag that will be checked in the burger path for what kind of nightmare triggers.
             else:
-                if persistent.lildeaths <= 40:
-                    $ nightmare_max = 60 + persistent.lildeaths
-                else:
-                    $ nightmare_max = 100
-                $ nightmare_chance = renpy.random.randint(1, nightmare_max)
-                if nightmare_chance >= 80:
-                    $ burger_nightmare = True
+                   if persistent.lildeaths <= 40:
+                       $ nightmare_max = 60 + persistent.lildeaths
+                   else:
+                       $ nightmare_max = 100
+                   $ nightmare_chance = renpy.random.randint(1, nightmare_max)
+                   if nightmare_chance >= 80:
+                       $ burger_nightmare = True
 
-                #TODO: Random percentage chance to trigger the burger nightmare. (Use a formula based on the amount of lilith deaths as a sort of guilt meter.)
+               #TODO: Random percentage chance to trigger the burger nightmare. (Use a formula based on the amount of lilith deaths as a sort of guilt meter.)
     l "Burgers sure sound good, see you there!"
     n "You arrive a tad late, Lilith already has grabbed herself a seat and waves at you when she sees you."
     l "Heya! Almost was scared you wouldn't show up."
@@ -23,22 +23,22 @@ label burger_start:
     $ burger = True
     if persistent.burgerwent == 0:
         if persistent.burgerstart == True:
-            $ persistent.burgerwent += 1
+          $ persistent.burgerwent += 1
         else:
             $ persistent.burgerstart = True
 
 
     menu:
-        "I can't say no to burgers!":
-            jump burger_start_choice1
+         "I can't say no to burgers!":
+             jump burger_start_choice1
 
-        "I wouldn't want to miss this for the world!":
-            jump burger_start_choice2
+         "I wouldn't want to miss this for the world!":
+             jump burger_start_choice2
 
-        "Sorry, traffic was quite bad.":
-            jump burger_start_choice3
+         "Sorry, traffic was quite bad.":
+             jump burger_start_choice3
 
-        "Hey glad to be here. Could we sit somewhere else though?" if persistent.burger_death_1:
+         "Hey glad to be here. Could we sit somewhere else though?" if persistent.burger_death_1:
             $ burger_alt = True
             n "Lilith gives you a smile and a thumbs up."
             l "Sure, where would you like to sit?"
@@ -68,31 +68,31 @@ label burger_start_choice1:
     menu:
 
 
-        "I've never been here before." if persistent.burgerwent == 0:
-            jump burger_beenbeforeXtimes
+         "I've never been here before." if persistent.burgerwent == 0:
+          jump burger_beenBeforeXTimes
 
 
-        "I've been here before, only once though." if persistent.burgerwent == 1:
-            jump burger_beenbeforeXtimes
+         "I've been here before, only once though." if persistent.burgerwent == 1:
+          jump burger_beenBeforeXTimes
 
 
-        "I've been here exactly [persistent.burgerwent] times." if persistent.burgerwent > 1:
-            jump burger_beenbeforeXtimes
+         "I've been here exactly [persistent.burgerwent] times." if persistent.burgerwent > 1:
+          jump burger_beenBeforeXTimes
 
 
-label burger_beenbeforeXtimes:
+label burger_beenBeforeXTimes:
 
     if persistent.burgerwent == 0:
-        l "I'm sure you'll love it here then!
-        Like I've said before, they have really amazing bugers here."
+     l "I'm sure you'll love it here then!
+     Like I've said before, they have really amazing bugers here."
 
     elif persistent.burgerwent == 1:
         l "Ah, I hope you liked your previous meal here!"
 
     else:
         if persistent.burgerwent <= 4:
-            l "Ah, you've been here a few times already.
-            Then you surely know how good the burgers are here."
+         l "Ah, you've been here a few times already.
+         Then you surely know how good the burgers are here."
 
         elif persistent.burgerwent <= 6:
             l "Wow, you've been here quite a few times already!
@@ -134,23 +134,23 @@ label burger_start_choice3:
 
 label burger_start_menu:
 
-menu:
+ menu:
 
-    "I could go for a veggie burger!":
-        $ burger_choice = "veggie burger"
-        jump burger_ordering
+  "I could go for a veggie burger!":
+      $ burger_choice = "veggie burger"
+      jump burger_ordering
 
-    "Hmm, that juicy cheeseburger sounds good!":
-        $ burger_choice = "juicy cheeseburger"
-        jump burger_ordering
+  "Hmm, that juicy cheeseburger sounds good!":
+      $ burger_choice = "juicy cheeseburger"
+      jump burger_ordering
 
-    "I think I'll pick the fish burger.":
-        $ burger_choice = "fish burger"
-        jump burger_ordering
+  "I think I'll pick the fish burger.":
+      $ burger_choice = "fish burger"
+      jump burger_ordering
 
-    "A beef burger sounds good.":
-        $ burger_choice = "beef burger"
-        jump burger_ordering
+  "A beef burger sounds good.":
+      $ burger_choice = "beef burger"
+      jump burger_ordering
 
 
 
@@ -158,67 +158,67 @@ menu:
 
 
 label burger_ordering:
-    n "Lilith and you go to order the burgers."
+  n "Lilith and you go to order the burgers."
 
-    if persistent.burgerwent == 0:
-        n "You were expecting having to order them from a screen most fastfood places tend to have but as you looked around you couldn't spot any. Instead Lilith walks to a counter.
-        You decide to follow her."
-    if persistent.rosename_knowledge == True:
-        n "An old lady, who you remember is called Rose, smiles at the both of you."
-    else:
-        n "An old lady smiles at the both of you."
-    #TODO: Find the way to properly replicate this effect from quest. (No linebreak if else statement. Find a way to properly do this, I can just use an if else to create two sepearate lines but I want to join the second line into the first one if you remember her name.
-    #Also find a way to make rose her name be "???" instead of Rose if you do not yet know her name.
-    r "Hey Lilith, glad to see you here once more!"
-    r "I'm almost surprised to see you here, it's been quite a while hasn't it?"
-    if persistent.rosename_knowledge == True:
-        n "Rose looks at you for a brief moment and continues."
-    else:
-        n "The old lady looks at you for a brief moment and continues."
+  if persistent.burgerwent == 0:
+      n "You were expecting having to order them from a screen most fastfood places tend to have but as you looked around you couldn't spot any. Instead Lilith walks to a counter.
+      You decide to follow her."
+  if persistent.rosename_knowledge == True:
+      n "An old lady, who you remember is called Rose, smiles at the both of you."
+  else:
+      n "An old lady smiles at the both of you."
+  #TODO: Find the way to properly replicate this effect from quest. (No linebreak if else statement. Find a way to properly do this, I can just use an if else to create two sepearate lines but I want to join the second line into the first one if you remember her name.
+  #Also find a way to make rose her name be "???" instead of Rose if you do not yet know her name.
+  r "Hey Lilith, glad to see you here once more!"
+  r "I'm almost surprised to see you here, it's been quite a while hasn't it?"
+  if persistent.rosename_knowledge == True:
+       n "Rose looks at you for a brief moment and continues."
+  else:
+       n "The old lady looks at you for a brief moment and continues."
 
-    r "Who did you bring along for the ride?"
-    l "Oh right, you two haven't met. Rose, this is [name] and [name] this is Rose."
-    $ persistent.rosename_knowledge = True
-    n "Rose gives you a sincere smile."
-    r "Nice to meet you [name]."
-    r "So, what can I get the two of you?"
-    n "You and Lilith tell her your choices."
-    r "A juicy cheeseburger and a [burger_choice] coming up! I'll bring them to you when they are done alright?"
-    r "That way you two can get to know each other some more."
-    n "She gives Lilith a quick wink that you just barely manage to catch."
-    n "Lilith's face turning beetred is a lot easier to notice."
-    l "{size=*0.5)Uhm, thank you Rose... we uhm have to get back to our table now.{/size}"
-    n "You can't help but chuckle to yourself as Lilith pratically darts back to the table."
-    n "By the time you've reached the table she is already sitting down, still as red as she possibly could be."
-    n "She quickly brushes one hand over her left cheek and somehow manages to turn even more red at the realisation that she is still blusing." #TODO: Rewrite this line a bit more, it feels kind of dumb.
-    n "Right then she lets out a few small coughs as she tries to somehow divert attention from what just happened."
-    #TODO: Add a better segway?
+  r "Who did you bring along for the ride?"
+  l "Oh right, you two haven't met. Rose, this is [name] and [name] this is Rose."
+  $ persistent.rosename_knowledge = True
+  n "Rose gives you a sincere smile."
+  r "Nice to meet you [name]."
+  r "So, what can I get the two of you?"
+  n "You and Lilith tell her your choices."
+  r "A juicy cheeseburger and a [burger_choice] coming up! I'll bring them to you when they are done alright?"
+  r "That way you two can get to know each other some more."
+  n "She gives Lilith a quick wink that you just barely manage to catch."
+  n "Lilith's face turning beetred is a lot easier to notice."
+  l "{size=*0.5)Uhm, thank you Rose... we uhm have to get back to our table now.{/size}"
+  n "You can't help but chuckle to yourself as Lilith pratically darts back to the table."
+  n "By the time you've reached the table she is already sitting down, still as red as she possibly could be."
+  n "She quickly brushes one hand over her left cheek and somehow manages to turn even more red at the realisation that she is still blusing." #TODO: Rewrite this line a bit more, it feels kind of dumb.
+  n "Right then she lets out a few small coughs as she tries to somehow divert attention from what just happened."
+  #TODO: Add a better segway?
 
-    l "Thank you for choosing this place [name].
-    It has been too long since I've been here, to tell you the truth I actually was avoiding this place.
-    But now the happy memories come flooding back to me."
+  l "Thank you for choosing this place [name].
+  It has been too long since I've been here, to tell you the truth I actually was avoiding this place.
+  But now the happy memories come flooding back to me."
 
-    n "Lilith pauses for a moment, she seems unsure whether to continue or not."
+  n "Lilith pauses for a moment, she seems unsure whether to continue or not."
 
-    l"You know, my brother really used to love this place before..."
+  l"You know, my brother really used to love this place before..."
 
-    n "Lilith freezes before she can continue the sentence."
+  n "Lilith freezes before she can continue the sentence."
 
-    menu :
-        "What was his name?":
-            jump burger_brother_question
+  menu :
+      "What was his name?":
+          jump burger_brother_question
 
-        "Are you alright Lilith? You don't need to share this story if it hurts you too much.":
-            $ love_points += 1
-            $ love_meter_updater()
-            l "Honestly I'm not sure if I'll ever be fully alright because of what happened."
-            l "And I think telling that story will always hurt."
-            l "But that doesn't mean I wouldn't like to tell you about it."
-            l "In fact, I think it might be good for me to eventually tell you."
-            l "Just..."
-            l "I just would like to wait a little before I do that, maybe some other time [name]?"
-            l "I do really appreciate your concern for me though!"
-            #TODO: Talk about something slightly different after this and then move back to the main path so that everything goes smoothly again.
+      "Are you alright Lilith? You don't need to share this story if it hurts you too much.":
+          $ love_points += 1
+          $ love_meter_updater()
+          l "Honestly I'm not sure if I'll ever be fully alright because of what happened."
+          l "And I think telling that story will always hurt."
+          l "But that doesn't mean I wouldn't like to tell you about it."
+          l "In fact, I think it might be good for me to eventually tell you."
+          l "Just..."
+          l "I just would like to wait a little before I do that, maybe some other time [name]?"
+          l "I do really appreciate your concern for me though!"
+          #TODO: Talk about something slightly different after this and then move back to the main path so that everything goes smoothly again.
 
 
 
@@ -301,11 +301,11 @@ label burger_living_writer:
     l "Well, try to never forget why you started writing in the first place, alright?
     And then maybe you'll find an opportunity, maybe you won't, but in the end you'll always have your passion for writing."
     menu:
-        "Would you like to show something you've written?":
-            jump burger_living_showwriting
+     "Would you like to show something you've written?":
+         jump burger_living_showWriting
 
-        "Thanks for the tip Lilith, I'll keep it in mind!":
-            jump burger_living_writer_thanktip
+     "Thanks for the tip Lilith, I'll keep it in mind!":
+         jump burger_living_writer_thankTip
 
 
 label burger_living_unemployed:
@@ -313,11 +313,11 @@ label burger_living_unemployed:
     l "Lilith seems to be quite enthusiastic, her eyes have a certain shimmer to them that wasn't there just a moment ago."
     l "I also like to write something from time to time, it's one of my hobby's actually."
     menu:
-        "Would you like to show something you've written?":
-            jump burger_living_showwriting
+     "Would you like to show something you've written?":
+         jump burger_living_showWriting
 
 
-label burger_living_showwriting:
+label burger_living_showWriting:
     $ persistent.burger_poem_knowledge = True
     n "A wide smile grows on Lilith's face."
     l "You want to read something of me?"
@@ -329,11 +329,11 @@ label burger_living_showwriting:
     menu:
         "*Clean your fingers with a napkin before taking the notebook.*":
             $ burger_poem_cleancheck = True
-            jump burger_showwriting_poem
+            jump burger_living_showWriting_poem
         "*Don't clean your fingers and just take the notebook*":
-            jump burger_showwriting_poem
+            jump burger_living_showWriting_poem
 
-label burger_showwriting_poem:
+label burger_living_showWriting_poem:
     #TODO:Add the tracker code on this page, it's on the clean fingers quest page.
     if burger_poem_cleancheck == True:
         n "Lilith seems thankful that you cleaned your fingers.
@@ -384,7 +384,7 @@ label burger_poem_rating_terrible:
     l "Oh...
     No need to be a douche about it."
     #TODO: Make it give slightly different text (brotherasked) based on the love meter instead of the brother counter I made, that way you can use universal systems more properly.
-    jump burger_brotherasked
+    jump burger_Brotherasked
 
 
 
@@ -392,7 +392,7 @@ label burger_poem_rating_fantastic:
     l "A wide smile appears on Lilith's face."
     l "Thanks [name]! I'm glad you like it so much."
     #TODO: Maybe put some extra text here since it feels a bit barren right now. She can talk about how she was in a edgy stage of her life when she wrote it for example.
-    jump burger_brotherasked
+    jump burger_Brotherasked
 
 
 
@@ -400,7 +400,7 @@ label burger_poem_rating_fantastic:
 
 
 
-label burger_living_writer_thanktip:
+label burger_living_writer_thankTip:
     n "Lilith gives you a big smile."
     l "You're more than welcome!
     This tip applies to all sort of things, not only writing."
@@ -416,9 +416,9 @@ label burger_living_writer_thanktip:
     menu:
 
         "Oh, I'm sorry that you lost a hobby.":
-            jump burger_living_writer_thanktip_sorryhobbylost
+            jump burger_living_writer_thankTip_sorryHobbyLost
 
-label burger_living_writer_thanktip_sorryhobbylost:
+label burger_living_writer_thankTip_sorryHobbyLost:
     n "Lilith laughs."
     l "No worries, I really like music and I will always treasure my memories with the trombone."
     $ persistent.musiclover_knowledge = True
@@ -426,9 +426,9 @@ label burger_living_writer_thanktip_sorryhobbylost:
     l "But if I kept playing it I think I would slowly grow to resent it, sometimes it's just better to end things on a good note."
     n "Lilith lets out a small giggle."
     l "That pun wasn't intended, I swear!"
-    jump burger_deathbuildup
+    jump burger_deathBuildup
 
-label burger_brotherasked:
+label burger_Brotherasked:
     if askedbrother == True:
         if love_meter == 3:
             #TODO: Does this love meter trigger the text?
@@ -462,49 +462,49 @@ label burger_brotherasked:
             n "She lets out a sigh of relief."
             l "As much as it hurts me to talk about James it feels good to finally let it all out once again.
             Thank you for listening to me ramble on [name]."
-            jump burger_deathbuildup
+            jump burger_deathBuildup
 
-label burger_deathbuildup:
-    n "Suddenly you hear screaming from a few shops further."
-    l "What was that?"
+label burger_deathBuildup:
+ n "Suddenly you hear screaming from a few shops further."
+ l "What was that?"
 
 menu:
     "It's probably not our concern.":
-        jump burger_deathbuildup_choice1
+        jump burger_deathBuildup_choice1
 
     "Maybe there is a sale going on somewhere?":
-        jump burger_deathbuildup_choice2
+        jump burger_deathBuildup_choice2
 
     "This is important, duck now." if persistent.burger_death_1 and not burger_alt:
         jump restaurant_death_1_prevented
-label burger_deathbuildup_choice1:
+label burger_deathBuildup_choice1:
     if burger_alt == False:
         l "You're probably right, it's probably not even a big deal anywa-"
         jump restaurant_death_1
 
 
 
-label burger_deathbuildup_choice2:
+label burger_deathBuildup_choice2:
     l "Let's hope it's just that."
     jump restaurant_death_1
 
-label burger_alt_askheraquestion:
+label burger_alt_askHerAQuestion:
 
-    $ burger_alt = False
+     $ burger_alt = False
 
-    menu:
-        "*Ask her a question.*":
-            menu:
-                "So you mentioned that you really like music. Which music do you listen to?" if persistent.musiclover_knowledge and musiclovertalked:
-                    jump burger_alt_askheraquestion_musiclover
-                "Which music do you like to listen to?" if persistent.musiclover_knowledge and not musiclovertalked:
-                    jump burger_alt_askheraquestion_musiclover
-                "So you mentioned that you like writing. That made me curious, which books do you like to read?" if persistent.booklover_knowledge and booklovertalked:
-                    jump burger_alt_askheraquestion_booklover
-                "Which books do you like to read?" if persistent.booklover_knowledge and not booklovertalked:
-                    jump burger_alt_askheraquestion_booklover
+     menu:
+         "*Ask her a question.*":
+             menu:
+                 "So you mentioned that you really like music. Which music do you listen to?" if persistent.musiclover_knowledge and musiclovertalked:
+                     jump burger_alt_askHerAQuestion_musicLover
+                 "Which music do you like to listen to?" if persistent.musiclover_knowledge and not musiclovertalked:
+                     jump burger_alt_askHerAQuestion_musicLover
+                 "So you mentioned that you like writing. That made me curious, which books do you like to read?" if persistent.booklover_knowledge and booklovertalked:
+                     jump burger_alt_askHerAQuestion_bookLover
+                 "Which books do you like to read?" if persistent.booklover_knowledge and not booklovertalked:
+                     jump burger_alt_askHerAQuestion_bookLover
 
-label burger_alt_askheraquestion_musiclover:
+label burger_alt_askHerAQuestion_musicLover:
     l "Oh, I'm glad you asked [name]!"
     l "I like quite a few genres and bands, it mostly depends on how I am feeling at the time."
     l "The genres I tend to listen to the most are jazz, rock, and heavy metal."
@@ -521,7 +521,7 @@ label burger_alt_askheraquestion_musiclover:
             jump restaurant_death_2
 
 
-label burger_alt_askheraquestion_booklover:
+label burger_alt_askHerAQuestion_bookLover:
     $ persistent.bookpreference_knowledge = True
     l "Oh, that's a very good question."
     l "Well, to begin I always liked reading about mythology."

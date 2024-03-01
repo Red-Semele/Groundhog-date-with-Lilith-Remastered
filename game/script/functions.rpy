@@ -6,7 +6,7 @@ label gdwl_functions:
             if love_meter <= 0:
                 #Check for the location to send to the right place.
                 if kokiri == True:
-                    renpy.jump("kokiri_angrylilith")
+                    renpy.jump("kokiri_angryLilith")
                 elif beach == True:
                     "Filler"
                     #TODO: Make an angry Lilith beach part once you start working on the beach.
@@ -81,25 +81,25 @@ label gdwl_functions:
 
 
                 if james_interest == True:
-                    fam_obsession = "James"
+                  fam_obsession = "James"
                 elif james_obsession == True:
-                    fam_obsession = "James"
-                    only_one_asked = True
-                    fam_pronoun = "him"
+                  fam_obsession = "James"
+                  only_one_asked = True
+                  fam_pronoun = "him"
 
                 elif david_interest == True:
-                        fam_obsession = "David"
+                  fam_obsession = "David"
                 elif david_obsession == True:
-                        fam_obsession = "David"
-                        only_one_asked = True
-                        fam_pronoun = "him"
+                  fam_obsession = "David"
+                  only_one_asked = True
+                  fam_pronoun = "him"
 
                 elif abigail_interest == True:
-                        fam_obsession = "Abigail"
+                   fam_obsession = "Abigail"
                 elif abigail_obsession == True:
-                        fam_obsession = "Abigail"
-                        only_one_asked = True
-                        fam_pronoun = "her"
+                   fam_obsession = "Abigail"
+                   only_one_asked = True
+                   fam_pronoun = "her"
 
                 elif lila_interest == True:
                     fam_obsession = "Lila" #TODO: Should this be mom instead of Lila?
@@ -110,26 +110,26 @@ label gdwl_functions:
 
                 if only_one_asked == True:
 
-                    renpy.say(l, "You know, you have quite an interest in [fam_obsession].")
-                    if fam_obsession == "James":
-                        renpy.say(l, "You haven't been using info about him to try to \"win\" the game, right?")
+                  renpy.say(l, "You know, you have quite an interest in [fam_obsession].")
+                  if fam_obsession == "James":
+                    renpy.say(l, "You haven't been using info about him to try to \"win\" the game, right?")
 
-                    else:
-                        renpy.say(l, "You haven't involved [fam_pronoun] in all of this yet, right?")    #TODO: (change this line)
+                  else:
+                      renpy.say(l, "You haven't involved [fam_pronoun] in all of this yet, right?")    #TODO: (change this line)
 
 
                 else:
-                    if fam_obsession == True:
-                        renpy.say (l, "You know, you have quite an interest in my family, [fam_obsession] in particular.") #TODO: (change this line)
-                        if fam_obsession == "James":
-                            renpy.say (l, "You haven't been using info about him and my family to try to \"win\" the game, right?")
-                        else:
-                            renpy.say (l, "You haven't involved [fam_pronoun] or anyone else in all of this yet, right?")
-
+                  if fam_obsession == True:
+                    renpy.say (l, "You know, you have quite an interest in my family, [fam_obsession] in particular.") #TODO: (change this line)
+                    if fam_obsession == "James":
+                      renpy.say (l, "You haven't been using info about him and my family to try to \"win\" the game, right?")
                     else:
-                        renpy.say (l, "You know, you have quite an interest in my family.") #TODO: (Change this line)
-                        renpy.say (l, "You haven't involved them yet in all of this, right?")
-                        no_fam_obsession = True
+                        renpy.say (l, "You haven't involved [fam_pronoun] or anyone else in all of this yet, right?")
+
+                  else:
+                    renpy.say (l, "You know, you have quite an interest in my family.") #TODO: (Change this line)
+                    renpy.say (l, "You haven't involved them yet in all of this, right?")
+                    no_fam_obsession = True
 
                 if fam_obsession == "David":
                     renpy.say(l, "I don't want to have anything to do with him ever again or I atleast don't want to have him involved in any of this.")
@@ -161,21 +161,21 @@ label gdwl_functions:
                         else:
                             renpy.say (l, "And although I am fine with sharing stories about James I don't want you to use any memories of him to further benefit you. It already hurts enough just to have to live with these memories.")
 
-                renpy.jump("didyouinvolvefamily")
+                renpy.jump("didYouInvolveFamily")
 
         def family_curiosity_checker_movetox(): #This function moves you back to the right story about Lilith's family if you promise to not use them for your own gain.
             if kokiri_chatchar_abigail_recent == True:
-                renpy.jump("askaboutabigail_tellmeabout_" + str(kokiri_chatchar_abigail_counter))
+                renpy.jump("askAboutAbigail_tellMeAbout_" + str(kokiri_chatchar_abigail_counter))
 
             elif kokiri_chatchar_david_recent == True:
-                renpy.jump("askaboutdavid_tellmeabout_" + str(kokiri_chatchar_david_counter))
+                renpy.jump("askAboutDavid_tellMeAbout_" + str(kokiri_chatchar_david_counter))
 
 
             elif kokiri_chatchar_james_recent == True:
-                renpy.jump("askaboutjames_tellmeabout_" + str(kokiri_chatchar_james_counter))
+                renpy.jump("askAboutJames_tellMeAbout_" + str(kokiri_chatchar_james_counter))
 
             elif kokiri_chatchar_lila_recent == True:
-                renpy.jump("askaboutlila_tellmeabout_" + str(kokiri_chatchar_lila_counter))
+                renpy.jump("askAboutLila_tellMeAbout_" + str(kokiri_chatchar_lila_counter))
 
         def kokiri_conversation_silent():
             if kokiri_conversation == 2:
@@ -199,42 +199,42 @@ label gdwl_functions:
             global kokiri_call_death_2_check
             persistent.kokiri_call_death = True
             if kokiri_alternateplace == True:
-                #The meteorite death check is not needed here, it is very far from her.
-                #The car one does happen though.
+              #The meteorite death check is not needed here, it is very far from her.
+              #The car one does happen though.
 
-                renpy.say (n, "The same meteorite that had previously ended up cutting your date with Lilith short now passes by her, un-noticed as it breaks into several smaller pieces." )
-                renpy.say (n, "They spreads across the entire forest, none of them landing even near her.")
-                renpy.say (n, "You can't help but smile at the thought.")
-                renpy.say (n, "Lilith is so focussed on her conversation that she can't even suspect her past death.")
-                renpy.say (n, "You think it's better that way, ignorance is bliss.")
+              renpy.say (n, "The same meteorite that had previously ended up cutting your date with Lilith short now passes by her, un-noticed as it breaks into several smaller pieces." )
+              renpy.say (n, "They spreads across the entire forest, none of them landing even near her.")
+              renpy.say (n, "You can't help but smile at the thought.")
+              renpy.say (n, "Lilith is so focussed on her conversation that she can't even suspect her past death.")
+              renpy.say (n, "You think it's better that way, ignorance is bliss.")
+              if car_caught == True:
+                 renpy.say (n, "While Lilith is engrossed in her conversation you notice the Red-Sedan isn't showing up. Looks like your call to the police worked wonderfully.")
+              else:
+                kokiri_call_death_2_check = True
+                renpy.jump("kokiri_death_2")
+            else:
+              if kokiri_meteorite_alert == True:
+                renpy.say (n, "The meteorite breaks into many different parts that spread all around the forest. One of them lands right where Lilith was sitting.")
+                renpy.say (n, "For a brief moment you are reminded of the horible state she was in when it hit her head.")
+                renpy.say (n, "You try to shake the feeling it gives you away and you half-succeed.")
+                renpy.say (n, "Lilith looks at you with visible shock in her eyes, knowing that she doesn't have much time left you point at the phone and motion her to continue calling.")
+                renpy.say (n, "She nods and frowns slightly, she understands very well what you are not saying directly but thinking nontheless.")
+                renpy.say (n, "The end is near.")
+                renpy.say (n, "Her end is near.")
+                renpy.say (n, "It might not be the meteorite.")
+                renpy.say (n, "It might not be right now.")
+                renpy.say (n, "But it will be something else.")
+                renpy.say (n, "It will happen soon.")
+                #TODO: Add a better segway in here to be more smooth, make the player get lost in their thoughts for the second death and get out of it by the speeding car.
                 if car_caught == True:
-                    renpy.say (n, "While Lilith is engrossed in her conversation you notice the Red-Sedan isn't showing up. Looks like your call to the police worked wonderfully.")
+                  renpy.say (n, "While Lilith is engrossed in her conversation you notice the Red-Sedan isn't showing up. Looks like your call to the police worked wonderfully.")
+
                 else:
                     kokiri_call_death_2_check = True
                     renpy.jump("kokiri_death_2")
-            else:
-                if kokiri_meteorite_alert == True:
-                    renpy.say (n, "The meteorite breaks into many different parts that spread all around the forest. One of them lands right where Lilith was sitting.")
-                    renpy.say (n, "For a brief moment you are reminded of the horible state she was in when it hit her head.")
-                    renpy.say (n, "You try to shake the feeling it gives you away and you half-succeed.")
-                    renpy.say (n, "Lilith looks at you with visible shock in her eyes, knowing that she doesn't have much time left you point at the phone and motion her to continue calling.")
-                    renpy.say (n, "She nods and frowns slightly, she understands very well what you are not saying directly but thinking nontheless.")
-                    renpy.say (n, "The end is near.")
-                    renpy.say (n, "Her end is near.")
-                    renpy.say (n, "It might not be the meteorite.")
-                    renpy.say (n, "It might not be right now.")
-                    renpy.say (n, "But it will be something else.")
-                    renpy.say (n, "It will happen soon.")
-                    #TODO: Add a better segway in here to be more smooth, make the player get lost in their thoughts for the second death and get out of it by the speeding car.
-                    if car_caught == True:
-                        renpy.say (n, "While Lilith is engrossed in her conversation you notice the Red-Sedan isn't showing up. Looks like your call to the police worked wonderfully.")
-
-                    else:
-                        kokiri_call_death_2_check = True
-                        renpy.jump("kokiri_death_2")
-                else:
-                    kokiri_call_death_1_check = True
-                    renpy.jump("kokiri_death_1")
+              else:
+                  kokiri_call_death_1_check = True
+                  renpy.jump("kokiri_death_1")
 
 
         def kokiri_meteoritewarn():
