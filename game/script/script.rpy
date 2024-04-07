@@ -54,18 +54,18 @@ if persistent.firstboot == None:
      define persistent.firstboot = True
      #Deaths:
      $ persistent.lildeaths = 0
-    $ persistent.retry_counter = 0
-    #Main restaurant deaths:
-    $ persistent.chinese_death_1 = False
-    $ persistent.cafe_death_1 = False
-    $ persistent.burger_death_1 = False
-    $ persistent.chinese_death_2 = False
-    $ persistent.cafe_death_2 = False
-    $ persistent.burger_death_2 = False
-    #Car deaths under here:
-        $ persistent.chinese_car_death = False
-        $ persistent.cafe_car_death = False
-        $ persistent.burger_car_death = False
+     $ persistent.retry_counter = 0
+     #Main restaurant deaths:
+     $ persistent.chinese_death_1 = False
+     $ persistent.cafe_death_1 = False
+     $ persistent.burger_death_1 = False
+     $ persistent.chinese_death_2 = False
+     $ persistent.cafe_death_2 = False
+     $ persistent.burger_death_2 = False
+     #Car deaths under here:
+     $ persistent.chinese_car_death = False
+     $ persistent.cafe_car_death = False
+     $ persistent.burger_car_death = False
         # Kokiri deaths under here:
         $ persistent.kokiri_death_1 = False
         $ persistent.kokiri_death_2 = False
