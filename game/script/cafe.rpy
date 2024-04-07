@@ -176,8 +176,8 @@ label cafe_dice_result:
                     $ dicenumber2 = 5
                 elif dicenumber2 == "six":
                     $ dicenumber2 = 6
-            if dicenumber = 6:
-                if dicenumber2 = 3:
+            if dicenumber == 6:
+                if dicenumber2 == 3:
                     jump cafe_dice_right
                 else:
                     jump cafe_dice_wrong

@@ -49,139 +49,152 @@ label start:
     play music "gameover.mp3"
 
     if persistent.firstboot == None: #This line ensures all flags that don't need constant resetting get reset only the first time the player boots the game.
-        $ persistent.firstboot = True
+        define persistent.firstboot = True
 
 
-
+        #TODO: Default all of these variables. That should fix most errors.
         #Deaths:
-        $ persistent.lildeaths = 0
-        $ persistent.retry_counter = 0
+        define persistent.lildeaths = 0
+        define persistent.retry_counter = 0
         #Main restaurant deaths:
-        $ persistent.chinese_death_1 = False
-        $ persistent.cafe_death_1 = False
-        $ persistent.burger_death_1 = False
-        $ persistent.chinese_death_2 = False
-        $ persistent.cafe_death_2 = False
-        $ persistent.burger_death_2 = False
+        define persistent.chinese_death_1 = False
+        define persistent.cafe_death_1 = False
+        define persistent.burger_death_1 = False
+        define persistent.chinese_death_2 = False
+        define persistent.cafe_death_2 = False
+        define persistent.burger_death_2 = False
         #Car deaths under here:
-        $ persistent.chinese_car_death = False
-        $ persistent.cafe_car_death = False
-        $ persistent.burger_car_death = False
+        define persistent.chinese_car_death = False
+        define persistent.cafe_car_death = False
+        define persistent.burger_car_death = False
         # Kokiri deaths under here:
-        $ persistent.kokiri_death_1 = False
-        $ persistent.kokiri_death_2 = False
-        $ persistent.kokiri_death_3 = False
-        $ persistent.kokiri_death_4 = False
-        $ persistent.kokiri_death_4_hill = False
-        $ persistent.kokiri_death_4_no_hill = False
+        define persistent.kokiri_death_1 = False
+        define persistent.kokiri_death_2 = False
+        define persistent.kokiri_death_3 = False
+        define persistent.kokiri_death_4 = False
+        define persistent.kokiri_death_4_hill = False
+        define persistent.kokiri_death_4_no_hill = False
         #Beach deaths under here:
-        $ persistent.beach_jelly_death = False
-        $ persistent.beach_hole_death = False
-        $ persistent. beach_pot_death = False
-        $ persistent.beach_slip_death = False
+        define persistent.beach_jelly_death = False
+        define persistent.beach_hole_death = False
+        define persistent. beach_pot_death = False
+        define persistent.beach_slip_death = False
 
         #Knowledge:
         #Untold story knowledge:
-        $ persistent.story_start_knowledge = False
-        $ persistent.story_medium_knowledge = False
-        $ persistent.story_end_knowledge = False
+        define persistent.story_start_knowledge = False
+        define persistent.story_medium_knowledge = False
+        define persistent.story_end_knowledge = False
         #Preventdeath explanation.
-        $ persistent.psychic_answer_right_knowledge = False
-        $ persistent.groundhog_answer_right_knowledge = False
+        define persistent.psychic_answer_right_knowledge = False
+        define persistent.groundhog_answer_right_knowledge = False
         # Other knowledge
-        $ persistent.brother_knowledge = False
-        $ persistent.kokiri_abigailhidessomething_knowledge = False
-        $ persistent.kokiri_knowledge = False
-        $ persistent.joke_knowledge = False
-        $ persistent.car_knowledge = False
-        $ persistent.bedcheck_knowledge = False
-        $ persistent.kokiri_knowledge = False
-        $ persistent.ron_knowledge = False
-        $ persistent.quest_knowledge = False #TODO: Maybe change the Quest flag since it now has less use.
-        $ persistent.reality_knowledge = False
-        $ persistent.bookpreference_knowledge = False #This will basically help you pick a book for Lilith she likes in the beach-bookstore.
-        $ persistent.booklover_knowledge = False
-        $ persistent.musiclover_knowledge = False
+        define persistent.brother_knowledge = False
+        define persistent.kokiri_abigailhidessomething_knowledge = False
+        define persistent.kokiri_knowledge = False
+        define persistent.joke_knowledge = False
+        define persistent.car_knowledge = False
+        define persistent.bedcheck_knowledge = False
+        define persistent.kokiri_knowledge = False
+        define persistent.ron_knowledge = False
+        define persistent.quest_knowledge = False #TODO: Maybe change the Quest flag since it now has less use.
+        define persistent.reality_knowledge = False
+        define persistent.bookpreference_knowledge = False #This will basically help you pick a book for Lilith she likes in the beach-bookstore.
+        define persistent.booklover_knowledge = False
+        define persistent.musiclover_knowledge = False
+        define persistent.needproof_knowledge = False
+        define persistent.drownraven_knowledge = False
         #Phone-numbers
-        $ persistent.david_call_knowledge = False
-        $ persistent.abigail_call_knowledge = False
-        $ persistent.james_call_knowledge = False
-        $ persistent.lila_call_knowledge = False
+        define persistent.david_call_knowledge = False
+        define persistent.abigail_call_knowledge = False
+        define persistent.james_call_knowledge = False
+        define persistent.lila_call_knowledge = False
         #Beach flags.
-        $ persistent.beach_knowledge = False
+        define persistent.beach_knowledge = False
 
         #Burger related flags and counters
-        $ persistent.burger_poem_knowledge = False
-        $ persistent.rosename_knowledge = False
-        $ persistent.burgerwent = 0
-        $ persistent.burgerstart = False
-
-
+        define persistent.burger_poem_knowledge = False
+        define persistent.rosename_knowledge = False
+        define persistent.burgerwent = 0
+        define persistent.burgerstart = False
         #Cafe related flags and counters
+        define persistent.cafe_taste_knowledge = False
+        define persistent.dice_knowledge = False
 
-
-        $ persistent.cafe_taste_knowledge = False
-        $ persistent.dice_knowledge = False
-
-        $ persistent.joke_knowledge = False
-        $ persistent.song_knowledge
+        define persistent.joke_knowledge = False
+        define persistent.song_knowledge = False
 
         #Chinese flags
-        $ persistent.chinese_phone_noretry = False #The noretry flags are meant to check if you replay the game after being asked not to do it.
-        $ persistent.pass_knowledge = False
-        $ persistent.need_pass_knowledge = True
-        $ persistent.peeked_phone = False
-        $ persistent.bedcheck_knowledge = False
+        define persistent.chinese_phone_noretry = False #The noretry flags are meant to check if you replay the game after being asked not to do it.
+        define persistent.pass_knowledge = False
+        define persistent.need_pass_knowledge = True
+        define persistent.peeked_phone = False
+        define persistent.bedcheck_knowledge = False
+        define persistent.dumbo_knowledge = False
         #Chinese riddle flags
 
-        $ persistent.r1_knowledge = False
-        $ persistent.r2_knowledge = False
-        $ persistent.r3_knowledge = False
+        define persistent.r1_knowledge = False
+        define persistent.r2_knowledge = False
+        define persistent.r3_knowledge = False
 
         #Kokiri flags
 
 
 
-        $ persistent.car_knowledge = False
+        define persistent.car_knowledge = False
 
-        $ persistent.ron_knowledge = False
-        $ persistent.kokiri_knowledge = False
-        $ persistent.kokiri_teacher_knowledge = False
-        $ persistent.kokiri_meteoritedistraction_knowledge = False
-        $ persistent.kokiri_call_death = False
-        $ persistent.restrainingorderfamily_violation_counter = 0
-        $ persistent.kokiri_tellnolies_knowledge = False
-        $ persistent.fakeoutnar_tip = False
+        define persistent.ron_knowledge = False
+        define persistent.kokiri_knowledge = False
+        define persistent.kokiri_teacher_knowledge = False
+        define persistent.kokiri_meteoritedistraction_knowledge = False
+        define persistent.kokiri_call_death = False
+        define persistent.restrainingorderfamily_violation_counter = 0
+        define persistent.kokiri_tellnolies_knowledge = False
+        define persistent.fakeoutnar_tip = False
+        define persistent.david_nolove_knowledge = False
+        define persistent.david_blame_knowledge = False
+        define persistent.david_love_knowledge = False
+        define persistent.david_apology_knowledge = False
+        define persistent.james_story_knowledge = False
+        define persistent.jamesconversation_becomethegame_knowledge = False
 
         #Kokiri poems
-        $ persistent.kokiri_poem_window_knowledge = False
-        $ persistent.kokiri_poem_bang_knowledge = False
-        $ persistent.kokiri_poem_lights_knowledge = False
-        $ persistent.kokiri_poem_snowwoman_knowledge = False
-        $ persistent.kokiri_poem_shadowman_knowledge = False
-        $ persistent.rp_detect = False #This flag will be used to try to check if a player is returning to the game after erasing their save-file.
-        $ persistent.met_james = False
+        define persistent.kokiri_poem_window_knowledge = False
+        define persistent.kokiri_poem_bang_knowledge = False
+        define persistent.kokiri_poem_lights_knowledge = False
+        define persistent.kokiri_poem_snowwoman_knowledge = False
+        define persistent.kokiri_poem_shadowman_knowledge = False
+        define persistent.rp_detect = False #This flag will be used to try to check if a player is returning to the game after erasing their save-file.
+        define persistent.met_james = False
+        define persistent.restrainingorderfamily_knowledge = False
+        #Beach flags
+        define persistent.beachroute_visited_knowledge = False
 
 
 
 
         #Phone_menu sortring related stuff:
-        $ persistent.amount_of_folder_links = 0 #This checks how many sub links I created in the phone menu to avoid clutter.
-        n "[persistent.amount_of_folder_links]"
+        define persistent.amount_of_folder_links = 0 #This checks how many sub links I created in the phone menu to avoid clutter.
+        n "[persistent.amount_of_folder_links]" //TODO: Remove this later.
 
-        $ persistent.restaurant_subfolder = False
-        $ persistent.other_subfolder = False
-        $ persistent.locations_subfolder = False
-        $ persistent.kokiri_unlock = False
-        $ persistent.beach_unlock = False
-        $ persistent.otherplans_unlock = False
-        $ persistent.breakup_unlock = False
-        $ persistent.call_unlock = False
-        $ persistent.amount_of_normal_links = 0 #This checks how many non-sub links there are.
-        $ persistent.amount_of_normal_location_links = 0
-        $ persistent.amount_of_normal_other_links = 0
-        $ persistent.links_phone = 0
-        $ persistent.times_phone_declined = 0
+        define persistent.restaurant_subfolder = False
+        define persistent.other_subfolder = False
+        define persistent.locations_subfolder = False
+        define persistent.kokiri_unlock = False
+        define persistent.beach_unlock = False
+        define persistent.otherplans_unlock = False
+        define persistent.breakup_unlock = False
+        define persistent.call_unlock = False
+        define persistent.amount_of_normal_links = 0 #This checks how many non-sub links there are.
+        define persistent.amount_of_normal_location_links = 0
+        define persistent.amount_of_normal_other_links = 0
+        define persistent.links_phone = 0
+        define persistent.times_phone_declined = 0
+        #ENDINGS?
+        define persistent.ending_anending = False
+        define persistent.ending_quitter = False
+        define persistent.ending_lettinggo = False
+
 
 
         #TODO:Add the extra stuff on this page that is in the original.
@@ -357,17 +370,15 @@ label game_start:
     #TODO: Add the other starts and scenario's in from the quest version.
 
     if persistent.lildeaths == 0:
-        n "It is a beautiful day unlike any other.
-    And while it may have something to do with waking up with warm sunbeams caressing your face and absurd amounts of cheese stuffed inside your mouth it's something else that makes the day even better, or should I say someone else?"
-
+        n "It is a beautiful day unlike any other."
+        n "And while it may have something to do with waking up with warm sunbeams caressing your face and absurd amounts of cheese stuffed inside your mouth it's something else that makes the day even better, or should I say someone else?"
         n "Suddenly your phone begins to blare \"Baby it's cold outside\" even though it's nowhere near winter."
-
         n "That has to be her, you better pick up the phone."
 
     else:
-        n "It is a beautiful day like the previous one, exactly like the previous one.
-Actually it's just the same day.
-Maybe you can make it just a tiny bit different."
+        n "It is a beautiful day like the previous one, exactly like the previous one."
+        n "Actually it's just the same day."
+        n "Maybe you can make it just a tiny bit different."
 
     menu:
 
@@ -655,25 +666,25 @@ label phone_callmenu:
             jump phone_call_police
 
         "Abigail." if persistent.abigail_call_knowledge:
-            if persistent.restrainingorderfamily.knowledge == True:
+            if persistent.restrainingorderfamily_knowledge == True:
                 #Karma
                 $ persistent.restrainingorderfamily_violation_counter += 1
             jump phone_call_abigail
 
         "David." if persistent.david_call_knowledge:
-            if persistent.restrainingorderfamily.knowledge == True:
+            if persistent.restrainingorderfamily_knowledge == True:
                 #Karma
                 $ persistent.restrainingorderfamily_violation_counter += 1
             jump phone_call_david
 
         "James." if persistent.james_call_knowledge:
-            if persistent.restrainingorderfamily.knowledge == True:
+            if persistent.restrainingorderfamily_knowledge == True:
                 #Karma
                 $ persistent.restrainingorderfamily_violation_counter += 1
             jump phone_call_james
 
         "Lila." if persistent.lila_call_knowledge:
-            if persistent.restrainingorderfamily.knowledge == True:
+            if persistent.restrainingorderfamily_knowledge == True:
                 #Karma
                 $ persistent.restrainingorderfamily_violation_counter += 1
             jump phone_call_lila
@@ -784,7 +795,7 @@ label phone_call_abigail:
                                     $ abby_phone_games = True #I'll use this to make sure that you can't select the same choice two times.
                                     jump phone_call_Abigail_convinceher
 
-                                "Drown the raven that never burns." if abigail_numberfakeout and persistent.drown_raven_knowledge:
+                                "Drown the raven that never burns." if abigail_numberfakeout and persistent.drownraven_knowledge:
                                     a "Did... did you really say that?"
                                     a "So it is actually true?"
                                     if abby_phone_counter > 0:
@@ -1038,6 +1049,7 @@ label donotpickupthephone:
             #Ending
             "An ending."
             $ persistent.ending_anending = True
+            
 
         else:
             n "You are very close to a breakthrough player!"
@@ -1058,7 +1070,7 @@ label donotpickupthephone:
 
         #Ending
         "Letting go ending"
-        $ persistent.ending_lettinggo
+        $ persistent.ending_lettinggo = True
 
 
     $ persistent.times_phone_declined = persistent.times_phone_declined + 1
@@ -1922,7 +1934,7 @@ label jameschat_whydidyoureturn:
             j "Then why did you come back here after I told you there were no extra endings here?" #TODO: Make this only appear if it's not your first time here and he did indeed say that.
             menu:
                 "I do not trust you.":
-                    if justgame = True:
+                    if justgame == True:
                         j "I see, you think I'm defending Lilith by lying about it?"
                         j "Well, maybe I am or maybe I am not."
                         j "In the first case I am so desperate to not let you destroy her once again that I am lying to your face and in the other case there is truly no other ending here."
@@ -1965,7 +1977,7 @@ label jameschat_whydidyoureturn_tobetogether_choices:
                             j "It's no use..."
                             j "If those words come from me they won't impact you that much."
                             j "Why don't you ask Lillith to explain them where three become one?"
-                            $ persistent.jamesconversation_becomethegame_knowledge = True #TODO: Convert this to a proper flag format.
+                            $ persistent.jamesconversation_becomethegame_knowledge = True 
                             #TODO: This path is not finished in the quest version, continue working on it.
 
 

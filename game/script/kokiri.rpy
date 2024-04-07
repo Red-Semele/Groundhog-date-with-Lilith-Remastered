@@ -1285,10 +1285,10 @@ label nocontactfamilypromise:
                                 $ persistent.donotusejames_knowledge = True
 
                             else:
-                                $ persistent.restrainingorderfamily.knowledge = True
+                                $ persistent.restrainingorderfamily_knowledge = True
 
                         else:
-                            $ persistent.restrainingorderfamily.knowledge = True
+                            $ persistent.restrainingorderfamily_knowledge = True
 
                         l "Thank you [name]. I know it might be tempting to try to see every line of dialogue in this game but there are limits I don't want you to cross.<br/>I appreciate that I atleast managed to convince you."
                         if persistent.restrainingorderfamily_violation_counter > 0:
