@@ -16,12 +16,12 @@ label chinese_start:
             l "Or are you glad to be here for the restaurant itself?"
             menu:
                 "Mostly the restaurant actually, otherwise I wouldn't have come her with you in the first place.":
-                    jump chinese_start_gladtobehere_therestaurant
+                    jump chinese_start_gladToBeHere_theRestaurant
 
                 "I'm glad to see you of course, otherwise I would've just come to this place on my own.":
-                    jump chinese_start_gladtobehere_youofcourse
+                    jump chinese_start_gladToBeHere_youOfcourse
 
-label chinese_start_gladtobehere_therestaurant:
+label chinese_start_gladToBeHere_theRestaurant:
 $ love_points = -1
 $ love_meter_updater()
 l "Oh, I mean I like this place aswell I suppose..."
@@ -30,7 +30,7 @@ l "Anyway, I think I'd starve if I don't eat soon so let's continue our little c
 What would you like to order?"
 #Make her slightly more dissapointed.
 jump chinese_menu
-label chinese_start_gladtobehere_youofcourse:
+label chinese_start_gladToBeHere_youOfcourse:
     l "Lilith lets out a sigh of relief and chuckles slightly."
     l "Sorry, that was just a thought that popped up in my head."
     n "She looks like she could sink through the floor out of embarrassment so you decide it's best to forget what she has said."
@@ -108,19 +108,19 @@ label chinese_riddle_accept:
             if name == "Demetrius":
                 $ demetrius = True
                 $ riddle_loop = 5
-                jump riddle_tryagain_loop
+                jump riddle_tryAgain_loop
 
 
         elif r1 == "adriel":
             if name == "Adriel":
                 $ adriel = True
                 $ riddle_loop = 5
-                jump riddle_tryagain_loop
+                jump riddle_tryAgain_loop
                 #It seems to never be five and just instantly become less than zero.
                 #My current theory is that it is due to the fact that the r2 and r3 text also moves you back to the loop for some reason.
 
         else:
-            label cafe_riddleone_retry:
+            label cafe_riddleOne_retry:
             l "Hmm, not exactly who I was thinking about.
             Would you like to try again or have me give the answer?"
             $ rw1 += 1
@@ -161,19 +161,19 @@ label chinese_riddle_accept:
                                 l "The answer is Orpheus."
                                 l "That was the final riddle!"
                                 jump chinese_riddle_evaluation
-                label riddle_tryagain_loop:
+                label riddle_tryAgain_loop:
                     if riddle_loop == 0:
                         if demetrius == True:
                             jump demetrius_unanswered_chat
                         elif adriel == True:
                             jump adriel_unanswered_chat
                         else:
-                            jump cafe_riddleone_retry
+                            jump cafe_riddleOne_retry
                     else:
                         $ riddle_loop -= 1
                         l "Hmm, not exactly who I was thinking about.
                         Would you like to try again or have me give the answer?"
-                        jump riddle_tryagain_loop
+                        jump riddle_tryAgain_loop
 
 label demetrius_unanswered_chat:
 de "There's not a chance, besides, in it's state I think it's going to read this instead of hearing us speak."
@@ -339,13 +339,13 @@ label chinese_riddle_railroad:
             l "Sure, what would you like to know?"
             menu:
                 "What is the funniest memory the two of you share?":
-                    jump chinese_riddle_talk_abbymemory
+                    jump chinese_riddle_talk_abbyMemory
 
                 "What does she like to do?":
-                    jump chinese_riddle_talk_abbyhobbies
+                    jump chinese_riddle_talk_abbyHobbies
 
 
-label chinese_riddle_talk_abbymemory:
+label chinese_riddle_talk_abbyMemory:
     if tracker == 2:
         $ tracker2 = True
     #The code above this works for an easteregg
@@ -393,12 +393,12 @@ label chinese_riddle_talk_abbymemory:
                                             Isn't it pretty weird to tell you about it?"
                                             menu:
                                                 "It can feel good to confide in strangers, it's not like they are going to know who to tell your secrets to.":
-                                                    jump chinese_lostsomeone_confidestranger
+                                                    jump chinese_lostSomeone_confideStranger
                                                 "Then ask me a few questions to not make me a stranger anymore.":
-                                                    jump chinese_lostsomeone_questions
+                                                    jump chinese_lostSomeone_questions
 
                                                 #TODO: Add a third option where you can tell her it feels as if you already know here pretty well after X amount of retries.
-label chinese_riddle_talk_abbyhobbies:
+label chinese_riddle_talk_abbyHobbies:
     n "Lilith chuckles slightly."
     $ persistent.quest_knowledge = True
     #Does this still make sense if I'm using renpy to make the game?
@@ -481,7 +481,7 @@ label chinese_riddle_talk_abbyhobbies:
                                             "I know that voice is hard to ignore but for whatever it is worth, I really like you Lilith.":
                                                 "Filler"
                                                 #TODO: This dialogue does not yet exist, make it.
-                                                jump chinese_phonescene
+                                                jump chinese_phoneScene
 
                                             "That voice is just self-doubt, you are more than good enough Lilith.":
                                                 l "Do you really believe that, [name]?"
@@ -491,18 +491,18 @@ label chinese_riddle_talk_abbyhobbies:
 
                                                     menu:
                                                         "Absolutely! It might sound weird but I really feel like I've gotten to know you well even if this is our first date and you really are a good person.":
-                                                            jump chinese_abby_selfdoubt_knowyouwell
+                                                            jump chinese_abby_selfdoubt_knowYouWell
                                                         "I do but I think you are the one who needs to believe that for it to work.":
-                                                            jump chinese_abby_selfdoubt_ido
+                                                            jump chinese_abby_selfdoubt_IDo
                                                 else:
-                                                    jump chinese_alternatemenu
+                                                    jump chinese_alternateMenu
 
 
 
-label chinese_alternatemenu:
+label chinese_alternateMenu:
 menu:
     "I do but I think you are the one who needs to believe that for it to work.":
-        jump chinese_abby_selfdoubt_ido
+        jump chinese_abby_selfdoubt_IDo
 
 
 
@@ -520,44 +520,44 @@ label chinese_abby_game_theme_nonsense:
         "You are not at all, this is actually very interesting.":
             n "Lilith's face lights up with pride for a moment as she lets out a giggle."
             l "You know, if you want to we could talk about it a little more."
-            jump chinese_phonescene
+            jump chinese_phoneScene
 
         "This is very interesting although I can't really wrap my head around it.":
             n "Lilith gives you a cute giggle."
             l "No worries, my ramblings are pretty hard to understand sometimes, thanks for listening either way [name]!"
-            jump chinese_phonescene
+            jump chinese_phoneScene
 
-label chinese_abby_selfdoubt_ido:
+label chinese_abby_selfdoubt_IDo:
     n "Lilith chuckles with a pained expression painted on her face."
     l "I suppose you are right.
     I need to believe that I'm a good person, otherwise it would just be empty praise coming from someone I barely met."
     n "Lilith tries her best to give you a smile, you can tell it's slightly forced."
     l "No offence [name]! I like how our date is going so far, even though I am messing it up pretty badly right now, but this is our first date afterall."
-    jump chinese_phonescene
+    jump chinese_phoneScene
 
-label chinese_abby_selfdoubt_knowyouwell:
+label chinese_abby_selfdoubt_knowYouWell:
     n "Lilith wipes away some tears as she gives you a big smile."
     l "Thank you [name], I'd like to know you the same way you seem to know me.
     I know it is strange but somehow I can see in your eyes that you truly seem to know me quite well already."
-    jump chinese_phonescene
+    jump chinese_phoneScene
 
 
 
 
-label chinese_lostsomeone_confidestranger:
+label chinese_lostSomeone_confideStranger:
     n "Lilith scratches her head and gives you a nice smile."
     l "I suppose you are right, I might take you up on that offer eventually."
     n "You are not really sure if she means it."
-    jump chinese_phonescene
-label chinese_lostsomeone_questions:
+    jump chinese_phoneScene
+label chinese_lostSomeone_questions:
     n "Lilith begins to laugh."
     l "I'm not sure it really works like that [name].
     I can't really think of any combination of questions that would make me feel like this isn't our first date.
     You get to know someone over the span of all your time together, not by seeing them one time."
     n "But thanks for the sugestion either way!"
     l "Lilith gives you a cute little smile."
-    jump chinese_phonescene
-label chinese_phonescene:
+    jump chinese_phoneScene
+label chinese_phoneScene:
     "Currently this does not yet exist in this version, it does in the quest version"
     l "I'll be right back [name], I just need to go to the bathroom real quick."
     n "Lilith stands up from her chair and pushes it back under the table."
@@ -584,7 +584,7 @@ label chinese_phonescene:
         "Take a quick peek at her phone.":
             jump chinese_phone_peek
         "Respect her privacy.":
-            jump chinese_phone_nopeek
+            jump chinese_phone_noPeek
 
 label chinese_phone_peek:
     n "As you open her phone you are greeted by a picture of a pug as the phone's background and a prompt.
@@ -655,7 +655,7 @@ label chinese_phone_caught:
         $ persistent.chinese_phone_noretry = True
     jump car_death
 
-label chinese_phone_nopeek:
+label chinese_phone_noPeek:
     n "You didn't peek, this will just continue the events like they are meant to play out."
     #TODO: add something else here, a short scene to make sense of her death in the chinese restaurant since she hasn't eaten once she gets back from the toilet.
     #It kind of already has something like that but not well enough, add some extra stuff.

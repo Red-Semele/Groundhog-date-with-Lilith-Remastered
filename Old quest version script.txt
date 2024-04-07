@@ -457,7 +457,7 @@
               </script>
               <object name="Death_music_true">
                 <inherit name="scripttext" />
-                <sound>Gameover and edgeofthegalaxy.wav</sound>
+                <sound>gameOver and edgeofthegalaxy.wav</sound>
                 <continuesound />
                 <script type="script">
                   SetForegroundColour (player.playcolor)
@@ -2120,7 +2120,7 @@
             msg ("Lilith and Ron got two kids that look like they had not a thing to worry about.")
             wait {
               if (GetBoolean(game, "musicon")) {
-                play sound ("Gameover and edgeofthegalaxy.wav", false, true)
+                play sound ("gameOver and edgeofthegalaxy.wav", false, true)
               }
               msg ("Looking at the pictures you can't help but feel tears coming up, you tried your best to move on but apparently that didn't work all too well.")
               msg ("You know that this was probably the best thing to do, to keep Lilith safe and sound.")
@@ -2191,7 +2191,7 @@
               msg ("Just as she says that you hear a deafening noise come from your phone.<br/>It sounds like a sharp whisteling (how does a planecrash sound? Maybe research this a bit to be more accurate.)")
               msg ("You try calling an ambulance to go to her house to make sure that she survives... (write this out a bit more when I'm more awake.)<br/>When the ambulance arrived there isn't much they could do, apparently a planecrashed on Lilith's house.<br/><br/>Lilith has been living alone for a year or two now and she had no real neighbours, not any that weren't a few kilometres away from her atleast. Which means their houses didn't sustain any damage.<br/>Sadly the same can't be said for both Lilith and most of the passengers of the plane...<br/><br/>There were luckily survivors of the plane crash, of the 139 people on board  86 people survived, most of them had minor injuries but where otherwise physically fine, if not mentally scared.<br/>The event was all plastered over the news as soon as it happened, they followed it live as it (unfolded?)<br/>Lilith did not survive though, they had to remove the plane to even get to her body, the sight was horifying, they never mentioned what she looked like but you could hear it in their voice when they where on the phone.")
               wait {
-                play sound ("Gameover and edgeofthegalaxy.wav", false, true)
+                play sound ("gameOver and edgeofthegalaxy.wav", false, true)
                 SetFontSize (29)
                 msg ("Game over")
                 SetFontSize (13)
@@ -4863,7 +4863,7 @@
                       SetForegroundColour ("HotPink")
                       msg ("Oh but how could I forget you?")
                       wait {
-                        play sound ("Gameover and edgeofthegalaxy.wav", false, true)
+                        play sound ("gameOver and edgeofthegalaxy.wav", false, true)
                         SetForegroundColour ("HotPink")
                         msg ("You are her killer right?")
                         wait {
@@ -7730,7 +7730,7 @@
             msg ("However, one point seems to be getting bigger and bigger, it doesn't seem to be a star as it's not sending out any light.")
             if (not GetBoolean(game, "Kokiri_alternate place")) {
               if (GetBoolean(game, "musicon")) {
-                play sound ("Gameover and edgeofthegalaxy.wav", false, true)
+                play sound ("gameOver and edgeofthegalaxy.wav", false, true)
               }
               wait {
                 msg ("The both of you watch in absolute terror as the thing only starts to get closer, becoming larger, in an alarming rate. ")
@@ -7889,7 +7889,7 @@
                       msg ("Give it your best shot {player.alias}")
                       wait {
                         if (GetBoolean(game, "musicon")) {
-                          play sound ("Gameover and edgeofthegalaxy.wav", false, true)
+                          play sound ("gameOver and edgeofthegalaxy.wav", false, true)
                         }
                         SetForegroundColour (player.Narcolor)
                         msg ("<br/><br/>Suddenly the earth begins to shake, in a flash the big tree Lilith is standing next to topples over right on top of her.<br/>The force of the tree kills her instantly. (Write this more out)")
@@ -7913,7 +7913,7 @@
                     msg ("Give it your best shot {player.alias}")
                     wait {
                       if (GetBoolean(game, "musicon")) {
-                        play sound ("Gameover and edgeofthegalaxy.wav", false, true)
+                        play sound ("gameOver and edgeofthegalaxy.wav", false, true)
                       }
                       SetForegroundColour (player.Narcolor)
                       msg ("<br/><br/>Suddenly the earth begins to shake, in a flash the big tree Lilith is standing next to topples over right on top of her.<br/>The force of the tree kills her instantly. (Write this more out)")
@@ -7937,7 +7937,7 @@
                   msg ("Give it your best shot {player.alias}")
                   wait {
                     if (GetBoolean(game, "musicon")) {
-                      play sound ("Gameover and edgeofthegalaxy.wav", false, true)
+                      play sound ("gameOver and edgeofthegalaxy.wav", false, true)
                     }
                     SetForegroundColour (player.Narcolor)
                     msg ("<br/><br/>Suddenly the earth begins to shake, in a flash the big tree Lilith is standing next to topples over right on top of her.<br/>The force of the tree kills her instantly. (Write this more out)")
@@ -8138,7 +8138,7 @@
                         <description type="string"></description>
                         <script type="script"><![CDATA[
                           if (GetBoolean(game, "musicon")) {
-                            play sound ("Gameover and edgeofthegalaxy.wav", false, true)
+                            play sound ("gameOver and edgeofthegalaxy.wav", false, true)
                           }
                           SetForegroundColour (player.Narcolor)
                           SetFlagOn ("Kak_death_4_hill")
@@ -8252,7 +8252,7 @@
                     <options type="stringdictionary" />
                     <script type="script"><![CDATA[
                       if (GetBoolean(game, "musicon")) {
-                        play sound ("Gameover and edgeofthegalaxy.wav", false, true)
+                        play sound ("gameOver and edgeofthegalaxy.wav", false, true)
                       }
                       SetForegroundColour (player.Devcolor)
                       SetFlagOn ("Kak_death_4_no hill")
@@ -8555,7 +8555,7 @@
           <inherit name="scripttext" />
           <script type="script"><![CDATA[
             if (GetBoolean(game, "musicon")) {
-              play sound ("Gameover and edgeofthegalaxy.wav", false, true)
+              play sound ("gameOver and edgeofthegalaxy.wav", false, true)
             }
             SetFlagOn ("Kokiri_death_2")
             SetForegroundColour (player.Narcolor)
@@ -9085,7 +9085,7 @@
                 <script type="script"><![CDATA[
                   SetFlagOn ("Hole_death")
                   if (GetBoolean(game, "musicon")) {
-                    play sound ("Gameover and edgeofthegalaxy.wav", false, true)
+                    play sound ("gameOver and edgeofthegalaxy.wav", false, true)
                   }
                   SetForegroundColour (player.Narcolor)
                   msg ("She fell down a hole in the sand, it collapses. (Write this more out.)")
@@ -9177,7 +9177,7 @@
                 <script type="script"><![CDATA[
                   SetFlagOn ("Jelly_death")
                   if (GetBoolean(game, "musicon")) {
-                    play sound ("Gameover and edgeofthegalaxy.wav", false, true)
+                    play sound ("gameOver and edgeofthegalaxy.wav", false, true)
                   }
                   SetForegroundColour (player.Narcolor)
                   msg ("She stepped on a jellyfish and she got into cardiac arrest.")
@@ -9833,7 +9833,7 @@
                   msg ("(Add snapping neck on railing death, she slips or gets pushed by a bike)")
                   SetFlagOn ("Slip_death")
                   if (GetBoolean(game, "musicon")) {
-                    play sound ("Gameover and edgeofthegalaxy.wav", false, true)
+                    play sound ("gameOver and edgeofthegalaxy.wav", false, true)
                   }
                   wait {
                     SetFontSize (29)
@@ -9935,7 +9935,7 @@
                 <script type="script"><![CDATA[
                   SetFlagOn ("Pot_death")
                   if (GetBoolean(game, "musicon")) {
-                    play sound ("Gameover and edgeofthegalaxy.wav", false, true)
+                    play sound ("gameOver and edgeofthegalaxy.wav", false, true)
                   }
                   SetForegroundColour (player.Narcolor)
                   msg ("A flower pot fell on her head, killing her.")
@@ -9990,7 +9990,7 @@
       <inherit name="scripttext" />
       <script type="script"><![CDATA[
         if (GetBoolean(game, "musicon")) {
-          play sound ("Gameover and edgeofthegalaxy.wav", false, true)
+          play sound ("gameOver and edgeofthegalaxy.wav", false, true)
         }
         if (not GetBoolean(game, "Car_caught")) {
           if (GetBoolean(game, "Burger")) {
@@ -10208,7 +10208,7 @@
           TextFX_Typewriter ("I...", 222)
           wait {
             if (GetBoolean(game, "musicon")) {
-              play sound ("Gameover and edgeofthegalaxy.wav", false, true)
+              play sound ("gameOver and edgeofthegalaxy.wav", false, true)
             }
             SetForegroundColour (player.Narcolor)
             msg ("Lilith seems to be frozen, on her face you can clearly see a mixture of fear and confusion.")
@@ -10257,7 +10257,7 @@
               msg ("Sadly it's traject leads right to Lilith's chest as it's sword-like bill pierces it, somehow you know it has pierced her heart aswell.")
               msg ("She gives you one last look of utter shock before she falls dead on the floor.")
               if (GetBoolean(game, "musicon")) {
-                play sound ("Gameover and edgeofthegalaxy.wav", false, true)
+                play sound ("gameOver and edgeofthegalaxy.wav", false, true)
               }
               wait {
                 SetFontSize (29)
@@ -10292,7 +10292,7 @@
             wait {
               SetForegroundColour (player.Narcolor)
               if (GetBoolean(game, "musicon")) {
-                play sound ("Gameover and edgeofthegalaxy.wav", false, true)
+                play sound ("gameOver and edgeofthegalaxy.wav", false, true)
               }
               msg ("Before Lilith can finish her sentence her face starts to swell,")
               SetForegroundColour (player.Lilcolor)
@@ -10581,7 +10581,7 @@
         if (GetBoolean(game, "Burger")) {
           SetForegroundColour (player.Narcolor)
           if (GetBoolean(game, "musicon")) {
-            play sound ("Gameover and edgeofthegalaxy.wav", false, true)
+            play sound ("gameOver and edgeofthegalaxy.wav", false, true)
           }
           msg ("Suddenly a inmense sensation of pain overwhelms you, the only thing you can see is a glimpse of pure white and an eternity of black.")
           wait {
@@ -10609,7 +10609,7 @@
           SetForegroundColour (player.Narcolor)
           msg ("Suddenly you begin to hear the sound of shattering glass.<br/>As you turn to look at the source of the sound you can see that the aquarium next to where Lilith was sitting has shattered.<br/>The water is gushing out rapidly and it does not seem to be planning to stop.<br/>It seems as if somehow the marlin must have made a crack form.<br/>You think about the pure shenanigans that were needed to even make this exact thing happen but you are soon interrupted by the water flowing past your shoes with some fish coming along for the ride.<br/>")
           if (GetBoolean(game, "musicon")) {
-            play sound ("Gameover and edgeofthegalaxy.wav", false, true)
+            play sound ("gameOver and edgeofthegalaxy.wav", false, true)
           }
           wait {
             SetForegroundColour (player.Lilcolor)
@@ -10699,7 +10699,7 @@
             wait {
               msg ("Lilith looks over your shoulder with a frightend look in her eyes.")
               if (GetBoolean(game, "musicon")) {
-                play sound ("Gameover and edgeofthegalaxy.wav", false, true)
+                play sound ("gameOver and edgeofthegalaxy.wav", false, true)
               }
               wait {
                 msg ("When you turn around you see a wave of angry geese breaking through the doors of the once cozy Chinese restaurant, the staff is running around in sheer panic.")
@@ -11313,7 +11313,7 @@
         msg ("As Lilith hangs up her phone you turn on the tv in frustration.")
         msg ("The news is on apparently, it's talking about a plane that had lost height just a moment ago")
         wait {
-          play sound ("Gameover and edgeofthegalaxy.wav", false, true)
+          play sound ("gameOver and edgeofthegalaxy.wav", false, true)
           msg ("The plane crashed right in the living room of a nice looking house, the house doesn't look unfamilliar to you at all.")
           msg ("Then it hits you.")
           msg ("It's her house.")
@@ -13617,21 +13617,21 @@
           <inherit name="scripttext" />
           <script type="script">
             SetForegroundColour (player.playcolor)
-            AddPageLink (Answer_right_psychic, auraofdeath, "You have an aura of death surrounding you Lilith, I'm trying to keep you safe with my powers.")
+            AddPageLink (Answer_right_psychic, auraOfDeath, "You have an aura of death surrounding you Lilith, I'm trying to keep you safe with my powers.")
             if (GetBoolean(game, "Need_proof")) {
               AddPageLink (Answer_right_psychic, Untold story, "I need some proof to make the past you trust me when I tell her the restaurants we wanted to go to are not safe.")
             }
             if (GetBoolean(game, "Chinese")) {
-              AddPageLink (Answer_right_psychic, datetosave, "I knew you would die on a date in a chinese restaurant because of an allergic reaction so I figured I would be your date so I would be able to warn you.")
-              AddPageLink (Answer_right_psychic, justhelpingout, "Well, while you were saying you wanted to go for the Peking duck I suddenly knew there was something in it that would cause you sever allergic reactions.")
+              AddPageLink (Answer_right_psychic, dateToSave, "I knew you would die on a date in a chinese restaurant because of an allergic reaction so I figured I would be your date so I would be able to warn you.")
+              AddPageLink (Answer_right_psychic, justHelpingOut, "Well, while you were saying you wanted to go for the Peking duck I suddenly knew there was something in it that would cause you sever allergic reactions.")
             }
             else if (GetBoolean(game, "Burger")) {
-              AddPageLink (Answer_right_psychic, datetosave, "I knew you would die on a date in a burger restaurant because of a lost bullet so I figured I would be your date so I would be able to warn you.")
-              AddPageLink (Answer_right_psychic, justhelpingout, "Well, while you were sitting there somehow I just felt that you would get shot.")
+              AddPageLink (Answer_right_psychic, dateToSave, "I knew you would die on a date in a burger restaurant because of a lost bullet so I figured I would be your date so I would be able to warn you.")
+              AddPageLink (Answer_right_psychic, justHelpingOut, "Well, while you were sitting there somehow I just felt that you would get shot.")
             }
             else if (GetBoolean(game, "Cafe")) {
-              AddPageLink (Answer_right_psychic, datetosave, "I knew you would die on a date in a cafe because of a shark's crushing weight so I figured I would be your date so I would be able to warn you.")
-              AddPageLink (Answer_right_psychic, justhelpingout, "Well, while you were sitting there somehow I just felt that that would happen.")
+              AddPageLink (Answer_right_psychic, dateToSave, "I knew you would die on a date in a cafe because of a shark's crushing weight so I figured I would be your date so I would be able to warn you.")
+              AddPageLink (Answer_right_psychic, justHelpingOut, "Well, while you were sitting there somehow I just felt that that would happen.")
             }
             RemovePageLink (Answer_right_psychic, no time to explain)
             RemovePageLink (Answer_right_psychic, no time to explain)
@@ -13654,7 +13654,7 @@
               }
             }
           </script>
-          <object name="datetosave">
+          <object name="dateToSave">
             <inherit name="scripttext" />
             <script type="script">
               SetForegroundColour (player.Lilcolor)
@@ -13662,13 +13662,13 @@
               msg ("Couldn't you just have found me and told me?")
               SetForegroundColour (player.playcolor)
               if (GetBoolean(game, "Chinese")) {
-                AddPageLink (datetosave, youwouldntbel, "Oh yeah, and you would just believe a random person telling you that you will die of an allergy in a chinese restaurant on a specific day?")
+                AddPageLink (dateToSave, youwouldntbel, "Oh yeah, and you would just believe a random person telling you that you will die of an allergy in a chinese restaurant on a specific day?")
               }
               else if (GetBoolean(game, "Cafe")) {
-                AddPageLink (datetosave, youwouldntbel, "Oh yeah, and you would just believe a random person telling you that you will die by being crushed by a great white shark in a fish themed cafe on a specific day?")
+                AddPageLink (dateToSave, youwouldntbel, "Oh yeah, and you would just believe a random person telling you that you will die by being crushed by a great white shark in a fish themed cafe on a specific day?")
               }
               else if (GetBoolean(game, "Burger")) {
-                AddPageLink (datetosave, youwouldntbel, "Oh yeah, and you would just believe a random person telling you that you will die because of a gunshot wound in a burger restaurant on a specific day?")
+                AddPageLink (dateToSave, youwouldntbel, "Oh yeah, and you would just believe a random person telling you that you will die because of a gunshot wound in a burger restaurant on a specific day?")
               }
               SetForegroundColour (player.playcolor)
             </script>
@@ -13680,42 +13680,42 @@
                 msg ("It still sounds like there were better, less convoluted ways to keep me from dying but I'm still really thankfull that you saved my life.")
                 msg ("We actually cheated death itself, take that death!")
                 SetForegroundColour (player.playcolor)
-                AddPageLink (youwouldntbel, dontteasedeath, "I think it may not be really wise to tease death itself. ")
+                AddPageLink (youwouldntbel, dontteaseDeath, "I think it may not be really wise to tease death itself. ")
                 SetForegroundColour (player.playcolor)
                 AddPageLink (youwouldntbel, take that, "Take that death, we've won, woohoo!")
                 if (GetBoolean(game, "Chinese")) {
                   if (GetBoolean(game, "Chinese_death_2")) {
-                    AddPageLink (youwouldntbel, stilldying, "Actually you're still going to die if we keep sitting here, this time by an army of angry geese.")
+                    AddPageLink (youwouldntbel, stillDying, "Actually you're still going to die if we keep sitting here, this time by an army of angry geese.")
                   }
                 }
                 else if (GetBoolean(game, "Burger")) {
                   if (GetBoolean(game, "Burger_death_2")) {
-                    AddPageLink (youwouldntbel, stilldying, "Actually you are still going to die if we keep sitting here, this time it'll be a gas explosion.")
+                    AddPageLink (youwouldntbel, stillDying, "Actually you are still going to die if we keep sitting here, this time it'll be a gas explosion.")
                   }
                 }
                 else if (GetBoolean(game, "Cafe")) {
                   if (GetBoolean(game, "Cafe_death_2")) {
-                    AddPageLink (youwouldntbel, stilldying, "Actually you are still going to drown, this time by drowning.")
+                    AddPageLink (youwouldntbel, stillDying, "Actually you are still going to drown, this time by drowning.")
                   }
                 }
               </script>
-              <object name="stilldying">
+              <object name="stillDying">
                 <inherit name="scripttext" />
                 <script type="script">
                   SetForegroundColour (player.Devcolor)
-                  msg ("Placeholder dialogue for stilldying here.")
+                  msg ("Placeholder dialogue for stillDying here.")
                   wait {
                     MovePlayer (Restaurant_death_2)
                   }
                 </script>
               </object>
-              <object name="dontteasedeath">
+              <object name="dontteaseDeath">
                 <inherit name="scripttext" />
                 <script type="script"><![CDATA[
                   SetForegroundColour (player.Lilcolor)
                   msg ("Common, let's celibrate. We just escaped death! <br/>Don't be so worried, what's the worst thing that could happen?")
                   SetForegroundColour (player.playcolor)
-                  AddPageLink (dontteasedeath, Restaurant_death_2, "Yeah, you're probably right... Wait, why did you say that? Now we are going to die for sure.")
+                  AddPageLink (dontteaseDeath, Restaurant_death_2, "Yeah, you're probably right... Wait, why did you say that? Now we are going to die for sure.")
                 ]]></script>
               </object>
               <object name="take that">
@@ -13730,27 +13730,27 @@
               </object>
             </object>
           </object>
-          <object name="justhelpingout">
+          <object name="justHelpingOut">
             <inherit name="scripttext" />
             <script type="script">
               SetForegroundColour (player.Lilcolor)
               msg ("Wow, that's quite the story. Luckily you somehow felt that because otherwise I'd be dead!")
               msg ("So am I in the clear now?")
               SetForegroundColour (player.playcolor)
-              AddPageLink (justhelpingout, Yes, "Yup, you are completly safe now!")
+              AddPageLink (justHelpingOut, Yes, "Yup, you are completly safe now!")
               if (GetBoolean(game, "Chinese")) {
                 if (GetBoolean(game, "Chinese_death_2")) {
-                  AddPageLink (justhelpingout, stilldying, "Actually you're still going to die, this time because of a swarm of geese.")
+                  AddPageLink (justHelpingOut, stillDying, "Actually you're still going to die, this time because of a swarm of geese.")
                 }
               }
               else if (GetBoolean(game, "Burger")) {
                 if (GetBoolean(game, "Burger_death_2")) {
-                  AddPageLink (justhelpingout, stilldying, "Actually you're still going to die, this time due to a gas leak.")
+                  AddPageLink (justHelpingOut, stillDying, "Actually you're still going to die, this time due to a gas leak.")
                 }
               }
               else if (GetBoolean(game, "Cafe")) {
                 if (GetBoolean(game, "Cafe_death_2")) {
-                  AddPageLink (justhelpingout, stilldying, "Actually you're still going to die, this time you'll drown.")
+                  AddPageLink (justHelpingOut, stillDying, "Actually you're still going to die, this time you'll drown.")
                 }
               }
             </script>
@@ -13772,7 +13772,7 @@
               </script>
             </object>
           </object>
-          <object name="auraofdeath">
+          <object name="auraOfDeath">
             <inherit name="scripttext" />
             <script type="script">
               SetForegroundColour (player.Lilcolor)
@@ -13783,8 +13783,8 @@
               msg ("Well, thanks for trying to save me, so far you're doing an absolutely fantastic job!")
               msg ("So, do you think it is over? Did you finally stop that weird aura of death you were speaking of?")
               SetForegroundColour (player.playcolor)
-              AddPageLink (auraofdeath, yes I did, "I sure did!")
-              AddPageLink (auraofdeath, stilldying, "Actually you're still dying.")
+              AddPageLink (auraOfDeath, yes I did, "I sure did!")
+              AddPageLink (auraOfDeath, stillDying, "Actually you're still dying.")
             </script>
             <object name="yes I did">
               <inherit name="scripttext" />

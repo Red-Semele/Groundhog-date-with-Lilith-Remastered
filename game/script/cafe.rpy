@@ -22,7 +22,7 @@ label cafe_start:
     What are you choosing [name]? "
     menu:
         "I'll have the same as you.":
-            jump cafe_food_choicesame
+            jump cafe_food_choiceSame
 
         "I'll have the sandwich of the day and an espresso.":
             jump cafe_food_choice1
@@ -36,7 +36,7 @@ jump cafe_food_result
 label cafe_food_choice2:
 jump cafe_food_result
 
-label cafe_food_choicesame:
+label cafe_food_choiceSame:
 l "You know what they say [name], great minds think alike. I guess that also counts for hungry stomachs."
 n "Lilith lets out a small chuckle."
 label cafe_food_result:
@@ -129,7 +129,7 @@ label cafe_dice_result:
                 label cafe_dice_right:
                 l "Wow, you managed to figure it out. Nicely done [name]!"
                 #TODO: Make a better segway for this.
-                jump cafe_ratecafe
+                jump cafe_rateCafe
             else:
                 label cafe_dice_wrong:
                 l "Nope, that's not the answer."
@@ -142,12 +142,12 @@ label cafe_dice_result:
                         $ persistent.dice_knowledge = True
                         l "The first dice was 6 and the second dice was 3."
                         #TODO: Make a better segway.
-                        jump cafe_ratecafe
+                        jump cafe_rateCafe
                     "No, if I ever learn the answer I want it to be because I solved it.":
                         l "That's respectable but I'm not sure when you'll get your next chance, this is not something I do all of the time."
                         #TODO: Set an if function that when the counter of the dice puzzle is a certain ammount the narrator says something like "You won't have to wait too long I'm sure..."
                         #TODO: Make this new segway a bit better because now it doesn't make much sense.
-                        jump cafe_ratecafe
+                        jump cafe_rateCafe
 
         "No, that's not right.":
             l "Oh,so what number do you think the second dice is [name]?"
@@ -189,61 +189,61 @@ label cafe_dice_stop:
     l "Oh no worries [name]!
     I might have made this a bit too daunting so I completely understand."
     #TODO: Make a slightly better segway for this.
-    jump cafe_ratecafe
+    jump cafe_rateCafe
 
 
 
-jump cafe_ratecafe
+jump cafe_rateCafe
 
-label cafe_ratecafe:
+label cafe_rateCafe:
     n "Lilith looks around in pure awe, a bright smile forms on her face."
     l "So, what do you think of this place now that you've seen it for the first time?"
 
     menu:
         "Actually it's not the first time I've seen this place." if persistent.cafe_death_1:
-            jump cafe_notthefirsttimeisaw
+            jump cafe_notTheFirstTimeISaw
         "It's fantastic! Look at all those fish!":
-            jump cafe_ratecafe_great
+            jump cafe_rateCafe_great
 
         "This cafe really sucks.":
-            jump cafe_ratecafe_bad
+            jump cafe_rateCafe_bad
 
         "I can see why you like it but it's not really my thing.":
-            jump cafe_ratecafe_okayish
+            jump cafe_rateCafe_okayish
 
 
-label cafe_notthefirsttimeisaw:
+label cafe_notTheFirstTimeISaw:
     l "Oh... I thought you said that you had only heard about this place."
     n "Lilith pauses, seemingly not knowing what to say."
     menu:
         "Oh, you probably just misheard me.":
-            jump cafe_backontrack
+            jump cafe_backOnTrack
 
-label cafe_backontrack:
+label cafe_backOnTrack:
     n "Lilith lets out a polite chuckle."
     l "Oh, my bad then!"
     #TODO: ADD a better segway
-    jump cafe_Abigailjoke
+    jump cafe_abigailJoke
 
 
-label cafe_ratecafe_great:
+label cafe_rateCafe_great:
     n "Lilith let's out a small giggle."
     l " I knew you would love it as much as me when I saw your smile.
     I've never seen so many colors at the same time, thank you for taking me here [name]!
     Just the fish on their own made this one of the best dates I ever had, it can only get better from here."
     $ persistent.cafe_taste_knowledge = True
-    jump cafe_ratecafe_result
+    jump cafe_rateCafe_result
 
-label cafe_ratecafe_okayish:
+label cafe_rateCafe_okayish:
     n "Lilith flashes you an understanding smile."
     l "Ah, sorry to hear that, but I am really loving this place if that's worth something.
     Maybe we can go to a place you like next time?
     I've never seen so many colors at the same time, thank you for taking me here [name].
     So far this is one of the best dates I ever had!"
     $ persistent.cafe_taste_knowledge = True
-    jump cafe_ratecafe_result
+    jump cafe_rateCafe_result
 
-label cafe_ratecafe_bad:
+label cafe_rateCafe_bad:
     $ love_points = -1
     $ love_meter_updater()
     n "Lilith frowns at your reaction."
@@ -259,18 +259,18 @@ label cafe_ratecafe_bad:
 
 
 
-label cafe_ratecafe_result:
+label cafe_rateCafe_result:
     menu:
         "Sorry to ask you this, but did you have bad experiences in love?":
             l "That's quite an unusual question to ask [name], why do you think I did?"
             #Maybe rephrase it slightly, comes of as a bit defensive.
             menu:
                 "Well, you said this was one of the best dates you've ever had. It seems as if your bar is set pretty low.":
-                    $ cafe_badlove_lowbar = True
-                    jump cafe_badlove
+                    $ cafe_badLove_lowbar = True
+                    jump cafe_badLove
                 "I just kind of had a feeling.":
-                    $ cafe_badlove_justafeeling = True
-                    jump cafe_badlove
+                    $ cafe_badLove_justafeeling = True
+                    jump cafe_badLove
                     #Make her mention something about this during the pshycic route?
         "You are very welcome, thank you for making me come here in the first place.":
             l "Did you just counter my thank you with another thank you?"
@@ -279,9 +279,9 @@ label cafe_ratecafe_result:
             l "You know, you made laugh quite good there [name], now it's my turn! Would you like to hear a joke?"
             menu:
                 "Sure, I'd love to!":
-                    jump cafe_Abigailjoke
+                    jump cafe_abigailJoke
 
-label cafe_Abigailjoke:
+label cafe_abigailJoke:
     l "So a priest, a monk and a rabbit enter a bar.
     Says the rabbit :\"Whoops, did you slip your tongue there Lilith?\""
     $ persistent.joke_knowledge = True
@@ -291,7 +291,7 @@ label cafe_Abigailjoke:
         "That was not funny at all.":
             jump cafe_joke_bad
         "Hmm, I'm not sure I'm getting the joke.":
-            jump cafe_joke_dontget
+            jump cafe_joke_dontGet
 label cafe_joke_bad:
     $ love_points = -1
     $ love_meter_updater()
@@ -317,7 +317,7 @@ label cafe_joke_good:
         "She sounds nice!":
             jump restaurant_death_1
 
-label cafe_joke_dontget:
+label cafe_joke_dontGet:
     l "Oh, the point of the joke is that the other two who entered the bar where religious fiures, the monk and the priest.
     So the rabbit doesn't quite fit in, it's because he was actually a rabbi instead. So I mispronounced that hence the \"did you slip your tongue?\" ."
     l "Is the joke now funnier or did it now become less funny? It tends to be that way when you explain a joke so I'm sorry if I ruined it for you."
@@ -329,7 +329,7 @@ label cafe_joke_dontget:
 
 
 
-label cafe_badlove:
+label cafe_badLove:
 
     #Say something extra based on which choice brought you here. TODO.
 
@@ -337,7 +337,7 @@ label cafe_badlove:
     l "Well..."
     l "I wouldn't say I had really bad experiences with love. It's just that I tend to grow connected with people before they even had the chance to grow fond of me.
     I also do not need to be with someone every single moment, both as a friend or lover, once I'm connected I start to sort of withdraw a little bit."
-    if cafe_badlove_lowbar == True:
+    if cafe_badLove_lowbar == True:
         #Make this only trigger if the player has already retried atleast once.
         l "But it's strange, I feel as if you already know me pretty well even though this is our first date. Not that I'm complaining though, I really like it if I'm being honest with you."
     l "In the beginning I thought that I was weird for acting that way, I started trying to make sure that I didn't distance myself from anyone so I wouldn't hurt them.

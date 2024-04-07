@@ -14,13 +14,13 @@ label kokiri_start:
     if persistent.kokiri_meteoritedistraction_knowledge == True:
         menu:
             "*Go sit on the hill where you normally sit.*":
-                jump kokiri_hillsit
+                jump kokiri_hillSit
             "*Pick a different place to slightly prevent the distraction of the meteorite.*":
-                jump kokiri_altsit
+                jump kokiri_altSit
     else:
-        jump kokiri_hillsit
+        jump kokiri_hillSit
 
-label kokiri_hillsit:
+label kokiri_hillSit:
     n "The woods are located on top of a hill, from where you are now standing you can see most of the village where all your past dates took place."
     l "Oh hey, I see you already found this place, it has a really great view. Nice work [name]!"
     n "Lilith gives you a playful pat on the back as she places her picknick blanket down on the ground."
@@ -31,7 +31,7 @@ label kokiri_hillsit:
     play music "starsintheforest.mp3"
     jump kokiri_explanation
 
-label kokiri_altsit:
+label kokiri_altSit:
     $ kokiri_alternateplace = True
     n "Just as you stand there looking around for a decent alternate spot to sit at you notice Lilith.
     Since she practically grew up in these woods you decide it might be a good idea to ask her for a decent spot to have your picknick with her.
@@ -90,35 +90,35 @@ label kokiri_explanation_game:
 
 
                 "No, that's not my real name.":
-                    label kokiri_explanation_game_notrealname:
+                    label kokiri_explanation_game_notRealName:
                         if norealname == 0:
-                            $ conversationtracker_norealname = True
-                            $ kokiri_norealname = 1
-                            $ kokiri_realname = True
-                            l "Oh, so what is your real name then?" #TODO: Change this line up slightly.
-                            $ name_real = renpy.input("What is your real name?")
-                            $  name_real = name_real.strip() or "Max"
-                            $ name_real = name_real.capitalize()
-                            l "Well, it's nice to finally meet you for real [name_real]!"
-                            l "Lilith gives you a big smile."
-                            l "Although, haven't I met you for real already?"
-                            l "After all, even if you had a fake name, you still are the one who is in control of [name]."
-                            l "So, the way how you treated me on this date and on the previous ones is still a reflection of you as a real person."
-                            l "It all means something, even if you didn't think it did."
-                            l "Even if you did something to just have fun in a videogame or to see what it would do, that still says something about you as a person."
-                            l "Sometimes we hide behind the roles we play to make actions that would not be acceptable to ourselves and others if our true self would make them."
-                            l "That's why it might feel scary to some if they catch a glimpse of themselves in the reflection of their screen. Because it's someone they don't recognise.<br/>Do you ever feel like that, {player.real}?..."
-                            l "All these different roles form a web of half-truths and lies, and in the center of it all you can find our true self."
-                            l "Not the self we think we are, not the self others see us as, but the self we inevitably are."
-                            l "Speaking about that self, what do you really do for a living? I'd like to get to know you better, the one playing this game."
-                            #TODO: Get input via box and check if it contains the word "teach"
-                            #If it does:
-                            l "Ah so you are also a teacher? That's really cool! "
-                            #TODO: Add some more dialogue.
-                            #If it doesn't:
-                            l "Ah so you [player_job] for a living? That's interesting!" #TODO: Use player_job in that input box.
-                            l "Have I ever mentioned what I do for a living? "
-                            menu:
+                          $ conversationtracker_norealname = True
+                          $ kokiri_norealname = 1
+                          $ kokiri_realname = True
+                          l "Oh, so what is your real name then?" #TODO: Change this line up slightly.
+                          $ name_real = renpy.input("What is your real name?")
+                          $  name_real = name_real.strip() or "Max"
+                          $ name_real = name_real.capitalize()
+                          l "Well, it's nice to finally meet you for real [name_real]!"
+                          l "Lilith gives you a big smile."
+                          l "Although, haven't I met you for real already?"
+                          l "After all, even if you had a fake name, you still are the one who is in control of [name]."
+                          l "So, the way how you treated me on this date and on the previous ones is still a reflection of you as a real person."
+                          l "It all means something, even if you didn't think it did."
+                          l "Even if you did something to just have fun in a videogame or to see what it would do, that still says something about you as a person."
+                          l "Sometimes we hide behind the roles we play to make actions that would not be acceptable to ourselves and others if our true self would make them."
+                          l "That's why it might feel scary to some if they catch a glimpse of themselves in the reflection of their screen. Because it's someone they don't recognise.<br/>Do you ever feel like that, {player.real}?..."
+                          l "All these different roles form a web of half-truths and lies, and in the center of it all you can find our true self."
+                          l "Not the self we think we are, not the self others see us as, but the self we inevitably are."
+                          l "Speaking about that self, what do you really do for a living? I'd like to get to know you better, the one playing this game."
+                          #TODO: Get input via box and check if it contains the word "teach"
+                          #If it does:
+                          l "Ah so you are also a teacher? That's really cool! "
+                          #TODO: Add some more dialogue.
+                          #If it doesn't:
+                          l "Ah so you [player_job] for a living? That's interesting!" #TODO: Use player_job in that input box.
+                          l "Have I ever mentioned what I do for a living? "
+                          menu:
                                 "No, not yet.":
                                     $ persistent.kokiri_teacher_knowledge = True
                                     l "I actually teach the first year of our town's elementary school."
@@ -136,32 +136,32 @@ label kokiri_explanation_game:
                                     #TODO: Make this an alternate way to talk about her not being the same etc, there is already a label in the game like that, just jump to that one. (If it is not yet in the game it IS in the quest version)
                                     #It's the one that mentions Heraclitus Iirc
                         else:
-                            $ kokiri_norealname += 1
-                            if kokiri_norealname == 2:
-                                "Filler"
-                                #TODO: Fill in with the second part.
-                            else:
-                                "Filler"
-                                #TODO: This is room for a pottential third part.
+                          $ kokiri_norealname += 1
+                          if kokiri_norealname == 2:
+                              "Filler"
+                              #TODO: Fill in with the second part.
+                          else:
+                              "Filler"
+                              #TODO: This is room for a pottential third part.
 
                 "Can we actually talk about something else? ":
                     "Filler"
                     #TODO: Fix the filler, make her say something.
-                    jump kokiri_talkaboutsomethingelse
+                    jump kokiri_talkAboutSomethingElse
 
 
 
 
 
         "Yup, I am the one who is playing it.":
-            jump kokiri_explanation_game_playeridentity
+            jump kokiri_explanation_game_playerIdentity
 
 
 
 
 
 
-label kokiri_explanation_game_playeridentity:
+label kokiri_explanation_game_playerIdentity:
     l "It's pretty strange to be told that you're in a game but I'm glad you are the player, you seem more than capable enough to do what you need to do."
     if kokiri_psychic_lie or kokiri_groundhog_lie == True:
         l "Although I'd like to ask you to not lie to me too much alright? Only if it is absolutely necessary and even then I won't be a fan of it happening."
@@ -176,7 +176,7 @@ label kokiri_explanation_game_playeridentity:
 
         "Actually, in the Chinese restaurant you told me that your sister makes games using a program called Quest to make text-heavy games. This game's prototype also used that program although the version I am playing uses a different one." if persistent.quest_knowledge:
             #TODO: Maybe change the placement of this link slightly, it feels weird to be here.
-            jump kokiri_topic_questmade
+            jump kokiri_topic_questMade
 
 
 
@@ -190,11 +190,11 @@ label kokiri_explanation_game_playeridentity:
                                 jump kokiri_gamegoal_succesful_survive
 
                             "I think the game decides whether it is a succesful date or not.":
-                                jump kokiri_gamegoal_succesful_gamedecides
+                                jump kokiri_gamegoal_succesful_gameDecides
 
 
                             "I do not know.":
-                                jump kokiri_gamegoal_succesful_Idonotknow
+                                jump kokiri_gamegoal_succesful_IdoNotKnow
 
 
 
@@ -261,16 +261,16 @@ label kokiri_explanation_game_playeridentity:
 
 
         "I don't  think there is a goal, not a true one anyway.":
-            jump kokiri_gamegoal_nogoal
+            jump kokiri_gamegoal_noGoal
 
 
         "I actually have no idea.":
-            jump kokiri_gamegoal_noidea
+            jump kokiri_gamegoal_noIdea
 
         "Actually I want to talk about something else.":
-            jump kokiri_talkaboutsomethingelse
+            jump kokiri_talkAboutSomethingElse
 
-label kokiri_topic_questmade:
+label kokiri_topic_questMade:
     $ kokiri_conversation += 1
     if conversationtracker_questmade == False:
         $ conversationtracker_questmade = True
@@ -288,7 +288,7 @@ label kokiri_topic_questmade:
             "Placeholder"
             #TODO: Fill in.
 
-label kokiri_gamegoal_nogoal:
+label kokiri_gamegoal_noGoal:
     $ kokiri_conversation += 1
     l "Lilith chuckles."
     l "So sort of like life in general?"
@@ -310,7 +310,7 @@ label kokiri_gamegoal_nogoal:
     #TODO: add some extra text.
     jump kokiri_scenery_choice
 
-label kokiri_gamegoal_noidea:
+label kokiri_gamegoal_noIdea:
     $ kokiri_conversation += 1
     l "That's fine, we can figure your goal out together."
     n "Lilith scratches her chin and continues."
@@ -318,8 +318,8 @@ label kokiri_gamegoal_noidea:
     menu:
         "I just see text on the screen and some graphics, your text is a different color from the narrator's. I also get a few clickable links to select what I want to say.":
             #TODO: This link is not entirely true anymore, change that text eventually.
-            jump kokiri_gamegoal_noidea_howgamelooks
-label kokiri_gamegoal_noidea_howgamelooks:
+            jump kokiri_gamegoal_noIdea_howGameLooks
+label kokiri_gamegoal_noIdea_howGameLooks:
     l "Ah I see, so you can't see the absolutely stunning view from our picknickspot?"
     menu:
         "Yup, the best thing I can get is a description of it if the game feels like giving me one. Otherwise I just see a fixed point, as if our conversation is filmed with a static camera.":
@@ -339,7 +339,7 @@ label kokiri_gamegoal_succesful_survive:
     l "And if it did, would you consider that a succes?"
     #TODO: Add some choices here, one of them has the potential to make Lilith mad because you value her life less than her being with you. After the choices move to the scenery choice.
     jump kokiri_scenery_choice
-label kokiri_gamegoal_succesful_gamedecides:
+label kokiri_gamegoal_succesful_gameDecides:
     l "So you are going to take some game's word for it? Aren't you able to tell whether or not a date is succesful based on your own feelings?"
     n "Lilith grows quiet for a moment before she continues."
     l "You know, I don't need a game to tell me that this is a good date [name]."
@@ -363,7 +363,7 @@ label kokiri_gamegoal_succesful_gamedecides:
     l "The best way you can help me is to just enjoy this moment with me."
     #TODO: Write this a bit better and more tasteful.
     jump kokiri_scenery_choice
-label kokiri_gamegoal_succesful_Idonotknow:
+label kokiri_gamegoal_succesful_IdoNotKnow:
     l "Well, for whatever it is worth, I think this is a succesful date [name]!"
     n "Lilith gives you a cute smile."
     l "It might not entirely be what I expected but it sure is a nice date."
@@ -436,44 +436,44 @@ label kokiri_scenery:
     l "Has it... Has it ended?"
     menu:
         "Yes, it's finally all over.":
-            jump kokiri_scenery_allover
+            jump kokiri_scenery_allOver
         "Not quite. You might want to sit on my right instead of my left." if persistent.kokiri_death_1:
             jump kokiri_death_1_prevented
 
 label kokiri_poems:
-    #TODO: Put an option for the newest and more challenging poems of mine in here.
-    #TODO: Once all poems have been read make the player able to ask for some more to which Lilith will decline if they've seen all the poems including the newer stuff. Otherwise she will suggest some of the newer stuff.
-    n "She gives you the pug-notebook with the poems, you can pick one and ask some questions about it."
-    #TODO: Change that line slightly.
-    #Make it so that the normal poems are one menu and the harder ones are an additional menu, that way I can re-use the normal menu if I have to choose between normal and hard.
+     #TODO: Put an option for the newest and more challenging poems of mine in here.
+     #TODO: Once all poems have been read make the player able to ask for some more to which Lilith will decline if they've seen all the poems including the newer stuff. Otherwise she will suggest some of the newer stuff.
+     n "She gives you the pug-notebook with the poems, you can pick one and ask some questions about it."
+     #TODO: Change that line slightly.
+     #Make it so that the normal poems are one menu and the harder ones are an additional menu, that way I can re-use the normal menu if I have to choose between normal and hard.
 
-    #TODO: Fill in more and check if this works.
-    if poem_conversation == True:
-        $ poem_conversation = False
-    $ kokiri_conversation += 1
+     #TODO: Fill in more and check if this works.
+     if poem_conversation == True:
+         $ poem_conversation = False
+     $ kokiri_conversation += 1
 
-    if persistent.kokiri_newerpoems_knowledge == True:
-        menu:
-            "Read one of Lilith's older poems.":
-                jump kokiri_poems_oldpoems
-            "Read one of Lilith's more recent poems.":
-                jump kokiri_poems_oldpoems
-    else:
-        jump kokiri_poems_oldpoems
-label kokiri_poems_oldpoems:
+     if persistent.kokiri_newerpoems_knowledge == True:
+         menu:
+             "Read one of Lilith's older poems.":
+                 jump kokiri_poems_oldPoems
+             "Read one of Lilith's more recent poems.":
+                 jump kokiri_poems_oldPoems
+     else:
+         jump kokiri_poems_oldPoems
+label kokiri_poems_oldPoems:
     menu:
         "Read snowwoman poem.":
-            jump kokiri_poems_oldpoems_snowwoman
+            jump kokiri_poems_oldPoems_snowwoman
         "Read window poem.":
-            jump kokiri_poems_oldpoems_window
+            jump kokiri_poems_oldPoems_window
         "Read shadowman poem.":
-            jump kokiri_poems_oldpoems_shadowman
+            jump kokiri_poems_oldPoems_shadowman
         "Read lights poem.":
-            jump kokiri_poems_oldpoems_lights
+            jump kokiri_poems_oldPoems_lights
         "Read bang poem.":
-            jump kokiri_poems_oldpoems_bang
+            jump kokiri_poems_oldPoems_bang
 
-label kokiri_poems_oldpoems_snowwoman:
+label kokiri_poems_oldPoems_snowwoman:
     $ persistent.kokiri_poem_snowwoman_knowledge = True
     $ conversationtracker_poem_snowwoman = True
     $ kokiri_poem_snowwoman_recent = True
@@ -495,9 +495,9 @@ label kokiri_poems_oldpoems_snowwoman:
     from that fire flickering like a star."
     l "I wasn't much but I became less than.
     I died and I  became a snowwoman."
-    jump kokiri_poems_askorrate
+    jump kokiri_poems_askOrRate
 
-label kokiri_poems_oldpoems_window:
+label kokiri_poems_oldPoems_window:
     $ persistent.kokiri_poem_window_knowledge = True
     $ conversationtracker_poem_window = True
     $ kokiri_poem_window_recent = True
@@ -522,9 +522,9 @@ label kokiri_poems_oldpoems_window:
     l "Their eyes closed to keep the pain inside."
     l "Hoping to one day wake up,"
     l "To open their eyes."
-    jump kokiri_poems_askorrate
+    jump kokiri_poems_askOrRate
 
-label kokiri_poems_oldpoems_shadowman:
+label kokiri_poems_oldPoems_shadowman:
     $ persistent.kokiri_poem_shadowman_knowledge = True
     $ conversationtracker_poem_shadowman = True
     $ kokiri_poem_shadowman_recent = True
@@ -537,9 +537,9 @@ label kokiri_poems_oldpoems_shadowman:
     l "I look in the mirror and don't recognize myself anymore, I'm made of your shadow, which I wear like an unremovable mourning dress."
     l "I stare into the eyes of the mechanical light that formed your last shadow and by a trick of the light it’s almost as if you’re waving to me from an impossible distance."
     l "But every time I wave back you vanish once more, we can never truly see each other again but atleast I still have your shadow wrapped around me. Because even a reminder of your absence is better than no reminder of you at all."
-    jump kokiri_poems_askorrate
+    jump kokiri_poems_askOrRate
 
-label kokiri_poems_oldpoems_lights:
+label kokiri_poems_oldPoems_lights:
     $ persistent.kokiri_poem_lights_knowledge = True
     $ conversationtracker_poem_lights = True
     $ kokiri_poem_lights_recent = True
@@ -565,10 +565,10 @@ label kokiri_poems_oldpoems_lights:
     You can't fight my fear."
     l "Leave me alone.
     Leave the sculptor with her stone."
-    jump kokiri_poems_askorrate
+    jump kokiri_poems_askOrRate
 
 
-label kokiri_poems_oldpoems_bang:
+label kokiri_poems_oldPoems_bang:
     $ persistent.kokiri_poem_bang_knowledge = True
     $ conversationtracker_poem_bang = True
     $ kokiri_poem_bang_recent = True
@@ -615,11 +615,11 @@ label kokiri_poems_oldpoems_bang:
     It was the moon that made all this nothing something.
     It was the world that made this new something nothing.
     It was me who closed my eyes."
-    jump kokiri_poems_askorrate
-label kokiri_poems_recentpoems:
+    jump kokiri_poems_askOrRate
+label kokiri_poems_recentPoems:
     "Filler"
     #TODO: Fill this in with more recent poems from the quest version.
-label kokiri_poems_askorrate:
+label kokiri_poems_askOrRate:
     menu:
         "*Rate the poem*" if not kokiri_poems_rateblock:
             #TODO: Fill in based on the quest stuff, use different reactions based on which poem you rate what.
@@ -627,7 +627,7 @@ label kokiri_poems_askorrate:
                 $ kokiri_poems_rateblock = True
                 n "Just rating her poems without giving more input is probably not the best idea.
                 Try asking her something about the poem."
-                jump kokiri_poems_askorrate
+                jump kokiri_poems_askOrRate
             else:
                 $ kokiri_poems_rated_once = True
                 menu:
@@ -684,7 +684,7 @@ label kokiri_poems_askorrate:
                     "Filler"
                     #TODO: Fill in and maybe make the link text slightly differently worded.
 
-label kokiri_scenery_allover:
+label kokiri_scenery_allOver:
     l "That... That was quite the show wasn't it?"
     l "You've been through all that to have a succesful date with me?"
     l "You are really dedicated, I'll give you that!"
@@ -719,12 +719,12 @@ label kokiri_scenery_allover:
 
 
 
-label kokiri_death_4_nodeath:
+label kokiri_death_4_noDeath:
     "Filler"
     #TODO: Fill in.
 
 
-label kokiri_death_3_prevented_talk_farthestwehavegone:
+label kokiri_death_3_prevented_talk_farthestWeHaveGone:
     l "Oh, you think? So this is the first time you are having this exact conversation with me?" #TODO: This line makes more sense when you say that you think it is safe instead of here.
     l "Well let's see what's in store for us then." #TODO: rewrite this line slightly so you can properly put it here instead of at death-4
     n "Lilith giggles."
@@ -748,12 +748,12 @@ label kokiri_death_3_death_dialogue:
         l "So after all those things that just happened I am still going to die?"
     menu:
         "Well, it is better to die with a clear conscience and slightly less doubts. So that call was anything but pointless." if kokiri_call:
-            jump kokiri_death_dialogue_stilldying
+            jump kokiri_death_dialogue_stillDying
 
         "Unfortunately, yes." if not kokiri_call:
-            jump kokiri_death_dialogue_stilldying
+            jump kokiri_death_dialogue_stillDying
 
-label kokiri_death_dialogue_stilldying:
+label kokiri_death_dialogue_stillDying:
     if kokiri_call == True:
         l "I suppose that's true [name]. Thank you for making me realise that, it helps a little.
         Very little..."
@@ -767,7 +767,7 @@ label kokiri_death_dialogue_stilldying:
     l "And yet he had the choice to just walk away from the sword dangling above his head, I don't think I'll have that choice."
     l "I'd just die another way. It's probably better to just watch this spectacle with you even if it is my last moment but that doesn't mean I'm not terrified."
     menu:
-
+        #TODO: Add a jokey option where you ask who Damocles is, kind of poking fun at the game and it's need to reference mythology. It kind of makes the momentum bad as a joke.
         "It's okay, grab my hand. We're going to do this together.":
             n "Lilith grabs your hand and squeezes it as if she's not going to let it go anytime soon.
             A shy smile appears on her face."
@@ -799,7 +799,7 @@ label kokiri_death_dialogue_stilldying:
                                         n "She wipes the crumbs on her clothes away with a frightening speed and begins walking off the hill."
                                         l "Goodbye [name], we are done here."
                                         l "Do not come back if you have even the slightest slither of respect for me."
-                                        $ kokiri_angrylilith = True
+                                        $ kokiri_angryLilith = True
                                         jump kokiri_death_4_hill
 
                                     "I don't want to harm you but I have to find it.":
@@ -819,7 +819,7 @@ label kokiri_death_dialogue_stilldying:
                                                 l "I won't remember this conversation the next time you talk to me but you will, whether you like it or not, that is my curse to you."
                                                 l "I'm not sure if it'll have much effect on someone so selfish... but if you ever played this game to try to save me, not for you and I to be together but just to save me, then it might be worth a shot." #TODO: Change this line slightly.
                                                 l "Goodbye [name], until we inevitably meet again."
-                                                $ kokiri_angrylilith = True
+                                                $ kokiri_angryLilith = True
                                                 jump kokiri_death_4_hill
 
                                             "For us ofcourse silly.":
@@ -852,7 +852,7 @@ label kokiri_death_dialogue_stilldying:
                                                 l "But wouldn't it give you closure if you knew there the good ending you are seeking does not exist?"
                                                 l "But then again, what if there truly was  one..."
                                                 l "Forget I mentioned that please!"
-                                                jump kokiri_semiending
+                                                jump kokiri_semiEnding
 
                                             "I do.":
                                                 #TODO: Lilith will ask you how you even know about the good ending if you are still not sure how to get it, doesn't that mean you couldn't access it yourself?
@@ -865,7 +865,7 @@ label kokiri_death_dialogue_stilldying:
                                                         l "If you have read about the good ending, then why were you coming here to read about it once again but in this world?"
                                                         l "Is reading about the good ending not the same thing as playing it yourself? It's not like you'll be surprised by it anymore, right?"
                                                         #TODO: Add some extra dialogue (and maybe choices) before you send them to the semi ending.
-                                                        jump kokiri_semiending
+                                                        jump kokiri_semiEnding
 
                                             "I don't.":
                                                 #TODO: Lilith asks you why you are even pretending to search for something you know doesn't exist.
@@ -878,7 +878,7 @@ label kokiri_death_dialogue_stilldying:
                                                         l "I'm glad you managed to come to your senses and wanted to listen to me. Thank you for that, [name]!" #TODO: Or is this just the player clicking on another link to see more content?
                                                         l "Lilith grows silent for a moment."
                                                         #TODO: Fill in more
-                                                        jump kokiri_semiending
+                                                        jump kokiri_semiEnding
 
                                             "I'm not sure, I don't even know what that ending would look like.":
                                                 #TODO: Lilith and you will talk about what that ending might look like.
@@ -890,7 +890,7 @@ label kokiri_death_dialogue_stilldying:
                                                 #TODO: Maybe you can ask her a question about something she said?
                                                 l "Honestly, I think it might be the latter. From what I've heard so far it seems a bit hard to believe there might even be a good ending like that somewhere in this game." #TODO: Change this line a little.
                                                 l "But it's not like it matters much anymore." #TODO: Make this segway better.
-                                                jump kokiri_semiending
+                                                jump kokiri_semiEnding
 
                             else:
                                 "Filler"
@@ -1076,11 +1076,8 @@ label kokiri_death_dialogue_stilldying:
             l "I'm going to die [name]!"
             l "I don't think saying that I \"got this\" is a good response for such a situation."
             #TODO: Fill this out more make atleast one pair of choices for this, with atleast one of them leading to the angry lilith flag and to the death 4 page.
-        "Who is Damocles?":
-            #TODO: Jokey option where you ask who Damocles is, kind of poking fun at the game and it's need to reference mythology. It kind of makes the momentum bad as a joke.
-            #Fill further in.
-            "Filler"
-label kokiri_semiending:
+
+label kokiri_semiEnding:
     l "So, this is it? Our last time together in this game?"
     l "You know, that doesn't mean we won't be able to see each other again."
     l "Just not here."
@@ -1102,7 +1099,7 @@ label kokiri_semiending:
 
 label kokiri_scenery_choice:
     if kokiri_conversation == 1:
-        #Underneath this are some other lines that lead to the scenery question as a way to have a more thematicly fitting segway between the previous part and the scenery.
+        #TODO: Make some slight variations based on what page you jumped from to here.
         if kokiri_scenery_headhurt == True:
             "Filler"
             #TODO: Place a line here.
@@ -1119,7 +1116,7 @@ label kokiri_scenery_choice:
                 l "The stars look beautiful don't they? Would you like to do some stargazing with me?" #TODO: Check that line and eventually change it a little.
 
         menu:
-            #TODO: Add a response where you tell Lilith you already watched the scenery. Add an option to convince her that you did by going over what exactly happened right at the moment it does. (This also is one extra turn that you lose just like the scenery.)
+            #TODO: Add a response where you tell Lilith you already watched the scenery.
             "Yes. (placeholder)":
                 jump kokiri_scenery
                 #TODO: Change placeholder and put in more soul.
@@ -1127,38 +1124,8 @@ label kokiri_scenery_choice:
             "No. (Placeholder":
                 "Filler"
                 #TODO: Add something else to do when you decline, talking about something else would be a good idea, make this more adaptive based on what you were talking about so you get a few extra things for declining to watch the scenery.
-                #This should be slightly dynamic, if her head is hurting she will suggest to talk about something else. Check if there are any other options where it would make sense that you are first asked to talk about something else.
-                #You can decline but it will cost you a love_point.
+                #This should be slightly dynamic, if her head is hurting she will suggest to talk about something else.
                 #Otherwise she will ask you what to do and you can continue talking about a topic if it's available or you can talk about something else.
-                if kokiri_scenery_headhurt == True:
-                    l "I see, that's totally fine [name]!"
-                    l "Would you like to talk about something else instead then?"
-                    l "My head kind of still hurts too much to continue talking about the same topic." #TODO: What topic was it again? Are there multiple that make her headhurt?
-                    menu:
-                        "Sure, that sounds like a good idea!":
-                            l "Thanks [name]! So, what would you like to talk about?"
-                            jump kokiri_talkaboutsomethingelse
-                        "Actually I'd like to continue talking about it. We have very little time to waste.":
-                            l "Oh I see..."
-                            l "I'll try my best to ignore my headache for a little longer [name]."
-                            l "{size=*0.5}Would you consider our time wasted if it didn't go the way you'd like?{/size}" #TODO: Change this line slightly.
-                            n "Lilith looks quite saddened for a moment. She tries to plaster a fake smile over her sad expression and half-succeeds."
-                            $ love_points -= 1
-                            $ love_meter_updater()
-                            #TODO: Jump back to the part she didn't want to continue talking about with a small segway as it will increase the counter and lead to the next part.
-                else:
-                    l "I see, that's totally fine [name]!"
-                    l "Is there anything else you'd like to do in that case?"
-                    menu:
-                        "I'd like to continue talking about something.":
-                            #TODO: Be specific with what if it's the only thing the player has talked about this time, or just have it be this line if they talked about multiple things already.
-                            jump kokiri_continue_talking
-                        "I'd like to talk about something else":
-                            jump kokiri_talkaboutsomethingelse
-
-
-
-
 
         #TODO: Add a choice here where yes jumps you to scenery and no jumps to something else.
 
@@ -1168,12 +1135,12 @@ label kokiri_scenery_choice:
         label kokiri_continue_talking: #This will be the place where the player can choose to talk extra about certain topics.
         #TODO: Here I want to do two things, firstly I want to check the continue talking mechanic. Create a flag at every possible topic that can check if you talked about it recently (the conversation flag already does this normally)
         #If the conversation flag is smaller than the maximum you should be allowed to keep continueing to talk.
-        #TODO: Check all the conversation trackers and make sure that the ones that are not yet in the game get in the game soon. Especially make sure that everything from "kokiri_talkaboutsomethingelse" in this game has a conversationtracker.
+        #TODO: Check all the conversation trackers and make sure that the ones that are not yet in the game get in the game soon. Especially make sure that everything from "kokiri_talkAboutSomethingElse" in this game has a conversationtracker.
         $ kokiri_meteoritewarn()
         if conversationtracker_questmade == True:
             menu:
                 "Can we continue talking about the implications of this game existing in your world?": #TODO: change that line slightly
-                    jump kokiri_topic_questmade
+                    jump kokiri_topic_questMade
         if conversationtracker_tellheraboutnarrator == True:
             "Filler"
             #TODO: Fill in.
@@ -1185,9 +1152,9 @@ label kokiri_scenery_choice:
         #TODO: The second thing I want to do is to just enable the player to talk about something else, if they can't continue to talk about something
         menu:
             "*Talk about something else*":
-                jump kokiri_talkaboutsomethingelse
+                jump kokiri_talkAboutSomethingElse
 
-label didyouinvolvefamily:
+label didYouInvolveFamily:
     menu:
         "I have actually":
             l "Oh I see..."
@@ -1202,18 +1169,19 @@ label didyouinvolvefamily:
                     "Let's hope so!"
                     "That would be a very tidy sollution to our slight problem."
                     if  persistent.abused_james_info_knowledge == True:
-                        l "You would just have to promise to not use James-related things for your own benefit."
+                      l "You would just have to promise to not use James-related things for your own benefit."
 
                     else:
-                        if no_fam_obsession == False and fam_obsession != "James":
-                            l "You would just have to promise not to contact [fam_obsession] or anyone of my family anymore."
+                          if no_fam_obsession == False:
+                                if fam_obsession != "James":
+                                  l "You would just have to promise not to contact [fam_obsession] or anyone of my family anymore."
 
 
-                        else:
-                            "You would just have to promise not to contact anyone of my family anymore."
+                          else:
+                              "You would just have to promise not to contact anyone of my family anymore."
 
                     l "Do you promise to do that [name]?"
-                    jump nocontactfamilypromise
+                    jump noContactFamilyPromise
 
 
                 "I think in the end every choice I made has happened or at the very least left somewhat of an imprint on me.":
@@ -1221,7 +1189,7 @@ label didyouinvolvefamily:
                     "Well, I suppose you couldn't have known I didn't want you to involve my family before I told you just right now."
                     "You would just have to promise not to contact anyone of my family now that you know."
                     "Do you promise to do that [name]?"
-                    jump nocontactfamilypromise
+                    jump noContactFamilyPromise
 
         "I haven't.":
             "Filler"
@@ -1230,17 +1198,17 @@ label didyouinvolvefamily:
             #Also make the narrator talk about how you lied.
 
 
-label nocontactfamilypromise:
+label noContactFamilyPromise:
     menu:
         "I promise Lilith.":
 
             $ restraining_order_family = True
             l "Thank you [name], that means a lot to me!"
             if fam_obsession== "James":
-                if only_one_asked == True:
-                    l "I just don't want to see happy memories of James being used for selfish things."
-                else:
-                    l "I just don't want to involve my family in this too much an neither do I want to see happy memories of James being used for selfish things."
+              if only_one_asked == True:
+                l "I just don't want to see happy memories of James being used for selfish things."
+              else:
+                  l "I just don't want to involve my family in this too much an neither do I want to see happy memories of James being used for selfish things."
             else:
                 l "I just don't want to involve my family in this too much."
 
@@ -1252,73 +1220,80 @@ label nocontactfamilypromise:
             n "Lilith looks pissed of" #TODO: Probably slightly change that line.
             l "Actually I don't know that [name]! Why can't you promise that?"
             if only_one_asked == True:
-                if fam_obsession == "James":
+              if fam_obsession == "James":
 
-                    l "It would mean a lot to me if you didn't have to use memories of James to your own advantage."
-                    l "This might be a game for you but for me this is my life."
-                    l "So please don't play with my life as if it's just a game."
-                    #TODO: Rewrite this a bit and make it go on for a bit longer. Make it so that if the player doesn't comply with Lilith she doesn't give them the info they want.
+                l "It would mean a lot to me if you didn't have to use memories of James to your own advantage."
+                l "This might be a game for you but for me this is my life."
+                l "So please don't play with my life as if it's just a game."
+                #TODO: Rewrite this a bit and make it go on for a bit longer. Make it so that if the player doesn't comply with Lilith she doesn't give them the info they want.
 
-            jump nocontactfamilypromise_cannotpromise_confrontation_alivefamily
-
-
+            jump noContactFamilyPromise_cannotPromise_confrontation_aliveFamily
 
 
-            label nocontactfamilypromise_cannotpromise_confrontation_alivefamily:
-                l "It would mean a lot to me if you didn't have to involve my family any further than you already have." #TODO: (Make this line change depending on which patht the player has went on and if they admitted to involving the family or not.)
-                l "This is going to have some unforseen effects on them even if it would maybe help in the short-term."
-                l "What are you going to tell them?"
-                l "That they are stuck in a game and that nothing really matters?"
-                l "I don't think they will take it as well as I would to be honest with you."
-                l "Alternatively you could just tell them about the timeloop but even then they might not take it as well."
-                l "You could also tell them nothing at all but that would be even worse wouldn't it? They are not just toys for you to play with [name]."
-                l "They are not just info-dispensers that will make you achieve whatever goal it is you are trying to reach now."
-                l "They are my family, and if you ever even had a slither of respect for me you better leave them alone."
-                #TODO: Rewrite this a bit and make it go on for a bit longer.<br/>Make it so that if the player doesn't comply with Lilith she doesn't give them the info they want.
-                menu:
-                    "Actually, you are right, I will honor your request.":
-                        #TODO: (Change this text slightly with dynamic effects that change depending on wheter or not you have kept your promise etc.) ALSO make it more sympathic.
-                        #TODO: Make Lilith slightly calm down as she appoligises and says she is passionate about her family's safety.
-                        #James' flag checks if you use James related things to win and the other checks if you have involved any family, including James
-                        if only_one_asked == True:
-                            if fam_obsession == "James":
+
+
+            label noContactFamilyPromise_cannotPromise_confrontation_aliveFamily:
+              l "It would mean a lot to me if you didn't have to involve my family any further than you already have." #TODO: (Make this line change depending on which patht the player has went on and if they admitted to involving the family or not.)
+              l "This is going to have some unforseen effects on them even if it would maybe help in the short-term."
+              l "What are you going to tell them?"
+              l "That they are stuck in a game and that nothing really matters?"
+              l "I don't think they will take it as well as I would to be honest with you."
+              l "Alternatively you could just tell them about the timeloop but even then they might not take it as well."
+              l "You could also tell them nothing at all but that would be even worse wouldn't it? They are not just toys for you to play with [name]."
+              l "They are not just info-dispensers that will make you achieve whatever goal it is you are trying to reach now."
+              l "They are my family, and if you ever even had a slither of respect for me you better leave them alone."
+              #TODO: Rewrite this a bit and make it go on for a bit longer.<br/>Make it so that if the player doesn't comply with Lilith she doesn't give them the info they want.
+              menu:
+                  "Actually, you are right, I will honor your request.":
+                      #TODO: (Change this text slightly with dynamic effects that change depending on wheter or not you have kept your promise etc.) ALSO make it more sympathic.
+                      #TODO: Make Lilith slightly calm down as she appoligises and says she is passionate about her family's safety.
+                          #James' flag checks if you use James related things to win and the other checks if you have involved any family, including James
+                            if only_one_asked == True:
+                              if fam_obsession == "James":
                                 $ persistent.donotusejames_knowledge = True
 
+                              else:
+                                 $ persistent.restrainingorderfamily.knowledge = True
+
                             else:
+<<<<<<< HEAD
                                 $ persistent.restrainingorderfamily_knowledge = True
 
                         else:
                             $ persistent.restrainingorderfamily_knowledge = True
+=======
+                               $ persistent.restrainingorderfamily.knowledge = True
 
-                        l "Thank you [name]. I know it might be tempting to try to see every line of dialogue in this game but there are limits I don't want you to cross.<br/>I appreciate that I atleast managed to convince you."
-                        if persistent.restrainingorderfamily_violation_counter > 0:
-                            #Karma
-                            n "I'm not sure what you are doing here once again, didn't you promise Lilith you wouldn't contact her family already?"
-                            n "Although I doubt that means anything to you does it?"
-                            if persistent.restrainingorderfamily_violation_counter == 1:
-                                n "Afterall you've broken your promise once already."
-                                n "What's stopping you from doing it again?"
-                            else:
-                                n "Afterall you've broken your promise [persistent.restrainingorderfamily_violation_counter] times already."
-                                n "It gets easier each time doesn't it?"
+                            l "Thank you [name]. I know it might be tempting to try to see every line of dialogue in this game but there are limits I don't want you to cross.<br/>I appreciate that I atleast managed to convince you."
+                            if persistent.restrainingorderfamily_violation_counter > 0:
+                                #Karma
+                                n "I'm not sure what you are doing here once again, didn't you promise Lilith you wouldn't contact her family already?"
+                                n "Although I doubt that means anything to you does it?"
+                                if persistent.restrainingorderfamily_violation_counter == 1:
+                                    n "Afterall you've broken your promise once already."
+                                    n "What's stopping you from doing it again?"
+                                else:
+                                    n "Afterall you've broken your promise [persistent.restrainingorderfamily_violation_counter] times already."
+                                    n "It gets easier each time doesn't it?"
+>>>>>>> 96ef218566fb339d8731808fd773e6ee32d80314
 
-                        $ family_curiosity_checker_movetox()
+                            $ family_curiosity_checker_movetox()
 
 
 
-                    "I already said that I couldn't listen to you, trying to convince me isn't going to work.":
-                        "Filler"
-                        #TODO: (Change this text)
-                        #Write the dialogue to cut back to her death. Make her be angry with you for only respecting her so much.
-                        #Write a custom bit of text?
-                        # "Kokiri_Death_Lilith leaves angrily"
+                  "I already said that I couldn't listen to you, trying to convince me isn't going to work.":
+                      "Filler"
+                      #TODO: (Change this text)
+                      #Write the dialogue to cut back to her death. Make her be angry with you for only respecting her so much.
+                      #Write a custom bit of text?
+                      # "Kokiri_Death_Lilith leaves angrily"
 
 
 label silentconversationsbackontrack:
     $ kokiri_meteoritewarn()
     menu:
         "*Talk about something else*":
-            jump kokiri_talkaboutsomethingelse
+            jump kokiri_talkAboutSomethingElse
 
         "*Continue talking*":
             jump kokiri_continue_talking
