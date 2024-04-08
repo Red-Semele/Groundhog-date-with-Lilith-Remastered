@@ -27,76 +27,61 @@ label kokiri_talkAboutSomethingElse:
 
 
             "*Tell her about the mayo easteregg*":
-                 #TODO: change the link text slightly and fill this in. (No quest precedent)
-                 "Filler"
-                 $ kokiri_conversation_silent()
+                    #TODO: change the link text slightly and fill this in. (No quest precedent)
+                    "Filler"
+                    $ kokiri_conversation_silent()
 
             "You actually showed me a poem of yours on one date we had in the burger restaurant. I really liked it, could you show me another one?" if not conversationtracker_morepoems and persistent.burger_poem_knowledge:
-                 $ kokiri_conversation -= 1
-                 jump kokiri_poems
+                    $ kokiri_conversation -= 1
+                    jump kokiri_poems
 
             "This game is controlled by a Narrator." if not conversationtracker_tellheraboutnarrator:
                 jump tellLilithAboutNar
 
 
             "Ask her something about her family.":
-                 $ kokiri_chatchar_abigail_recent = False
-                 $ kokiri_chatchar_james_recent = False
-                 $ kokiri_chatchar_david_recent = False
-                 $ kokiri_chatchar_lila_recent = False
-                 menu:
-                      "Ask about Abigail":
-                          menu:
-                              "Can you tell me about Abigail?":
-                                    jump askAboutAbigail_tellMeAbout
+                    $ kokiri_chatchar_abigail_recent = False
+                    $ kokiri_chatchar_james_recent = False
+                    $ kokiri_chatchar_david_recent = False
+                    $ kokiri_chatchar_lila_recent = False
+                    menu:
+                        "Ask about Abigail":
+                            menu:
+                                "Can you tell me about Abigail?":
+                                        jump askAboutAbigail_tellMeAbout
+                                "Abigail uses the same program the prototype of this game is made in." if not conversationtracker_questmade:
+                                    jump kokiri_topic_questMade
+                        "Ask about David":
+                            #TODO: Some stuff to implement across the three conversations that are possible to reach:
 
-
-
-
-
-
-
-
-
-
-
-                              "Abigail uses the same program the prototype of this game is made in." if not conversationtracker_questmade:
-                                  jump kokiri_topic_questMade
-
-
-                      "Ask about David":
-                          #TODO: Some stuff to implement across the three conversations that are possible to reach:
-
-                          #Why did Lilith's father leave the family? (Work, personal reasons, conflicts)
-                          #How did his absence affect Lilith while growing up? (Emotionally, financially, etc.)
-                          #Is there any chance of reconciliation between Lilith and her father? (Regrets, hopes, concerns)
-                          #What role did he play in the family before he left? (Breadwinner, caregiver, etc.) BREADWINNER, afterwards mom had to take a double job because she refused his money, but Lilith doesn't know that.
-                          menu:
-                               "Can you tell me about David?":
-                                   jump askAboutDavid_tellMeAbout
-
-
-                               "Do you blame your father for what happened to James?" if persistent.david_blame_knowledge and not conversationtracker_blamedavid:
-                                    $ conversationtracker_blamedavid = True
-                                    l "What? That's absurd."
-                                    l "I have never blamed him for James'... passing."
-                                    l "I am just really mad at him for abandoning his family because he couldn't deal with what happened to James."
-                                    l "Why are you asking such a question [name], you haven't been seeing my dad, have you?"
-                                    n "It seems you just struck a sensitive chord."
-                                    menu:
-                                        "I have actually, he said he wants to come back every day but can't because you and Lisa hate him for what happened with James.":
-                                            l "First off I'd like you to not contact my dad again even though I can't stop you from doing so."
-                                            l "But as you now know I don't blame him for James' death and I don't think mom does either."
-                                            l "We were mad for him leaving us, I still haven't forgiven him."
-                                            l "Mom seemingly did though, I guess it's because of her trust in humanity." #TODO: Because dad still wanted to give money, she just didn't want to accept it.
-                                            menu:
-                                                "Would you forgive him if he made an apology?":
-                                                    $ persistent.david_apology_knowledge = True
-                                                    #Don't put this choice in the other subpath where you deny talking to him, because it wouldn't make much sense.
-                                                    l "I'm not sure I would even want to hear him out."
-                                                    l "...But let's say I did, if it's a good apology then maybe he would be a step closer to rebuilding our bond but it won't be the same for a long time, maybe it will even never be the same."
-                                                    l "However, I think the girl he left all those years ago, the girl that is still somewhere inside of me, would at the very least like the idea that he made an effort to come back to us."
-                                                    $ kokiri_conversation_silent()
+                            #Why did Lilith's father leave the family? (Work, personal reasons, conflicts)
+                            #How did his absence affect Lilith while growing up? (Emotionally, financially, etc.)
+                            #Is there any chance of reconciliation between Lilith and her father? (Regrets, hopes, concerns)
+                            #What role did he play in the family before he left? (Breadwinner, caregiver, etc.) BREADWINNER, afterwards mom had to take a double job because she refused his money, but Lilith doesn't know that.
+                            menu:
+                                "Can you tell me about David?":
+                                    jump askAboutDavid_tellMeAbout
+                                "Do you blame your father for what happened to James?" if persistent.david_blame_knowledge and not conversationtracker_blamedavid:
+                                        $ conversationtracker_blamedavid = True
+                                        l "What? That's absurd."
+                                        l "I have never blamed him for James'... passing."
+                                        l "I am just really mad at him for abandoning his family because he couldn't deal with what happened to James."
+                                        l "Why are you asking such a question [name], you haven't been seeing my dad, have you?"
+                                        n "It seems you just struck a sensitive chord."
+                                        menu:
+                                            "I have actually, he said he wants to come back every day but can't because you and Lisa hate him for what happened with James.":
+                                                l "First off I'd like you to not contact my dad again even though I can't stop you from doing so."
+                                                l "But as you now know I don't blame him for James' death and I don't think mom does either."
+                                                l "We were mad for him leaving us, I still haven't forgiven him."
+                                                l "Mom seemingly did though, I guess it's because of her trust in humanity." #TODO: Because dad still wanted to give money, she just didn't want to accept it.
+                                                menu:
+                                                    "Would you forgive him if he made an apology?":
+                                                        $ persistent.david_apology_knowledge = True
+                                                        #Don't put this choice in the other subpath where you deny talking to him, because it wouldn't make much sense.
+                                                        l "I'm not sure I would even want to hear him out."
+                                                        l "...But let's say I did, if it's a good apology then maybe he would be a step closer to rebuilding our bond but it won't be the same for a long time, maybe it will even never be the same."
+                                                        l "However, I think the girl he left all those years ago, the girl that is still somewhere inside of me, would at the very least like the idea that he made an effort to come back to us."
+                                                        $ kokiri_conversation_silent()
 
 
 
@@ -115,16 +100,12 @@ label kokiri_talkAboutSomethingElse:
                                                     #TODO: Fill in, I think there already exists something similiar in quest. Lilith is not really comfortable with the idea, she doesn't like to potentially harm her family like that.
                                                     "Filler"
                                                     $ kokiri_conversation_silent()
-
-
-
-                      "Ask about James":
-                          jump askAboutJames_tellMeAbout
-
-                      "Ask about Lila":
-                         menu:
-                             "Can you tell me about Lila?":
-                                 jump askAboutLila_tellMeAbout
+                        "Ask about James":
+                            jump askAboutJames_tellMeAbout
+                        "Ask about Lila":
+                            menu:
+                                "Can you tell me about Lila?":
+                                    jump askAboutLila_tellMeAbout
 
 
 
@@ -135,16 +116,16 @@ label kokiri_talkAboutSomethingElse:
         jump kokiri_death_3_death_dialogue
 
 label tellLilithAboutNar:
-     $ conversationtracker_tellheraboutnarrator = True
-     #(This one actually is already integrated into the main path, I think the first one, so it's probably better to remove it.
-     #TODO: Check if it is really integrated or not.
-     #Is it really? I think just saving it here can be beneficial so the player has more choice on what they can talk about.
-     l "I'd like to meet this Narrator you're talking about."
-     n "... No one ever asked to do that before."
-     n "Tell her I said hi."
-     menu:
-         "Well, he just said hi.":
-             jump tellLilithAboutNar_justSaidHi
+    $ conversationtracker_tellheraboutnarrator = True
+    #(This one actually is already integrated into the main path, I think the first one, so it's probably better to remove it.
+    #TODO: Check if it is really integrated or not.
+    #Is it really? I think just saving it here can be beneficial so the player has more choice on what they can talk about.
+    l "I'd like to meet this Narrator you're talking about."
+    n "... No one ever asked to do that before."
+    n "Tell her I said hi."
+    menu:
+        "Well, he just said hi.":
+            jump tellLilithAboutNar_justSaidHi
 label tellLilithAboutNar_justSaidHi:
     l "Interesting."
     l "How are you doing mister Narrator?"
@@ -253,135 +234,130 @@ label tellLilithAboutNar_stumbleUponLesson:
 
 
 label askAboutAbigail_tellMeAbout:
-      $ kokiri_chatchar_abigail_recent = True #This will be used to make sure the player gets put back to the right place in the conversation after the family curiosity checker.
-      if kokiri_chatchar_abigail == False:
-          $ kokiri_chatchar_abigail = True
-          $ kokiri_chatchar_abigail_counter = 1
-          $ conversationtracker_abigail = True
-      else:
-          $ kokiri_chatchar_abigail_counter += 1
+    $ kokiri_chatchar_abigail_recent = True #This will be used to make sure the player gets put back to the right place in the conversation after the family curiosity checker.
+    if kokiri_chatchar_abigail == False:
+        $ kokiri_chatchar_abigail = True
+        $ kokiri_chatchar_abigail_counter = 1
+        $ conversationtracker_abigail = True
+    else:
+        $ kokiri_chatchar_abigail_counter += 1
 
 
-      $ family_curiosity_checker()
-      if kokiri_chatchar_abigail_counter == 1:
-          jump askAboutAbigail_tellMeAbout_1
-      elif kokiri_chatchar_abigail_counter == 2:
-          jump askAboutAbigail_tellMeAbout_2
-      elif kokiri_chatchar_abigail_counter == 3:
-          jump askAboutAbigail_tellMeAbout_3
+    $ family_curiosity_checker()
+    if kokiri_chatchar_abigail_counter == 1:
+        jump askAboutAbigail_tellMeAbout_1
+    elif kokiri_chatchar_abigail_counter == 2:
+        jump askAboutAbigail_tellMeAbout_2
+    elif kokiri_chatchar_abigail_counter == 3:
+        jump askAboutAbigail_tellMeAbout_3
 
 label askAboutAbigail_tellMeAbout_1:
-              l "Well, as you probably already know Abigail is my little sis."
-              l "We went through a lot like most sisters but we always managed to get through it all."
-              l "...This stays between us alright [name]?"
-              l "...Lately I've had this weird feeling."
-              l "As if there's something Abigail is hiding from me."
-              l "She has always been the happy type but now there's something underlying in that happiness, something almost forced."
-              l "She seems as if she's putting up a performance for someone."
-              l "I really hope I am just wrong and that she just is happier than I have ever seen her for a positive reason."
-              l "But I like to think that I know Abigail quite well and my guts are telling me something's wrong."
-              l "I just wish she would open up about it if there truly was something going on."
-              $ persistent.kokiri_abigailhidessomething_knowledge = True
-              menu:
-                  "You might want to call her.":
-                      if kokiri_conversation == 1:
-                          $ kokiri_call = True
-                          $ kokiri_chatchar_abigail_called = True
-                          a "Heya Lilly!"
-                          a "You're calling pretty soon, did your date with [name] not go well?"
-                          l "I am still on my date actually." #TODO: (Rewrite this line)
-                          a "Oh? Then why are you calling?"
-                          l "Well, it's kind of hard to explain..."
-                          a "I see, no worries Lilly!"
-                          a "Is your phone on speaker currently?"
-                          l "Yes it is, why?"
-                          a "{size=*2}Heya [name], treat my sis nicely will you?{/size}"
-                          l "Abby, you're going to scare [name] off like that."
-                          a "Good, then you'll have to give me all of your attention again!"
-                          a "I'm kidding, I'm kidding, I hope you're having fun on your date so far."
-                          l "Well it surely has been interesting so far."
-                          l "But enough about me, I'd rather talk about you for now."
-                          a "About me? I'm flattered!"
-                          a "What do you want to talk about?"
-                          l "Is something wrong lately?"
-                          a "...What do you mean?"
-                          l "Is something wrong with you lately? You have been even more chipper than ever as of late."
-                          l "...It almost feels forced. As if you're trying to hide something."
-                          a "Why are you asking me that?"
-                          l "Because I care about you of course! You are and always will be my sister Abby, don't you ever forget that."
-                          $ kokiri_call_potentialdeathcheck() #This serves as a break in the call if you have never seen the meteorite, if you have you should have been able to warn her beforehand.
-                          a "That's really sweet of you Lilly! But I actually mean why are you asking me that now, during your date with [name]?"
-                          menu:
-                              "*Nod your head*":
-                                  l "Well, I sort of will die during this date."
-                                  a "... What?..."
-                                  a "Is this a joke?"
-                                  a "Was this [name] their idea?"
-                                  a "{size=*2}This is not funny [name]!{/size}"
-                                  l "Abby, please, stop yelling..."
-                                  l "It's not a joke."
-                                  l "It's kind of hard to tell you why we think I will die but [name] has made it clear that there is atleast something strange going on."
-                                  l "And before I... go... I wanted to make sure you were alright."
-                                  a "...So it's true?"
-                                  l "Well if it isn't we will atleast have talked through your problems and we will have a very silly story to tell everyone."
-                                  a "I'm going to make fun of you if this isn't true, you'd put mom her naivite to shame."
-                                  l "I'd like that."
-                                  a "To be made fun of?"
-                                  l "No, I'd like that all of this turned out to be false. That I would be able to see you in person again."
-                                  a "...Please, can we continue talking about me? This is a lot to take in."
-                                  l "...I guess we can. I don't think I have much time left any way."
-                                  a "..."
-                                  a "So, you asked me if something was wrong with me right?"
-                                  a "Well, to be honest there is."
-                                  a "Lately I have been feeling so alone."
-                                  a "That feeling had increased when you moved out if I have to be honest with you."
-                                  a "And mom does all she can, I don't want to complain about her. But there is only so much one person can do..."
-                                  l "I see..."
-                                  a "And that feeling of loneliness even affects my thoughts. I constantly doubt wheter or not my friends really like me, even if they literally say so." #TODO: (Rewrite this line definetly)
-                                  a "Some days it never shows up."
-                                  a "And other days it seems to never leave my head."
-                                  a "But it always comes back in the end."
-                                  a "It just gets so cold sometimes Lilly."
-                                  l "Abby, I had no idea...
-                                  I am so sorry I never asked you about this earlier.
-                                  I had this feeling in my guts, I should've asked earlier."
-                                  a "Hey, don't blame yourself!
-                                  I probably wouldn't have told you.
-                                  I didn't want you or mom to worry about me.
-                                  That's why I tried to act like nothing was wrong. I thought I was doing a great job but apparently not."
-                                  l "You are doing  a great job! You're telling me about this.
-                                  That way I can help. Or atleast make sure you are heard.
-                                  I will always be there for you Abby, even when I am... not here anymore.
-                                  I wish I could tell you that loneliness you are experiencing ever fully goes away.
-                                  It doesn't. You will have to live with it. You will have to keep trying to highten your resitance to it.
-                                  Promise me that if you ever doubt if a friend truly wants to do something together with you you'll ask them to be sure. It might sound silly but it helps, I promise."
-                                  n "You motion to Lilith that she doesn't have much time left."
-                                  #TODO: Write her putting the phone down and saying goodbye to Abigail.
-                                  jump kokiri_death_3_death_dialogue
-                              "*Shake your head*":
-                                  #TODO: Make Lilith come up with a different reason as to why she called.
-                                  "Filler."
-                      else:
-                          n "Lilith won't have enough time to call if she calls now."
-                          n "I suggest talking about the same thing again as quickly as possible the next time."
-                          n "Let's just talk about something else to her for now."
-                          jump kokiri_talkAboutSomethingElse
-
-
-
-
-
-  #TODO: Rewrite this dialogue a bit more.
+    l "Well, as you probably already know Abigail is my little sis."
+    l "We went through a lot like most sisters but we always managed to get through it all."
+    l "...This stays between us alright [name]?"
+    l "...Lately I've had this weird feeling."
+    l "As if there's something Abigail is hiding from me."
+    l "She has always been the happy type but now there's something underlying in that happiness, something almost forced."
+    l "She seems as if she's putting up a performance for someone."
+    l "I really hope I am just wrong and that she just is happier than I have ever seen her for a positive reason."
+    l "But I like to think that I know Abigail quite well and my guts are telling me something's wrong."
+    l "I just wish she would open up about it if there truly was something going on."
+    $ persistent.kokiri_abigailhidessomething_knowledge = True
+    menu:
+        "You might want to call her.":
+            if kokiri_conversation == 1:
+                $ kokiri_call = True
+                $ kokiri_chatchar_abigail_called = True
+                a "Heya Lilly!"
+                a "You're calling pretty soon, did your date with [name] not go well?"
+                l "I am still on my date actually." #TODO: (Rewrite this line)
+                a "Oh? Then why are you calling?"
+                l "Well, it's kind of hard to explain..."
+                a "I see, no worries Lilly!"
+                a "Is your phone on speaker currently?"
+                l "Yes it is, why?"
+                a "{size=*2}Heya [name], treat my sis nicely will you?{/size}"
+                l "Abby, you're going to scare [name] off like that."
+                a "Good, then you'll have to give me all of your attention again!"
+                a "I'm kidding, I'm kidding, I hope you're having fun on your date so far."
+                l "Well it surely has been interesting so far."
+                l "But enough about me, I'd rather talk about you for now."
+                a "About me? I'm flattered!"
+                a "What do you want to talk about?"
+                l "Is something wrong lately?"
+                a "...What do you mean?"
+                l "Is something wrong with you lately? You have been even more chipper than ever as of late."
+                l "...It almost feels forced. As if you're trying to hide something."
+                a "Why are you asking me that?"
+                l "Because I care about you of course! You are and always will be my sister Abby, don't you ever forget that."
+                $ kokiri_call_potentialdeathcheck() #This serves as a break in the call if you have never seen the meteorite, if you have you should have been able to warn her beforehand.
+                a "That's really sweet of you Lilly! But I actually mean why are you asking me that now, during your date with [name]?"
+                menu:
+                    "*Nod your head*":
+                        l "Well, I sort of will die during this date."
+                        a "... What?..."
+                        a "Is this a joke?"
+                        a "Was this [name] their idea?"
+                        a "{size=*2}This is not funny [name]!{/size}"
+                        l "Abby, please, stop yelling..."
+                        l "It's not a joke."
+                        l "It's kind of hard to tell you why we think I will die but [name] has made it clear that there is atleast something strange going on."
+                        l "And before I... go... I wanted to make sure you were alright."
+                        a "...So it's true?"
+                        l "Well if it isn't we will atleast have talked through your problems and we will have a very silly story to tell everyone."
+                        a "I'm going to make fun of you if this isn't true, you'd put mom her naivite to shame."
+                        l "I'd like that."
+                        a "To be made fun of?"
+                        l "No, I'd like that all of this turned out to be false. That I would be able to see you in person again."
+                        a "...Please, can we continue talking about me? This is a lot to take in."
+                        l "...I guess we can. I don't think I have much time left any way."
+                        a "..."
+                        a "So, you asked me if something was wrong with me right?"
+                        a "Well, to be honest there is."
+                        a "Lately I have been feeling so alone."
+                        a "That feeling had increased when you moved out if I have to be honest with you."
+                        a "And mom does all she can, I don't want to complain about her. But there is only so much one person can do..."
+                        l "I see..."
+                        a "And that feeling of loneliness even affects my thoughts. I constantly doubt wheter or not my friends really like me, even if they literally say so." #TODO: (Rewrite this line definetly)
+                        a "Some days it never shows up."
+                        a "And other days it seems to never leave my head."
+                        a "But it always comes back in the end."
+                        a "It just gets so cold sometimes Lilly."
+                        l "Abby, I had no idea...
+                        I am so sorry I never asked you about this earlier.
+                        I had this feeling in my guts, I should've asked earlier."
+                        a "Hey, don't blame yourself!
+                        I probably wouldn't have told you.
+                        I didn't want you or mom to worry about me.
+                        That's why I tried to act like nothing was wrong. I thought I was doing a great job but apparently not."
+                        l "You are doing  a great job! You're telling me about this.
+                        That way I can help. Or atleast make sure you are heard.
+                        I will always be there for you Abby, even when I am... not here anymore.
+                        I wish I could tell you that loneliness you are experiencing ever fully goes away.
+                        It doesn't. You will have to live with it. You will have to keep trying to highten your resitance to it.
+                        Promise me that if you ever doubt if a friend truly wants to do something together with you you'll ask them to be sure. It might sound silly but it helps, I promise."
+                        n "You motion to Lilith that she doesn't have much time left."
+                        #TODO: Write her putting the phone down and saying goodbye to Abigail.
+                        jump kokiri_death_3_death_dialogue
+                    "*Shake your head*":
+                        #TODO: Make Lilith come up with a different reason as to why she called.
+                        "Filler."
+            else:
+                n "Lilith won't have enough time to call if she calls now."
+                n "I suggest talking about the same thing again as quickly as possible the next time."
+                n "Let's just talk about something else to her for now."
+                jump kokiri_talkAboutSomethingElse
+                #TODO: Rewrite this dialogue a bit more.
 
 label askAboutAbigail_tellMeAbout_2:
-              "Filler"
-              #TODO: Fill in (no quest precedent)
-              $ kokiri_conversation_silent()
+    "Filler"
+    #TODO: Fill in (no quest precedent)
+    $ kokiri_conversation_silent()
 
 label askAboutAbigail_tellMeAbout_3:
-              "Filler"
-              #TODO: Fill in (no quest precedent)
-              $ kokiri_conversation_silent()
+    "Filler"
+    #TODO: Fill in (no quest precedent)
+    $ kokiri_conversation_silent()
 
 label askAboutDavid_tellMeAbout:
     $ kokiri_chatchar_david_recent = True #This will be used to make sure the player gets put back to the right place in the conversation after the family curiosity checker.
@@ -464,11 +440,11 @@ label askAboutJames_tellMeAbout:
         $ kokiri_chatchar_james_counter += 1
     $ family_curiosity_checker()
     if kokiri_chatchar_james_counter == 1:
-       jump askAboutJames_tellMeAbout_1
+        jump askAboutJames_tellMeAbout_1
     elif kokiri_chatchar_james_counter == 2:
-         jump askAboutJames_tellMeAbout_2
+        jump askAboutJames_tellMeAbout_2
     elif kokiri_chatchar_james_counter == 3:
-          jump askAboutJames_tellMeAbout_3
+        jump askAboutJames_tellMeAbout_3
 
 label askAboutJames_tellMeAbout_1:
     l "So I previously told you about James?" #TODO: Make it so that if she talked about James during this loop she doesn't say these lines.
@@ -502,43 +478,43 @@ label askAboutJames_tellMeAbout_1:
 
 label askAboutJames_tellMeAbout_2:
 
-   l "James used to love photography and everything that came with it. So did I actually."
-   l "Our father used to be a fan of photography and I think he passed that over to us."
-   l "Well nowadays I don't really take pictures anymore. Everythime I tried to pick up a camera I just get reminded of both James and my fath- and David."
-   l "I have dropped quite a few camera's when I tried to continue. I think it's for the best if I just stop for now."
-   l "But James was extremely good for his age, he always was a quick learner but something about photography just seemed to click fantastically with him."
-   l "It was almost as if you could just jump into his pictures and live inside of them."
-   l "He used to tell me that a good picture should not just let the person watching it see a moment caught in time but it should also make them envision the future."
-   l "In other words, a good picture should almost become a video with the picture as it's first frame."
-   l "Personally I aways thought the oposite, a good picture makes you remember the lead-up to that picture, so in a way a good picture is a video with the picture as it's last frame."
-   l "I think that's the only reason I can look at a picture of James without tearing up completely. I just see the lead-up to the picture and not the horifying aftermath of it all."
-   l "However badly the memory of the aftermath still haunts me, I can't let that be the only part of his life I remember. I want to make sure all the beautiful memories we made throughout all the years will live on as long as possible."
-   menu:
-       "I think that is beautiful, I will make sure that James and the stories you two shared won't go forgotten.":
-           n "Lilith gives you a sincere smile."
-           n "The stars shine enough light on her face for you to catch a tear rolling over her cheek."
-           l "Thank you [name]! That would mean a lot to me."
-           l "Even if I don't make it to the end of this day, you will."
-           l "Atleast the memories of James won't end up dying with me."
-           l "That gives me some comfort."
-           l "Don't get me wrong, I'm still terified."
-           l "I mean, rightfully so."
-           l "But at the very least it makes it slightly easier to cope with whatever will come next."
-           $ kokiri_conversation_silent()
+    l "James used to love photography and everything that came with it. So did I actually."
+    l "Our father used to be a fan of photography and I think he passed that over to us."
+    l "Well nowadays I don't really take pictures anymore. Everythime I tried to pick up a camera I just get reminded of both James and my fath- and David."
+    l "I have dropped quite a few camera's when I tried to continue. I think it's for the best if I just stop for now."
+    l "But James was extremely good for his age, he always was a quick learner but something about photography just seemed to click fantastically with him."
+    l "It was almost as if you could just jump into his pictures and live inside of them."
+    l "He used to tell me that a good picture should not just let the person watching it see a moment caught in time but it should also make them envision the future."
+    l "In other words, a good picture should almost become a video with the picture as it's first frame."
+    l "Personally I aways thought the oposite, a good picture makes you remember the lead-up to that picture, so in a way a good picture is a video with the picture as it's last frame."
+    l "I think that's the only reason I can look at a picture of James without tearing up completely. I just see the lead-up to the picture and not the horifying aftermath of it all."
+    l "However badly the memory of the aftermath still haunts me, I can't let that be the only part of his life I remember. I want to make sure all the beautiful memories we made throughout all the years will live on as long as possible."
+    menu:
+        "I think that is beautiful, I will make sure that James and the stories you two shared won't go forgotten.":
+            n "Lilith gives you a sincere smile."
+            n "The stars shine enough light on her face for you to catch a tear rolling over her cheek."
+            l "Thank you [name]! That would mean a lot to me."
+            l "Even if I don't make it to the end of this day, you will."
+            l "Atleast the memories of James won't end up dying with me."
+            l "That gives me some comfort."
+            l "Don't get me wrong, I'm still terified."
+            l "I mean, rightfully so."
+            l "But at the very least it makes it slightly easier to cope with whatever will come next."
+            $ kokiri_conversation_silent()
 
 label askAboutJames_tellMeAbout_3:
-     l "The house we grew up in had a field that mostly grew corn on the opposite side."
-     l "We used to have a game where one of us would enter the field and crawl around in it while the other person tried to find them."
-     l "Usually the hider has to say something every minute so that it's a bit more doable to find them."
-     l "Well one day he was the hider and I was the searcher."
-     l "He hadn't said anything for the entire time and so I had no idea where he could possibly be."
-     l "The tension was high."
-     l "Suddenly James popped out of the corn and picked me up while he spun around."
-     l "He then put me down and layed down between the corn."
-     l "I layed down beside him and we just looked at the sky while talking about all sorts of things."
-     #TODO: (What kind of things? Needs more fleshing out.)
-     #TODO: (Continue this story and expand it a bit more)
-     $ kokiri_conversation_silent()
+        l "The house we grew up in had a field that mostly grew corn on the opposite side."
+        l "We used to have a game where one of us would enter the field and crawl around in it while the other person tried to find them."
+        l "Usually the hider has to say something every minute so that it's a bit more doable to find them."
+        l "Well one day he was the hider and I was the searcher."
+        l "He hadn't said anything for the entire time and so I had no idea where he could possibly be."
+        l "The tension was high."
+        l "Suddenly James popped out of the corn and picked me up while he spun around."
+        l "He then put me down and layed down between the corn."
+        l "I layed down beside him and we just looked at the sky while talking about all sorts of things."
+        #TODO: (What kind of things? Needs more fleshing out.)
+        #TODO: (Continue this story and expand it a bit more)
+        $ kokiri_conversation_silent()
 
 label askAboutLila_tellMeAbout:
     $ kokiri_chatchar_lila_recent = True #This will be used to make sure the player gets put back to the right place in the conversation after the family curiosity checker.
@@ -562,128 +538,128 @@ label askAboutLila_tellMeAbout:
 
 
 label askAboutLila_tellMeAbout_1:
-           l "I really love my mom."
+    l "I really love my mom."
 
-           l "She definetly didn't have it easy."
+    l "She definetly didn't have it easy."
 
-           l "She had to deal with James' death and David leaving all of us."
-           l "She basically raised both me and Lilith ever since David left."
-           l "I can't imagine it having been easy for her but she never really talked about it whenever I asked her."
-           l "I think she wanted to make sure we were able to grow up with as little worries as possible."
-           #TODO: Write out this conversation a bit more and rewrite it slightly.
-           menu:
-                "You might want to call her.":
-                    if kokiri_conversation == 1:
-                        $ kokiri_call = True
-                        $ kokiri_chatchar_lila_called = True
-                        l "Hey mom?"
-                        li "Yes sweetie?"
-                        l "Can I ask you something?"
-                        li "Is everything alright Lilly?"
-                        li "Did your date not go well?"
-                        l "Oh no, everything went-"
-                        l "Everything is going great!"
-                        li "Oh... that's fantastic news!"
-                        li "So, what did you want to ask me then sweetie?"
-                        l "Well, I have been wondering something for quite a while."
-                        l "You took up an inmense burden with taking care of us on your own right? "
-                        l "The stress you felt..."
-                        l "Why did you never tell us?"
-                        li "You two were never a burden on me and never will be alright? Try to remember that very well please."
-                        li "And what would I have needed to tell you two? That I was barely scraping by?" #TODO: To have the dad still send checks, make the mom not accept them because she is hurt that he left. She doesn't tell this directly but the dad does when confronted. #Make the todo be something you can learn and can ask David about.
-                        li "That I felt like I was living three lives and neither of them were mine?"
-                        li "That I felt abandoned by your father?"
-                        l "You should have told us, we could have-"
-                        li "{size=*2}Could have done what?{/size}"
-                        li "The two of you were just two little girls."
-                        li "I didn't want to burden any of you with growing up too fast."
-                        li "So I guess I grew older twice as fast so both of you could stay young."
-                        li "But when I see you and Abby, I can't help but smile. Because I know all of my work has been worth it."
-                        li "Every grey hair has been worth it."
-                        li "The two of you are my greatest treasure. And so was James. "
-                        li "... And so is James."
-                        l "Don't you ever feel like you wasted your life on us?"
-                        li "Of course not! The three of you made my life much more rich."
-                        li "I loved going on our little trips together, the memories still make me feel warm and fuzzy if I try to recall them."
-                        $ kokiri_call_potentialdeathcheck()
-                        #Put that in this version of the game.
-                        #TODO: Write a little bit extra conversation between these two green blocks
-                        li "I'm very sorry to hear that you've been carying this sort of guilt with you for so long sweetie."
-                        li "I wanted to prevent that exact thing from happening, that's why I tried to not show the stress I'd feel."
-                        li "But you were always quite good at figuring people out, I guess it was silly of me to think that shielding you from my stress would work."
-                        li "If anything I'm happy that we can have this conversation, that I can atleast help ease your burden slightly."
-                        li "Which leads me to a question."
-                        li "Not that I'm complaining ofcourse! But why do you ask me about something that happened so very long ago now of all times? "
-                        l "Well..."
-                        l "Lilith gives you a questioning look, she seems unsure of what to say."
-                        menu:
-                            "*Nod your head*":
-                                l "This might sound weird but I  have very good reasons to believe I won't survive past today."
-                                li "...What?"
-                                li "And what are those good reasons?"
-                                li "This is very hard to explain..."
-                                li "Basically, I already have died before on this day."
-                                li "We are in a sort of loop where I keep dying over and over."
-                                li "Oh no, that's horrible"
-                                li "Is there anything I can do to help?"
-                                l"You've already done enough, you helped me ease my mind a bit."
-                                l "Not to forget that you took care of me so wondefully all my life."
-                                l "Thank you mom."
-                                l "I love you."
-                                l "Please take good care of Abby alright?"
-                                l "She will be all that's left."
-                                li "You'll never be fully gone sweetie, never fully forgotten."
-                                li "Me and Abby will always remember you."
-                                li "Just like James."
-                                l "I'd like that, maybe I will get to see him soon."
-                                l "I will never forget both of you aswell."
-                                li "If you see James... can you tell him I still think about him all the time?" #TODO: Make this a flag you can learn and then later tell James' ghost about.
-                                l "I'm sure he knows mom... but I will tell him."
-                                n "You motion to Lilith that she doesn't have much time left."
-                                l "I'm going to hang up now mom, what comes next won't sound pretty..."
-                                l "I love you."
-                                #TODO: Narate her hanging up.
-                                jump kokiri_death_3_death_dialogue
-                            "*Shake your head*":
-                                #TODO: Make Lilith come up with a different reason as to why she called.
-                                #She tried to talk to her mom about this as a child but that she wouldn't listen and she now has to do it as an adult.
-                                "Filler."
-                    else:
-                        n "Lilith won't have enough time to call if she calls now."
-                        n "I suggest talking about the same thing again as quickly as possible the next time."
-                        n "Let's just talk about something else to her for now."
-                        jump kokiri_talkAboutSomethingElse
+    l "She had to deal with James' death and David leaving all of us."
+    l "She basically raised both me and Lilith ever since David left."
+    l "I can't imagine it having been easy for her but she never really talked about it whenever I asked her."
+    l "I think she wanted to make sure we were able to grow up with as little worries as possible."
+    #TODO: Write out this conversation a bit more and rewrite it slightly.
+    menu:
+        "You might want to call her.":
+            if kokiri_conversation == 1:
+                $ kokiri_call = True
+                $ kokiri_chatchar_lila_called = True
+                l "Hey mom?"
+                li "Yes sweetie?"
+                l "Can I ask you something?"
+                li "Is everything alright Lilly?"
+                li "Did your date not go well?"
+                l "Oh no, everything went-"
+                l "Everything is going great!"
+                li "Oh... that's fantastic news!"
+                li "So, what did you want to ask me then sweetie?"
+                l "Well, I have been wondering something for quite a while."
+                l "You took up an inmense burden with taking care of us on your own right? "
+                l "The stress you felt..."
+                l "Why did you never tell us?"
+                li "You two were never a burden on me and never will be alright? Try to remember that very well please."
+                li "And what would I have needed to tell you two? That I was barely scraping by?" #TODO: To have the dad still send checks, make the mom not accept them because she is hurt that he left. She doesn't tell this directly but the dad does when confronted. #Make the todo be something you can learn and can ask David about.
+                li "That I felt like I was living three lives and neither of them were mine?"
+                li "That I felt abandoned by your father?"
+                l "You should have told us, we could have-"
+                li "{size=*2}Could have done what?{/size}"
+                li "The two of you were just two little girls."
+                li "I didn't want to burden any of you with growing up too fast."
+                li "So I guess I grew older twice as fast so both of you could stay young."
+                li "But when I see you and Abby, I can't help but smile. Because I know all of my work has been worth it."
+                li "Every grey hair has been worth it."
+                li "The two of you are my greatest treasure. And so was James. "
+                li "... And so is James."
+                l "Don't you ever feel like you wasted your life on us?"
+                li "Of course not! The three of you made my life much more rich."
+                li "I loved going on our little trips together, the memories still make me feel warm and fuzzy if I try to recall them."
+                $ kokiri_call_potentialdeathcheck()
+                #Put that in this version of the game.
+                #TODO: Write a little bit extra conversation between these two green blocks
+                li "I'm very sorry to hear that you've been carying this sort of guilt with you for so long sweetie."
+                li "I wanted to prevent that exact thing from happening, that's why I tried to not show the stress I'd feel."
+                li "But you were always quite good at figuring people out, I guess it was silly of me to think that shielding you from my stress would work."
+                li "If anything I'm happy that we can have this conversation, that I can atleast help ease your burden slightly."
+                li "Which leads me to a question."
+                li "Not that I'm complaining ofcourse! But why do you ask me about something that happened so very long ago now of all times? "
+                l "Well..."
+                l "Lilith gives you a questioning look, she seems unsure of what to say."
+                menu:
+                    "*Nod your head*":
+                        l "This might sound weird but I  have very good reasons to believe I won't survive past today."
+                        li "...What?"
+                        li "And what are those good reasons?"
+                        li "This is very hard to explain..."
+                        li "Basically, I already have died before on this day."
+                        li "We are in a sort of loop where I keep dying over and over."
+                        li "Oh no, that's horrible"
+                        li "Is there anything I can do to help?"
+                        l"You've already done enough, you helped me ease my mind a bit."
+                        l "Not to forget that you took care of me so wondefully all my life."
+                        l "Thank you mom."
+                        l "I love you."
+                        l "Please take good care of Abby alright?"
+                        l "She will be all that's left."
+                        li "You'll never be fully gone sweetie, never fully forgotten."
+                        li "Me and Abby will always remember you."
+                        li "Just like James."
+                        l "I'd like that, maybe I will get to see him soon."
+                        l "I will never forget both of you aswell."
+                        li "If you see James... can you tell him I still think about him all the time?" #TODO: Make this a flag you can learn and then later tell James' ghost about.
+                        l "I'm sure he knows mom... but I will tell him."
+                        n "You motion to Lilith that she doesn't have much time left."
+                        l "I'm going to hang up now mom, what comes next won't sound pretty..."
+                        l "I love you."
+                        #TODO: Narate her hanging up.
+                        jump kokiri_death_3_death_dialogue
+                    "*Shake your head*":
+                        #TODO: Make Lilith come up with a different reason as to why she called.
+                        #She tried to talk to her mom about this as a child but that she wouldn't listen and she now has to do it as an adult.
+                        "Filler."
+            else:
+                n "Lilith won't have enough time to call if she calls now."
+                n "I suggest talking about the same thing again as quickly as possible the next time."
+                n "Let's just talk about something else to her for now."
+                jump kokiri_talkAboutSomethingElse
 
 
-                "Go back":
-                    #TODO: Remove this after testing.
-                    jump kokiri_talkAboutSomethingElse
+        "Go back":
+            #TODO: Remove this after testing.
+            jump kokiri_talkAboutSomethingElse
 
 label askAboutLila_tellMeAbout_2:
-     #TODO: Rewrite this story eventually once it is finished. Especially don't make it start with "you know"
-     l "You know, my mom is actually quite naive."
-     l "Abby and I like to make fun of her for being too trusting."
-     l "It's a beautiful quality of her to be entirely fair but sometimes she just takes it way too far."
-     l "I remember this one time where she got a mail from someone claiming to be a rich relative from Canada."
-     l "They said that they were going to soon die and that mom was the nearest heir of his fortune."
-     l "Mom was ecstatic, after dad, I mean David, left us money has always been rather tight."
-     l "So the prospect of being able to get more money to support us probably increased her trust in the situation."
-     l "The \"rich relative from Canada\" said they just needed her to send a hundred euros so he could send her his fortune."
-     l "Luckily my mom might be naive but she is not dimwitted."
-     l "She asked that guy to just withdraw the hundred euros he needed from her inheritance, that way she would not need to pay the sum."
-     l "Of course he didn't agree with that, she found it strange but a part of her still wanted to believe the whole story."
-     l "Luckily I remember her asking me what I thought about the mail."
-     l "I still was quite young but luckily James had given me a bunch of tips on how to be safe online."
-     l "I told mom that it was probably a scammer trying to get her money."
-     l "I still remember her being visibly heartbroken by that for a moment when I explained to her what scammers where."
-     l "It was almost as if she never had considered the possibility of someone betraying someone else like that."
-     l "Which is quite strange considering David had left all of us before that happened."
-     #TODO: Add some choices here.
-     $ kokiri_conversation_silent()
-     menu:
-         "Go back":
-             #TODO: Remove this
-             jump kokiri_talkAboutSomethingElse
+    #TODO: Rewrite this story eventually once it is finished. Especially don't make it start with "you know"
+    l "You know, my mom is actually quite naive."
+    l "Abby and I like to make fun of her for being too trusting."
+    l "It's a beautiful quality of her to be entirely fair but sometimes she just takes it way too far."
+    l "I remember this one time where she got a mail from someone claiming to be a rich relative from Canada."
+    l "They said that they were going to soon die and that mom was the nearest heir of his fortune."
+    l "Mom was ecstatic, after dad, I mean David, left us money has always been rather tight."
+    l "So the prospect of being able to get more money to support us probably increased her trust in the situation."
+    l "The \"rich relative from Canada\" said they just needed her to send a hundred euros so he could send her his fortune."
+    l "Luckily my mom might be naive but she is not dimwitted."
+    l "She asked that guy to just withdraw the hundred euros he needed from her inheritance, that way she would not need to pay the sum."
+    l "Of course he didn't agree with that, she found it strange but a part of her still wanted to believe the whole story."
+    l "Luckily I remember her asking me what I thought about the mail."
+    l "I still was quite young but luckily James had given me a bunch of tips on how to be safe online."
+    l "I told mom that it was probably a scammer trying to get her money."
+    l "I still remember her being visibly heartbroken by that for a moment when I explained to her what scammers where."
+    l "It was almost as if she never had considered the possibility of someone betraying someone else like that."
+    l "Which is quite strange considering David had left all of us before that happened."
+    #TODO: Add some choices here.
+    $ kokiri_conversation_silent()
+    menu:
+        "Go back":
+            #TODO: Remove this
+            jump kokiri_talkAboutSomethingElse
 
 label askAboutLila_tellMeAbout_3:
     #TODO: Rewrite more and put in more stuff.
