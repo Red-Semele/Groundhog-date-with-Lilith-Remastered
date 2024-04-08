@@ -1244,7 +1244,7 @@ label proof_convincePast:
      l "That's the end of this part of the story, like I said you are the only person I've ever told this to so I hope you'll make good use out of it."
      menu:
           "I sure will! ":
-                jump restaurant_death_2
+               jump restaurant_death_2
 
 
 
@@ -1509,418 +1509,416 @@ label psychic_dateToSave:
                jump psychic_dateToSave_youWouldNotBelieveMe
 
 label psychic_dateToSave_youWouldNotBelieveMe:
-    l "Hmm, you made a fair point there, even if I would have believed you I don't think I would have actually been able to remember it when I needed that knowledge."
-    l "It still sounds like there were better, less convoluted ways to keep me from dying but I'm still really thankfull that you saved my life."
-    l "We actually cheated death itself, take that death!"
-    menu:
-         "I think it may not be really wise to tease death itself. ":
-             jump youwouldntbelieveme_doNotteaseDeath
-
-         "Take that death, we've won, woohoo!":
-             jump youwouldntbelieveme_teaseDeath
-
-
+     l "Hmm, you made a fair point there, even if I would have believed you I don't think I would have actually been able to remember it when I needed that knowledge."
+     l "It still sounds like there were better, less convoluted ways to keep me from dying but I'm still really thankfull that you saved my life."
+     l "We actually cheated death itself, take that death!"
+     menu:
+          "I think it may not be really wise to tease death itself. ":
+               jump youwouldntbelieveme_doNotteaseDeath
+ 
+          "Take that death, we've won, woohoo!":
+               jump youwouldntbelieveme_teaseDeath
 
 
-         "Actually you are still going to die if we keep sitting here, this time it'll be a gas explosion." if burger and burger_death_2:
-             jump explanation_stillDying
-         "Actually you're still going to die if we keep sitting here, this time by an army of angry geese." if chinese and chinese_death_2:
-             jump explanation_stillDying
-         "Actually you are still going to drown, this time by drowning." if cafe and cafe_death_2:
-             jump explanation_stillDying
+
+
+          "Actually you are still going to die if we keep sitting here, this time it'll be a gas explosion." if burger and burger_death_2:
+               jump explanation_stillDying
+          "Actually you're still going to die if we keep sitting here, this time by an army of angry geese." if chinese and chinese_death_2:
+               jump explanation_stillDying
+          "Actually you are still going to drown, this time by drowning." if cafe and cafe_death_2:
+               jump explanation_stillDying
 
 label youwouldntbelieveme_doNotteaseDeath:
-    l "Common, let's celibrate. We just escaped death!
-    Don't be so worried, what's the worst thing that could happen?"
-
-    menu:
-        "Yeah, you're probably right... Wait, why did you say that? Now we are going to die for sure.":
-            jump restaurant_death_2
+     l "Common, let's celibrate. We just escaped death!
+     Don't be so worried, what's the worst thing that could happen?"
+ 
+     menu:
+          "Yeah, you're probably right... Wait, why did you say that? Now we are going to die for sure.":
+               jump restaurant_death_2
 
 label youwouldntbelieveme_teaseDeath:
-    n "Lilith and you high five eachother, you've won. Congratulatons!"
-    #TODO:Make the narrator say something like "It seems you didn't win just quite, maybe something else will work?" the first time and the second time, when you know about the death he will say "Is what I would say if either of us thought that was the truth."
-    jump restaurant_death_2
+     n "Lilith and you high five eachother, you've won. Congratulatons!"
+     #TODO:Make the narrator say something like "It seems you didn't win just quite, maybe something else will work?" the first time and the second time, when you know about the death he will say "Is what I would say if either of us thought that was the truth."
+     jump restaurant_death_2
 
 label psychic_justHelpingOut:
-    l "Wow, that's quite the story. Luckily you somehow felt that because otherwise I'd be dead!"
-    l "So am I in the clear now?"
-    menu:
-         "Yup, you are completly safe now!":
-             jump psychic_justHelpingOut_totallySafe
+     l "Wow, that's quite the story. Luckily you somehow felt that because otherwise I'd be dead!"
+     l "So am I in the clear now?"
+     menu:
+          "Yup, you are completly safe now!":
+               jump psychic_justHelpingOut_totallySafe
 
 label psychic_justHelpingOut_totallySafe:
-n "Lilith gives you a thumbs up and plays a few notes on an air gitar."
-l "We actually did it, that's awesome!"
-n "Lilith opens her arms and motions to you with her head."
-l "Come and give me a hug [name]"
-#TODO:Make the narrator mention if you hug here in the cafe that she got her wanted hug finally.
-jump restaurant_death_2
+     n "Lilith gives you a thumbs up and plays a few notes on an air gitar."
+     l "We actually did it, that's awesome!"
+     n "Lilith opens her arms and motions to you with her head."
+     l "Come and give me a hug [name]"
+     #TODO:Make the narrator mention if you hug here in the cafe that she got her wanted hug finally.
+     jump restaurant_death_2
 
 
 label prevented_psychic:
-    $ psychic = True
-    if burger == True:
-        l "So what you are saying is that you knew I was going to get shot because you're psychic?"
-        l "I mean, I'm thankful for you saving my life and all but you got to admit that sounds kind of far fetched."
-        l "Do you have any proof to maybe show you're a psychic?"
-    if cafe == True:
-        l "So what you are saying is that you knew I was allergic to something in this dish because you are psychic?"
-        l "Well unless you got any proof I'm not even sure if I'm really allergic to that Peking duck in the first place so you got to admit that this sounds very weird."
-    if chinese == True:
-        l "So what you are saying is that you knew I was going to be skewered by a marlin because you are psychic?"
-        l "I mean, I'm thankful for you saving my life and all but you got to admit that sounds kind of far fetched."
-        l "Do you have any proof to maybe show you're a psychic?"
-
-    menu:
-        "I've got no clue what to tell you honestly":
-            jump prevented_noProof
-
-        "Alright, pick a word, doesn't matter wich one but make it a hard one to guess.":
-            jump prevented_proof
+     $ psychic = True
+     if burger == True:
+          l "So what you are saying is that you knew I was going to get shot because you're psychic?"
+          l "I mean, I'm thankful for you saving my life and all but you got to admit that sounds kind of far fetched."
+          l "Do you have any proof to maybe show you're a psychic?"
+     if cafe == True:
+          l "So what you are saying is that you knew I was allergic to something in this dish because you are psychic?"
+          l "Well unless you got any proof I'm not even sure if I'm really allergic to that Peking duck in the first place so you got to admit that this sounds very weird."
+     if chinese == True:
+          l "So what you are saying is that you knew I was going to be skewered by a marlin because you are psychic?"
+          l "I mean, I'm thankful for you saving my life and all but you got to admit that sounds kind of far fetched."
+          l "Do you have any proof to maybe show you're a psychic?"
+ 
+     menu:
+          "I've got no clue what to tell you honestly":
+               jump prevented_noProof
+ 
+          "Alright, pick a word, doesn't matter wich one but make it a hard one to guess.":
+               jump prevented_proof 
 
 label prevented_silent:
-    "Filler, make her weirded out by your silence."
-    #TODO: Do just that, make her freak out by your silence and leave.
-    jump car_death
+     "Filler, make her weirded out by your silence."
+     #TODO: Do just that, make her freak out by your silence and leave.
+     jump car_death
 
 label explanation_noTimeToExplain:
-    #TODO add all the other ones, so burger, cafe, and chinese carcaught untrue ("no time to explain" in Quest version)
-    if chinese == True:
-        if car_caught == True:
-
-            #TODO: Make all the retries manual and if you come back after the first time it just skips you straight to the end while describing how you beat all the obstacles.
-            n "You run through the exit of the restaurant and brace yourself for the impact of a speeding car." #TODO: Only do this if you have not already seen that the car didn't show up once.
-            n "Nothing happens, the police indeed managed to take care of the drunk driver."
-            n "Lilith and you continue to run as if death itself is chasing you."
-            n "Lilith is still very confused but she can feel the fear that is running through your body and she fears whatever made you so scared to begin with."
-            n "As you are running along the side of an empty street you suddenly hear the screeching of wheels and loud laughter."
-            n "As you look behind you you see a bus full with elderly people coming straight towards you and her, you manage to jump away from it just as it would've hit you but Lilith ofcourse doesn't."
-            n "You know what you have to do, you've come too far to just give up now."
-            n "You retry."
-            n"This time you manage to push Lilith away just as she would get hit by the bus, you both make it out alive and well."
-            n "When she gets back up you both continue running, as if you were trying to escape fate."
-            n "Just moments after the first death you prevented you can see a truck coming towards you at full speed, Lilith doesn't make it once again."
-            n "You curse at the skies, trying to reach the one responsible for Lilith's countless deaths himself."
-            n "You retry."
-            n "This time Lilith makes it out alive, you've done these things so many times it almost just seems like you're back in an instant, time is blending together."
-            n "Lilith and you continue running untill you hear the sound of thunder, lightening strikes closer to Abigail then you like but she seems to escape unharmed."
-            n "That's when you notice oil leaking from the crashed truck, it's set ablaze by the lightening."
-            n "The fire tries to consume her, the hungry flames don't let off until she is beyond saving."
-            n "You retry once again."
-            n "You lead Lilith to a diverging street where the oil and the truck shouldn't be a problem."
-            n "As Lilith and you are running once again you can feel a terrible trembling coming from the ground."
-            n "It feels like an earthquake but it's far stronger that any earthquake you've ever gone through." #TODO: Make an allusion to the ufo coming out of kokiri woods making the same kind of feeling.
-            n "It also doesn't last as long as the earthquakes usually do, you feel thankful when the earth stops trembling and Lilith is still left unharmed."
-            n "However, you thought she was safe too soon and a safety hazard of a building that shouldn't have  been built in the first place collapses in on her."
-            n "Retry. Retry. Retry."
-            n "This time Lilith and you make it to your car which was parked a few streets away from the restaurant, you decided that it would be the best plan to just get away from this village as fast as you can."
-            n "As you are driving away from the village you finally arrive at a bigger city, maybe you and Lilith will be safe here?"
-            n "You look at Lilith for a moment, just hoping that death will have mercy on her."
-            n "Suddenly you hear a cacophony of animal sounds, as you look in the side mirrors of your car you can see a swarm of animals running towards your direction."
-            n "You try to go as fast as you can but then you realize something."
-            n "You forgot to fill up your car, just as you realize that it abruptly stops, you try to persuade the car into going a tad further but your efforts are futile."
-            n "The animals run on top of your car, now this isn't a problem except that there were also elephants among those animals."
-            n "Sigh, retry."
-            n "Now you've made sure to gas up your car for the inevitable chase scene, as you are driving away as fast as you can from the animals, more buildings start to collapse, now even the sturdier looking ones are doing so."
-            n "These scenarios are becoming more and more unjustified, you shake your head and try to focus on getting Lilith alive and well out of this mess."
-            l "Listen, I really don't think we are safe here. Even if we make it out of this city, where are we going to go then?"
-            l "It's not like we can just leave this planet so death will always follow me."
-            l "Lilith has given you the greatest idea, you give her a kiss on the lips and tell her she is genious."
-            l "Oh I wouldn't know about that. But how are we supposed to get in space?" #TODO: (Rewrite this line)
-            l "You stop the car for a moment, waiting for death to cath up with both of you, and it sure does so fast." #TODO: Maybe make this line a bit different.
-            n "Retry, this could be it!"
-            n "This time you don't leave the village, instead you remember the ufo that is hidden in Kokiri forest. Maybe you could use it to escape."
-            n "Eventually you find it, you and Lilith climb inside it."
-            n "However, an onslaught of buttons, levers and contraptions you can't identify await you."
-            n "I'll retry untill I get it right!"
-            n "After about a hundred or so attempts you manage to take of with the spaceship without plummeting to your death instantly."
-            n "As you and Lilith take of into space you can see the sun absorbing the earth, you know that that should've happened like a million or so years later but it happened now. These deaths are really getting out of hand aren't they?"
-            n "Suddenly you are hit by a speeding ufo, yes, they also have drunk drivers in space, deal with it."
-            n "Retry. Retry. Retry and retry once again."
-            n "Everything starts to blend together even more, sometimes you're not even sure if you are actually progressing in the story or not."
-            n "Death by colliding stars."
-            n "Retry."
-            n "Death by a storm of asteroïds."
-            n "Retry."
-            n "Death by crashlanding on a planet."
-            n "Retry."
-            n "The universe grows calm for a moment, it seems like you got through the constant barrage of deaths." #These three lines only trigger in the quest version if "Starttalk" is not set, I'm not sure what that is anymore.
-            n "You set the ship on auto-pilot and move away from the controls."
-            n "Lilith is standing there, she seems to be quite scared but is taking it pretty well all things considered."
-            menu:
-                "*Talk with Lilith*":
-                    #TODO: Add some extra choices here? Not too much though!
-                    l "What just happened [name]?  What is this all about?" #TODO: Rewrite the "What is this all about?" part because it is kind of weird to say something so anti-cimactic
-                    menu:
-                        "So basically you are in a game and I need to keep you from dying.":
-                            #TODO: Rewrite this choice.
-                            l "The speed with which you said that..."
-                            l "I assume we've had conversations like this a few times?"
-                            n "You nod your head."
-                            l "Where did we go over those many times you lived through [name]?" #TODO: Change this into her asking if you went to all of the three restaurants and then you can say that you also went to the kokiri woods and to the beach.
-                            menu:
-                                "Let's see, we went to all three of the restaurants you suggested so the burger restaurant, the cafe and the Chinese restaurant. Then we went to the Kokiri woods and we also visited the beach.":
-                                    #TODO: Change this line to better fit the question that also will be changed.
-                                    #TODO: Also make her question the fact that you went to the Kokiri forest.
-                                    l "Sounds like we did quite a lot on our first date."
-                                    n "Lilith laughs."
-                                    l "It's a shame I don't remember anything of it though..."
-                                    l "What was your favourite first date?"
-                                    menu:
-                                        "My favourite part was the beach.":
-                                            $ favouriteFirstDate = "beach"
-                                            jump ufo_talk_favouriteFirstDate
-
-                                        "My favourite part was the burger restaurant.":
-                                            $ favouriteFirstDate = "burger"
-                                            jump ufo_talk_favouriteFirstDate
-
-                                        "My favourite part was the cafe.":
-                                            $ favouriteFirstDate = "cafe"
-                                            jump ufo_talk_favouriteFirstDate
-
-                                        "My favourite part was the Chinese restaurant.":
-                                            $ favouriteFirstDate = "chinese"
-                                            jump ufo_talk_favouriteFirstDate
-
-                                        "My favourite part was the Kokiri forest.":
-                                            $ favouriteFirstDate = "kokiri"
-                                            jump ufo_talk_favouriteFirstDate
-
+     #TODO add all the other ones, so burger, cafe, and chinese carcaught untrue ("no time to explain" in Quest version)
+     if chinese == True:
+          if car_caught == True:
+  
+               #TODO: Make all the retries manual and if you come back after the first time it just skips you straight to the end while describing how you beat all the obstacles.
+               n "You run through the exit of the restaurant and brace yourself for the impact of a speeding car." #TODO: Only do this if you have not already seen that the car didn't show up once.
+               n "Nothing happens, the police indeed managed to take care of the drunk driver."
+               n "Lilith and you continue to run as if death itself is chasing you."
+               n "Lilith is still very confused but she can feel the fear that is running through your body and she fears whatever made you so scared to begin with."
+               n "As you are running along the side of an empty street you suddenly hear the screeching of wheels and loud laughter."
+               n "As you look behind you you see a bus full with elderly people coming straight towards you and her, you manage to jump away from it just as it would've hit you but Lilith ofcourse doesn't."
+               n "You know what you have to do, you've come too far to just give up now."
+               n "You retry."
+               n"This time you manage to push Lilith away just as she would get hit by the bus, you both make it out alive and well."
+               n "When she gets back up you both continue running, as if you were trying to escape fate."
+               n "Just moments after the first death you prevented you can see a truck coming towards you at full speed, Lilith doesn't make it once again."
+               n "You curse at the skies, trying to reach the one responsible for Lilith's countless deaths himself."
+               n "You retry."
+               n "This time Lilith makes it out alive, you've done these things so many times it almost just seems like you're back in an instant, time is blending together."
+               n "Lilith and you continue running untill you hear the sound of thunder, lightening strikes closer to Abigail then you like but she seems to escape unharmed."
+               n "That's when you notice oil leaking from the crashed truck, it's set ablaze by the lightening."
+               n "The fire tries to consume her, the hungry flames don't let off until she is beyond saving."
+               n "You retry once again."
+               n "You lead Lilith to a diverging street where the oil and the truck shouldn't be a problem."
+               n "As Lilith and you are running once again you can feel a terrible trembling coming from the ground."
+               n "It feels like an earthquake but it's far stronger that any earthquake you've ever gone through." #TODO: Make an allusion to the ufo coming out of kokiri woods making the same kind of feeling.
+               n "It also doesn't last as long as the earthquakes usually do, you feel thankful when the earth stops trembling and Lilith is still left unharmed."
+               n "However, you thought she was safe too soon and a safety hazard of a building that shouldn't have  been built in the first place collapses in on her."
+               n "Retry. Retry. Retry."
+               n "This time Lilith and you make it to your car which was parked a few streets away from the restaurant, you decided that it would be the best plan to just get away from this village as fast as you can."
+               n "As you are driving away from the village you finally arrive at a bigger city, maybe you and Lilith will be safe here?"
+               n "You look at Lilith for a moment, just hoping that death will have mercy on her."
+               n "Suddenly you hear a cacophony of animal sounds, as you look in the side mirrors of your car you can see a swarm of animals running towards your direction."
+               n "You try to go as fast as you can but then you realize something."
+               n "You forgot to fill up your car, just as you realize that it abruptly stops, you try to persuade the car into going a tad further but your efforts are futile."
+               n "The animals run on top of your car, now this isn't a problem except that there were also elephants among those animals."
+               n "Sigh, retry."
+               n "Now you've made sure to gas up your car for the inevitable chase scene, as you are driving away as fast as you can from the animals, more buildings start to collapse, now even the sturdier looking ones are doing so."
+               n "These scenarios are becoming more and more unjustified, you shake your head and try to focus on getting Lilith alive and well out of this mess."
+               l "Listen, I really don't think we are safe here. Even if we make it out of this city, where are we going to go then?"
+               l "It's not like we can just leave this planet so death will always follow me."
+               l "Lilith has given you the greatest idea, you give her a kiss on the lips and tell her she is genious."
+               l "Oh I wouldn't know about that. But how are we supposed to get in space?" #TODO: (Rewrite this line)
+               l "You stop the car for a moment, waiting for death to cath up with both of you, and it sure does so fast." #TODO: Maybe make this line a bit different.
+               n "Retry, this could be it!"
+               n "This time you don't leave the village, instead you remember the ufo that is hidden in Kokiri forest. Maybe you could use it to escape."
+               n "Eventually you find it, you and Lilith climb inside it."
+               n "However, an onslaught of buttons, levers and contraptions you can't identify await you."
+               n "I'll retry untill I get it right!"
+               n "After about a hundred or so attempts you manage to take of with the spaceship without plummeting to your death instantly."
+               n "As you and Lilith take of into space you can see the sun absorbing the earth, you know that that should've happened like a million or so years later but it happened now. These deaths are really getting out of hand aren't they?"
+               n "Suddenly you are hit by a speeding ufo, yes, they also have drunk drivers in space, deal with it."
+               n "Retry. Retry. Retry and retry once again."
+               n "Everything starts to blend together even more, sometimes you're not even sure if you are actually progressing in the story or not."
+               n "Death by colliding stars."
+               n "Retry."
+               n "Death by a storm of asteroïds."
+               n "Retry."
+               n "Death by crashlanding on a planet."
+               n "Retry."
+               n "The universe grows calm for a moment, it seems like you got through the constant barrage of deaths." #These three lines only trigger in the quest version if "Starttalk" is not set, I'm not sure what that is anymore.
+               n "You set the ship on auto-pilot and move away from the controls."
+               n "Lilith is standing there, she seems to be quite scared but is taking it pretty well all things considered."
+               menu:
+                    "*Talk with Lilith*":
+                         #TODO: Add some extra choices here? Not too much though!
+                         l "What just happened [name]?  What is this all about?" #TODO: Rewrite the "What is this all about?" part because it is kind of weird to say something so anti-cimactic
+                         menu:
+                              "So basically you are in a game and I need to keep you from dying.":
+                                   #TODO: Rewrite this choice.
+                                   l "The speed with which you said that..."
+                                   l "I assume we've had conversations like this a few times?"
+                                   n "You nod your head."
+                                   l "Where did we go over those many times you lived through [name]?" #TODO: Change this into her asking if you went to all of the three restaurants and then you can say that you also went to the kokiri woods and to the beach.
+                                   menu:
+                                        "Let's see, we went to all three of the restaurants you suggested so the burger restaurant, the cafe and the Chinese restaurant. Then we went to the Kokiri woods and we also visited the beach.":
+                                             #TODO: Change this line to better fit the question that also will be changed.
+                                             #TODO: Also make her question the fact that you went to the Kokiri forest.
+                                             l "Sounds like we did quite a lot on our first date."
+                                             n "Lilith laughs."
+                                             l "It's a shame I don't remember anything of it though..."
+                                             l "What was your favourite first date?"
+                                             menu:
+                                                  "My favourite part was the beach.":
+                                                       $ favouriteFirstDate = "beach"
+                                                       jump ufo_talk_favouriteFirstDate
+          
+                                                  "My favourite part was the burger restaurant.":
+                                                       $ favouriteFirstDate = "burger"
+                                                       jump ufo_talk_favouriteFirstDate
+          
+                                                  "My favourite part was the cafe.":
+                                                       $ favouriteFirstDate = "cafe"
+                                                       jump ufo_talk_favouriteFirstDate
+          
+                                                  "My favourite part was the Chinese restaurant.":
+                                                       $ favouriteFirstDate = "chinese"
+                                                       jump ufo_talk_favouriteFirstDate
+          
+                                                  "My favourite part was the Kokiri forest.":
+                                                       $ favouriteFirstDate = "kokiri"
+                                                       jump ufo_talk_favouriteFirstDate
+ 
 
 label ufo_talk_favouriteFirstDate:
-    #TODO: Give her like a small line about what she thinks about your favourite date
-    if favouriteFirstDate == "beach":
-        "Filler"
-    elif favouriteFirstDate == "burger":
-        "Filler"
-    elif favouriteFirstDate == "cafe":
-        "Filler"
-    elif favouriteFirstDate == "chinese":
-        "Filler"
-    elif favouriteFirstDate == "kokiri":
-        "Filler"
-    l "And what was your favourite moment of your favourite first date [name]?"
-    #TODO: Put an input box here.
-    #TODO: Also make the line about here becoming less real slower. Maybe you are free to use chatboxes to talk to her and she just keeps repeating "That's great, [name]!"? I LIKE THAT IDEA
-    l "..."
-    n "Lilith is staring right into your soul without saying a word.
-    She somehow seems to have lost everything that made her feel human."
-    #TODO: An other input box here.
-    l "..."
-    n "Once every room she was in felt more warm because of her presence, now this iron ship feels colder than ever with her silence in it."
-    n "It's almost as if she has no new dialogue for this moment."
-    #TODO: An other input box here.
-    n "In her frozen, wordless nature she seems more like a replica of the woman you once knew than the real deal."
-    n "You have seen her die many times but this somehow feels even more wrong."
-    n "A fate worse than death has befallen her."
-    #TODO: Put some more text here.
-    n "Just then you hear something. Not Lilith, it's a loud beeping sound coming from the metal ship itself."
-    ship "Alert: Universal inconsistency has been detected."
-    ship "Previous stabilisation attempts proved fruitless."
-    ship "Implosion of universe is set in motion as last effort to remove inconsistency."
-    ship "Brace yourself."
-    ship "Brace yourself."
-    ship "Brace yourself."
-    ship "{size=*0.5}All hope is lost.{/size}"
-    ship "Brace yourse-"
-    jump ufo_crash
+     #TODO: Give her like a small line about what she thinks about your favourite date
+     if favouriteFirstDate == "beach":
+          "Filler"
+     elif favouriteFirstDate == "burger":
+          "Filler"
+     elif favouriteFirstDate == "cafe":
+          "Filler"
+     elif favouriteFirstDate == "chinese":
+          "Filler"
+     elif favouriteFirstDate == "kokiri":
+          "Filler"
+     l "And what was your favourite moment of your favourite first date [name]?"
+     #TODO: Put an input box here.
+     #TODO: Also make the line about here becoming less real slower. Maybe you are free to use chatboxes to talk to her and she just keeps repeating "That's great, [name]!"? I LIKE THAT IDEA
+     l "..."
+     n "Lilith is staring right into your soul without saying a word.
+     She somehow seems to have lost everything that made her feel human."
+     #TODO: An other input box here.
+     l "..."
+     n "Once every room she was in felt more warm because of her presence, now this iron ship feels colder than ever with her silence in it."
+     n "It's almost as if she has no new dialogue for this moment."
+     #TODO: An other input box here.
+     n "In her frozen, wordless nature she seems more like a replica of the woman you once knew than the real deal."
+     n "You have seen her die many times but this somehow feels even more wrong."
+     n "A fate worse than death has befallen her."
+     #TODO: Put some more text here.
+     n "Just then you hear something. Not Lilith, it's a loud beeping sound coming from the metal ship itself."
+     ship "Alert: Universal inconsistency has been detected."
+     ship "Previous stabilisation attempts proved fruitless."
+     ship "Implosion of universe is set in motion as last effort to remove inconsistency."
+     ship "Brace yourself."
+     ship "Brace yourself."
+     ship "Brace yourself."
+     ship "{size=*0.5}All hope is lost.{/size}"
+     ship "Brace yourse-"
+     jump ufo_crash
 
 label ufo_crash:
-    #TODO: Have it only be your soul and not body that survived the crash.
-    #TODO: Reality is glitching so that you won't have to draw every picture.
-    n "After awakening from the dark slumber your eyelids are still shut close as if they want to go back to sleep."
-    n "You feel like you need to go back to sleep. Nothing makes sense anymore. <br/>Probably the result of the entire universe literally collapsing in on you."
-    n "On you and on..."
-    n "On Lilith"
-    #TODO: The text above this is unscrambled in the quest version but I'm not sure how to do that here.
-    n "The thought of Lilith takes you out of this confused state of mind in an instant."
-    n "You open your eyes and get back up."
-    n "You look around in search of her but all you can find is bright white emptiness."
-    n "Bright white emptiness and a floating  trail of gigantic polaroids. The white borders of the polarioid were seemingly melting over in the emptiness."
-    n "As you continue looking around you notice you are standing on one of those giant polarioids, it's a picture of your messy room. Hang on, how is that possible? How is any of this possible?"
-    n "Your not sure if you want to know who took those pictures but regardless the only way is forward by following the trail."
-    $ polaroidzone_picture = 0
-    jump ufo_crash_polaroids
-
+     #TODO: Have it only be your soul and not body that survived the crash.
+     #TODO: Reality is glitching so that you won't have to draw every picture.
+     n "After awakening from the dark slumber your eyelids are still shut close as if they want to go back to sleep."
+     n "You feel like you need to go back to sleep. Nothing makes sense anymore. <br/>Probably the result of the entire universe literally collapsing in on you."
+     n "On you and on..."
+     n "On Lilith"
+     #TODO: The text above this is unscrambled in the quest version but I'm not sure how to do that here.
+     n "The thought of Lilith takes you out of this confused state of mind in an instant."
+     n "You open your eyes and get back up."
+     n "You look around in search of her but all you can find is bright white emptiness."
+     n "Bright white emptiness and a floating  trail of gigantic polaroids. The white borders of the polarioid were seemingly melting over in the emptiness."
+     n "As you continue looking around you notice you are standing on one of those giant polarioids, it's a picture of your messy room. Hang on, how is that possible? How is any of this possible?"
+     n "Your not sure if you want to know who took those pictures but regardless the only way is forward by following the trail."
+     $ polaroidzone_picture = 0
+     jump ufo_crash_polaroids
+ 
 label ufo_crash_polaroids:
-    #TODO: Add some small descriptions of each picture you jump on
-    if polaroidzone_picture == 1:
-        n "You jump to the next picture."
-    elif polaroidzone_picture == 2:
-        n "You keep jumping from picture to picture."
-    elif polaroidzone_picture == 3:
-        n "At first it doesn't seem like you are making much progress."
-    elif polaroidzone_picture == 4:
-        n "But after a while you see something coming closer and closer."
-    elif polaroidzone_picture == 5:
-        n "That \"something\" you saw seems to be human, it has a human looking figure anyway."
-    elif polaroidzone_picture == 6:
-        n "You didn't jump far enough, you barely manage to grab the border of the polaroid and pull yourself up."
-        n "You take a moment to breath after performing such a feat. While you do you look once more at the mysterious figure."
-        n "The figure wears a grey hoodie."
-    elif polaroidzone_picture == 7:
-        n "Your legs are beginning to get really tired, luckily it seems as if you are getting closer to the figure. "
-        n "They have their back turned towards you."
-    elif polaroidzone_picture == 8:
-        n "Only one picture is between you and the figure, which is standing on a picture aswell, you ignore the cramp in your legs."
-    elif polaroidzone_picture == 9:
-        n "The next jump will land you on the picture the figure is standing on, right behind them."
-    elif polaroidzone_picture == 10:
-        jump ufo_crash_polaroids_James
-
-    menu:
-        "*Jump to the next picture*":
-            $ polaroidzone_picture += 1
-            jump ufo_crash_polaroids
+     #TODO: Add some small descriptions of each picture you jump on
+     if polaroidzone_picture == 1:
+          n "You jump to the next picture."
+     elif polaroidzone_picture == 2:
+          n "You keep jumping from picture to picture."
+     elif polaroidzone_picture == 3:
+          n "At first it doesn't seem like you are making much progress."
+     elif polaroidzone_picture == 4:
+          n "But after a while you see something coming closer and closer."
+     elif polaroidzone_picture == 5:
+          n "That \"something\" you saw seems to be human, it has a human looking figure anyway."
+     elif polaroidzone_picture == 6:
+          n "You didn't jump far enough, you barely manage to grab the border of the polaroid and pull yourself up."
+          n "You take a moment to breath after performing such a feat. While you do you look once more at the mysterious figure."
+          n "The figure wears a grey hoodie."
+     elif polaroidzone_picture == 7:
+          n "Your legs are beginning to get really tired, luckily it seems as if you are getting closer to the figure. "
+          n "They have their back turned towards you."
+     elif polaroidzone_picture == 8:
+          n "Only one picture is between you and the figure, which is standing on a picture aswell, you ignore the cramp in your legs."
+     elif polaroidzone_picture == 9:
+          n "The next jump will land you on the picture the figure is standing on, right behind them."
+     elif polaroidzone_picture == 10:
+          jump ufo_crash_polaroids_James
+ 
+     menu:
+          "*Jump to the next picture*":
+               $ polaroidzone_picture += 1
+               jump ufo_crash_polaroids
 
 label ufo_crash_polaroids_James:
-    j "Welcome [name], I was expecting you."
-    j "This place must feel pretty strange to you, let's move to a more familiar one."
-    j "You and the boy are now both standing in your room."
-    j "Don't be fooled, this room doesn't exist anymore due to the universe collapsing in on itself, it's just an illusion."
-    j "I just thought this place might be easier on the eyes if you want to talk with me."
-    j "We need to talk, about... about all of this."
-    j "I assume you already know who I am?"
-    menu:
-        "Yes, you must be James. Lilith told me about you before.":
-            #TODO: Only make this popup if she really told you about him before.
-            $ met_james = True #TODO: Check if this is the right flag. Also make it a persistent flag.
-            j "Ah, I thought she might have mentioned me eventually."
-            j "What are your thoughts  on Lilith [name]?" #TODO: Maybe don't make this so sudden.
-            n "You are pretty surprised by that question."
-            menu:
-                "I really love her.":
-                    "If that's the case then this talk might be easier then I thought."
-                    "You have seen Lilith die about [persistent.lildeaths] times, right?"
-                    "You nod, you can still remember all the times she died.<br/>That doesn't stop you from wishing you could forget though."
-                    "And you are trying to keep her safe so that she will not die, right?"
-                    "You nod."
-                    "And yet you came back after she didn't die, why?" #TODO: Check to see if you have seen any ending where she lives
-                    $ persistent_jamestalk_iloveher_knowledge = True
-                    jump jamesChat_whyDidYouReturn
-
-                "I really like her.":
-                    "Filler"
-                    #TODO: Fill in, there is no quest precedent for this.
-                "I don't really think anything of her, she's just a game character.":
-                    $ justgame = True
-
-                    j "This is going to be pretty hard..."
-                    j "To you this is all a game but to us this is our world."
-                    j "But even though the world seems to keep resetting your actions still have consequences."
-                    j "Even though the world seems to keep resetting you managed to come here, to have the entire universe collapse in on itself."
-                    j "Even though the world seems to keep resetting every ending you have seen has happened. Every action you have taken has been done."
-                    j "Even if it doesn't always seem like that. You seperate yourself from the worlds where things didn't go your way but that doesn't make them less real than the one where things will eventually go your way."
-                    j "Those abandoned worlds are still out there, [name]. I know that because I can see them, I am watching over the infinite worlds that exist in this game."
-                    j "This place is the weakest link to every world, a sort of dying breath of those worlds. Here it is possible for souls to linger instead of crossing over into the Darkness."
-                    j "There is only one Darkness but there are many versions of this place. So through the Darkness every world is linked together and since we can observe the Darkness here we can observe the other worlds aswell."
-                    j "I have seen many more worlds than you have crossed."
-                    j "I have seen many other crossers, I have even talked to some of them before."
-                    j "I have changed some of their minds, made them see this game as more than just a game."
-                    j "But that also didn't work for quite a few of them."
-                    j "And now you are here and I am telling you the same thing as I was telling the previous ones, as I will tell the next ones."
-                    j "It all seems pointless sometimes if I'm being entirely honest with you. You are stuck in a loop, right?"
-                    j "And you hope that once you break out of it you will be able to move on to the next day."
-                    j "Well for me that next day always comes but the loop follows suit."
-                    j "I never get the luxury of dreaming what will happen when I get out of the loop, this place is my loop."
-                    j "The only way to break it would be to enter the Darkness but I'm not ready for that yet, I need to know that Lilith is happy and safe."
-                    j "And for a brief moment I thought you wanted the same thing [name] but if that was truly the case, then why did you retry even after getting an ending where she was happy and alive?"
-                    jump jamesChat_whyDidYouReturn
+     j "Welcome [name], I was expecting you."
+     j "This place must feel pretty strange to you, let's move to a more familiar one."
+     j "You and the boy are now both standing in your room."
+     j "Don't be fooled, this room doesn't exist anymore due to the universe collapsing in on itself, it's just an illusion."
+     j "I just thought this place might be easier on the eyes if you want to talk with me."
+     j "We need to talk, about... about all of this."
+     j "I assume you already know who I am?"
+     menu:
+          "Yes, you must be James. Lilith told me about you before.":
+               #TODO: Only make this popup if she really told you about him before.
+               $ met_james = True #TODO: Check if this is the right flag. Also make it a persistent flag.
+               j "Ah, I thought she might have mentioned me eventually."
+               j "What are your thoughts  on Lilith [name]?" #TODO: Maybe don't make this so sudden.
+               n "You are pretty surprised by that question."
+               menu:
+                    "I really love her.":
+                         "If that's the case then this talk might be easier then I thought."
+                         "You have seen Lilith die about [persistent.lildeaths] times, right?"
+                         "You nod, you can still remember all the times she died.<br/>That doesn't stop you from wishing you could forget though."
+                         "And you are trying to keep her safe so that she will not die, right?"
+                         "You nod."
+                         "And yet you came back after she didn't die, why?" #TODO: Check to see if you have seen any ending where she lives
+                         $ persistent_jamestalk_iloveher_knowledge = True
+                         jump jamesChat_whyDidYouReturn
+   
+                    "I really like her.":
+                         "Filler"
+                         #TODO: Fill in, there is no quest precedent for this.
+                    "I don't really think anything of her, she's just a game character.":
+                         $ justgame = True
+                         j "This is going to be pretty hard..."
+                         j "To you this is all a game but to us this is our world."
+                         j "But even though the world seems to keep resetting your actions still have consequences."
+                         j "Even though the world seems to keep resetting you managed to come here, to have the entire universe collapse in on itself."
+                         j "Even though the world seems to keep resetting every ending you have seen has happened. Every action you have taken has been done."
+                         j "Even if it doesn't always seem like that. You seperate yourself from the worlds where things didn't go your way but that doesn't make them less real than the one where things will eventually go your way."
+                         j "Those abandoned worlds are still out there, [name]. I know that because I can see them, I am watching over the infinite worlds that exist in this game."
+                         j "This place is the weakest link to every world, a sort of dying breath of those worlds. Here it is possible for souls to linger instead of crossing over into the Darkness."
+                         j "There is only one Darkness but there are many versions of this place. So through the Darkness every world is linked together and since we can observe the Darkness here we can observe the other worlds aswell."
+                         j "I have seen many more worlds than you have crossed."
+                         j "I have seen many other crossers, I have even talked to some of them before."
+                         j "I have changed some of their minds, made them see this game as more than just a game."
+                         j "But that also didn't work for quite a few of them."
+                         j "And now you are here and I am telling you the same thing as I was telling the previous ones, as I will tell the next ones."
+                         j "It all seems pointless sometimes if I'm being entirely honest with you. You are stuck in a loop, right?"
+                         j "And you hope that once you break out of it you will be able to move on to the next day."
+                         j "Well for me that next day always comes but the loop follows suit."
+                         j "I never get the luxury of dreaming what will happen when I get out of the loop, this place is my loop."
+                         j "The only way to break it would be to enter the Darkness but I'm not ready for that yet, I need to know that Lilith is happy and safe."
+                         j "And for a brief moment I thought you wanted the same thing [name] but if that was truly the case, then why did you retry even after getting an ending where she was happy and alive?"
+                         jump jamesChat_whyDidYouReturn
 
 
 label jamesChat_whyDidYouReturn:
-    menu:
-        "I wanted to find an ending where we could be together and where she would be alive.":
-            if justgame == True:
-                #TODO: Check if that flag is right.
-
-              j "..."
-              j "That doesn't really surprise me."
-              j "But who do you want to reach the ending for?"  #TODO: (Make this check if the player has answered that question before but to Lilith to see if they would change their answer.)
-              j "You just take whatever you want to mold it into whichever way you please."
-              j "Don't you think you are being unfair to Lilith? Don't you think she has the right to die only once?"
-              j "I also don't like to see her die but you are just making things worse."
-              j "Can't you just break the cycle? Can't you just stop playing this game?"
-              j "You won't find what you are looking for in here."
-              j "Every time you retry you get transported to a parallel instance of this world with the new knowledge you gained."
-              j "You can however only do so much in those parallel versions of the world as they are copies, they don't tend to vary much."
-              j "To get more variation, limitless and controlable variation even, you would need to not be bound to <u>them</u>.anymore."
-              jump jamesChat_whyDidYouReturn_toBeTogether_choices
-
-            elif loveher == True:
-                #TODO: Check if that flag is right.
-                j "..."
-                j "Oh [name], love is not about always being together. Sometimes it is about doing the best thing for the person you love, even if it's hard."
-                #TODO: (use flags to detect endings where she lived, the ones below this are endings where she lived that should only be mentioned if you saw them.)
-                j "When Lilith met Ron and they were happy together, even had some kids."
-                j "Or when Abby got her to safely stay at her home."
-                j "When this entire ordeal finally settled down..."
-                j "You didn't have to retry."
-                j "You didn't have to cause her to go through the bad things once again after you were even told that she was safe and secure."
-                j "You see, you do not undo your actions each time you retry, each time you save Lilith once more or don't."
-                j "If only it was that simple, then she would have only died just now in that crash."
-                j "Every time you retry you get transported to a parallel instance of this world with the new knowledge you gained."
-                j "You can however only do so much in those parallel versions of the world as they are copies, they don't tend to vary much."
-                j "To get more variation, limitless and controlable variation even, you would need to not be bound to <u>them</u> anymore."
-                jump jamesChat_whyDidYouReturn_toBeTogether_choices
-
-            elif likeher == True:
-                "Filler"
-                #TODO: Fill in.
-
-        "I wanted to see what other endings there are.":
-            #TODO: Fill in based on the quest version.
-            j "I see..." #TODO: (Add different reactions based on the three flags you had.)
-            j "Then why did you come back here after I told you there were no extra endings here?" #TODO: Make this only appear if it's not your first time here and he did indeed say that.
-            menu:
-                "I do not trust you.":
-                    if justgame = True:
-                        j "I see, you think I'm defending Lilith by lying about it?"
-                        j "Well, maybe I am or maybe I am not."
-                        j "In the first case I am so desperate to not let you destroy her once again that I am lying to your face and in the other case there is truly no other ending here."
-                        j "In both options it would be wise to reconsider before you move further towards a path you wouldn't like, right?"
-                        #TODO: Continue writing this text.
-
-                    else:
-                      j "Oh [name], why don't you trust me? We both care for Lilith right? So you can rest assured that I only want the best for her."
-                      #TODO: Continue writing this text, maybe add some slight variations if the player treated Lilith badly.
-
-
-                "I just had to make sure, this seems like a place where the developper would be able to hide some stuff.":
+     menu:
+          "I wanted to find an ending where we could be together and where she would be alive.":
+               if justgame == True:
+                    #TODO: Check if that flag is right.
+                    j "..."
+                    j "That doesn't really surprise me."
+                    j "But who do you want to reach the ending for?"  #TODO: (Make this check if the player has answered that question before but to Lilith to see if they would change their answer.)
+                    j "You just take whatever you want to mold it into whichever way you please."
+                    j "Don't you think you are being unfair to Lilith? Don't you think she has the right to die only once?"
+                    j "I also don't like to see her die but you are just making things worse."
+                    j "Can't you just break the cycle? Can't you just stop playing this game?"
+                    j "You won't find what you are looking for in here."
+                    j "Every time you retry you get transported to a parallel instance of this world with the new knowledge you gained."
+                    j "You can however only do so much in those parallel versions of the world as they are copies, they don't tend to vary much."
+                    j "To get more variation, limitless and controlable variation even, you would need to not be bound to <u>them</u>.anymore."
+                    jump jamesChat_whyDidYouReturn_toBeTogether_choices
+ 
+               elif loveher == True:
+                    #TODO: Check if that flag is right.
+                    j "..."
+                    j "Oh [name], love is not about always being together. Sometimes it is about doing the best thing for the person you love, even if it's hard."
+                    #TODO: (use flags to detect endings where she lived, the ones below this are endings where she lived that should only be mentioned if you saw them.)
+                    j "When Lilith met Ron and they were happy together, even had some kids."
+                    j "Or when Abby got her to safely stay at her home."
+                    j "When this entire ordeal finally settled down..."
+                    j "You didn't have to retry."
+                    j "You didn't have to cause her to go through the bad things once again after you were even told that she was safe and secure."
+                    j "You see, you do not undo your actions each time you retry, each time you save Lilith once more or don't."
+                    j "If only it was that simple, then she would have only died just now in that crash."
+                    j "Every time you retry you get transported to a parallel instance of this world with the new knowledge you gained."
+                    j "You can however only do so much in those parallel versions of the world as they are copies, they don't tend to vary much."
+                    j "To get more variation, limitless and controlable variation even, you would need to not be bound to <u>them</u> anymore."
+                    jump jamesChat_whyDidYouReturn_toBeTogether_choices
+   
+               elif likeher == True:
                     "Filler"
-                    #TODO: Fill this in, there is no quest precedent.
-
-        "You can't just bombard me with so much info and then just move on like I should understand, can you please atleast explain something clearly?":
-            j "I see..."
-            j "I guess that indeed was a bit too much info for you to handle."
-            j "I will let you ask me one question about what I just said, then you have to answer my previous question."
-            menu:
-                "Filler":
-                    "Filler"
-                    #TODO: Fill the menu in with some questions they can ask.
-                    #After it has been answered let James reask the question.
+                    #TODO: Fill in.
+   
+          "I wanted to see what other endings there are.":
+               #TODO: Fill in based on the quest version.
+               j "I see..." #TODO: (Add different reactions based on the three flags you had.)
+               j "Then why did you come back here after I told you there were no extra endings here?" #TODO: Make this only appear if it's not your first time here and he did indeed say that.
+               menu:
+                    "I do not trust you.":
+                         if justgame == True:
+                              j "I see, you think I'm defending Lilith by lying about it?"
+                              j "Well, maybe I am or maybe I am not."
+                              j "In the first case I am so desperate to not let you destroy her once again that I am lying to your face and in the other case there is truly no other ending here."
+                              j "In both options it would be wise to reconsider before you move further towards a path you wouldn't like, right?"
+                              #TODO: Continue writing this text.
+    
+                         else:
+                              j "Oh [name], why don't you trust me? We both care for Lilith right? So you can rest assured that I only want the best for her."
+                              #TODO: Continue writing this text, maybe add some slight variations if the player treated Lilith badly.
+     
+    
+                    "I just had to make sure, this seems like a place where the developper would be able to hide some stuff.":
+                         "Filler"
+                         #TODO: Fill this in, there is no quest precedent.
+    
+          "You can't just bombard me with so much info and then just move on like I should understand, can you please atleast explain something clearly?":
+               j "I see..."
+               j "I guess that indeed was a bit too much info for you to handle."
+               j "I will let you ask me one question about what I just said, then you have to answer my previous question."
+               menu:
+                    "Filler":
+                         "Filler"
+                         #TODO: Fill the menu in with some questions they can ask.
+                         #After it has been answered let James reask the question.
 
 label jameschat_whydidyoureturn_tobetogether_choices:
-    menu:
-        "Who are they?":
-            j "The first one you probably haven't met, not for long anyway. He is the one that created this world, gave you acces to it and made the second one.
-            The second one you might know actually, the jester that controls the flow and direction of our story. He even controls the deaths Lilith suffered and yet you rely on him to fight him, that might be his biggest joke yet."
-            menu:
-                "Alright mister purple prose. So the \"they\" you were talking about are the game developper and the narrator?":
-                    j "Purple prose? I'll try to keep it a bit more straight-forward."
-                    j "Yes, they are them."
-                    j "They made you search for an ending that doesn't exist."
-                    j "If you want to find it within yourself you'll need to become your own creator, become your own narrator."
-                    j "The only way to win an unwinnable game is by becoming the game."
-                    menu:
-                        "... what?":
-                            j "It's no use..."
-                            j "If those words come from me they won't impact you that much."
-                            j "Why don't you ask Lillith to explain them where three become one?"
-                            $ persistent.jamesconversation_becomethegame_knowledge = True #TODO: Convert this to a proper flag format.
-                            #TODO: This path is not finished in the quest version, continue working on it.
+     menu:
+          "Who are they?":
+               j "The first one you probably haven't met, not for long anyway. He is the one that created this world, gave you acces to it and made the second one.
+               The second one you might know actually, the jester that controls the flow and direction of our story. He even controls the deaths Lilith suffered and yet you rely on him to fight him, that might be his biggest joke yet."
+               menu:
+                    "Alright mister purple prose. So the \"they\" you were talking about are the game developper and the narrator?":
+                         j "Purple prose? I'll try to keep it a bit more straight-forward."
+                         j "Yes, they are them."
+                         j "They made you search for an ending that doesn't exist."
+                         j "If you want to find it within yourself you'll need to become your own creator, become your own narrator."
+                         j "The only way to win an unwinnable game is by becoming the game."
+                         menu:
+                              "... what?":
+                                   j "It's no use..."
+                                   j "If those words come from me they won't impact you that much."
+                                   j "Why don't you ask Lillith to explain them where three become one?"
+                                   $ persistent.jamesconversation_becomethegame_knowledge = True #TODO: Convert this to a proper flag format.
+                                   #TODO: This path is not finished in the quest version, continue working on it.
 
 
 
