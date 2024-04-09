@@ -83,23 +83,20 @@ label kokiri_talkAboutSomethingElse:
                                                         l "However, I think the girl he left all those years ago, the girl that is still somewhere inside of me, would at the very least like the idea that he made an effort to come back to us."
                                                         $ kokiri_conversation_silent()
 
-
-
-
-                                        "No, I haven't talked to him. I was just curious because I got the impression you hated him for what happened to James from a conversation we had in a previous time.":
-                                            l "I see, I definetly do have some resentment for him since he left us alone but I don't think he could have saved James somehow."
-                                            l "Alright, now that's all cleared up."
-                                            l "It's a relief to hear you haven't contacted my dad yet, I'd prefer if you never did at all, even if given the option somehow."
-                                            l "I'd prefer if you didn't  anyone of my family, but especially not David."
-                                            menu:
-                                                "Of course! I would never contact someone of your family":
-                                                    #TODO: Fill this in, the narrator calls you a liar etc.
-                                                    "Filler"
-                                                    $ kokiri_conversation_silent()
-                                                "And what if contacting someone of your family could potentially save you?":
-                                                    #TODO: Fill in, I think there already exists something similiar in quest. Lilith is not really comfortable with the idea, she doesn't like to potentially harm her family like that.
-                                                    "Filler"
-                                                    $ kokiri_conversation_silent()
+                                            "No, I haven't talked to him. I was just curious because I got the impression you hated him for what happened to James from a conversation we had in a previous time.":
+                                                l "I see, I definetly do have some resentment for him since he left us alone but I don't think he could have saved James somehow."
+                                                l "Alright, now that's all cleared up."
+                                                l "It's a relief to hear you haven't contacted my dad yet, I'd prefer if you never did at all, even if given the option somehow."
+                                                l "I'd prefer if you didn't  anyone of my family, but especially not David."
+                                                menu:
+                                                    "Of course! I would never contact someone of your family":
+                                                        #TODO: Fill this in, the narrator calls you a liar etc.
+                                                        "Filler"
+                                                        $ kokiri_conversation_silent()
+                                                    "And what if contacting someone of your family could potentially save you?":
+                                                        #TODO: Fill in, I think there already exists something similiar in quest. Lilith is not really comfortable with the idea, she doesn't like to potentially harm her family like that.
+                                                        "Filler"
+                                                        $ kokiri_conversation_silent()
                         "Ask about James":
                             jump askAboutJames_tellMeAbout
                         "Ask about Lila":

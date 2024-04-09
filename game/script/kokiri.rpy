@@ -135,7 +135,7 @@ label kokiri_explanation_game:
                                         l "Oh I see, so you have already spoken to me here?" #TODO: Change this line slightly.
                                         #TODO: Make this an alternate way to talk about her not being the same etc, there is already a label in the game like that, just jump to that one. (If it is not yet in the game it IS in the quest version)
                                         #It's the one that mentions Heraclitus Iirc
-                            else:
+                        else:
                             $ kokiri_norealname += 1
                             if kokiri_norealname == 2:
                                 "Filler"
@@ -1206,7 +1206,7 @@ label noContactFamilyPromise:
             l "Thank you [name], that means a lot to me!"
             if fam_obsession== "James":
                 if only_one_asked == True:
-                l "I just don't want to see happy memories of James being used for selfish things."
+                    l "I just don't want to see happy memories of James being used for selfish things."
                 else:
                     l "I just don't want to involve my family in this too much an neither do I want to see happy memories of James being used for selfish things."
             else:
@@ -1219,13 +1219,7 @@ label noContactFamilyPromise:
         "You know I can't promise that.":
             n "Lilith looks pissed of" #TODO: Probably slightly change that line.
             l "Actually I don't know that [name]! Why can't you promise that?"
-            if only_one_asked == True:
-                if fam_obsession == "James":
-
-                l "It would mean a lot to me if you didn't have to use memories of James to your own advantage."
-                l "This might be a game for you but for me this is my life."
-                l "So please don't play with my life as if it's just a game."
-                #TODO: Rewrite this a bit and make it go on for a bit longer. Make it so that if the player doesn't comply with Lilith she doesn't give them the info they want.
+            
 
             jump noContactFamilyPromise_cannotPromise_confrontation_aliveFamily
 
@@ -1233,48 +1227,53 @@ label noContactFamilyPromise:
 
 
             label noContactFamilyPromise_cannotPromise_confrontation_aliveFamily:
-                l "It would mean a lot to me if you didn't have to involve my family any further than you already have." #TODO: (Make this line change depending on which patht the player has went on and if they admitted to involving the family or not.)
-                l "This is going to have some unforseen effects on them even if it would maybe help in the short-term."
-                l "What are you going to tell them?"
-                l "That they are stuck in a game and that nothing really matters?"
-                l "I don't think they will take it as well as I would to be honest with you."
-                l "Alternatively you could just tell them about the timeloop but even then they might not take it as well."
-                l "You could also tell them nothing at all but that would be even worse wouldn't it? They are not just toys for you to play with [name]."
-                l "They are not just info-dispensers that will make you achieve whatever goal it is you are trying to reach now."
-                l "They are my family, and if you ever even had a slither of respect for me you better leave them alone."
-                #TODO: Rewrite this a bit and make it go on for a bit longer.<br/>Make it so that if the player doesn't comply with Lilith she doesn't give them the info they want.
+                if only_one_asked == True:
+                    if fam_obsession == "James":
+                        l "It would mean a lot to me if you didn't have to use memories of James to your own advantage."
+                        l "This might be a game for you but for me this is my life."
+                        l "So please don't play with my life as if it's just a game."
+                        #TODO: Rewrite this a bit and make it go on for a bit longer. Make it so that if the player doesn't comply with Lilith she doesn't give them the info they want.
+                else:
+                    l "It would mean a lot to me if you didn't have to involve my family any further than you already have." #TODO: (Make this line change depending on which patht the player has went on and if they admitted to involving the family or not.)
+                    l "This is going to have some unforseen effects on them even if it would maybe help in the short-term."
+                    l "What are you going to tell them?"
+                    l "That they are stuck in a game and that nothing really matters?"
+                    l "I don't think they will take it as well as I would to be honest with you."
+                    l "Alternatively you could just tell them about the timeloop but even then they might not take it as well."
+                    l "You could also tell them nothing at all but that would be even worse wouldn't it? They are not just toys for you to play with [name]."
+                    l "They are not just info-dispensers that will make you achieve whatever goal it is you are trying to reach now."
+                    l "They are my family, and if you ever even had a slither of respect for me you better leave them alone."
+                    #TODO: Rewrite this a bit and make it go on for a bit longer.<br/>Make it so that if the player doesn't comply with Lilith she doesn't give them the info they want.
                 menu:
                     "Actually, you are right, I will honor your request.":
                         #TODO: (Change this text slightly with dynamic effects that change depending on wheter or not you have kept your promise etc.) ALSO make it more sympathic.
                         #TODO: Make Lilith slightly calm down as she appoligises and says she is passionate about her family's safety.
-                            #James' flag checks if you use James related things to win and the other checks if you have involved any family, including James
-                                if only_one_asked == True:
-                                if fam_obsession == "James":
-                                    $ persistent.donotusejames_knowledge = True
+                        #James' flag checks if you use James related things to win and the other checks if you have involved any family, including James
+                        if only_one_asked == True:
+                            if fam_obsession == "James":
+                                $ persistent.donotusejames_knowledge = True
 
-                                else:
-                                    $ persistent.restrainingorderfamily.knowledge = True
+                            
 
-                                else:
+                            else:
                                 $ persistent.restrainingorderfamily_knowledge = True
 
                         else:
                             $ persistent.restrainingorderfamily_knowledge = True
                                
+                        l "Thank you [name]. I know it might be tempting to try to see every line of dialogue in this game but there are limits I don't want you to cross.<br/>I appreciate that I atleast managed to convince you."
+                        if persistent.restrainingorderfamily_violation_counter > 0:
+                            #Karma
+                            n "I'm not sure what you are doing here once again, didn't you promise Lilith you wouldn't contact her family already?"
+                            n "Although I doubt that means anything to you does it?"
+                            if persistent.restrainingorderfamily_violation_counter == 1:
+                                n "Afterall you've broken your promise once already."
+                                n "What's stopping you from doing it again?"
+                            else:
+                                n "Afterall you've broken your promise [persistent.restrainingorderfamily_violation_counter] times already."
+                                n "It gets easier each time doesn't it?"
 
-                            l "Thank you [name]. I know it might be tempting to try to see every line of dialogue in this game but there are limits I don't want you to cross.<br/>I appreciate that I atleast managed to convince you."
-                            if persistent.restrainingorderfamily_violation_counter > 0:
-                                #Karma
-                                n "I'm not sure what you are doing here once again, didn't you promise Lilith you wouldn't contact her family already?"
-                                n "Although I doubt that means anything to you does it?"
-                                if persistent.restrainingorderfamily_violation_counter == 1:
-                                    n "Afterall you've broken your promise once already."
-                                    n "What's stopping you from doing it again?"
-                                else:
-                                    n "Afterall you've broken your promise [persistent.restrainingorderfamily_violation_counter] times already."
-                                    n "It gets easier each time doesn't it?"
-
-                            $ family_curiosity_checker_movetox()
+                        $ family_curiosity_checker_movetox()
 
 
 

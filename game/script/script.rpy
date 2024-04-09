@@ -823,7 +823,6 @@ label phone_call_abigail_topics_distractionforlilith:
 
 
 label phone_call_abigail_topics_spoketodavid_noonelovesdavid:
-     #TODO: Probably change this flag to something with knowledge in the title.
      a "That's absurd! I still love him... I also still miss him."
      a "I mean, a daughter needs her dad, right?"
      a "Mom and Lilly are pretty mad because he left us but honestly I'm more sad because of it."
@@ -842,7 +841,6 @@ label phone_call_abigail_topics_spoketodavid_noonelovesdavid:
                jump Game_start2
 
 label phone_call_abigail_topics_spoketodavid_davidblameshimself:
-     "I spoke to David in a previous cycle. He told me he blames himself for James' death and thinks Lilith and Lisa do aswell." if persistent.david_blame_knowledge:
      a "That's ridiculous!"
      a "No one blames him for James' death."
      a "Mom and Lilly mad at him because he left us, not because of James death."
@@ -850,10 +848,10 @@ label phone_call_abigail_topics_spoketodavid_davidblameshimself:
      a "Could you tell him that I don't blame him and that I'm sure mom and Lilly don't either?"
      menu:
           "I will.":
-          a "Thank you [name]."
-          a "We probably shouldn't leave Lilith waiting any longer though. Good luck trying to save her and also don't forget to have fun alright?"
-          n "She hung up."
-          jump Game_start2
+               a "Thank you [name]."
+               a "We probably shouldn't leave Lilith waiting any longer though. Good luck trying to save her and also don't forget to have fun alright?"
+               n "She hung up."
+               jump Game_start2
 
                                         
 
