@@ -152,7 +152,7 @@ label gdwl_functions:
                             if only_one_asked == True:
                                 renpy.say(l, "Lilith studies your face, seemingly in an attempt to gauge your reaction to her next question.")
                                 renpy.say (l, "You haven't used anything James-related to your befit yet... have you?")
-                                persistent.abused_james_info_knowledge = True
+                                persistent.abusedJamesInfo_knowledge = True
 
                             else:
                                 renpy.say (l, "I would also prefer it if you didn't involve anyone of my family into this.")

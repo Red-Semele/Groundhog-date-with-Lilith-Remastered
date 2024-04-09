@@ -452,7 +452,7 @@ label kokiri_poems:
             $ poem_conversation = False
         $ kokiri_conversation += 1
 
-        if persistent.kokiri_newerpoems_knowledge == True:
+        if persistent.kokiri_newerPoems_knowledge == True:
             menu:
                 "Read one of Lilith's older poems.":
                     jump kokiri_poems_oldPoems
@@ -648,7 +648,7 @@ label kokiri_poems_askOrRate:
 
                             I haven't written a lot of new poems lately, the few I have are a whole lot longer and kind of hard to get since they reference a lot of Greek and Roman mythology.
                             If you like to I could also show you them but just be warned that they are a lot less accessible than my poems from back in the day."
-                        $ persistent.kokiri_newerpoems_knowledge = True #This enables you to read some of the more recent poems.
+                        $ persistent.kokiri_newerPoems_knowledge = True #This enables you to read some of the more recent poems.
 
                     "That poem was pretty good, it definetly has a lot of potential.":
                         if kokiri_poem_bang_recent == True:
@@ -663,7 +663,7 @@ label kokiri_poems_askOrRate:
                             I haven't written a lot of new poems lately, the few I have are a whole lot longer and kind of hard to get since they reference a lot of Greek and Roman mythology.
                             If you like to I could also show you them but just be warned that they are a lot less accessible than my poems from back in the day."
                             #TODO: Rewrite this text a bit more to not feel like the good text.
-                        $ persistent.kokiri_newerpoems_knowledge = True #This enables you to read some of the more recent poems.
+                        $ persistent.kokiri_newerPoems_knowledge = True #This enables you to read some of the more recent poems.
                     "That was really bad.":
                         "Filler"
                         #TODO: Fill in.
@@ -1168,7 +1168,7 @@ label didYouInvolveFamily:
 
                     "Let's hope so!"
                     "That would be a very tidy sollution to our slight problem."
-                    if  persistent.abused_james_info_knowledge == True:
+                    if  persistent.abusedJamesInfo_knowledge == True:
                         l "You would just have to promise to not use James-related things for your own benefit."
 
                     else:
@@ -1251,7 +1251,7 @@ label noContactFamilyPromise:
                         #James' flag checks if you use James related things to win and the other checks if you have involved any family, including James
                         if only_one_asked == True:
                             if fam_obsession == "James":
-                                $ persistent.donotusejames_knowledge = True
+                                $ persistent.doNotUseJames_knowledge = True
 
                             
 

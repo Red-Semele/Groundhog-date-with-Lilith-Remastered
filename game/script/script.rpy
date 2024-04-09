@@ -73,6 +73,7 @@ if persistent.firstboot == None:
      define persistent.kokiri_death_4 = False
      define persistent.kokiri_death_4_hill = False
      define persistent.kokiri_death_4_no_hill = False
+     define persistent.kokiri_death_4_hill_holdhand = False
      #Beach deaths under here:
      define persistent.beach_jelly_death = False
      define persistent.beach_hole_death = False
@@ -110,6 +111,7 @@ if persistent.firstboot == None:
      define persistent.david_apology_knowledge = False
      define persistent.james_story_knowledge = False
      define persistent.jamesconversation_becomethegame_knowledge = False
+     define persistent.tracker = 0 #Tracker 
      #Phone-numbers
      define persistent.david_call_knowledge = False
      define persistent.abigail_call_knowledge = False
@@ -131,7 +133,7 @@ if persistent.firstboot == None:
      #Chinese flags
      define persistent.chinese_phone_noretry = False #The noretry flags are meant to check if you replay the game after being asked not to do it.
      define persistent.pass_knowledge = False
-     define persistent.need_pass_knowledge = True
+     define persistent.need_pass_knowledge = False
      define persistent.peeked_phone = False
      define persistent.bedcheck_knowledge = False
      #Chinese riddle flags
@@ -149,6 +151,11 @@ if persistent.firstboot == None:
      define persistent.restrainingorderfamily_knowledge = False
      define persistent.kokiri_tellnolies_knowledge = False
      define persistent.fakeoutnar_tip = False
+     define persistent.kokiri_determinism_knowledge = False
+     define persistent.kokiri_newerPoems_knowledge = False
+     define persistent.kokiri_heraclitus_knowledge = False
+     define persistent.abusedJamesInfo_knowledge = False
+     define persistent.doNotUseJames_knowledge = False
      #Kokiri poems
      define persistent.kokiri_poem_window_knowledge = False
      define persistent.kokiri_poem_bang_knowledge = False
