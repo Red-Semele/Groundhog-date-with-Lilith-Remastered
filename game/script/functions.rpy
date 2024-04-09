@@ -122,7 +122,7 @@ label gdwl_functions:
                     if fam_obsession == True:
                         renpy.say (l, "You know, you have quite an interest in my family, [fam_obsession] in particular.") #TODO: (change this line)
                         if fam_obsession == "James":
-                        renpy.say (l, "You haven't been using info about him and my family to try to \"win\" the game, right?")
+                            renpy.say (l, "You haven't been using info about him and my family to try to \"win\" the game, right?")
                         else:
                             renpy.say (l, "You haven't involved [fam_pronoun] or anyone else in all of this yet, right?")
 

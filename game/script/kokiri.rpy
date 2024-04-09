@@ -92,57 +92,57 @@ label kokiri_explanation_game:
                 "No, that's not my real name.":
                     label kokiri_explanation_game_notRealName:
                         if norealname == 0:
-                          $ conversationtracker_norealname = True
-                          $ kokiri_norealname = 1
-                          $ kokiri_realname = True
-                          l "Oh, so what is your real name then?" #TODO: Change this line up slightly.
-                          $ name_real = renpy.input("What is your real name?")
-                          $  name_real = name_real.strip() or "Max"
-                          $ name_real = name_real.capitalize()
-                          l "Well, it's nice to finally meet you for real [name_real]!"
-                          l "Lilith gives you a big smile."
-                          l "Although, haven't I met you for real already?"
-                          l "After all, even if you had a fake name, you still are the one who is in control of [name]."
-                          l "So, the way how you treated me on this date and on the previous ones is still a reflection of you as a real person."
-                          l "It all means something, even if you didn't think it did."
-                          l "Even if you did something to just have fun in a videogame or to see what it would do, that still says something about you as a person."
-                          l "Sometimes we hide behind the roles we play to make actions that would not be acceptable to ourselves and others if our true self would make them."
-                          l "That's why it might feel scary to some if they catch a glimpse of themselves in the reflection of their screen. Because it's someone they don't recognise.<br/>Do you ever feel like that, {player.real}?..."
-                          l "All these different roles form a web of half-truths and lies, and in the center of it all you can find our true self."
-                          l "Not the self we think we are, not the self others see us as, but the self we inevitably are."
-                          l "Speaking about that self, what do you really do for a living? I'd like to get to know you better, the one playing this game."
-                          #TODO: Get input via box and check if it contains the word "teach"
-                          #If it does:
-                          l "Ah so you are also a teacher? That's really cool! "
-                          #TODO: Add some more dialogue.
-                          #If it doesn't:
-                          l "Ah so you [player_job] for a living? That's interesting!" #TODO: Use player_job in that input box.
-                          l "Have I ever mentioned what I do for a living? "
-                          menu:
-                                "No, not yet.":
-                                    $ persistent.kokiri_teacher_knowledge = True
-                                    l "I actually teach the first year of our town's elementary school."
-                                    l "I just love working with those kids and helping them out as best as I can."
-                                    #TODO: Go a bit more indepth on this.
-                                    menu:
-                                        "That's really cool!":
-                                            #TODO: That's kind of a weird reaction.
-                                            l "Thanks, [name_real]!"
-                                            #TODO: Probably scrap this choice or heavily rework it. Instead I think a better choice would be to ask her what she likes about working with the kids.
-                                            #Fill out a bit more.
+                            $ conversationtracker_norealname = True
+                            $ kokiri_norealname = 1
+                            $ kokiri_realname = True
+                            l "Oh, so what is your real name then?" #TODO: Change this line up slightly.
+                            $ name_real = renpy.input("What is your real name?")
+                            $  name_real = name_real.strip() or "Max"
+                            $ name_real = name_real.capitalize()
+                            l "Well, it's nice to finally meet you for real [name_real]!"
+                            l "Lilith gives you a big smile."
+                            l "Although, haven't I met you for real already?"
+                            l "After all, even if you had a fake name, you still are the one who is in control of [name]."
+                            l "So, the way how you treated me on this date and on the previous ones is still a reflection of you as a real person."
+                            l "It all means something, even if you didn't think it did."
+                            l "Even if you did something to just have fun in a videogame or to see what it would do, that still says something about you as a person."
+                            l "Sometimes we hide behind the roles we play to make actions that would not be acceptable to ourselves and others if our true self would make them."
+                            l "That's why it might feel scary to some if they catch a glimpse of themselves in the reflection of their screen. Because it's someone they don't recognise.<br/>Do you ever feel like that, {player.real}?..."
+                            l "All these different roles form a web of half-truths and lies, and in the center of it all you can find our true self."
+                            l "Not the self we think we are, not the self others see us as, but the self we inevitably are."
+                            l "Speaking about that self, what do you really do for a living? I'd like to get to know you better, the one playing this game."
+                            #TODO: Get input via box and check if it contains the word "teach"
+                            #If it does:
+                            l "Ah so you are also a teacher? That's really cool! "
+                            #TODO: Add some more dialogue.
+                            #If it doesn't:
+                            l "Ah so you [player_job] for a living? That's interesting!" #TODO: Use player_job in that input box.
+                            l "Have I ever mentioned what I do for a living? "
+                            menu:
+                                    "No, not yet.":
+                                        $ persistent.kokiri_teacher_knowledge = True
+                                        l "I actually teach the first year of our town's elementary school."
+                                        l "I just love working with those kids and helping them out as best as I can."
+                                        #TODO: Go a bit more indepth on this.
+                                        menu:
+                                            "That's really cool!":
+                                                #TODO: That's kind of a weird reaction.
+                                                l "Thanks, [name_real]!"
+                                                #TODO: Probably scrap this choice or heavily rework it. Instead I think a better choice would be to ask her what she likes about working with the kids.
+                                                #Fill out a bit more.
 
-                                "You have mentioned you teach the first year of elementary when we had this talk before actually." if persistent.kokiri_teacher_knowledge:
-                                    l "Oh I see, so you have already spoken to me here?" #TODO: Change this line slightly.
-                                    #TODO: Make this an alternate way to talk about her not being the same etc, there is already a label in the game like that, just jump to that one. (If it is not yet in the game it IS in the quest version)
-                                    #It's the one that mentions Heraclitus Iirc
-                        else:
-                          $ kokiri_norealname += 1
-                          if kokiri_norealname == 2:
-                              "Filler"
-                              #TODO: Fill in with the second part.
-                          else:
-                              "Filler"
-                              #TODO: This is room for a pottential third part.
+                                    "You have mentioned you teach the first year of elementary when we had this talk before actually." if persistent.kokiri_teacher_knowledge:
+                                        l "Oh I see, so you have already spoken to me here?" #TODO: Change this line slightly.
+                                        #TODO: Make this an alternate way to talk about her not being the same etc, there is already a label in the game like that, just jump to that one. (If it is not yet in the game it IS in the quest version)
+                                        #It's the one that mentions Heraclitus Iirc
+                            else:
+                            $ kokiri_norealname += 1
+                            if kokiri_norealname == 2:
+                                "Filler"
+                                #TODO: Fill in with the second part.
+                            else:
+                                "Filler"
+                                #TODO: This is room for a pottential third part.
 
                 "Can we actually talk about something else? ":
                     "Filler"
@@ -441,25 +441,25 @@ label kokiri_scenery:
             jump kokiri_death_1_prevented
 
 label kokiri_poems:
-     #TODO: Put an option for the newest and more challenging poems of mine in here.
-     #TODO: Once all poems have been read make the player able to ask for some more to which Lilith will decline if they've seen all the poems including the newer stuff. Otherwise she will suggest some of the newer stuff.
-     n "She gives you the pug-notebook with the poems, you can pick one and ask some questions about it."
-     #TODO: Change that line slightly.
-     #Make it so that the normal poems are one menu and the harder ones are an additional menu, that way I can re-use the normal menu if I have to choose between normal and hard.
+        #TODO: Put an option for the newest and more challenging poems of mine in here.
+        #TODO: Once all poems have been read make the player able to ask for some more to which Lilith will decline if they've seen all the poems including the newer stuff. Otherwise she will suggest some of the newer stuff.
+        n "She gives you the pug-notebook with the poems, you can pick one and ask some questions about it."
+        #TODO: Change that line slightly.
+        #Make it so that the normal poems are one menu and the harder ones are an additional menu, that way I can re-use the normal menu if I have to choose between normal and hard.
 
-     #TODO: Fill in more and check if this works.
-     if poem_conversation == True:
-         $ poem_conversation = False
-     $ kokiri_conversation += 1
+        #TODO: Fill in more and check if this works.
+        if poem_conversation == True:
+            $ poem_conversation = False
+        $ kokiri_conversation += 1
 
-     if persistent.kokiri_newerpoems_knowledge == True:
-         menu:
-             "Read one of Lilith's older poems.":
-                 jump kokiri_poems_oldPoems
-             "Read one of Lilith's more recent poems.":
-                 jump kokiri_poems_oldPoems
-     else:
-         jump kokiri_poems_oldPoems
+        if persistent.kokiri_newerpoems_knowledge == True:
+            menu:
+                "Read one of Lilith's older poems.":
+                    jump kokiri_poems_oldPoems
+                "Read one of Lilith's more recent poems.":
+                    jump kokiri_poems_oldPoems
+        else:
+            jump kokiri_poems_oldPoems
 label kokiri_poems_oldPoems:
     menu:
         "Read snowwoman poem.":
@@ -1169,16 +1169,16 @@ label didYouInvolveFamily:
                     "Let's hope so!"
                     "That would be a very tidy sollution to our slight problem."
                     if  persistent.abused_james_info_knowledge == True:
-                      l "You would just have to promise to not use James-related things for your own benefit."
+                        l "You would just have to promise to not use James-related things for your own benefit."
 
                     else:
-                          if no_fam_obsession == False:
+                        if no_fam_obsession == False:
                                 if fam_obsession != "James":
-                                  l "You would just have to promise not to contact [fam_obsession] or anyone of my family anymore."
+                                    l "You would just have to promise not to contact [fam_obsession] or anyone of my family anymore."
 
 
-                          else:
-                              "You would just have to promise not to contact anyone of my family anymore."
+                        else:
+                            "You would just have to promise not to contact anyone of my family anymore."
 
                     l "Do you promise to do that [name]?"
                     jump noContactFamilyPromise
@@ -1205,10 +1205,10 @@ label noContactFamilyPromise:
             $ restraining_order_family = True
             l "Thank you [name], that means a lot to me!"
             if fam_obsession== "James":
-              if only_one_asked == True:
+                if only_one_asked == True:
                 l "I just don't want to see happy memories of James being used for selfish things."
-              else:
-                  l "I just don't want to involve my family in this too much an neither do I want to see happy memories of James being used for selfish things."
+                else:
+                    l "I just don't want to involve my family in this too much an neither do I want to see happy memories of James being used for selfish things."
             else:
                 l "I just don't want to involve my family in this too much."
 
@@ -1220,7 +1220,7 @@ label noContactFamilyPromise:
             n "Lilith looks pissed of" #TODO: Probably slightly change that line.
             l "Actually I don't know that [name]! Why can't you promise that?"
             if only_one_asked == True:
-              if fam_obsession == "James":
+                if fam_obsession == "James":
 
                 l "It would mean a lot to me if you didn't have to use memories of James to your own advantage."
                 l "This might be a game for you but for me this is my life."
@@ -1233,36 +1233,34 @@ label noContactFamilyPromise:
 
 
             label noContactFamilyPromise_cannotPromise_confrontation_aliveFamily:
-              l "It would mean a lot to me if you didn't have to involve my family any further than you already have." #TODO: (Make this line change depending on which patht the player has went on and if they admitted to involving the family or not.)
-              l "This is going to have some unforseen effects on them even if it would maybe help in the short-term."
-              l "What are you going to tell them?"
-              l "That they are stuck in a game and that nothing really matters?"
-              l "I don't think they will take it as well as I would to be honest with you."
-              l "Alternatively you could just tell them about the timeloop but even then they might not take it as well."
-              l "You could also tell them nothing at all but that would be even worse wouldn't it? They are not just toys for you to play with [name]."
-              l "They are not just info-dispensers that will make you achieve whatever goal it is you are trying to reach now."
-              l "They are my family, and if you ever even had a slither of respect for me you better leave them alone."
-              #TODO: Rewrite this a bit and make it go on for a bit longer.<br/>Make it so that if the player doesn't comply with Lilith she doesn't give them the info they want.
-              menu:
-                  "Actually, you are right, I will honor your request.":
-                      #TODO: (Change this text slightly with dynamic effects that change depending on wheter or not you have kept your promise etc.) ALSO make it more sympathic.
-                      #TODO: Make Lilith slightly calm down as she appoligises and says she is passionate about her family's safety.
-                          #James' flag checks if you use James related things to win and the other checks if you have involved any family, including James
-                            if only_one_asked == True:
-                              if fam_obsession == "James":
-                                $ persistent.donotusejames_knowledge = True
+                l "It would mean a lot to me if you didn't have to involve my family any further than you already have." #TODO: (Make this line change depending on which patht the player has went on and if they admitted to involving the family or not.)
+                l "This is going to have some unforseen effects on them even if it would maybe help in the short-term."
+                l "What are you going to tell them?"
+                l "That they are stuck in a game and that nothing really matters?"
+                l "I don't think they will take it as well as I would to be honest with you."
+                l "Alternatively you could just tell them about the timeloop but even then they might not take it as well."
+                l "You could also tell them nothing at all but that would be even worse wouldn't it? They are not just toys for you to play with [name]."
+                l "They are not just info-dispensers that will make you achieve whatever goal it is you are trying to reach now."
+                l "They are my family, and if you ever even had a slither of respect for me you better leave them alone."
+                #TODO: Rewrite this a bit and make it go on for a bit longer.<br/>Make it so that if the player doesn't comply with Lilith she doesn't give them the info they want.
+                menu:
+                    "Actually, you are right, I will honor your request.":
+                        #TODO: (Change this text slightly with dynamic effects that change depending on wheter or not you have kept your promise etc.) ALSO make it more sympathic.
+                        #TODO: Make Lilith slightly calm down as she appoligises and says she is passionate about her family's safety.
+                            #James' flag checks if you use James related things to win and the other checks if you have involved any family, including James
+                                if only_one_asked == True:
+                                if fam_obsession == "James":
+                                    $ persistent.donotusejames_knowledge = True
 
-                              else:
-                                 $ persistent.restrainingorderfamily.knowledge = True
+                                else:
+                                    $ persistent.restrainingorderfamily.knowledge = True
 
-                            else:
-<<<<<<< HEAD
+                                else:
                                 $ persistent.restrainingorderfamily_knowledge = True
 
                         else:
                             $ persistent.restrainingorderfamily_knowledge = True
-=======
-                               $ persistent.restrainingorderfamily.knowledge = True
+                               
 
                             l "Thank you [name]. I know it might be tempting to try to see every line of dialogue in this game but there are limits I don't want you to cross.<br/>I appreciate that I atleast managed to convince you."
                             if persistent.restrainingorderfamily_violation_counter > 0:
@@ -1275,18 +1273,17 @@ label noContactFamilyPromise:
                                 else:
                                     n "Afterall you've broken your promise [persistent.restrainingorderfamily_violation_counter] times already."
                                     n "It gets easier each time doesn't it?"
->>>>>>> 96ef218566fb339d8731808fd773e6ee32d80314
 
                             $ family_curiosity_checker_movetox()
 
 
 
-                  "I already said that I couldn't listen to you, trying to convince me isn't going to work.":
-                      "Filler"
-                      #TODO: (Change this text)
-                      #Write the dialogue to cut back to her death. Make her be angry with you for only respecting her so much.
-                      #Write a custom bit of text?
-                      # "Kokiri_Death_Lilith leaves angrily"
+                    "I already said that I couldn't listen to you, trying to convince me isn't going to work.":
+                        "Filler"
+                        #TODO: (Change this text)
+                        #Write the dialogue to cut back to her death. Make her be angry with you for only respecting her so much.
+                        #Write a custom bit of text?
+                        # "Kokiri_Death_Lilith leaves angrily"
 
 
 label silentconversationsbackontrack:
