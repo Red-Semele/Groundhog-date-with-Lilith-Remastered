@@ -524,7 +524,7 @@ label kokiri_deaths:
             n "Lilith shudders as she speaks those words but when you look at her she tries her best to give you a smile."
             n "Lilith was right, the hill flew up into space itself, probably to some far-off stars, not that the two of you would know as after fifteen seconds everything went black.
             You can only imagine the gruesome death the two of you suffered, that is if you weren't unconcious."
-            $ persistent.kokiri_death_4_hill_holdhand = True
+            $ persistent.kokiri_death_4_hill_holdHand = True
             jump gameOver
         label kokiri_death_4_noHill:
             play music "gameOver.mp3"

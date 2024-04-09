@@ -678,7 +678,7 @@ label chinese_phone_peek_numbers:
         "Learn James' phone number." if not persistent.james_call_knowledge:
             $ persistent.james_call_knowledge = True
             jump chinese_phone_caught
-        "Learn Lisa's phone number." if not persistent.lisa_call_knowledge: #TODO: For some reason it doesn't think this flag is defined.
+        "Learn Lisa's phone number." if not persistent.lisa_call_knowledge: #TODO: For some reason it does not think this flag is defined.
             $ persistent.lisa_call_knowledge = True
             jump chinese_phone_caught
         "Close the phone." if persistent.abigail_call_knowledge and persistent.david_call_knowledge andpersistent.james_call_knowledge and persistent.lisa_call_knowledge: #TODO: Rewrite this line slightly.

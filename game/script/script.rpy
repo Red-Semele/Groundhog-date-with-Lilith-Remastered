@@ -72,8 +72,8 @@ if persistent.firstboot == None:
      define persistent.kokiri_death_3 = False
      define persistent.kokiri_death_4 = False
      define persistent.kokiri_death_4_hill = False
-     define persistent.kokiri_death_4_no_hill = False
-     define persistent.kokiri_death_4_hill_holdhand = False
+     define persistent.kokiri_death_4_noHill = False
+     define persistent.kokiri_death_4_hill_holdHand = False
      #Beach deaths under here:
      define persistent.beach_jelly_death = False
      define persistent.beach_hole_death = False
@@ -112,6 +112,11 @@ if persistent.firstboot == None:
      define persistent.james_story_knowledge = False
      define persistent.jamesconversation_becomethegame_knowledge = False
      define persistent.tracker = 0 #Tracker 
+     define persistent.easter_1 = False
+     define persistent.easter_2 = False
+     define persistent.easter_3 = False
+     define persistent.plane_knowledge = False
+     
      #Phone-numbers
      define persistent.david_call_knowledge = False
      define persistent.abigail_call_knowledge = False
@@ -170,6 +175,7 @@ if persistent.firstboot == None:
      define persistent.ending_quitter = False
      define persistent.ending_anending = False
      define persistent.ending_lettinggo = False
+     define persistent.game_credits = False
      #Phone_menu sortring related stuff:
      define persistent.amount_of_folder_links = 0 #This checks how many sub links I created in the phone menu to avoid clutter.
      n "[persistent.amount_of_folder_links]" #TODO: Remove this

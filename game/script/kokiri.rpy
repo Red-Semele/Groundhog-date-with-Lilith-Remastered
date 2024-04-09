@@ -1060,11 +1060,11 @@ label kokiri_death_dialogue_stillDying:
                     l "But is this death at the very least not too painful?"
                     #TODO: Add a menu here that eventually leads to the death_4 part.
                     menu:
-                        "I'm not sure honestly." if not persistent.kokiri_death_4_hill_holdhand:
+                        "I'm not sure honestly." if not persistent.kokiri_death_4_hill_holdHand:
                             #TODO: Make that line change depending on if you have seen a version of the death that you didn't feel or if you just didn't see anything. If you didn't see anything then make it "I'm not sure how you would die, this is the furthest we have ever gotten."
                             l "Filler"
                             #TODO: Fill in.
-                        "It shouldn't hurt too much I think, I've experienced it myself aswell." if persistent.kokiri_death_4_hill_holdhand:
+                        "It shouldn't hurt too much I think, I've experienced it myself aswell." if persistent.kokiri_death_4_hill_holdHand:
                             l "Well, that's easy for you to say isn't it?"
                             l "Of course it doesn't hurt too much for you, you are probably playing this game from the comfort of your own home."
                             l "Or at the very least you don't really have to experience whatever fate awaits us."
