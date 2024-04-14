@@ -95,7 +95,7 @@ label kokiri_explanation_game:
                             $ conversationtracker_norealname = True
                             $ kokiri_norealname = 1
                             $ kokiri_realname = True
-                            l "Oh, so what is your real name then?" #TODO: Change this line up slightly.
+                            l "Oh I see! Let's reintroduce ourselves in that case. Hello, my name is Lilith, what is your name?"
                             $ name_real = renpy.input("What is your real name?")
                             $  name_real = name_real.strip() or "Max"
                             $ name_real = name_real.capitalize()
@@ -121,20 +121,25 @@ label kokiri_explanation_game:
                             menu:
                                     "No, not yet.":
                                         $ persistent.kokiri_teacher_knowledge = True
-                                        l "I actually teach the first year of our town's elementary school."
+                                        l "Oh I see! Well, I actually teach the first year of our town's elementary school."
                                         l "I just love working with those kids and helping them out as best as I can."
-                                        #TODO: Go a bit more indepth on this.
                                         menu:
-                                            "That's really cool!":
-                                                #TODO: That's kind of a weird reaction.
-                                                l "Thanks, [name_real]!"
-                                                #TODO: Probably scrap this choice or heavily rework it. Instead I think a better choice would be to ask her what she likes about working with the kids.
-                                                #Fill out a bit more.
+                                            "That's really nice to hear! What other things do you like about teaching?":
+                                                "Filler"
+                                                #TODO: Fill out. (No quest precedent.)
+                                            "That's great to hear! Why did you choose to be a teacher specifically?":
+                                                "Filler"
+                                                #TODO: Fill this in about liking to help the children etc. But also really liking the vactations and more her-time.
 
                                     "You have mentioned you teach the first year of elementary when we had this talk before actually." if persistent.kokiri_teacher_knowledge:
-                                        l "Oh I see, so you have already spoken to me here?" #TODO: Change this line slightly.
-                                        #TODO: Make this an alternate way to talk about her not being the same etc, there is already a label in the game like that, just jump to that one. (If it is not yet in the game it IS in the quest version)
-                                        #It's the one that mentions Heraclitus Iirc
+                                        l "Oh I see, so we already had this conversation?"
+                                        menu:
+                                            "Yes, we did, I just wanted to ask you something else about it.":
+                                                "Filler"
+                                                #TODO: Add the questions you can ask if you say you haven't talked about it yet here aswell.
+                                            "Sort of? I had this conversation with a version of you, but that was not the same version of you that you are now.":
+                                                jump kokiri_notTheSameYou
+                                        
                         else:
                             $ kokiri_norealname += 1
                             if kokiri_norealname == 2:
@@ -202,7 +207,8 @@ label kokiri_explanation_game_playerIdentity:
                         $ kokiri_conversation += 1
                         "Filler."
                         #TODO: Fill in (There is no quest precedent for this.) Make it be about what "an ending" looks like, can Lilith make endings? Can you?
-                    "I think the goal is to make my own version of this game through a medium of my own somehow.": #TODO: (Make this pop-up once Lilith suggests it.)
+                    "I think the goal is to make my own version of this game through a medium of my own somehow.": 
+                        #TODO: (Make this link pop-up once Lilith suggests it.)
                         $ kokiri_conversation += 1
                         l "I see..."
                         n "Lilith scratches her chin, she seems to be deep in thought for a moment."
@@ -572,49 +578,48 @@ label kokiri_poems_oldPoems_bang:
     $ persistent.kokiri_poem_bang_knowledge = True
     $ conversationtracker_poem_bang = True
     $ kokiri_poem_bang_recent = True
-    #TODO: Format this better.
-    l "A bang, to keep me awake
-    A mix of rust and salt on my tongue
-    Deep cut my broken dreams
-    in the skin of an idiot
-    It still rings in my ears"
-    l "The reality is breaking
-    I still can not understand it
-    A lie and still the truth"
-    l "Time seems to stand still
-    And yet I do not get any younger
-    But also not smarter
-    Just more of myself and then less"
-    l "Because everything finally falls down,
-    The leaves of a proud tree,
-    The feathers of lost birds,
-    My life."
-    l "It is the law of gravity
-    Who laughs with us,
-    Who raised us."
-    l "The really much too heavy force.
-    Who slowly slaughter us,
-    Who slowly laughs at us,
-    Who is waiting for us."
-    l "Constantly day and night
-    We push our whole life against a gigantic boulder on our hill and when we are at the top it slowly rolls to the other side.
-    I try to be smarter, different than they are."
-    l "But that makes me exactly like them. My other me blames me every day
-    How I was the match, the fire and the ashes.
-    I cry for help but they do not hear it,
-    I cry for help but you do not hear it,
-    I cry for help but I do not hear it."
-    l "Falling stars fall to the ground, I bathe in the light and yet I drown in the inkblack
-    Hopping for air, hoping for a sign I sink deeper and deeper and more and more unclear until nothing is left of me.
-    Dead hands pull me with them,
-    Living hands push me even further
-    Stuck in this night-filled  realm
-    With all the shadows"
-    l "But in the darkness of our thoughts
-    It looked like I could  see light
-    It was the moon that made all this nothing something.
-    It was the world that made this new something nothing.
-    It was me who closed my eyes."
+    l "A bang, to keep me awake"
+    l "A mix of rust and salt on my tongue"
+    l "Deep cut my broken dreams"
+    l "in the skin of an idiot"
+    l "It still rings in my ears"
+    l "The reality is breaking"
+    l "I still can not understand it"
+    l "A lie and still the truth"
+    l "Time seems to stand still"
+    l "And yet I do not get any younger"
+    l "But also not smarter"
+    l "Just more of myself and then less"
+    l "Because everything finally falls down,"
+    l "The leaves of a proud tree,"
+    l "The feathers of lost birds,"
+    l "My life."
+    l "It is the law of gravity"
+    l "Who laughs with us,"
+    l "Who raised us."
+    l "The really much too heavy force."
+    l "Who slowly slaughter us,"
+    l "Who slowly laughs at us,"
+    l "Who is waiting for us."
+    l "Constantly day and night"
+    l "We push our whole life against a gigantic boulder on our hill and when we are at the top it slowly rolls to the other side."
+    l "I try to be smarter, different than they are."
+    l "But that makes me exactly like them. My other me blames me every day"
+    l "How I was the match, the fire and the ashes."
+    l "I cry for help but they do not hear it,"
+    l "I cry for help but you do not hear it,"
+    l "I cry for help but I do not hear it."
+    l "Falling stars fall to the ground, I bathe in the light and yet I drown in the inkblack"
+    l "Hopping for air, hoping for a sign I sink deeper and deeper and more and more unclear until nothing is left of me."
+    l "Dead hands pull me with them,"
+    l "Living hands push me even further"
+    l "Stuck in this night-filled  realm"
+    l "With all the shadows"
+    l "But in the darkness of our thoughts"
+    l "It looked like I could  see light"
+    l "It was the moon that made all this nothing something."
+    l "It was the world that made this new something nothing."
+    l "It was me who closed my eyes."
     jump kokiri_poems_askOrRate
 label kokiri_poems_recentPoems:
     "Filler"
@@ -670,8 +675,6 @@ label kokiri_poems_askOrRate:
 
 
         "*Ask something about the poem*":
-            "Filler"
-            #TODO: Fill in based on quest stuff.
             menu:
                 "There seems to be a connection between some of your poems. In one you close your eyes, in the other the shadows hope to open their eyes. Was that intentional?" if persistent.kokiri_poem_bang_knowledge and persistent.kokiri_poem_window_knowledge:
                     "Filler"
@@ -743,10 +746,15 @@ label kokiri_death_3_death_dialogue:
     if kokiri_call == True:
         l "So after that call I am still going to die, right?"
         l "Forgive me if I am slightly nihilistic but what was the point of that?"
-        l "After you retry everything of this is going to be undone and she won't even remember that I called her." #TODO: Rewrite these lines a little bit. Make Lilith say that she loved helping abbigail and or lila a little bit but that she's not sure if that will even mean anything upon a reload.
+        l "After you retry everything of this is going to be undone and she won't even remember that I called her." 
+        if kokiri_chatchar_abigail_called == True:
+            l "I really love that I still managed to help my sister in my last moments but if everything gets reset inevitably doesn't that make all of this pointless?"
+        else: 
+            l "I really love that I still managed to help my mom in my last moments but if everything gets reset inevitably doesn't that make all of this pointless?"
     else:
         l "So after all those things that just happened I am still going to die?"
     menu:
+        #TODO: Add a choice here after you learn that not everything truly resets telling her that in this universe nothing resets but that the player goes to another.
         "Well, it is better to die with a clear conscience and slightly less doubts. So that call was anything but pointless." if kokiri_call:
             jump kokiri_death_dialogue_stillDying
 
@@ -757,6 +765,7 @@ label kokiri_death_dialogue_stillDying:
     if kokiri_call == True:
         l "I suppose that's true [name]. Thank you for making me realise that, it helps a little.
         Very little..."
+        l "But I can use all the comfort I can get now to be honest."
     else:
         l "When you told me your story just a bit ago it all seemed so far away but now it all feels so much closer."
 
@@ -922,47 +931,7 @@ label kokiri_death_dialogue_stillDying:
                                     #TODO: check to see if you need a better segway
                                     jump kokiri_death_4_hill
                                 "Well that's true, but that was not the same you as you are now. ":
-                                    n "Lilith chuckles and gives you a confused look."
-                                    l "I'm afraid I'm not really following you [name]."
-                                    l "If you were at the exact same place and time with a version of me and you told her the same things you are telling me up to this point, doesn't that make me essentially her?"
-                                    menu:
-                                        "That might be true but you are forgetting one thing, my time isn't frozen, it keeps going and so do my memories. So my perception of you keeps shifting and with that you do aswell.":
-                                            l "Ah I hadn't thought about it like that!"
-                                            l "I guess I feel like a different person to you depending on what you learn about me but unlike me you can't forget it."
-                                            l "It's almost like that saying I suppose: \"You can't step into the same river twice.\""
-                                            l "Do you know who said that?"
-                                            if persistent.kokiri_heraclitus_knowledge == True:
-                                                l "You remember Lilith telling you it was Heraclitus who said that."
-                                            menu:
-                                                "Oh yeah, the one who said that is...":
-                                                    #TODO: Add input box here that checks on your answer. You can find this piece of the code on : "Heraclitus trigger response_yes"
-                                                    "Filler"
-
-                                                "I don't know.":
-                                                    $ persistent.kokiri_heraclitus_knowledge = True
-                                                    $ persistent.kokiri_determinism_knowledge = True
-                                                    l "No worries [name]! It's not like I'm going to leave you because you don't know the name of that guy."
-                                                    n "Lilith chuckles slightly."
-                                                    l "He believed that everything flows and moves, that nothing stays the same. I believe the right words are: \"Panta rhei\""
-                                                    l "I think he certainly has a point, especially when you start to think of all the cogs and parts that interact with eachother every single second of our lives and even beyond them."
-                                                    l "Then again, I wonder if you put those exact cogs and parts in the exact same place and under the same circumstances if you would get other results or if everything would go the same way."
-                                                    l "I tend to believe the latter, what do you think [name]?"
-                                                    #TODO: Segway? "You want to answer Lilith, when suddenly:"
-                                                    jump kokiri_death_4_hill
-
-
-
-                                        "Actually, what you're saying makes a lot of sense, I hadn't considered that.":
-                                            $ persistent.kokiri_determinism_knowledge = True
-                                            l "I always found that a fascinating thing to ponder, if you had two universes that so far are identical in every way. Can they go in different directions?"
-                                            l "Or is there such a thing as fate always steering them in the same direction?"
-                                            l "I believe they would follow the same direction if every single little detail up to that point was the same but that's the fun part in this whole speculation, the idea that I could be wrong!"
-                                            n "You give Lilith a questioning look and she burst out in laughter."
-                                            n "After a few moments she finds her calm once again."
-                                            l "Where would be the fun if I could just know how the universe itself worked? I think it is way more interesting to try to think of new interesting ways that can be explained with logic than to just cling to it being unknowable as an excuse to not think of explanations. Don't you think so aswell [name]?"
-                                            #TODO: Segway? "You want to answer Lilith, when suddenly:"
-                                            jump kokiri_death_4_hill
-
+                                    jump kokiri_notTheSameYou
                 "I would love to truly watch them with you but I can't actually see them.":
                     l "Oh right, because this game is textbased for you. Well, I could narrate the stars if you want to." #TODO: change this line since the game will have graphics, make her say that the graphics are not really stars but pixels on a screen.
                     n "You give a quick nod."
@@ -988,17 +957,60 @@ label kokiri_death_dialogue_stillDying:
                     $ persistent.kokiri_determinism_knowledge = True
                     #TODO: Segway? "You want to answer Lilith, when suddenly:"
                     jump kokiri_death_4_hill
-
-
-
                 "*Stay silent and watch the stars.*":
-                    #TODO: Make a joke about not wanting to ruin the moment with more philosophy.
+                    n "Honestly staying silent probably was the best call, I mean have you {b}seen{/b} some of the other options?"
+                    n "It's probably not the best idea to constantly bring up something philosopical on your first date."
+                    n "Well... for her it's the first date. For you it's becoming hard to keep track of how many first dates you had with her isn't it?"
+                    n "I'll help you out, it's somewhere around the [persistent.lildeaths]th date for you."
+                    n "But anyway, I just wanted to say that I'm proud of you for not saying too much, that is my job afterall."
+                    n "Let me jump right back into the narration."
                     n "You're not sure how long you two have been staring at the stars, it might have been a minute or fifteen of them. All you're sure about is that you felt at peace for every second of it."
                     l "Thank you for making these memories with me [name] even if I won't remember them the next time, I'll remember them for as long as I possibly can."
                     l "I had a blast so far, even if the concept that I'm in a game still is a bit much to wrap my head around."
                     l "I was always so focused on Abby, mom, my work, pretty much anything else that isn't me, that I forgot how good it feels to take some time to just relax."
                     #TODO: Maybe make this more indepth?
                     jump kokiri_death_4_hill
+label kokiri_notTheSameYou:                                    
+    n "Lilith chuckles and gives you a confused look."
+    l "I'm afraid I'm not really following you [name]."
+    l "If you were at the exact same place and time with a version of me and you told her the same things you are telling me up to this point, doesn't that make me essentially her?"
+    menu:
+        "That might be true but you are forgetting one thing, my time isn't frozen, it keeps going and so do my memories. So my perception of you keeps shifting and with that you do aswell.":
+            l "Ah I hadn't thought about it like that!"
+            l "I guess I feel like a different person to you depending on what you learn about me but unlike me you can't forget it."
+            l "It's almost like that saying I suppose: \"You can't step into the same river twice.\""
+            l "Do you know who said that?"
+            if persistent.kokiri_heraclitus_knowledge == True:
+                l "You remember Lilith telling you it was Heraclitus who said that."
+            menu:
+                "Oh yeah, the one who said that is...":
+                    #TODO: Add input box here that checks on your answer. You can find this piece of the code on : "Heraclitus trigger response_yes"
+                    "Filler"
+
+                "I don't know.":
+                    $ persistent.kokiri_heraclitus_knowledge = True
+                    $ persistent.kokiri_determinism_knowledge = True
+                    l "No worries [name]! It's not like I'm going to leave you because you don't know the name of that guy."
+                    n "Lilith chuckles slightly."
+                    l "He believed that everything flows and moves, that nothing stays the same. I believe the right words are: \"Panta rhei\""
+                    l "I think he certainly has a point, especially when you start to think of all the cogs and parts that interact with eachother every single second of our lives and even beyond them."
+                    l "Then again, I wonder if you put those exact cogs and parts in the exact same place and under the same circumstances if you would get other results or if everything would go the same way."
+                    l "I tend to believe the latter, what do you think [name]?"
+                    jump kokiri_death_4_hill
+
+
+
+        "Actually, what you're saying makes a lot of sense, I hadn't considered that.":
+            $ persistent.kokiri_determinism_knowledge = True
+            l "I always found that a fascinating thing to ponder, if you had two universes that so far are identical in every way. Can they go in different directions?"
+            l "Or is there such a thing as fate always steering them in the same direction?"
+            l "I believe they would follow the same direction if every single little detail up to that point was the same but that's the fun part in this whole speculation, the idea that I could be wrong!"
+            n "You give Lilith a questioning look and she burst out in laughter."
+            n "After a few moments she finds her calm once again."
+            l "Where would be the fun if I could just know how the universe itself worked? I think it is way more interesting to try to think of new interesting ways that can be explained with logic than to just cling to it being unknowable as an excuse to not think of explanations. Don't you think so aswell [name]?"
+            jump kokiri_death_4_hill
+
+                
 
 
         "You need to go through this, it's the only way I might be able to save you.":
@@ -1064,12 +1076,21 @@ label kokiri_death_dialogue_stillDying:
                             #TODO: Make that line change depending on if you have seen a version of the death that you didn't feel or if you just didn't see anything. If you didn't see anything then make it "I'm not sure how you would die, this is the furthest we have ever gotten."
                             l "Filler"
                             #TODO: Fill in.
-                        "It shouldn't hurt too much I think, I've experienced it myself aswell." if persistent.kokiri_death_4_hill_holdHand:
+                        "I have experienced it myself aswell and I can honestly say that it is over very quick, probably before you could feel pain. It shouldn't hurt." if persistent.kokiri_death_4_hill_holdHand:
                             l "Well, that's easy for you to say isn't it?"
                             l "Of course it doesn't hurt too much for you, you are probably playing this game from the comfort of your own home."
                             l "Or at the very least you don't really have to experience whatever fate awaits us."
+                            l "Your character did, not you."
+                            n "Lilith grows quiet for a moment."
+                            l "..."
+                            l "Look [name], I'm sorry if I came of as a bit agitated just now. I didn't want to hurt you like that."
+                            l "I guess this is a bit much for me? The feeling of death looming right above your head, it's messing with me."
+                            l "But still, I shouldn't have said that, I shouldn't have taken my frustration out on you."
+                            l "After all, you just wanted to comfort me, right?"
+                            l "And though I am still terified it oddly helps that someone experienced the same thing, even if it merely was your character that felt it."
+                            l "So thank you [name], thank you for trying to be there for me."
                             l "Still, thank you for telling me that [name], it helps to comfort me a little even though I still feel terified."
-                            #TODO: Rewrite these lines a bit and maybe write some more.
+                            #TODO: Jump to the correct next part.
         "You got this!":
             #This is the most dumb one but in the quest version it is also treated as such.
             l "I...got this?"

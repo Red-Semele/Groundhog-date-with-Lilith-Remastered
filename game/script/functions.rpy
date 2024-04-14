@@ -1,6 +1,5 @@
 
 label gdwl_functions:
-    #TODO: For some reason it can't find this label
     init python:
         def love_meter_result():
             if love_meter <= 0:
@@ -247,7 +246,7 @@ label gdwl_functions:
             if kokiri_conversation == 2:
                 if persistent.kokiri_death_1 == True:
                     if kokiri_alternateplace == False:
-                        renpy.say(n, "You remember that it's almost the moment when a fragment from the meteorite would threaten to hit Lilith if she doesn't move out of the way.", interact=False) #TODO: Rewrite this line a bit.
+                        renpy.say(n, "Suddenly you are plagued with a vision of the meteorite that killed Lilith. You should probably try to warn her this time.", interact=False)
                         met_check = renpy.display_menu([("You might want to sit on my right instead of my left first. Something's coming soon.","meteorite_warn"),("*Don't warn her.*","no_meteorite_warn")])
                         if met_check == "meteorite_warn":
                             renpy.say (n, "Lilith gives you a nod as she moves to the other side of the blanket, to your left.")

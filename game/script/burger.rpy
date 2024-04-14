@@ -165,8 +165,7 @@ label burger_ordering:
         n "An old lady, who you remember is called Rose, smiles at the both of you."
     else:
         n "An old lady smiles at the both of you."
-    #TODO: Find the way to properly replicate this effect from quest. (No linebreak if else statement. Find a way to properly do this, I can just use an if else to create two sepearate lines but I want to join the second line into the first one if you remember her name.
-    #Also find a way to make rose her name be "???" instead of Rose if you do not yet know her name.
+    #TODO:Also find a way to make rose her name be "???" instead of Rose if you do not yet know her name.
     r "Hey Lilith, glad to see you here once more!"
     r "I'm almost surprised to see you here, it's been quite a while hasn't it?"
     if persistent.rosename_knowledge == True:
@@ -185,10 +184,10 @@ label burger_ordering:
     r "That way you two can get to know each other some more."
     n "She gives Lilith a quick wink that you just barely manage to catch."
     n "Lilith's face turning beetred is a lot easier to notice."
-    l "{size=*0.5)Uhm, thank you Rose... we uhm have to get back to our table now.{/size}"
+    l "{size=*0.5}Uhm, thank you Rose... we uhm have to get back to our table now.{/size}"
     n "You can't help but chuckle to yourself as Lilith pratically darts back to the table."
     n "By the time you've reached the table she is already sitting down, still as red as she possibly could be."
-    n "She quickly brushes one hand over her left cheek and somehow manages to turn even more red at the realisation that she is still blusing." #TODO: Rewrite this line a bit more, it feels kind of dumb.
+    n "She quickly brushes one hand over her left cheek and somehow manages to turn even more red at the realisation that she is still blusing."
     n "Right then she lets out a few small coughs as she tries to somehow divert attention from what just happened."
     #TODO: Add a better segway?
     l "Thank you for choosing this place [name].
@@ -380,7 +379,6 @@ label burger_poem_rating_terrible:
     She looks hurt by your words."
     l "Oh...
     No need to be a douche about it."
-    #TODO: Make it give slightly different text (brotherasked) based on the love meter instead of the brother counter I made, that way you can use universal systems more properly.
     jump burger_Brotherasked
 
 
@@ -427,8 +425,7 @@ label burger_living_writer_thankTip_sorryHobbyLost:
 
 label burger_Brotherasked:
     if askedbrother == True:
-        if love_meter == 3:
-            #TODO: Does this love meter trigger the text?
+        if love_meter >= 3:
             $ persistent.brother_knowledge = True
             n "Lilith pauses for a moment."
             l "You asked what my brother's name was, right?

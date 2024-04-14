@@ -1,5 +1,4 @@
 ﻿# The script of the game goes in this file.
-#TODO: global "x" should turn the "x" variable into a global one.
 #TODO: Add a morality counter you can use for a system where the player gets judged on their actions.
 #TODO: Make all mentions of the car reflect that you've already seen it if that's the case.
 
@@ -116,6 +115,7 @@ if persistent.firstboot == None:
      define persistent.easter_2 = False
      define persistent.easter_3 = False
      define persistent.plane_knowledge = False
+     define persistent.teaseDeath_fakeOut_knowledge = False
      
      #Phone-numbers
      define persistent.david_call_knowledge = False
@@ -173,7 +173,7 @@ if persistent.firstboot == None:
      define persistent.beachroute_visited_knowledge = False
      #Endings:
      define persistent.ending_quitter = False
-     define persistent.ending_anending = False
+     define persistent.ending_anEnding = False
      define persistent.ending_lettinggo = False
      define persistent.game_credits = False
      #Phone_menu sortring related stuff:
@@ -193,121 +193,122 @@ if persistent.firstboot == None:
      define persistent.links_phone = 0
      define persistent.times_phone_declined = 0
      #TODO:Add the extra stuff on this page that is in the original.
-     #NON-PERSISTENT FLAGS
-     #Other:
-     $ car_caught = False
-     $ car_free = False
-     $ groundhog = False
-     $ psychic = False
-     # Locations:
-     $ burger_poem_cleancheck = False
-     $ burger = False
-     $ burger_alt = False
-     $ cafe = False
-     $ kokiri = False
-     $ brotherasked = 0
-     $ dicenumber = 0
-     $ dicenumber2 = 0
-     $ cafedicecheat = False
-     $ cafe_badLove_lowbar = False
-     $ cafe_badLove_justafeeling = False
-     $ chinese = False
-     $ peking = False
-     $ orange = False
-     $ rw1 = 0
-     $ rw2 = 0
-     $ rw3 = 0
-     $ rw_total = 0
-     $ riddle_loop = False
-     $ kokiri = False
-     $ kokiri_groundhog_lie = False
-     $ kokiri_psychic_lie = False
-     $ family_ask = 0
-     $ poem_conversation = False
+#NON-PERSISTENT FLAGS
+#Other:
+$ car_caught = False
+$ car_free = False
+$ groundhog = False
+$ psychic = False
+# Locations:
+$ burger_poem_cleancheck = False
+$ burger = False
+$ burger_alt = False
+$ cafe = False
+$ kokiri = False
+$ brotherasked = 0
+$ dicenumber = 0
+$ dicenumber2 = 0
+$ cafedicecheat = False
+$ cafe_badLove_lowbar = False
+$ cafe_badLove_justafeeling = False
+$ chinese = False
+$ peking = False
+$ orange = False
+$ rw1 = 0
+$ rw2 = 0
+$ rw3 = 0
+$ rw_total = 0
+$ riddle_loop = False
+$ kokiri = False
+$ kokiri_groundhog_lie = False
+$ kokiri_psychic_lie = False
+$ family_ask = 0
+$ poem_conversation = False
+$ teaseDeath = False
 
-     $ kokiri_poems_rated_once = False
-     $ kokiri_poems_rateblock = False
-     $ kokiri_alternateplace = False
-     $ kokiri_holdhand = False
-     $ kokiri_scenery_headhurt = False
-     $ kokiri_scenery_breakfrombreakingyourhead = False
-     $ kokiri_scenery_gamegoal = False
-     $ kokiri_meteorite_alert = False
-     $ kokiri_meteorite_no_alert = False
+$ kokiri_poems_rated_once = False
+$ kokiri_poems_rateblock = False
+$ kokiri_alternateplace = False
+$ kokiri_holdhand = False
+$ kokiri_scenery_headhurt = False
+$ kokiri_scenery_breakfrombreakingyourhead = False
+$ kokiri_scenery_gamegoal = False
+$ kokiri_meteorite_alert = False
+$ kokiri_meteorite_no_alert = False
 
-     $ kokiri_call_death_2_check = False
-     $ kokiri_call_death_1_check = False
-     #TODO: Add the other recent poem checkers below here.
-     $ kokiri_poem_snowwoman_recent = False
-     $ kokiri_poem_shadowman_recent = False
-     $ kokiri_poem_lights_recent = False
-     $ kokiri_poem_bang_recent = False
-     $ kokiri_poem_window_recent = False
-     #TODO: Talk about family kokiri:
-     $ family_ask = 0
+$ kokiri_call_death_2_check = False
+$ kokiri_call_death_1_check = False
+#TODO: Add the other recent poem checkers below here.
+$ kokiri_poem_snowwoman_recent = False
+$ kokiri_poem_shadowman_recent = False
+$ kokiri_poem_lights_recent = False
+$ kokiri_poem_bang_recent = False
+$ kokiri_poem_window_recent = False
+#TODO: Talk about family kokiri:
+$ family_ask = 0
 
-     $ kokiri_chatchar_abigail = False
-     $ kokiri_chatchar_james = False
-     $ kokiri_chatchar_lila = False
-     $ kokiri_chatchar_david = False
-     $ kokiri_call = False
-     $ james_interest = False
-     $ abigail_interest = False
-     $ david_interest = False
-     $ lila_interest = False
-     $ james_obsession = False
-     $ abigail_obsession = False
-     $ david_obsession = False
-     $ lila_obsession = False
-     $ no_fam_obsession = False
-     $ james_involved = False
-     $ kokiri_chatchar_abigail_recent = False
-     $ kokiri_chatchar_james_recent = False
-     $ kokiri_chatchar_david_recent = False
-     $ kokiri_chatchar_lila_recent = False
-     #CONVERSATION TRACKERS
-     $ conversationtracker_morepoems = False
-     $ conversationtracker_tellheraboutnarrator = False
-     $ conversationtracker_questmade = False
-     $ questmade = 0
-     $ conversationtracker_abigail = False
-     $ conversationtracker_david = False
-     $ conversationtracker_james = False
-     $ conversationtracker_lila = False
-     $ conversationtracker_blamedavid = False
-     $ conversationtracker_poem_window = True
-     $ conversationtracker_poem_snowwoman = True
-     $ conversationtracker_poem_window = True
-     $ conversationtracker_poem_shadowman = True
-     $ conversationtracker_poem_lights = True
-     $ conversationtracker_poem_bang = True
-     #TODO: Put all conversationtracker flags here.
+$ kokiri_chatchar_abigail = False
+$ kokiri_chatchar_james = False
+$ kokiri_chatchar_lila = False
+$ kokiri_chatchar_david = False
+$ kokiri_call = False
+$ james_interest = False
+$ abigail_interest = False
+$ david_interest = False
+$ lila_interest = False
+$ james_obsession = False
+$ abigail_obsession = False
+$ david_obsession = False
+$ lila_obsession = False
+$ no_fam_obsession = False
+$ james_involved = False
+$ kokiri_chatchar_abigail_recent = False
+$ kokiri_chatchar_james_recent = False
+$ kokiri_chatchar_david_recent = False
+$ kokiri_chatchar_lila_recent = False
+#CONVERSATION TRACKERS
+$ conversationtracker_morepoems = False
+$ conversationtracker_tellheraboutnarrator = False
+$ conversationtracker_questmade = False
+$ questmade = 0
+$ conversationtracker_abigail = False
+$ conversationtracker_david = False
+$ conversationtracker_james = False
+$ conversationtracker_lila = False
+$ conversationtracker_blamedavid = False
+$ conversationtracker_poem_window = True
+$ conversationtracker_poem_snowwoman = True
+$ conversationtracker_poem_window = True
+$ conversationtracker_poem_shadowman = True
+$ conversationtracker_poem_lights = True
+$ conversationtracker_poem_bang = True
+#TODO: Put all conversationtracker flags here.
 
 
-     #Other flags
-     $ NMdetect = False #TODO: Is the flag and the Mdetect one lowercase or not? Make them lowercase everywhere if not.
-     $ Mdetect = False
-     $ hard_rude = False
-     $ easy_rude = False
-     $ tracker = 0
-     $ demetrius = False
-     $ adriel = False
-     $ currentcar = False
-     $ love_meter = 3
-     $ love_points = 0
-     $ minor_love_offence = 0
-     $ major_love_offence = 0
-     $ minor_love_comfort = 0
-     $ major_love_comfort = 0
-     $ booklovertalked = False
-     $ musiclovertalked = False
-     #QOL-settings:
-     $ no_nightmare = False
-     $ perm_nightmare = False
-     $ other_phone = 0
+#Other flags
+$ NMdetect = False #TODO: Is the flag and the Mdetect one lowercase or not? Make them lowercase everywhere if not.
+$ Mdetect = False
+$ hard_rude = False
+$ easy_rude = False
+$ tracker = 0
+$ demetrius = False
+$ adriel = False
+$ currentcar = False
+$ love_meter = 3
+$ love_points = 0
+$ minor_love_offence = 0
+$ major_love_offence = 0
+$ minor_love_comfort = 0
+$ major_love_comfort = 0
+$ booklovertalked = False
+$ musiclovertalked = False
+#QOL-settings:
+$ no_nightmare = False
+$ perm_nightmare = False
+$ other_phone = 0
 
-     #FUNCTIONS:
-     jump gdwl_functions
+#FUNCTIONS:
+jump gdwl_functions
 
 
 
@@ -317,6 +318,7 @@ label after_setup:
      # images directory to show it.
 
      scene bg room
+     
 
      # This shows a character sprite. A placeholder is used, but you can
      # replace it by adding a file named "eileen happy.png" to the images
@@ -472,15 +474,11 @@ label Game_start2:
                jump restaurant_subfolder_enabler
  
  
-          #Trigger the alternate menu:
-          #TODO: Check if the other location and the "other" folder are made, in that case make a folder for the three main restaurants.
-          #If there are 2 extra links on the page that can't be put into a folder, put the three main restaurants in one.
+          
 
 
 label phone_start_choices:
 
-
-     #TODO: Properly align all these links of the menu once you are done with the code.
      menu:
  
           "How do burgers sound?" if not persistent.restaurant_subfolder:
@@ -1026,6 +1024,7 @@ label doNotPickUpThePhone:
           #Ending
           "The quitter ending."
           $ persistent.ending_quitter = True
+          $ persistent.game_credits = True
      #TODO: Add an ending for when you have 2-9 deaths, the narrator tells you that you are so close to a breakthrough.
  
      elif persistent.lildeaths <= 20:
@@ -1034,7 +1033,8 @@ label doNotPickUpThePhone:
                n "But is it really?..."
                #Ending
                "An ending."
-               $ persistent.ending_anending = True
+               $ persistent.ending_anEnding = True
+               $ persistent.game_credits = True
  
      elif persistent.lildeaths > 20:
  
@@ -1050,6 +1050,7 @@ label doNotPickUpThePhone:
           #Ending
           "Letting go ending"
           $ persistent.ending_lettinggo = True
+          $ persistent.game_credits = True
  
  
      $ persistent.times_phone_declined = persistent.times_phone_declined + 1
@@ -1330,7 +1331,6 @@ label loopGone_happyForYou:
      l "Then come dance with me!"
      n "Lilith gets up and beckons you closer with a wide smile."
      n "The two of you begin to move around with all kinds of limb-shaking that probably could be considered dancing by some."
-     #TODO: These death flags should be persistent ones.
      if burger == True:
           if persistent.burger_death_2 == True:
                jump loopGone_happyForYou_real
@@ -1482,7 +1482,6 @@ label didNotTryYet_neverMeet:
      l "You know, I got a feeling that won't be the case so you can always give it a shot if you want."
      n "She grows slilent for a moment."
      l "But just in case something does end up happening and causes you to never be able to see me again."
-     #TODO: Do the text below in a typewriter effect:
      l "I want you to know that I really liked our time together..."
      jump restaurant_death_2
 
@@ -1565,8 +1564,10 @@ label youwouldntbelieveme_doNotteaseDeath:
                jump restaurant_death_2
 
 label youwouldntbelieveme_teaseDeath:
+     $ teaseDeath = True
      n "Lilith and you high five eachother, you've won. Congratulatons!"
-     #TODO:Make the narrator say something like "It seems you didn't win just quite, maybe something else will work?" the first time and the second time, when you know about the death he will say "Is what I would say if either of us thought that was the truth."
+     if persistent.teaseDeath_fakeOut_knowledge = False:
+          n "That is what I would say if either of us thought that was the truth. Afterall, you came back here for a reason didn't you?"
      jump restaurant_death_2
 
 label psychic_justHelpingOut:
@@ -1653,8 +1654,11 @@ label explanation_noTimeToExplain:
                n "These scenarios are becoming more and more unjustified, you shake your head and try to focus on getting Lilith alive and well out of this mess."
                l "Listen, I really don't think we are safe here. Even if we make it out of this city, where are we going to go then?"
                l "It's not like we can just leave this planet so death will always follow me."
-               l "Lilith has given you the greatest idea, you give her a kiss on the lips and tell her she is genious."
-               l "Oh I wouldn't know about that. But how are we supposed to get in space?" #TODO: (Rewrite this line)
+               n "Lilith has given you the greatest idea, you give her a kiss on the lips and tell her she is genious."
+               n "Lilith turns beetred."
+               l "Oh I wouldn't know about that..." 
+               l "But hang on, you are not seriously thinking about leaving this planet, right?"
+               l "How would we even be able to do that?"
                l "You stop the car for a moment, waiting for death to cath up with both of you, and it sure does so fast." #TODO: Maybe make this line a bit different.
                n "Retry, this could be it!"
                n "This time you don't leave the village, instead you remember the ufo that is hidden in Kokiri forest. Maybe you could use it to escape."
@@ -1678,7 +1682,15 @@ label explanation_noTimeToExplain:
                menu:
                     "*Talk with Lilith*":
                          #TODO: Add some extra choices here? Not too much though!
-                         l "What just happened [name]?  What is this all about?" #TODO: Rewrite the "What is this all about?" part because it is kind of weird to say something so anti-cimactic
+                         l "What just happened [name]?"
+                         l "How did you know about the Kokiri forest?"
+                         l "How did you know there was an ufo there?"
+                         l "And how in the world do you know how to fly it succesfully?"
+                         l "What is this all about?"
+                         l "{size=*0.5}Are you... an alien?{/size}"
+                         l "Or are your really INSERT ANSWER HERE?"
+                         #TODO: Make her ask if you really are pshyic or groundhog daying based on what you told her when you said you had no time to explain.
+                         
                          menu:
                               "So basically you are in a game and I need to keep you from dying.":
                                    #TODO: Rewrite this choice.

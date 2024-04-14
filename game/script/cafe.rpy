@@ -337,9 +337,9 @@ label cafe_badLove:
     l "Well..."
     l "I wouldn't say I had really bad experiences with love. It's just that I tend to grow connected with people before they even had the chance to grow fond of me.
     I also do not need to be with someone every single moment, both as a friend or lover, once I'm connected I start to sort of withdraw a little bit."
-    if cafe_badLove_lowbar == True:
-        #Make this only trigger if the player has already retried atleast once.
-        l "But it's strange, I feel as if you already know me pretty well even though this is our first date. Not that I'm complaining though, I really like it if I'm being honest with you."
+    if cafe_badLove_lowbar == True: #TODO: What is this supposed to do again? Check it out 
+        if persistent.lildeaths > 0:
+            l "But it's strange, I feel as if you already know me pretty well even though this is our first date. Not that I'm complaining though, I really like it if I'm being honest with you."
     l "In the beginning I thought that I was weird for acting that way, I started trying to make sure that I didn't distance myself from anyone so I wouldn't hurt them.
     Of course this only made things worse, soon I began having almost no confidence in myself and messed up quite a few relationships and friendships."
     l "It took me a while before I managed to find the courage in myself to try and fix my problems.

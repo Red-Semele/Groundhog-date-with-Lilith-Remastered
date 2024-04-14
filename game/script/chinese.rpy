@@ -38,6 +38,8 @@ label chinese_start_gladToBeHere_youOfcourse:
     What would you like to order?"
     jump chinese_menu
 label chinese_menu:
+    $ peking = False
+    $ orange = False
     menu:
         "I'm going for the peking duck.":
             $ peking = True
@@ -51,7 +53,6 @@ label chinese_menu_result:
     if peking == True:
         l "That's a good choice!
         So good in fact that I was thinking about picking the same thing."
-    #TODO:Elif line lijkt niet te kloppen voor de een of andere reden. Is this still the case?
     elif orange == True:
         l "That's a good choice!
         I've had my fair share of orange chicken already throughout my life, so I think I'm going for something else."
@@ -372,8 +373,19 @@ label chinese_riddle_talk_abbyMemory:
             n "Lilith gives you a saddened look."
             menu:
                 "I understand, I also know someone I wouldn't want to lose but it seems like I am always on the verge of losing her." if persistent.lildeaths > 0:
-                    "Filler"
-                    #TODO: Make it move you to the right space.
+                    n "Lilith tries her best to give you a comforting smile and she half-succeeds."
+                    l "I also sometimes feel like I will lose Abigail. When that happens I always try to give it my all so that that won't happen."
+                    l "If your situation with the person you mentioned is even slightly similair I'm sure you'll figure something out."
+                    if persistent.lildeaths < 4:
+                        "Lilith's words fill your heart with hope, maybe there is a way to save her. "
+                    
+                    elif persistent.lildeaths <= 7:
+                        "You are not sure if you can figure something out to save Lilith but you have to try it, for her."
+                    
+                    else:
+                        "You try to hold back your tears as to not alert her to something being wrong. You have seen her die so many times.
+                        Reliving her deaths over and over while only being able to slightly change the way to inevitably reach  them again is really messing with you."
+                    jump chinese_phoneScene
                 "Have you already lost someone close to you?":
                 #Give the player the ability to say "Like James?" if he has learned about him. Then you can tell her that you heard about it when it happened since it is a small town but Lilith will say that her mom, abby and her moved away from her hometown so that you couldn't know.
                     l "...
@@ -485,24 +497,12 @@ label chinese_riddle_talk_abbyHobbies:
 
                                             "That voice is just self-doubt, you are more than good enough Lilith.":
                                                 l "Do you really believe that, [name]?"
-                                                if persistent.burger_death_1 == True and if persistent.cafe_death_1 == True and if persistent.chinese_death_1 == True:
-                                                    #TODO: Check if this works.
-
-
-                                                    menu:
-                                                        "Absolutely! It might sound weird but I really feel like I've gotten to know you well even if this is our first date and you really are a good person.":
-                                                            jump chinese_abby_selfdoubt_knowYouWell
-                                                        "I do but I think you are the one who needs to believe that for it to work.":
-                                                            jump chinese_abby_selfdoubt_IDo
-                                                else:
-                                                    jump chinese_alternateMenu
-
-
-
-label chinese_alternateMenu:
-menu:
-    "I do but I think you are the one who needs to believe that for it to work.":
-        jump chinese_abby_selfdoubt_IDo
+                                                menu:
+                                                    "Absolutely! It might sound weird but I really feel like I've gotten to know you well even if this is our first date and you really are a good person." if persistent.burger_death_1 and persistent.cafe_death_1 == True and persistent.chinese_death_1:
+                                                        jump chinese_abby_selfdoubt_knowYouWell
+                                                    "I do but I think you are the one who needs to believe that for it to work.":
+                                                        jump chinese_abby_selfdoubt_IDo
+                                               
 
 
 
@@ -558,7 +558,6 @@ label chinese_lostSomeone_questions:
     l "Lilith gives you a cute little smile."
     jump chinese_phoneScene
 label chinese_phoneScene:
-    "Currently this does not yet exist in this version, it does in the quest version"
     l "I'll be right back [name], I just need to go to the bathroom real quick."
     n "Lilith stands up from her chair and pushes it back under the table."
     n "As she enters the bathroom stall you see that she has forgotten her phone, it is still laying on the table."
@@ -616,7 +615,15 @@ label chinese_phone_peek:
         jump chinese_phone_peek_numbers
     else:
         n "Wrong password."
-        #TODO: If the player knows the code and gets it wrong, make the narrator ask about that.
+        if persistent.pass_knowledge == True:
+            #TODO: Add a line here where it just says: Again? each time you see this text again.
+            n "Wait, that can't be right."
+            n "You knew the password, right?"
+            n "I even told you what it was in case you would have forgotten it."
+            n "Did you just want to see the scene where you get caught once again?"
+            n "I guess you win, I can't afford to derail this story even more, not for something so minor."
+            n "I'll just jump forward to that scene and then we can all pretend nothing happened."
+            jump chinese_phone_caught
         n "You try to input a few other codes to see if those work instead."
         #TODO: Add a random chance that you accidentally type in the correct password. The chance increases at each attempt. (This way you give the player a way to get the phone number in an alternate way.)
         #Never let it work the first time though.
@@ -657,8 +664,6 @@ label chinese_phone_caught:
 
 label chinese_phone_noPeek:
     n "You didn't peek, this will just continue the events like they are meant to play out."
-    #TODO: add something else here, a short scene to make sense of her death in the chinese restaurant since she hasn't eaten once she gets back from the toilet.
-    #It kind of already has something like that but not well enough, add some extra stuff.
     jump restaurant_death_1
 
 label chinese_phone_peek_numbers:
@@ -678,7 +683,8 @@ label chinese_phone_peek_numbers:
         "Learn James' phone number." if not persistent.james_call_knowledge:
             $ persistent.james_call_knowledge = True
             jump chinese_phone_caught
-        "Learn Lisa's phone number." if not persistent.lisa_call_knowledge: #TODO: For some reason it does not think this flag is defined.
+        "Learn Lisa's phone number." if not persistent.lisa_call_knowledge: 
+            #TODO: For some reason it does not think this flag is defined.
             $ persistent.lisa_call_knowledge = True
             jump chinese_phone_caught
         "Close the phone." if persistent.abigail_call_knowledge and persistent.david_call_knowledge andpersistent.james_call_knowledge and persistent.lisa_call_knowledge: #TODO: Rewrite this line slightly.

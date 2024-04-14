@@ -1,6 +1,4 @@
 #Put all the deaths in here as a way to clean up all the other files and also just make this way easier to find deaths to rewrite etc.
-#TODO: Give all menu's sublabels to clean things up.
-
 
 
 
@@ -210,13 +208,13 @@ label restaurant_deaths:
             else:
                 if currentcar == True:
                     n "Lilith leaves the [resname], you can not bare seeing what happens next so you decide to stay inside.
-        Even from inside you can still hear the car crash into her."
+                    Even from inside you can still hear the car crash into her."
                     #TODO:Account for the notangry flag in the original here:
 
                 else:
                     $ currentcar = True
                     n "Lilith leaves the [resname], you rush after her in an effort to calm her down.
-        When you set one foot outside of the doorframe a red Sedan drives head first into the both of you."
+                    When you set one foot outside of the doorframe a red Sedan drives head first into the both of you."
                     n "Luckily you managed to get flung to the side somehow. Lilith however was not so lucky."
                     n "She died on impact when the speeding car hit her."
             jump gameOver
@@ -247,10 +245,13 @@ label kokiri_deaths:
         label kokiri_death_1:
             if kokiri_call_death_1_check == True: #If she was calling her mom/sis during this death:
                 #TODO: Make this also trigger a persistent death flag.
-                n "The meteorite breaks into many different parts that spread all around the forest." #TODO: Add a few lines before this one to ùake the jump from her calling to this less sudden.
+                n "The meteorite breaks into many different parts that spread all around the forest." #TODO: Add a few lines before this one to make the jump from her calling to this less sudden.
                 n "One of them crashes straight against Lilith's head with a frightening impact."
                 n "Her head is cracked open and a puddle begins to form around it. Everything around you turns silent."
-                n "Even the phone which you know is currently screaming her lungs out." #TODO: This line is weird, change it a bit.
+                if kokiri_chatchar_abigail_called == True:
+                    n "Even Abigail who is currently screaming her lungs out has become unbearingly silent."
+                else:
+                    n "Even Lila who is currently screaming her lungs out has become unbearingly silent."   
                 n "You would also like to scream but all that manages to come out is the same silence that seems to have taken over the forest."
                 n "It's almost as if the forest itself is mourning her death."
                 n "Some dark clouds move in front of the moon as if to stop it from revealing the state of Lilith's corpse."
@@ -260,8 +261,6 @@ label kokiri_deaths:
 
             else:
 
-                "Filler"
-                #TODO: Put meteorite death here with all the flags.
                 #TODO: Make this death instead break the meteorite and make them land on places where she gets hit.
                 n "Lilith stops talking for a moment as she begins staring at the star-filled night, it seems like something has drawn her attention away from you."
                 #TODO: This is an alternate line for if she's not talking to you: n "Lilith diverts her look from your eyes from a moment and continues watching the star-filled night."
@@ -270,13 +269,12 @@ label kokiri_deaths:
                 n "The sky now is completly filled with falling stars, you've never seen so many falling stars in your entire life, let alone all together."
                 n "However, one point seems to be getting bigger and bigger, it doesn't seem to be a star as it's not sending out any light."
                 if kokiri_alternateplace == False:
-                        #TODO: check to see if the flag above is the right one, it's for when you sit somewhere else.
                         #TODO: Play gameOver music
 
                         n "The both of you watch in absolute terror as the thing only starts to get closer, becoming larger, in an alarming rate. "
                         n "Before you can move away the meteorite smashes Lilith like a newspaper would smash a fly, miraculously it didn't even hit you." #TODO: change this, make it so that the meteorite splinters and one piece hits Lilith.
 
-                        $ persistent.kokiri_death_1 = True #TODO: Make sure this is the proper flag.
+                        $ persistent.kokiri_death_1 = True
                         jump gameOver
 
                 else:
@@ -347,7 +345,7 @@ label kokiri_deaths:
                         l "You know, I've been thinking..."
                         l "If I'm going to die soon then what's stopping you from quitting this game? Or would I just lose consciousnes, like I'm dying?"
                         l "I'm not sure if there's a way to tell. What do you think?"
-                        $ persistent.game_credits = True #TODO: Set this flag to true after every semiEnding/ending
+                        $ persistent.game_credits = True
                         menu:
                             "I believe that you would still live on.":
                                 l "That's rather reassuring."
@@ -370,7 +368,7 @@ label kokiri_deaths:
                                 menu:
                                     "No, we're still in the game.":
                                         n "Lilith looks at you with a puzzled look on her face."
-                                        l "Oh, why haven't you started yet? Just picture us in your mind and tell the story you'd like to live through." #TODO: Slightly rewrite this line.
+                                        l "Oh... I thought you had already started. Why are you still playing this game instead of making your own story?"
                                         menu:
                                             "I just want to see what happens when I choose this path.":
                                                 n "It appears you got your wish, this path only leads to death. " #TODO: (connect it to the appropriate kak death) + write that line after the death itself. And maybe add some more text from nar.
@@ -402,58 +400,60 @@ label kokiri_deaths:
 
                 "We're running out of time, can we please continue talking?":  #TODO:Change line slightly
                     jump kokiri_continue_talking
-        label kokiri_death_2_prevented_youWereHappyWithRon:
+label kokiri_death_2_prevented_youWereHappyWithRon:
 
-            l "Well, I am spending this moment with you, not with this \"Ron\"."
-            n "Lilith places her hand on your arm and rubs it softly."
-            l "It is sweet that you care about me enough to worry about those sorts of things but I would rather not have you worry about them."
-            l "Besides, you made that version of me happy with Ron and now you've made this version of me very happy with you."
-            n "She flashes you a knowing smile."
-            l "If you ask me you have succeeded."
-            jump kokiri_pictureChoice
-        label kokiri_death_2_prevented_youDiedATon:
-            l "Oh, [name], it certainly has been a lot to wrap my head around  but I never had to constantly deal with this whole scenario like you. I truly suppose ignorance is bliss."
-            l "I can completely understand that you are dealing with a lot throughout this whole thing. I really don't blame you for trying to keep coming back."
-            l "You are just trying to find a way out and I'm sure you'll find it. Your intentions are pure."
-            l "I don't blame you for anything [name], please don't blame yourself either."
-            l "Afterall, is it worth it to live with me if you can't live with yourself?"
-            #TODO: Add some more text?
-            #Probably make her react more heavily when she is told this.
-            jump kokiri_pictureChoice
+    l "Well, I am spending this moment with you, not with this \"Ron\"."
+    n "Lilith places her hand on your arm and rubs it softly."
+    l "It is sweet that you care about me enough to worry about those sorts of things but I would rather not have you worry about them."
+    l "Besides, you made that version of me happy with Ron and now you've made this version of me very happy with you."
+    n "She flashes you a knowing smile."
+    l "If you ask me you have succeeded."
+    jump kokiri_pictureChoice
 
-        label kokiri_pictureChoice:
-            #TODO: Add a few different ways to be shown this picture, as it unlocks the beach.
-            l "You know what? I want to show you something..."
-            n "Lilith stands up from the blanket, some shards of the meteorite still laying on it and extends her hand to you."
-            menu:
-                "*Take her hand*":
-                    jump kokiri_showpicture
-                "You actually already showed me the beach picture in that big tree over there. It fell over right on top of you..." if persistent.kokiri_death_3:
-                    jump kokiri_death_3_prevented
-        label kokiri_showpicture:
-            $ persistent.beach_knowledge = True
-            n "You grab her hand and get up."
-            n "With your hand in hers she leads you to a very high tree surrounded by a bunch of smaller trees."
-            l "You are probably thinking why I am taking you here."
-            l "Well, I hid something... precious here."
-            #TODO: Probably add some more descriptions of the route you took
-            n "She looks at the big tree and the trees surrounding it, a smile growing on her face."
-            n "She moves to the back of the big tree, and comes back with a small wooden box, decorated with red details."
-            n "Then she takes of her necklace you somehow never noticed before, a key is dangling on it."
-            n "She uses the key to unlock the box and takes out a polaroid."
-            n "The photo shows two adults,two small girls and a prebuscent boy on a beach. The children are all building a sandcastle together and the adults are smiling while watching them."
-            l "This is a photo of our family at a day on the beach, those were the happy days..."
-            l "Even to this day I still have an afinity for the beach because it is linked to those happy days."
-            l "But I know i will never truly get them back, not like it used to be anyway.."
-            l "I still have Abigail and my mother of course, both of them are just so important to me and together we are trying to slowly but surely make new happy days."
-            l "But anyway, what I'm trying to say is that you have something special, a way to prevent me from dying and a whole boat-load of determination."
-            l "So don't feel guilty about your gift but use it to the fullest extent."
-            #TODO: Make it so that you can tell Lilith she mentioned to use your gift to the fullest extent when she says not to involve her family.
-            menu:
-                "I will Lilith, I promise.":
-                    n "Lilith gives you a lovely smile."
-                    l "Give it your best shot"
-                    jump kokiri_death_3
+label kokiri_death_2_prevented_youDiedATon:
+    l "Oh, [name], it certainly has been a lot to wrap my head around  but I never had to constantly deal with this whole scenario like you. I truly suppose ignorance is bliss."
+    l "I can completely understand that you are dealing with a lot throughout this whole thing. I really don't blame you for trying to keep coming back."
+    l "You are just trying to find a way out and I'm sure you'll find it. Your intentions are pure."
+    l "I don't blame you for anything [name], please don't blame yourself either."
+    l "Afterall, is it worth it to live with me if you can't live with yourself?"
+    #TODO: Add some more text?
+    #Probably make her react more heavily when she is told this.
+    jump kokiri_pictureChoice
+
+label kokiri_pictureChoice:
+    #TODO: Add a few different ways to be shown this picture, as it unlocks the beach.
+    l "You know what? I want to show you something..."
+    n "Lilith stands up from the blanket, some shards of the meteorite still laying on it and extends her hand to you."
+    menu:
+        "*Take her hand*":
+            jump kokiri_showpicture
+        "You actually already showed me the beach picture in that big tree over there. It fell over right on top of you..." if persistent.kokiri_death_3:
+            jump kokiri_death_3_prevented
+label kokiri_showpicture:
+    $ persistent.beach_knowledge = True
+    n "You grab her hand and get up."
+    n "With your hand in hers she leads you to a very high tree surrounded by a bunch of smaller trees."
+    l "You are probably thinking why I am taking you here."
+    l "Well, I hid something... precious here."
+    #TODO: Probably add some more descriptions of the route you took
+    n "She looks at the big tree and the trees surrounding it, a smile growing on her face."
+    n "She moves to the back of the big tree, and comes back with a small wooden box, decorated with red details."
+    n "Then she takes of her necklace you somehow never noticed before, a key is dangling on it."
+    n "She uses the key to unlock the box and takes out a polaroid."
+    n "The photo shows two adults,two small girls and a prebuscent boy on a beach. The children are all building a sandcastle together and the adults are smiling while watching them."
+    l "This is a photo of our family at a day on the beach, those were the happy days..."
+    l "Even to this day I still have an afinity for the beach because it is linked to those happy days."
+    l "But I know i will never truly get them back, not like it used to be anyway.."
+    l "I still have Abigail and my mother of course, both of them are just so important to me and together we are trying to slowly but surely make new happy days."
+    l "But anyway, what I'm trying to say is that you have something special, a way to prevent me from dying and a whole boat-load of determination."
+    l "So don't feel guilty about your gift but use it to the fullest extent."
+    #TODO: Make it so that you can tell Lilith she mentioned to use your gift to the fullest extent when she says not to involve her family.
+    menu:
+        "I will Lilith, I promise.":
+            n "Lilith gives you a lovely smile."
+            l "Give it your best shot"
+            jump kokiri_death_3
+
     label kokiri_3:
         label kokiri_death_3:
             if persistent.easter_1 == True and persistent.easter_2 == True and persistent.easter_3 == True:
@@ -573,12 +573,22 @@ label other_deaths:
 
     label phone_planeDeath:
         $ persistent.plane_knowledge = True
-        #TODO: Fill this in with the quest planedeath.
-        "Filler"
+        n "As Lilith hangs up her phone you turn on the tv in frustration."
+        n "The news is on apparently, it's talking about a plane that had lost height just a moment ago"
+        n "The plane crashed right in the living room of a nice looking house, the house doesn't look unfamilliar to you at all."
+        n "Then it hits you."
+        n "It's her house."
+        #TODO: Play gameover music here.
+        jump gameOver
 
 
 
 label gameOver:
+    if teaseDeath == True:
+        if persistent.teaseDeath_fakeOut_knowledge == False:
+            n "It seems like I was wrong when I said you won. Maybe an other approach would work?"
+            $ persistent.teaseDeath_fakeOut_knowledge = True
+    
     $ persistent.lildeaths += 1
     $ persistent.retry_counter += 1
     n "{size=*2.5}Game over{/size}"

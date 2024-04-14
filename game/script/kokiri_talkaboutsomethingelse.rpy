@@ -156,9 +156,10 @@ label tellLilithAboutNar_goodAndBusy:
         l "Yeah, I basically steer the story in the right direction and when we are off track I try my best to get us back on track." #TODO: This is not entirely true, the dev controls the story, the narrator controls the flow.
         menu:
             "(Tell her about how he steers the story back on track.)":
+                #TODO: rewrite this link-text.
                 jump tellLilithAboutNar_storySteerer
 label tellLilithAboutNar_storySteerer:
-    #TODO: rewrite this link-text.
+    
     l "Funny that you mention that Nar, I was just thinking about that."
     l "Do you steer us towards my deaths?"
     n "Well, I have to, but I don't always do so, there are plenty of endings where you make it out alive. It's just that [name] usually doesn't end up with you when that happens." #TODO: He doesn"t HAVE to, change this line slightly.
@@ -224,7 +225,8 @@ label tellLilithAboutNar_doNotPush:
 label tellLilithAboutNar_stumbleUponLesson:
     l "Thank you Nar, I appreciate it!"
     l "Also, I'm sorry for all the questions but is it possible to meet this creator you are speaking about?"
-    n "Fragments of them but never the whole because, just like the player, He doesn't live in this game." #TODO: Rewrite this line a bit.
+    n "Fragments of them but never the whole because, just like the player, He doesn't live in this game."
+    n "This game can never fully accommodate either of their essences fully."
     n "Also I'm sorry to do this but your time is up." #TODO: Do something about having to cut the line before the narrator shows too much info instead of here time running out.
     #TODO: Move Lilith to death, in the quest version it moves to "Kak_death_4_hill_2"
     $ kokiri_conversation_silent()
@@ -267,7 +269,9 @@ label askAboutAbigail_tellMeAbout_1:
                 $ kokiri_chatchar_abigail_called = True
                 a "Heya Lilly!"
                 a "You're calling pretty soon, did your date with [name] not go well?"
-                l "I am still on my date actually." #TODO: (Rewrite this line)
+                l "I am still on my date actually." 
+                l "And currenctly it is really great!"
+                l  "{size=*0.5}If not a little hard to wrap my head around.{/size}"
                 a "Oh? Then why are you calling?"
                 l "Well, it's kind of hard to explain..."
                 a "I see, no worries Lilly!"
@@ -315,7 +319,7 @@ label askAboutAbigail_tellMeAbout_1:
                         a "That feeling had increased when you moved out if I have to be honest with you."
                         a "And mom does all she can, I don't want to complain about her. But there is only so much one person can do..."
                         l "I see..."
-                        a "And that feeling of loneliness even affects my thoughts. I constantly doubt wheter or not my friends really like me, even if they literally say so." #TODO: (Rewrite this line definetly)
+                        a "And that feeling of loneliness even affects my thoughts. I'm not sure if my friends really like me, even if they literally say so."
                         a "Some days it never shows up."
                         a "And other days it seems to never leave my head."
                         a "But it always comes back in the end."
@@ -341,10 +345,9 @@ label askAboutAbigail_tellMeAbout_1:
                         "Filler."
             else:
                 n "Lilith won't have enough time to call if she calls now."
-                n "I suggest talking about the same thing again as quickly as possible the next time."
+                n "I suggest making sure you don't talk about anything else except this next time."
                 n "Let's just talk about something else to her for now."
                 jump kokiri_talkAboutSomethingElse
-                #TODO: Rewrite this dialogue a bit more.
 
 label askAboutAbigail_tellMeAbout_2:
     "Filler"
@@ -417,7 +420,7 @@ label askAboutDavid_tellMeAbout_2:
                             l "Thank you for comforting me [name]! I really appreciate it."
                             l "Knowing that we don't have unlimited time makes me really thankful that you chose to spend that time to make sure I was okay."
                             $ kokiri_conversation += 1
-                            $ love_points = 2 #This gains you 2 love points but as a sacrifice you lose an additional topic to talk about.
+                            $ love_points += 2 #This gains you 2 love points but as a sacrifice you lose an additional topic to talk about.
                             $ love_meter_updater()
                             $ kokiri_conversation_silent()
 
@@ -509,8 +512,7 @@ label askAboutJames_tellMeAbout_3:
         l "Suddenly James popped out of the corn and picked me up while he spun around."
         l "He then put me down and layed down between the corn."
         l "I layed down beside him and we just looked at the sky while talking about all sorts of things."
-        #TODO: (What kind of things? Needs more fleshing out.)
-        #TODO: (Continue this story and expand it a bit more)
+        #TODO: (Continue this story and expand it a bit more: What kind of things? Needs more fleshing out)
         $ kokiri_conversation_silent()
 
 label askAboutLila_tellMeAbout:
