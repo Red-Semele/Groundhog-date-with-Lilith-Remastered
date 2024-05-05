@@ -1088,6 +1088,7 @@ label prevented_groundhog:
      l "But you got to admit that this really sounds contrived."
      l "I mean, this whole thing seems pretty weird to me. Can you atleast offer me some proof?"
      $ groundhog = True
+     $ psychic = False
 
      menu:
           "I have no proof":
@@ -1184,7 +1185,7 @@ label proof_giveAnswer:
           l "This is all a bit much for me, I think I'm better of heading back to home."
           jump car_death
 
-     elif psychic = True:
+     elif psychic == True:
           $ persistent.psychic_answer_right_knowledge = True
           l "Uhm, alright, but that defeats the purpose of this doesn't it? The word was thinking of is  electronegativity."
           l "Listen, I'm really thankful for you saving my life and everything but I think you could atleast give me some semblance of an explanation." #"" This fits better witht the joke and silence.
@@ -1588,6 +1589,7 @@ label psychic_justHelpingOut_totallySafe:
 
 label prevented_psychic:
      $ psychic = True
+     $ groundhog = False
      if burger == True:
           l "So what you are saying is that you knew I was going to get shot because you're psychic?"
           l "I mean, I'm thankful for you saving my life and all but you got to admit that sounds kind of far fetched."

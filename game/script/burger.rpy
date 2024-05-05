@@ -471,16 +471,22 @@ menu:
 
     "This is important, duck now." if persistent.burger_death_1 and not burger_alt:
         jump restaurant_death_1_prevented
+
 label burger_deathBuildup_choice1:
     if burger_alt == False:
         l "You're probably right, it's probably not even a big deal anywa-"
         jump restaurant_death_1
-
+    else: 
+        l "You're probably right, it's probably not even a big deal anyway."
+        jump burger_alt_askHerAQuestion
 
 
 label burger_deathBuildup_choice2:
     l "Let's hope it's just that."
-    jump restaurant_death_1
+    if burger_alt == False:
+        jump restaurant_death_1
+    else:
+        jump burger_alt_askHerAQuestion
 
 label burger_alt_askHerAQuestion:
 

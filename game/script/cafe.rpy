@@ -31,38 +31,38 @@ label cafe_start:
             jump cafe_food_choice2
 
 label cafe_food_choice1:
-jump cafe_food_result
+    jump cafe_food_result
 
 label cafe_food_choice2:
-jump cafe_food_result
+    jump cafe_food_result
 
 label cafe_food_choiceSame:
-l "You know what they say [name], great minds think alike. I guess that also counts for hungry stomachs."
-n "Lilith lets out a small chuckle."
+    l "You know what they say [name], great minds think alike. I guess that also counts for hungry stomachs."
+    n "Lilith lets out a small chuckle."
 label cafe_food_result:
-n "The barista smiles and says: \"Coming right up!\""
-n "Lilith and you walk back to your table and take a seat."
+    n "The barista smiles and says: \"Coming right up!\""
+    n "Lilith and you walk back to your table and take a seat."
 
-n "Lilith gives you a mischievous smile."
-l "I just got a fun idea."
-n "She eagerly digs into her handbag and takes out two red six-sided dice."
-l "It's a little game I came up with a while ago, I want to test it with you."
-l "So, the rules are simple. "
-#Smaller text + typewriter
-l "Actually they might be a little complex..."
-#Normal text
-l "I will first roll two dice and tell you the sum of them. If I roll a double so for example if I roll two four's an extra four is added. So every double I roll is effectively a tripple."
-l "After that I can take one action each turn."
-l "I can change one of the dice numbers into any number that isn't the number it was the last turn, so a three could become any number except for a three."
-l "But I also can subtract a value from one dice and add it to another, so a five and a one could become two three's."
-l "After every action I take I'll tell you the new sum of the dice."
-l "So, do you still want to do this?"
-menu:
-    "Sure, I'm excited to try it out!":
-        jump cafe_dice_continue
+    n "Lilith gives you a mischievous smile."
+    l "I just got a fun idea."
+    n "She eagerly digs into her handbag and takes out two red six-sided dice."
+    l "It's a little game I came up with a while ago, I want to test it with you."
+    l "So, the rules are simple. "
+    #TODO: Make the line below this smaller
+    l "Actually they might be a little complex..."
+    #Normal text
+    l "I will first roll two dice and tell you the sum of them. If I roll a double so for example if I roll two four's an extra four is added. So every double I roll is effectively a tripple."
+    l "After that I can take one action each turn."
+    l "I can change one of the dice numbers into any number that isn't the number it was the last turn, so a three could become any number except for a three."
+    l "But I also can subtract a value from one dice and add it to another, so a five and a one could become two three's."
+    l "After every action I take I'll tell you the new sum of the dice."
+    l "So, do you still want to do this?"
+    menu:
+        "Sure, I'm excited to try it out!":
+            jump cafe_dice_continue
 
-    "Actually, I'm not sure about this anymore.":
-        jump cafe_dice_stop
+        "Actually, I'm not sure about this anymore.":
+            jump cafe_dice_stop
 
 label cafe_dice_continue:
     n "Lilith throws two six-sided dice and puts her hands in front of them so you can't see the result."
@@ -122,6 +122,7 @@ label cafe_dice_result:
             $ dicenumber = 6
         #TODO: Add a safety mechanism for if the player gives a none-number word.
     $ dicenumber2 = 9 - dicenumber
+    #TODO: Add a check here to see if dicenumber2 is bigger than 6, have her just ask what number you think it is in that case since it's a d6 and the math wouldn't make sense.
     l "So do you think the number of the second dice is [dicenumber2]?"
     menu:
         "Yes, that's right.":
@@ -193,7 +194,7 @@ label cafe_dice_stop:
 
 
 
-jump cafe_rateCafe
+#TODO: In the code, at exactly this place there is a "jump cafe_rateCafe" extra. Find out if it ever belonged to something.
 
 label cafe_rateCafe:
     n "Lilith looks around in pure awe, a bright smile forms on her face."
