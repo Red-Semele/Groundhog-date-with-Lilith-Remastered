@@ -617,7 +617,8 @@ label askAboutLila_tellMeAbout_1:
                         n "You motion to Lilith that she doesn't have much time left."
                         l "I'm going to hang up now mom, what comes next won't sound pretty..."
                         l "I love you."
-                        #TODO: Narate her hanging up.
+                        n "Lilith hangs up and for a moment the two of you sit in pure silence."
+                        n "The sharp tunes of the wind break the silence, as if to remind the both of you of the limited time you still have left."
                         jump kokiri_death_3_death_dialogue
                     "*Shake your head*":
                         #TODO: Make Lilith come up with a different reason as to why she called.

@@ -18,6 +18,7 @@ define li = Character("Lila")
 define q = Character("???")
 define p = Character("[name]")
 define dev = Character("Developer")
+define mt = Character("Mysterious Text")
 
 
 
@@ -42,156 +43,152 @@ define dev = Character("Developer")
 
 
 label start:
-
-
-
-
-     play music "gameOver.mp3"
+     
 
 if persistent.firstboot == None: 
      #This line ensures all flags that don't need constant resetting get reset only the first time the player boots the game.
-     define persistent.firstboot = True
+     default persistent.firstboot = True
      #Deaths:
-     define persistent.lildeaths = 0
-     define persistent.retry_counter = 0
+     default persistent.lildeaths = 0
+     default persistent.retry_counter = 0
      #Main restaurant deaths:
-     define persistent.chinese_death_1 = False
-     define persistent.cafe_death_1 = False
-     define persistent.burger_death_1 = False
-     define persistent.chinese_death_2 = False
-     define persistent.cafe_death_2 = False
-     define persistent.burger_death_2 = False
+     default persistent.chinese_death_1 = False
+     default persistent.cafe_death_1 = False
+     default persistent.burger_death_1 = False
+     default persistent.chinese_death_2 = False
+     default persistent.cafe_death_2 = False
+     default persistent.burger_death_2 = False
      #Car deaths under here:
-     define persistent.chinese_car_death = False
-     define persistent.cafe_car_death = False
-     define persistent.burger_car_death = False
+     default persistent.chinese_car_death = False
+     default persistent.cafe_car_death = False
+     default persistent.burger_car_death = False
      # Kokiri deaths under here:
-     define persistent.kokiri_death_1 = False
-     define persistent.kokiri_death_2 = False
-     define persistent.kokiri_death_3 = False
-     define persistent.kokiri_death_4 = False
-     define persistent.kokiri_death_4_hill = False
-     define persistent.kokiri_death_4_noHill = False
-     define persistent.kokiri_death_4_hill_holdHand = False
+     default persistent.kokiri_death_1 = False
+     default persistent.kokiri_death_2 = False
+     default persistent.kokiri_death_3 = False
+     default persistent.kokiri_death_4 = False
+     default persistent.kokiri_death_4_hill = False
+     default persistent.kokiri_death_4_noHill = False
+     default persistent.kokiri_death_4_hill_holdHand = False
      #Beach deaths under here:
-     define persistent.beach_jelly_death = False
-     define persistent.beach_hole_death = False
-     define persistent. beach_pot_death = False
-     define persistent.beach_slip_death = False
+     default persistent.beach_jelly_death = False
+     default persistent.beach_hole_death = False
+     default persistent. beach_pot_death = False
+     default persistent.beach_slip_death = False
 
      #Knowledge:
      #Untold story knowledge:
-     define persistent.story_start_knowledge = False
-     define persistent.story_medium_knowledge = False
-     define persistent.story_end_knowledge = False
+     default persistent.story_start_knowledge = False
+     default persistent.story_medium_knowledge = False
+     default persistent.story_end_knowledge = False
      #Preventdeath explanation.
-     define persistent.psychic_answer_right_knowledge = False
-     define persistent.groundhog_answer_right_knowledge = False
+     default persistent.psychic_answer_right_knowledge = False
+     default persistent.groundhog_answer_right_knowledge = False
      # Other knowledge
-     define persistent.brother_knowledge = False
-     define persistent.kokiri_abigailhidessomething_knowledge = False
-     define persistent.kokiri_knowledge = False
-     define persistent.joke_knowledge = False
-     define persistent.car_knowledge = False
-     define persistent.bedcheck_knowledge = False
-     define persistent.kokiri_knowledge = False
-     define persistent.ron_knowledge = False
-     define persistent.quest_knowledge = False #TODO: Maybe change the Quest flag since it now has less use.
-     define persistent.reality_knowledge = False
-     define persistent.bookpreference_knowledge = False #This will basically help you pick a book for Lilith she likes in the beach-bookstore.
-     define persistent.booklover_knowledge = False
-     define persistent.musiclover_knowledge = False
-     define persistent.needProof_knowledge = False
-     define persistent.dumbo_knowledge = False
-     define persistent.drownRaven_knowledge = False
-     define persistent.david_nolove_knowledge = False
-     define persistent.david_blame_knowledge = False
-     define persistent.david_love_knowledge = False
-     define persistent.david_apology_knowledge = False
-     define persistent.james_story_knowledge = False
-     define persistent.jamesconversation_becomethegame_knowledge = False
-     define persistent.tracker = 0 #Tracker 
-     define persistent.easter_1 = False
-     define persistent.easter_2 = False
-     define persistent.easter_3 = False
-     define persistent.plane_knowledge = False
-     define persistent.teaseDeath_fakeOut_knowledge = False
+     default persistent.brother_knowledge = False
+     default persistent.kokiri_abigailhidessomething_knowledge = False
+     default persistent.kokiri_knowledge = False
+     default persistent.joke_knowledge = False
+     default persistent.car_knowledge = False
+     default persistent.bedcheck_knowledge = False
+     default persistent.kokiri_knowledge = False
+     default persistent.ron_knowledge = False
+     default persistent.quest_knowledge = False #TODO: Maybe change the Quest flag since it now has less use.
+     default persistent.reality_knowledge = False
+     default persistent.bookpreference_knowledge = False #This will basically help you pick a book for Lilith she likes in the beach-bookstore.
+     default persistent.booklover_knowledge = False
+     default persistent.musiclover_knowledge = False
+     default persistent.needProof_knowledge = False
+     default persistent.dumbo_knowledge = False
+     default persistent.drownRaven_knowledge = False
+     default persistent.david_nolove_knowledge = False
+     default persistent.david_blame_knowledge = False
+     default persistent.david_love_knowledge = False
+     default persistent.david_apology_knowledge = False
+     default persistent.james_story_knowledge = False
+     default persistent.jamesconversation_becomethegame_knowledge = False
+     default persistent.tracker = 0 #Tracker 
+     default persistent.easter_1 = False
+     default persistent.easter_2 = False
+     default persistent.easter_3 = False
+     default persistent.plane_knowledge = False
+     default persistent.teaseDeath_fakeOut_knowledge = False
      
      #Phone-numbers
-     define persistent.david_call_knowledge = False
-     define persistent.abigail_call_knowledge = False
-     define persistent.james_call_knowledge = False
-     define persistent.lila_call_knowledge = False
+     default persistent.david_call_knowledge = False
+     default persistent.abigail_call_knowledge = False
+     default persistent.james_call_knowledge = False
+     default persistent.lila_call_knowledge = False
      #Beach flags.
-     define persistent.beach_knowledge = False
+     default persistent.beach_knowledge = False
 
      #Burger related flags and counters
-     define persistent.burger_poem_knowledge = False
-     define persistent.rosename_knowledge = False
-     define persistent.burgerwent = 0
-     define persistent.burgerstart = False
+     default persistent.burger_poem_knowledge = False
+     default persistent.rosename_knowledge = False
+     default persistent.burgerwent = 0
+     default persistent.burgerstart = False
      #Cafe related flags and counters
-     define persistent.cafe_taste_knowledge = False
-     define persistent.dice_knowledge = False
-     define persistent.joke_knowledge = False
-     define persistent.song_knowledge = False
+     default persistent.cafe_taste_knowledge = False
+     default persistent.dice_knowledge = False
+     default persistent.joke_knowledge = False
+     default persistent.song_knowledge = False
      #Chinese flags
-     define persistent.chinese_phone_noretry = False #The noretry flags are meant to check if you replay the game after being asked not to do it.
-     define persistent.pass_knowledge = False
-     define persistent.need_pass_knowledge = False
-     define persistent.peeked_phone = False
-     define persistent.bedcheck_knowledge = False
+     default persistent.chinese_phone_noretry = False #The noretry flags are meant to check if you replay the game after being asked not to do it.
+     default persistent.pass_knowledge = False
+     default persistent.need_pass_knowledge = False
+     default persistent.peeked_phone = False
+     default persistent.bedcheck_knowledge = False
      #Chinese riddle flags
-     define persistent.r1_knowledge = False
-     define persistent.r2_knowledge = False
-     define persistent.r3_knowledge = False
+     default persistent.r1_knowledge = False
+     default persistent.r2_knowledge = False
+     default persistent.r3_knowledge = False
      #Kokiri flags
-     define persistent.car_knowledge = False
-     define persistent.ron_knowledge = False
-     define persistent.kokiri_knowledge = False
-     define persistent.kokiri_teacher_knowledge = False
-     define persistent.kokiri_meteoritedistraction_knowledge = False
-     define persistent.kokiri_call_death = False
-     define persistent.restrainingorderfamily_violation_counter = 0
-     define persistent.restrainingorderfamily_knowledge = False
-     define persistent.kokiri_tellnolies_knowledge = False
-     define persistent.fakeoutnar_tip = False
-     define persistent.kokiri_determinism_knowledge = False
-     define persistent.kokiri_newerPoems_knowledge = False
-     define persistent.kokiri_heraclitus_knowledge = False
-     define persistent.abusedJamesInfo_knowledge = False
-     define persistent.doNotUseJames_knowledge = False
+     default persistent.car_knowledge = False
+     default persistent.ron_knowledge = False
+     default persistent.kokiri_knowledge = False
+     default persistent.kokiri_teacher_knowledge = False
+     default persistent.kokiri_meteoritedistraction_knowledge = False
+     default persistent.kokiri_call_death = False
+     default persistent.restrainingorderfamily_violation_counter = 0
+     default persistent.restrainingorderfamily_knowledge = False
+     default persistent.kokiri_tellnolies_knowledge = False
+     default persistent.fakeoutnar_tip = False
+     default persistent.kokiri_determinism_knowledge = False
+     default persistent.kokiri_newerPoems_knowledge = False
+     default persistent.kokiri_heraclitus_knowledge = False
+     default persistent.abusedJamesInfo_knowledge = False
+     default persistent.doNotUseJames_knowledge = False
      #Kokiri poems
-     define persistent.kokiri_poem_window_knowledge = False
-     define persistent.kokiri_poem_bang_knowledge = False
-     define persistent.kokiri_poem_lights_knowledge = False
-     define persistent.kokiri_poem_snowwoman_knowledge = False
-     define persistent.kokiri_poem_shadowman_knowledge = False
-     define persistent.rp_detect = False #This flag will be used to try to check if a player is returning to the game after erasing their save-file.
-     define persistent.met_james = False
+     default persistent.kokiri_poem_window_knowledge = False
+     default persistent.kokiri_poem_bang_knowledge = False
+     default persistent.kokiri_poem_lights_knowledge = False
+     default persistent.kokiri_poem_snowwoman_knowledge = False
+     default persistent.kokiri_poem_shadowman_knowledge = False
+     default persistent.rp_detect = False #This flag will be used to try to check if a player is returning to the game after erasing their save-file.
+     default persistent.met_james = False
      #Beach:
-     define persistent.beachroute_visited_knowledge = False
+     default persistent.beachroute_visited_knowledge = False
      #Endings:
-     define persistent.ending_quitter = False
-     define persistent.ending_anEnding = False
-     define persistent.ending_lettinggo = False
-     define persistent.game_credits = False
+     default persistent.ending_quitter = False
+     default persistent.ending_anEnding = False
+     default persistent.ending_lettinggo = False
+     default persistent.game_credits = False
      #Phone_menu sortring related stuff:
-     define persistent.amount_of_folder_links = 0 #This checks how many sub links I created in the phone menu to avoid clutter.
+     default persistent.amount_of_folder_links = 0 #This checks how many sub links I created in the phone menu to avoid clutter.
      n "[persistent.amount_of_folder_links]" #TODO: Remove this
-     define persistent.restaurant_subfolder = False
-     define persistent.other_subfolder = False
-     define persistent.locations_subfolder = False
-     define persistent.kokiri_unlock = False
-     define persistent.beach_unlock = False
-     define persistent.otherPlans_unlock = False
-     define persistent.breakup_unlock = False
-     define persistent.call_unlock = False
-     define persistent.amount_of_normal_links = 0 #This checks how many non-sub links there are.
-     define persistent.amount_of_normal_location_links = 0
-     define persistent.amount_of_normal_other_links = 0
-     define persistent.links_phone = 0
-     define persistent.times_phone_declined = 0
+     default persistent.restaurant_subfolder = False
+     default persistent.other_subfolder = False
+     default persistent.locations_subfolder = False
+     default persistent.kokiri_unlock = False
+     default persistent.beach_unlock = False
+     default persistent.otherPlans_unlock = False
+     default persistent.breakup_unlock = False
+     default persistent.call_unlock = False
+     default persistent.amount_of_normal_links = 0 #This checks how many non-sub links there are.
+     default persistent.amount_of_normal_location_links = 0
+     default persistent.amount_of_normal_other_links = 0
+     default persistent.links_phone = 0
+     default persistent.times_phone_declined = 0
      #TODO:Add the extra stuff on this page that is in the original.
 #NON-PERSISTENT FLAGS
 #Other:
@@ -1113,13 +1110,13 @@ label prevented_proof:
           Alright, I've gotten my number!"
           menu:
                "It's 20.":
-                    jump proof_answer_wrong1
+                    jump proof_answer_wrong
    
                "It's 38.":
-                    jump proof_answer_wrong1
+                    jump proof_answer_wrong
    
                "It's -17.":
-                    jump proof_answer_wrong1
+                    jump proof_answer_wrong
    
                "It's -72,8947, can we move on now?" if persistent.groundhog_answer_right_knowledge:
                     jump proof_answer_right
@@ -1133,13 +1130,13 @@ label prevented_proof:
           l "I got my word, guess away magic [name]!"
           menu:
                "It's apple.":
-                    jump proof_answer_wrong1
+                    jump proof_answer_wrong
    
                "It's abyss.":
-                    jump proof_answer_wrong2
+                    jump proof_answer_wrong
    
                "It's photosynthesis.":
-                    jump proof_answer_wrong3
+                    jump proof_answer_wrong
    
                "It's electronegativity obviously." if persistent.psychic_answer_right_knowledge:
                     jump proof_answer_right
@@ -1147,7 +1144,7 @@ label prevented_proof:
                "Alright, now tell me which word you are thinking about.":
                     jump proof_giveAnswer
 
-label proof_answer_wrong1:
+label proof_answer_wrong:
 
      if groundhog == True:
           l "That was the wrong number, I knew you wouldn't guess -72,8947!"
@@ -1613,6 +1610,8 @@ label prevented_silent:
      "Filler, make her weirded out by your silence."
      #TODO: Do just that, make her freak out by your silence and leave.
      jump car_death
+
+
 
 label explanation_noTimeToExplain:
      #TODO add all the other ones, so burger, cafe, and chinese carcaught untrue ("no time to explain" in Quest version)

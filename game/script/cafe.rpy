@@ -48,9 +48,7 @@ label cafe_food_result:
     n "She eagerly digs into her handbag and takes out two red six-sided dice."
     l "It's a little game I came up with a while ago, I want to test it with you."
     l "So, the rules are simple. "
-    #TODO: Make the line below this smaller
-    l "Actually they might be a little complex..."
-    #Normal text
+    l "{size=*0.5}Actually they might be a little complex...{/size}"
     l "I will first roll two dice and tell you the sum of them. If I roll a double so for example if I roll two four's an extra four is added. So every double I roll is effectively a tripple."
     l "After that I can take one action each turn."
     l "I can change one of the dice numbers into any number that isn't the number it was the last turn, so a three could become any number except for a three."
@@ -93,97 +91,111 @@ label cafe_dice_result:
     l "The last action I took was changing the second dice.
     I hope that hint is helpful!"
     l "So, what was the number of the first dice on the first turn?"
+    label cafe_dice_choice:
+        $ dicenumber = renpy.input("Place your guess here", length=5)
+        $ dicenumber = dicenumber.strip()
 
-    $ dicenumber = renpy.input("Place your guess here", length=5)
-    $ dicenumber = dicenumber.strip()
+        if not dicenumber:
+            $ dicenumber = "4"
 
-    if not dicenumber:
-        $ dicenumber = "2"
+        $ dicelength = len(dicenumber)
 
-    $ dicelength = len(dicenumber)
-
-    if dicelength == 1:
-        $ dicenumber = int(dicenumber)
-    else:
-        $ dicenumber = dicenumber.lower()
-        #This sets the text to lowercase.
-        #TODO: Add a line here that checks if the dicenumber is an int, if it is not I should have a failsafe for that aswell.
-        if dicenumber == "one":
-            $ dicenumber = 1
-        elif dicenumber == "two":
-            $ dicenumber = 2
-        elif dicenumber == "three":
-            $ dicenumber = 3
-        elif dicenumber == "four":
-            $ dicenumber = 4
-        elif dicenumber == "five":
-            $ dicenumber = 5
-        elif dicenumber == "six":
-            $ dicenumber = 6
-        #TODO: Add a safety mechanism for if the player gives a none-number word.
-    $ dicenumber2 = 9 - dicenumber
-    #TODO: Add a check here to see if dicenumber2 is bigger than 6, have her just ask what number you think it is in that case since it's a d6 and the math wouldn't make sense.
-    l "So do you think the number of the second dice is [dicenumber2]?"
-    menu:
-        "Yes, that's right.":
-            if dicenumber2 == 3:
-                label cafe_dice_right:
-                l "Wow, you managed to figure it out. Nicely done [name]!"
-                #TODO: Make a better segway for this.
-                jump cafe_rateCafe
-            else:
-                label cafe_dice_wrong:
-                l "Nope, that's not the answer."
-                l "You gave it your best shot [name]!
-                I might have made this a bit too hard.
-
-                Would you like to know the answer?"
-                menu:
-                    "Yeah, please tell me what the answer was.":
-                        $ persistent.dice_knowledge = True
-                        l "The first dice was 6 and the second dice was 3."
-                        #TODO: Make a better segway.
-                        jump cafe_rateCafe
-                    "No, if I ever learn the answer I want it to be because I solved it.":
-                        l "That's respectable but I'm not sure when you'll get your next chance, this is not something I do all of the time."
-                        #TODO: Set an if function that when the counter of the dice puzzle is a certain ammount the narrator says something like "You won't have to wait too long I'm sure..."
-                        #TODO: Make this new segway a bit better because now it doesn't make much sense.
-                        jump cafe_rateCafe
-
-        "No, that's not right.":
-            l "Oh,so what number do you think the second dice is [name]?"
-            $ dicenumber2 = renpy.input("Place your guess here", length=5)
-            $ dicenumber2 = dicenumber2.strip()
-
-            if not dicenumber2:
-                $ dicenumber2 = "2"
-
-            $ dicelength = len(dicenumber2)
-
-            if dicelength == 1:
-                $ dicenumber2 = int(dicenumber2)
-            else:
-                $ dicenumber2 = dicenumber2.lower()
-
-                if dicenumber2 == "one":
-                    $ dicenumber2 = 1
-                elif dicenumber2 == "two":
-                    $ dicenumber2 = 2
-                elif dicenumber2 == "three":
-                    $ dicenumber2 = 3
-                elif dicenumber2 == "four":
-                    $ dicenumber2 = 4
-                elif dicenumber2 == "five":
-                    $ dicenumber2 = 5
-                elif dicenumber2 == "six":
-                    $ dicenumber2 = 6
-            if dicenumber == 6:
+        if dicelength == 1:
+            python:
+                try:
+                    dicenumber = int(dicenumber)
+                except ValueError:
+                    renpy.say(n, "That was a kind of weird response. Let's just pretend that never happened. Please enter a number this time.")
+                    renpy.jump("cafe_dice_choice")
+            if dicenumber > 6:
+                n "Let's try that again, she is using six-sided dice, remember? So you can only choose a number from 1-6."
+                jump cafe_dice_choice
+        else:
+            $ dicenumber = dicenumber.lower()
+            #This sets the text to lowercase.
+            if dicenumber == "one":
+                $ dicenumber = 1
+            elif dicenumber == "two":
+                $ dicenumber = 2
+            elif dicenumber == "three":
+                $ dicenumber = 3
+            elif dicenumber == "four":
+                $ dicenumber = 4
+            elif dicenumber == "five":
+                $ dicenumber = 5
+            elif dicenumber == "six":
+                $ dicenumber = 6
+            else: 
+                n "That doesn't really feel like the right answer, you should give a number from 1-6, let me just put you back a little so you can retry."
+                jump cafe_dice_choice
+        $ dicenumber2 = 9 - dicenumber
+        if dicenumber2 > 6:
+            n "You do realise that that means the second dice would be a [dicenumber2], right?"
+            n "Remember that the sum of both dice has to be 9."
+            n "Let's just try again."
+            jump cafe_dice_choice 
+        else:
+            l "So do you think the number of the second dice is [dicenumber2]?"
+        menu:
+            "Yes, that's right.":
                 if dicenumber2 == 3:
-                    jump cafe_dice_right
+                    label cafe_dice_right:
+                    l "Wow, you managed to figure it out. Nicely done [name]!"
+                    #TODO: Make a better segway for this.
+                    jump cafe_rateCafe
+                else:
+                    label cafe_dice_wrong:
+                    l "Nope, that's not the answer."
+                    l "You gave it your best shot [name]!
+                    I might have made this a bit too hard.
+
+                    Would you like to know the answer?"
+                    menu:
+                        "Yeah, please tell me what the answer was.":
+                            $ persistent.dice_knowledge = True
+                            l "The first dice was 6 and the second dice was 3."
+                            #TODO: Make a better segway.
+                            jump cafe_rateCafe
+                        "No, if I ever learn the answer I want it to be because I solved it.":
+                            l "That's respectable but I'm not sure when you'll get your next chance, this is not something I do all of the time."
+                            #TODO: Set an if function that when the counter of the dice puzzle is a certain ammount the narrator says something like "You won't have to wait too long I'm sure..."
+                            #TODO: Make this new segway a bit better because now it doesn't make much sense.
+                            jump cafe_rateCafe
+
+            "No, that's not right.":
+                l "Oh,so what number do you think the second dice is [name]?"
+                $ dicenumber2 = renpy.input("Place your guess here", length=5)
+                $ dicenumber2 = dicenumber2.strip()
+
+                if not dicenumber2:
+                    $ dicenumber2 = "2"
+
+                $ dicelength = len(dicenumber2)
+
+                if dicelength == 1:
+                    $ dicenumber2 = int(dicenumber2)
+                else:
+                    $ dicenumber2 = dicenumber2.lower()
+
+                    if dicenumber2 == "one":
+                        $ dicenumber2 = 1
+                    elif dicenumber2 == "two":
+                        $ dicenumber2 = 2
+                    elif dicenumber2 == "three":
+                        $ dicenumber2 = 3
+                    elif dicenumber2 == "four":
+                        $ dicenumber2 = 4
+                    elif dicenumber2 == "five":
+                        $ dicenumber2 = 5
+                    elif dicenumber2 == "six":
+                        $ dicenumber2 = 6
+                if dicenumber == 6:
+                    if dicenumber2 == 3:
+                        jump cafe_dice_right
+                    else:
+                        jump cafe_dice_wrong
                 else:
                     jump cafe_dice_wrong
-            else:
-                jump cafe_dice_wrong
 
 
 label cafe_dice_stop:
@@ -238,8 +250,8 @@ label cafe_rateCafe_great:
 label cafe_rateCafe_okayish:
     n "Lilith flashes you an understanding smile."
     l "Ah, sorry to hear that, but I am really loving this place if that's worth something.
-    Maybe we can go to a place you like next time?
-    I've never seen so many colors at the same time, thank you for taking me here [name].
+    Maybe we can go to a place you like next time?"
+    l "I've never seen so many colors at the same time, thank you for taking me here [name].
     So far this is one of the best dates I ever had!"
     $ persistent.cafe_taste_knowledge = True
     jump cafe_rateCafe_result
@@ -359,7 +371,7 @@ label cafe_badLove:
             l "Sometimes I think other people find it a burden to talk to me or be around me at all."
             menu:
                 "Quick, come stand next to me!" if persistent.cafe_death_1:
-                    jump restaurant_death_1_prevent
+                    jump restaurant_death_1_prevented
 
                 "Well, I really enjoy our time together!":
                     l "Thank you [name], it really helps to hear someone say that from time to time."

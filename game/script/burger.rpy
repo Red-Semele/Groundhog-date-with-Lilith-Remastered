@@ -370,7 +370,11 @@ label burger_poem_rating:
             jump burger_poem_rating_terrible
         "Wow, you really impressed me. That was fantastic!":
             jump burger_poem_rating_fantastic
-        #TODO: Add another option where you ask who Orpheus is.
+        "I liked it a lot! Though could you explain who Orpheus is?":
+            "Filler"
+            #TODO: Fll this in with her forgetting that not everyone is that good with mythology and her casually explaining.
+            #Also set a knowledge flag for that.
+
 
 label burger_poem_rating_terrible:
     $ love_points = -1

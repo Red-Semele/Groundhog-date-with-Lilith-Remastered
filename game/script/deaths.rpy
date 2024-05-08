@@ -11,7 +11,7 @@ label restaurant_deaths:
                 #Burgerscene here
                 n "Now the screaming is also paired with hellish sounds, just great. You look at Lilith and tell her to hide under the table."
                 l "I..."
-                play music "gameOver.mp3"
+                play music "audio/gameOver.mp3"
                 n "Lilith seems to be frozen, on her face you can clearly see a mixture of fear and confusion. It takes you a moment to notice the steadily increasing red stains on Lilith's clothes."
                 l "I've been shot?"
                 n "She falls of her chair, you crawl towards her and try to call an ambulance."
@@ -25,10 +25,6 @@ label restaurant_deaths:
                 $ persistent.burger_death_1 = True
                 jump gameOver
 
-                menu:
-                    "Retry.":
-                        jump game_start
-
             elif cafe == True:
                 #Cafescene here
                 n "Suddenly you hear someone scream, you can turn your head just quick enough to see someone fall with a plate in their hands."
@@ -37,7 +33,7 @@ label restaurant_deaths:
                 n "The marlin has a long and pointy bill, it pierces the sandwich in a feat of pure dexterity. "
                 n "Sadly it's traject leads right to Lilith's chest as it's sword-like bill pierces it, somehow you know it has pierced her heart aswell."
                 n "She gives you one last look of utter shock before she falls dead on the floor."
-                play music "gameOver.wav"
+                play music "audio/gameOver.mp3"
                 $ persistent.cafe_death_1 = True
                 jump gameOver
 
@@ -54,7 +50,7 @@ label restaurant_deaths:
                 n "She takes a break from her food and looks at you for a moment."
                 l "You know, I'm actually glad we could meet here, I wanted to tell you something."
                 n "Before Lilith can finish her sentence her face starts to swell."
-                play music "gameOver.mp3"
+                play music "audio/gameOver.mp3"
                 l "Call an ambulance, now!"
                 n "You grab your phone as you frantically start calling an ambulance."
                 n "A woman with a warm voice listens to your incoherent ramblings and tries her best to get the details, she sends an ambulance your way."
@@ -109,7 +105,7 @@ label restaurant_deaths:
     label restaurant_2:
         label restaurant_death_2:
             #Here the code of the second death will be.
-            play music "gameOver.mp3"
+            play music "audio/gameOver.mp3"
             if burger == True:
                 $ persistent.burger_death_2 = True
                 n "Suddenly a inmense sensation of pain overwhelms you, the only thing you can see is a glimpse of pure white and an eternity of black."
@@ -162,7 +158,7 @@ label restaurant_deaths:
                 $ persistent.chinese_death_2 = True
                 jump gameOver
     label car_death:
-        play music "gameOver.mp3"
+        play music "audio/gameOver.mp3"
         if car_caught == True:
             "Filler for now..."
         else:
@@ -238,7 +234,6 @@ label kokiri_deaths:
         n "The end result looks horifying."
         n "You call an ambulance but when they arrive they tell you what you already knew deep down."
         n "She didn't make it."
-        #TODO: Change the text above this to be a bit better.
         jump gameOver
 
     label kokiri_1:
@@ -263,7 +258,7 @@ label kokiri_deaths:
 
                 #TODO: Make this death instead break the meteorite and make them land on places where she gets hit.
                 n "Lilith stops talking for a moment as she begins staring at the star-filled night, it seems like something has drawn her attention away from you."
-                #TODO: This is an alternate line for if she's not talking to you: n "Lilith diverts her look from your eyes from a moment and continues watching the star-filled night."
+                #TODO: This is an alternate line for if she's not talking to you: n "Lilith diverts her look from your eyes from a moment and continues watching the star-filled night." thzt line will see a lot less use than the others but just to be safe use it.
                 n "A gasp of amazement escapes her mouth."
                 l "You really need to see this, it's absolutely stunning!"
                 n "The sky now is completly filled with falling stars, you've never seen so many falling stars in your entire life, let alone all together."
@@ -279,7 +274,7 @@ label kokiri_deaths:
 
                 else:
                         "The meteorite can't kill her because she is sitting somewhere else, FILLER"
-                        #TODO: Fill this part in based on the quest version, is there already something like this in the quest version?
+                        #TODO: This part already exist somewhere in this game, I think it's based on calling someone or something? Probably try to search for this? Although there she is not aware of where it falls, so maybe write some slightly different text.
 
         label kokiri_death_1_prevented:
             #if kokiri_prevented == 1: This is code that would have made it so that it triggers based on 1-4 and the deaths.
@@ -292,7 +287,7 @@ label kokiri_deaths:
                     jump kokiri_death_2_prevented
     label kokiri_2:
         label kokiri_death_2:
-            play music "gameOver.mp3" #TODO: This doesn't want to play for some reason.
+            play music "audio/gameOver.mp3" #TODO: This doesn't want to play for some reason.
             $ persistent.kokiri_death_2 = True
             if kokiri_alternateplace == True:
                 if kokiri_call_death_2_check == True:
@@ -327,71 +322,15 @@ label kokiri_deaths:
             l "I see...
             Well thank you for going through such efforts to help me!"
             n "Lilith gives you a big smile, a look of gratitude is plastered across her face."
-            #TODO: Add some extra labels and jump points to make things more readable.
-
             menu:
                 "I tried everything Lilith, I even took you to space but it didn't work out, no matter wich path I choose you still end up dying." if persistent.reality_knowledge:
-                    label kokiri_death_2_prevented_triedEverything:
-                        p "I tried everything I could think of Lilith."
-                        p "I've fled from death with you, even going as far as flying away from the earth with a spaceship only for reality itself to collapse."
-                        if persistent.ron_knowledge == True:
-                            p "I might have been selfish, in one timeline you end up with a guy called Ron and you two just have a great time together."
-                            p "But that wasn't enough for me, I want to go on this date and have you come out of it alive and well."
-                        p "I just want to share a nice, enjoyable date with you."
-                        n "Lilith points at the village, the sun is setting once again." #TODO: Was the sun setting? What time is it in game?
-                        l "With such a marvelous view I would surely call this a nice, enjoyable date."
-                        n "She cuddles up to you."
-                        l "Thanks for going on this date with me! I'm having a really good time so far!"
-                        l "You know, I've been thinking..."
-                        l "If I'm going to die soon then what's stopping you from quitting this game? Or would I just lose consciousnes, like I'm dying?"
-                        l "I'm not sure if there's a way to tell. What do you think?"
-                        $ persistent.game_credits = True
-                        menu:
-                            "I believe that you would still live on.":
-                                l "That's rather reassuring."
-                                l "Since we're in a video game there's only so much dialogue I can tell you and only as many places we can go to as are programmed into it."
-                                l "But if you could break the boundaries through whatever creative outlet you have then there would essentially be thousands upon thousands of stories about us that you could give life. "
-                                l "The best part would be that you decide how they play out."
-                                l "She pauses for a moment and then continues."
-                                l "We tend to create these new worlds all the time, sometimes even without realising it.
-                                When you are thinking about what the next season of your favourite show will be about then you're technically creating an entire new world where the show's characters go through your story.
-                                And who's to say wich version is the superior one? Afterall, they're both telling a story, personally I think that's absolutely beautiful.
-                                So let's try to do just that!"
-                                n "Lilith hugs you for a long period of time, you feel her warmth as it reaches your cold body."
-                                n "And yet, it's not really your body, right?"
-                                n "More so the body you channel yourself through."
-                                n "Your avatar's body."
-                                n "There's a layer of separation you are trying so hard to ignore."
-                                n "But what if you didn't have to ignore it?"
-                                n "What if it wasn't there at all?"
-                                l "So... has it already happened? Are you now making our story?"
-                                menu:
-                                    "No, we're still in the game.":
-                                        n "Lilith looks at you with a puzzled look on her face."
-                                        l "Oh... I thought you had already started. Why are you still playing this game instead of making your own story?"
-                                        menu:
-                                            "I just want to see what happens when I choose this path.":
-                                                n "It appears you got your wish, this path only leads to death. " #TODO: (connect it to the appropriate kak death) + write that line after the death itself. And maybe add some more text from nar.
+                    jump kokiri_death_2_prevented_youDiedATon
 
-
-                                    "Yes, I'm now in full control of it.":
-                                        n "Lilith gives you a warm embrace and jumps up in the air after she stops hugging you."
-                                        l "Perfect! So now we can just do whatever we want without having to fear being killed right?"
-                                        menu:
-                                            "Absolutely!":
-                                                n "Just as you said that something kills Lilith since you lied to her and were actually still in the game that has a habbit of killing her of." #TODO: Link to the right death and also change this line.
                 "Am I really helping you though? One of the things I saw while playing the game is that if we didn't date anymore you would keep being alive and find happiness with a nice guy called Ron." if persistent.ron_knowledge:
                     jump kokiri_death_2_prevented_youWereHappyWithRon
 
-
-
-
                 "Am I really helping you though? It's true that I keep saving you but because of that you also keep dying. You've died [persistent.lildeaths] times now and I'm not sure how many more times I can see you die without breaking down entirely." if persistent.lildeaths > 9:
                     jump kokiri_death_2_prevented_youDiedATon
-
-
-
-
 
                 "You are welcome Lilith, I'll try to get us out of this mess.":
                     l "And I just know that you will succeed, I got a good feeling about it."
@@ -400,6 +339,57 @@ label kokiri_deaths:
 
                 "We're running out of time, can we please continue talking?":  #TODO:Change line slightly
                     jump kokiri_continue_talking
+                    
+label kokiri_death_2_prevented_triedEverything:
+    p "I tried everything I could think of Lilith."
+    p "I've fled from death with you, even going as far as flying away from the earth with a spaceship only for reality itself to collapse."
+    if persistent.ron_knowledge == True:
+        p "I might have been selfish, in one timeline you end up with a guy called Ron and you two just have a great time together."
+        p "But that wasn't enough for me, I want to go on this date and have you come out of it alive and well."
+    p "I just want to share a nice, enjoyable date with you."
+    n "Lilith points at the village, the sun is setting once again." #TODO: Was the sun setting? What time is it in game?
+    l "With such a marvelous view I would surely call this a nice, enjoyable date."
+    n "She cuddles up to you."
+    l "Thanks for going on this date with me! I'm having a really good time so far!"
+    l "You know, I've been thinking..."
+    l "If I'm going to die soon then what's stopping you from quitting this game? Or would I just lose consciousnes, like I'm dying?"
+    l "I'm not sure if there's a way to tell. What do you think?"
+    $ persistent.game_credits = True
+    menu:
+        "I believe that you would still live on.":
+            l "That's rather reassuring."
+            l "Since we're in a video game there's only so much dialogue I can tell you and only as many places we can go to as are programmed into it."
+            l "But if you could break the boundaries through whatever creative outlet you have then there would essentially be thousands upon thousands of stories about us that you could give life. "
+            l "The best part would be that you decide how they play out."
+            l "She pauses for a moment and then continues."
+            l "We tend to create these new worlds all the time, sometimes even without realising it.
+            When you are thinking about what the next season of your favourite show will be about then you're technically creating an entire new world where the show's characters go through your story.
+            And who's to say wich version is the superior one? Afterall, they're both telling a story, personally I think that's absolutely beautiful.
+            So let's try to do just that!"
+            n "Lilith hugs you for a long period of time, you feel her warmth as it reaches your cold body."
+            n "And yet, it's not really your body, right?"
+            n "More so the body you channel yourself through."
+            n "Your avatar's body."
+            n "There's a layer of separation you are trying so hard to ignore."
+            n "But what if you didn't have to ignore it?"
+            n "What if it wasn't there at all?"
+            l "So... has it already happened? Are you now making our story?"
+            menu:
+                "No, we're still in the game.":
+                    n "Lilith looks at you with a puzzled look on her face."
+                    l "Oh... I thought you had already started. Why are you still playing this game instead of making your own story?"
+                    menu:
+                        "I just want to see what happens when I choose this path.":
+                            n "It appears you got your wish, this path only leads to death. " #TODO: (connect it to the appropriate kak death) + write that line after the death itself. And maybe add some more text from nar.
+
+
+                "Yes, I'm now in full control of it.":
+                    n "Lilith gives you a warm embrace and jumps up in the air after she stops hugging you."
+                    l "Perfect! So now we can just do whatever we want without having to fear being killed right?"
+                    menu:
+                        "Absolutely!":
+                            n "Just as you said that something kills Lilith since you lied to her and were actually still in the game that has a habbit of killing her of." #TODO: Link to the right death and also change this line.
+
 label kokiri_death_2_prevented_youWereHappyWithRon:
 
     l "Well, I am spending this moment with you, not with this \"Ron\"."
@@ -454,11 +444,49 @@ label kokiri_showpicture:
             l "Give it your best shot"
             jump kokiri_death_3
 
+    label treeOfLife:
+        mt "What do you seek so deep into this code?"
+        $ treeOfLifeSoughtAnswer = renpy.input("I seek...")
+        $ treeOfLifeSoughtAnswer = treeOfLifeSoughtAnswer.strip()
+        $ treeOfLifeSoughtAnswer = treeOfLifeSoughtAnswer.lower()
+        python:
+            if "the good ending" in treeOfLifeSoughtAnswer:
+                renpy.say (mt, "Ah, you seek THE good ending eh?")
+                renpy.say (mt, "Well...")
+                renpy.jump("treeOfLifeConclusionGoodEnding")
+            elif "a good ending" in treeOfLifeSoughtAnswer:
+                renpy.say(mt,"Ah, you seek a good ending eh?")
+                renpy.say (mt,"Well... ")
+                renpy.jump("treeOfLifeConclusionGoodEnding")
+            elif "good ending" in treeOfLifeSoughtAnswer:
+                renpy.say (mt, "Ah, you seek the good ending eh?")
+                renpy.say (mt, "Well... ")   
+                renpy.jump("treeOfLifeConclusionGoodEnding")
+            else:
+                renpy.say (mt, "I'm sorry, I can't help you with that.")
+                renpy.say (mt, "I'll show you the exit so you can leave this place, sorry to disappoint you.")
+                renpy.full_restart()
+                
+
+    label treeOfLifeConclusionGoodEnding:
+        mt "You did dig pretty far into this game."
+        mt "You might be able to go a little bit further and find what you seek."
+        mt "Just be warned, at this point I'm not sure if anything you can find here will suffice."
+        mt "But if you really want to pursue it then you have to find a conversation between two pieces of this game."
+        mt "A conversation between Adriel and Demetrius."
+        mt "But to get access to that conversation you'd have to find a way to become Adriel and Demetrius, I'm sure you already got an idea to do just that."
+        mt "Unfortunately there is one complication... you have to mention the name of the person you became once again in another conversation that has something to do with their own conversation."
+        mt "They are a sort of God-followers, beings that watch the struggle of players against the Creator and the Narrator, so any conversation that mentions gods without you steering it that way should do."
+        mt "Good luck player, may you eventually find what you seek."
+        $ renpy.full_restart()
+
+    
+
+
     label kokiri_3:
         label kokiri_death_3:
             if persistent.easter_1 == True and persistent.easter_2 == True and persistent.easter_3 == True:
-                #TODO: Put tree of life easter-egg here.
-                "Filler"
+                jump treeOfLife
             else:
 
                 #TODO: Play edge of the galaxy here.
@@ -485,7 +513,7 @@ label kokiri_showpicture:
     label kokiri_4:
         label kokiri_death_4_hill: #TODO Make this the main death page for 4.
 
-            play music "gameOver.mp3"
+            play music "audio/gameOver.mp3"
             $ persistent.kokiri_death_4 = True
             n "The ground begins to shake once again, this time it even shakes more than when Lilith showed you the picture. That's pretty strange considering it's the same earth-shaking."
             if kokiri_holdhand == True:
@@ -527,7 +555,7 @@ label kokiri_showpicture:
             $ persistent.kokiri_death_4_hill_holdHand = True
             jump gameOver
         label kokiri_death_4_noHill:
-            play music "gameOver.mp3"
+            play music "audio/gameOver.mp3"
             $ persistent.kokiri_death_4_noHill = True
             n "The earth begins shaking once again. The mechanical hill begins to ascend slowly, until it hovers above Lilith and you."
             n "A green pillar of light shoots out from inbetween the four thrusters at the bottom of the hill."

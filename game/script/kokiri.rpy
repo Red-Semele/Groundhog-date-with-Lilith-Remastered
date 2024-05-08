@@ -168,13 +168,13 @@ label kokiri_explanation_game:
 
 label kokiri_explanation_game_playerIdentity:
     l "It's pretty strange to be told that you're in a game but I'm glad you are the player, you seem more than capable enough to do what you need to do."
+    l "For example, you somehow managed to reach this place! That must not have been easy at all."
     if kokiri_psychic_lie or kokiri_groundhog_lie == True:
         l "Although I'd like to ask you to not lie to me too much alright? Only if it is absolutely necessary and even then I won't be a fan of it happening."
         l "We are in this together, and together we will try to achieve our goal!"
         $ persistent.kokiri_tellnolies_knowledge = True
-    #TODO: Make her say that an example of how capable you are is you knowing about the kokiri forest.
     l "She pauses for a moment and then continues."
-    n "Now that I think about it, what is it you've got to do in this game?"
+    n "Now that I think about it, what is the goal of this game?"
     $ kokiri_path1 = True
     $ kokiri_conversation = 0
     menu:
@@ -216,8 +216,7 @@ label kokiri_explanation_game_playerIdentity:
                         l "I've been thinking about something like this for quite a while."
                         l "If you read a book, close it halfway and make up your own story, is it any less valid than the original?"
                         menu:
-                            "I think it would be equally valid.":
-                                #TODO: Rewrite this text slightly.
+                            "No, I don't think so. It would be equally valid.":
                                 l "Exactly, and that's why creating your own version of this game could be really interesting. You can take the elements you like and put your own spin on it."
                                 l "So, do you have any ideas on how you want to approach this? How would you create your own version of this world?"
                                 menu:
@@ -834,8 +833,12 @@ label kokiri_death_dialogue_stillDying:
                                             "For us ofcourse silly.":
                                                 l "Oh [name]... can't we just make our own good ending?"
                                                 l "What's stopping us from becoming our own storytellers?"
-                                                #TODO: Fill in more. Make her say that obviously she doesn't want you to find it, she has doubts and doesn't want to risk her life when she knows she could live..
-                                                #Continue this more.
+                                                l "None of this is real, right?"
+                                                l "Doesn't that mean that we do't have to accept what will happen?"
+                                                l "That our own perfect little story with a good ending is as real as anything in here?"
+                                                l "Please don't drive yourself mad while searching for something that may very well not exist."
+                                                l "I want the moments we share to be enjoyable for the both of us."
+                                                l "This moment right now, however unconventianal is perfect. Even when I think about what is to come."
                                                 jump kokiri_death_4_hill
 
 
@@ -843,9 +846,10 @@ label kokiri_death_dialogue_stillDying:
                                                 l "Can't you see [name]? This is my good ending."
                                                 l "I get to spend some quality time with you right here and right now, that's all I need."
                                                 l "If we just trick ourselves into not seeing the way the game is trying to push us this night was very nice, wasn't it?"
+                                                l "If only time could be frozen, so we could forever share this moment without any of the hurt."
                                                 l "So is this not a good enough good ending for you?"
                                                 l "Try to enjoy it, try to have some fun. Do it for me [name], do it for us."
-                                                #TODO: Fill in more.
+                                                l "Live every one of these days with me as if it is your last, because for me it is."
                                                 jump kokiri_death_4_hill
 
 
@@ -905,8 +909,16 @@ label kokiri_death_dialogue_stillDying:
                                 "Filler"
                                 #TODO: Put alternative text here.
                 "I won't.":
-                    "Filler"
-                    #TODO: Create something here, there is no precedent in the quest version. (Make her be glad that you hold her hand.
+                    n "Her smile grows even wider."
+                    l "Thank you [name], that really helps comfort me a little."
+                    l "Whatever happens next, we're facing it together."
+                    l "Can we watch the stars some more?"
+                    l "I'd like to have that be my last memory before..."
+                    l "Well, I think you know what I mean, right?"
+                    n "Lilith and you lie down next to eachother, still holding eachother's hand as you gaze at the nightsky."
+                    l "Thank you for being here with me [name], I'm not sure if I could brave something like this on my own."
+                    l "The stars are even more beautiful now than ever before. Maybe it's because I know it will be the last time I ever get to look at them?"
+                    l "Either way, I'm really glad that I get to share this moment with you."
                     jump kokiri_death_4_hill
 
         "Try to think of a happy memory.":
@@ -920,8 +932,7 @@ label kokiri_death_dialogue_stillDying:
                 "Maybe this is really your first time watching them?":
                     l "I'm not sure I understand, what do you mean with that [name]?"
                     menu:
-                        "Well, since you are in a game you have simulated memories and so this might be the first time you truly watched the stars.":
-                            #TODO: Change that link text slightly, but keep the conclusion.
+                        "Well, since you are in a game you might have simulated memories. That would mean you only think you saw the stars before because it was programmed into you and so this might be the first time you truly watched the stars.":
                             l "Hmm, I suppose that might be the case but haven't you been here before when you were playing the game?"
                             l "And if you have, doesn't that mean that I was with you and that I watched the stars that time?"
                             menu:

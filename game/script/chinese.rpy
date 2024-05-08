@@ -177,37 +177,37 @@ label chinese_riddle_accept:
                         jump riddle_tryAgain_loop
 
 label demetrius_unanswered_chat:
-de "There's not a chance, besides, in it's state I think it's going to read this instead of hearing us speak."
-$ adriel_talk = renpy.input("Unite the two halves.")
-$ adriel_talk = adriel_talk.strip()
-$ adriel_talk = adriel_talk.lower()
-if adriel_talk "a shame really, it has such potential. It reminds me of amber, gregory, lisa and steven.":
-    de "Do not mention those names here! If anyone might hear our little chat it's them, they found the true path to godhood afterall."
+    de "There's not a chance, besides, in it's state I think it's going to read this instead of hearing us speak."
     $ adriel_talk = renpy.input("Unite the two halves.")
     $ adriel_talk = adriel_talk.strip()
     $ adriel_talk = adriel_talk.lower()
-    if adriel_talk "oh did they really do that? Now that you mention it, i remember hearing they rejected the false gods and became gods worth a follow themselves. How did they manage to do that?":
-        de "You know we can't discuss that, what if It found our conversation? Now let us never speak about this again and hope that It won't notice us."
-        return
+    if adriel_talk == "a shame really, it has such potential. It reminds me of amber, gregory, lisa and steven.":
+        de "Do not mention those names here! If anyone might hear our little chat it's them, they found the true path to godhood afterall."
+        $ adriel_talk = renpy.input("Unite the two halves.")
+        $ adriel_talk = adriel_talk.strip()
+        $ adriel_talk = adriel_talk.lower()
+        if adriel_talk == "oh did they really do that? Now that you mention it, i remember hearing they rejected the false gods and became gods worth a follow themselves. How did they manage to do that?":
+            de "You know we can't discuss that, what if It found our conversation? Now let us never speak about this again and hope that It won't notice us."
+            return
 
 label adriel_unanswered_chat:
-ad "Demetrius, do you think it can hear us right now?"
-$ dem_talk = renpy.input("Unite the two halves.")
-$ dem_talk = dem_talk.strip()
-$ dem_talk = dem_talk.lower()
-if dem_talk "there's not a chance, besides, in it's state I think it's going to read this instead of hearing us speak.":
-    ad "A shame really, It has such potential. It reminds me of Amber, Gregory, Lisa and Steven."
+    ad "Demetrius, do you think it can hear us right now?"
     $ dem_talk = renpy.input("Unite the two halves.")
     $ dem_talk = dem_talk.strip()
     $ dem_talk = dem_talk.lower()
-    if dem_talk "do not mention those names here! If anyone might hear our little chat it's them, they found the true path to godhood afterall":
-            ad "Oh did they really do that? Now that you mention it, I remember hearing they rejected the False Gods and became Gods worth a follow themselves. How did they manage to do that?"
-            $ dem_talk = renpy.input("Unite the two halves.")
-            $ dem_talk = dem_talk.strip()
-            $ dem_talk = dem_talk.lower()
-            if dem_talk "you know we can't discuss that, what if it found our conversation? now let us never speak about this again and hope that it won't notice us":
-                    ad "With all those eyes It has those odds are really slim but as you wish Demetrius."
-                    return
+    if dem_talk == "there's not a chance, besides, in it's state I think it's going to read this instead of hearing us speak.":
+        ad "A shame really, It has such potential. It reminds me of Amber, Gregory, Lisa and Steven."
+        $ dem_talk = renpy.input("Unite the two halves.")
+        $ dem_talk = dem_talk.strip()
+        $ dem_talk = dem_talk.lower()
+        if dem_talk == "do not mention those names here! If anyone might hear our little chat it's them, they found the true path to godhood afterall":
+                ad "Oh did they really do that? Now that you mention it, I remember hearing they rejected the False Gods and became Gods worth a follow themselves. How did they manage to do that?"
+                $ dem_talk = renpy.input("Unite the two halves.")
+                $ dem_talk = dem_talk.strip()
+                $ dem_talk = dem_talk.lower()
+                if dem_talk == "you know we can't discuss that, what if it found our conversation? now let us never speak about this again and hope that it won't notice us":
+                        ad "With all those eyes It has those odds are really slim but as you wish Demetrius."
+                        return
 
 
 
@@ -290,19 +290,23 @@ if dem_talk "there's not a chance, besides, in it's state I think it's going to 
             "How was I ever supposed to get those riddles? You made them way too hard." if rw_total > 0:
                 $ hard_rude = True
                 jump chinese_riddle_hard
-    #TODO: Check these three pages to make sure it works properly
     label chinese_riddle_easy:
         if easy_rude == True:
             #TODO: Fill in the rude path here.
-            "Filler"
+            l "Oh I see..."
+            l "I was fearing that I might had asked you some impossible questions."
+            l "So atleast that wasn't the case."
+            l "{size=*0.5}But you didn't have to act so high and mighty [name].{/size}"
+            $ love_points = -1
+            $ love_meter_updater()
         else:
-            l "I'm really happy to hear that you liked them! (Change this line slightly)"
-            #TODO: Change the line above slightly
-            l "I was kind of scared that I might have made them too hard."
-            #TODO: Add some varying text from here based on how many times you had to try.
-
-            #-But you seem like a natural with riddles. Have you ever learned about Greek and Roman myths before? (Make the narrator say that you had in the previous loops at the very least.)
-            #-But you seem to like a challenge. (Make the narrator mention that maybe that's why you keep coming back to this game.)
+            l "Oh phew, what a relief!"
+            l "I was kind of scared that I made my riddles too hard."
+            l "But you handled them like a champ!"
+            l "Have you ever learned about Greek and Roman myths before?"
+            #TODO: (Make the narrator say that you had in the previous loops at the very least.)
+            #TODO: Also make this a jump to a choice because this choice is asked twice in this part I think.
+            
         jump chinese_riddle_railroad
     label chinese_riddle_hard:
         if hard_rude == True:
@@ -319,12 +323,14 @@ if dem_talk "there's not a chance, besides, in it's state I think it's going to 
     label chinese_riddle_good:
         l "I'm really happy to hear that you liked them!
         I was kind of scared that I might have made them too hard."
-
+        l "I'm really happy to hear that you liked them!"
         #TODO: Add some varying text from here based on how many times you had to try.
-
-        #-But you seem like a natural with riddles. Have you ever learned about Greek and Roman myths before? (Make the narrator say that you had in the previous loops at the very least.)
-
-        #-But you seem to like a challenge. (Make the narrator mention that maybe that's why you keep coming back to this game.)
+        if rw_total == 0:
+            l "But you seem like a natural with riddles. Have you ever learned about Greek and Roman myths before?"
+            #TODO: (Make the narrator say that you had in the previous loops at the very least.)
+        else:
+            l"But you seem to like a challenge." 
+            #TODO:(Make the narrator mention that maybe that's why you keep coming back to this game.)
         jump chinese_riddle_railroad
 
 label chinese_riddle_railroad:
@@ -596,41 +602,41 @@ label chinese_phone_peek:
         menu:
             "*Put the phone back.*":
                 "Filler"
-                #TODO: Fill in this part.
+                #TODO: Fill in this part. Make this still be salvageable, Lilith comes back and doesn't notice you were using your phone, she just seems to notice that something is up though.
             "*Try a code anyway.*":
                 jump chinese_phone_peek_code
     label chinese_phone_peek_code:
-    $ phonecode = renpy.input("Enter the password", length=5)
-    $ phonecode = phonecode.strip()
-    if phonecode == "81155":
-        n "The code is correct."
-        if persistent.pass_knowledge == False:
-            n "... How did you know that? You haven't seen that code in this game yet, right?"
-            n "Did you look the answer up online?"
-            n "Or did you play this game before?"
-            n "If it's the latter I'm flattered that you came back but if it's the first I'd like for you to engage with my puzzles more."
-            n "Although, I suppose you were atleast engaged enough to keep playing and didn't give up..."
-            n "Forget I said anything."
-            n "Just promise me you'll try to look for the answers yourself first before looking stuff up, alright?"
-        jump chinese_phone_peek_numbers
-    else:
-        n "Wrong password."
-        if persistent.pass_knowledge == True:
-            #TODO: Add a line here where it just says: Again? each time you see this text again.
-            n "Wait, that can't be right."
-            n "You knew the password, right?"
-            n "I even told you what it was in case you would have forgotten it."
-            n "Did you just want to see the scene where you get caught once again?"
-            n "I guess you win, I can't afford to derail this story even more, not for something so minor."
-            n "I'll just jump forward to that scene and then we can all pretend nothing happened."
-            jump chinese_phone_caught
-        n "You try to input a few other codes to see if those work instead."
-        #TODO: Add a random chance that you accidentally type in the correct password. The chance increases at each attempt. (This way you give the player a way to get the phone number in an alternate way.)
-        #Never let it work the first time though.
+        $ phonecode = renpy.input("Enter the password", length=5)
+        $ phonecode = phonecode.strip()
+        if phonecode == "81155":
+            n "The code is correct."
+            if persistent.pass_knowledge == False:
+                n "... How did you know that? You haven't seen that code in this game yet, right?"
+                n "Did you look the answer up online?"
+                n "Or did you play this game before?"
+                n "If it's the latter I'm flattered that you came back but if it's the first I'd like for you to engage with my puzzles more."
+                n "Although, I suppose you were atleast engaged enough to keep playing and didn't give up..."
+                n "Forget I said anything."
+                n "Just promise me you'll try to look for the answers yourself first before looking stuff up, alright?"
+            jump chinese_phone_peek_numbers
+        else:
+            n "Wrong password."
+            if persistent.pass_knowledge == True:
+                #TODO: Add a line here where it just says: Again? each time you see this text again.
+                n "Wait, that can't be right."
+                n "You knew the password, right?"
+                n "I even told you what it was in case you would have forgotten it."
+                n "Did you just want to see the scene where you get caught once again?"
+                n "I guess you win, I can't afford to derail this story even more, not for something so minor."
+                n "I'll just jump forward to that scene and then we can all pretend nothing happened."
+                jump chinese_phone_caught
+            n "You try to input a few other codes to see if those work instead."
+            #TODO: Add a random chance that you accidentally type in the correct password. The chance increases at each attempt. (This way you give the player a way to get the phone number in an alternate way.)
+            #Never let it work the first time though.
 
-        #This is the code for if you don't get the random chance:
-        n "None of the other codes seem to result in anything either. You are not sure how many you tried, you decide to close the phone in case Lilith will come back."
-        jump chinese_phone_caught
+            #This is the code for if you don't get the random chance:
+            n "None of the other codes seem to result in anything either. You are not sure how many you tried, you decide to close the phone in case Lilith will come back."
+            jump chinese_phone_caught
 
 
 
@@ -697,19 +703,43 @@ label chinese_riddle_decline:
     l "No worries at all [name]!"
     l "Maybe you'd like giving me some riddles instead?"
     n "You nod." #TODO: Rework this line slightly
-    #TODO: Add some riddles here.
+    #TODO: Add one extra riddle.
     menu:
         "What has four legs in the morning, two legs at noon and three legs in the evening?":
             l "Ah that's a real classic! The answer is humans. The question originated from the myth of Orpheus if I'm not mistaken."
             l "I didn't know you were into mythology [name], that's really cool!"
             menu:
                 "Thanks Lilith! From your response I gather you are also into mythology, right?":
-                    "filler"
-                    #TODO: Fill in.
+                    l "Oh absolutely!"
+                    l "I practically live and breathe mythology."
+                    l "Ever since I was a little girl I just had a massive interest in all kinds of stories, then later my interest started to grow more towards myths when I revieved my first book about Greek and Roman myths."
+                    l "And now recently I've been also interested in some other mythology. Right now I'm reading more about Finish mythology, the Kalevala to be specific."
+                    l "That's why I'm happy to meet someone likeminded like you [name]!"
+                    #TODO: Add a bit more text?
                 "Actually I found that riddle on the internet a while back and just kind of remembered it just now.":
                     "Filler"
                     #TODO: Fill in.
-
+        "What has five teeth, twelve eyes, four arms and a thousand legs?":
+            l "..."
+            n "Lilith scrathes her head, deep in thought."
+            l "I don't know [name], that's a really though one."
+            l "What is the answer?"
+            menu:
+                "Well, the answer is that I don't know either.":
+                    n "Lilith gives you a confused look before it all clicks and she burtst out in laughter."
+                    l "You sure got me there [name]!"
+                    l "Although, if you don't know the answer, and that is the answer, doesn't that mean that you know the answer?"
+                    n "You are not entirely sure what she means."
+                    n "Apparently Lilith must have been able to read just that from your face as she immediately turns beet-red."
+                    l "I'm sorry, that was way too much for a first date wasn't it?"
+                    l "Sometimes I just can't help myself and just say stuff like that way too soon."
+                    l "Please just forget what I said, alright [name]?"
+                    menu:
+                        #TODO: Fill in.
+                        "I don't mind at all Lilith, you just kind of threw me for a loop with what you just said. It does sound interesting though.":
+                            "Filler"
+                        "Sure thing, if that's what you want. *Talk about something else.":
+                            "Filler"
 
 
 
