@@ -63,6 +63,7 @@ label cafe_food_result:
             jump cafe_dice_stop
 
 label cafe_dice_continue:
+    $ persistent.dice_counter += 1
     n "Lilith throws two six-sided dice and puts her hands in front of them so you can't see the result."
     l "The sum of the dice is nine."
     if persistent.dice_knowledge == True:
@@ -141,6 +142,7 @@ label cafe_dice_result:
                 if dicenumber2 == 3:
                     label cafe_dice_right:
                     l "Wow, you managed to figure it out. Nicely done [name]!"
+                    $ persistent.dice_knowledge = True
                     #TODO: Make a better segway for this.
                     jump cafe_rateCafe
                 else:
@@ -158,7 +160,15 @@ label cafe_dice_result:
                             jump cafe_rateCafe
                         "No, if I ever learn the answer I want it to be because I solved it.":
                             l "That's respectable but I'm not sure when you'll get your next chance, this is not something I do all of the time."
-                            #TODO: Set an if function that when the counter of the dice puzzle is a certain ammount the narrator says something like "You won't have to wait too long I'm sure..."
+                            if persistent.dice_counter >= 2:
+                                n "Oh I think she doesn't have to worry about that at all..."
+                                n "Afterall, isn't this the [persistent.dice_counter] time you try this puzzle?"
+                                if persistent.dice_knowledge == True:
+                                    n "But what is peculiar to me is that you already know the correct answer, right?"
+                                    n "I even gave you a reminder about it."
+                                    n "And yet you got it wrong, why is that?"
+                                    n "Is it because you want to see these lines of new dialogue?"
+                                    #TODO: Check if the player never saw these lines and otherwise have the narrator say "no, that can't be the case, there mmust be a different reason..."
                             #TODO: Make this new segway a bit better because now it doesn't make much sense.
                             jump cafe_rateCafe
 
@@ -344,13 +354,18 @@ label cafe_joke_dontGet:
 
 label cafe_badLove:
 
-    #Say something extra based on which choice brought you here. TODO.
 
-
-    l "Well..."
+    if cafe_badLove_lowbar == True:
+        l "Hey, don't sell yourself or this date short!"
+        l "So far I'm having a really good time [name]."
+        l "Anyway, to answer your question..."
+    elif cafe_badLove_justafeeling == True:
+        l "Ah I see, are you sure you are not a psychic?"
+        n "Lilith lets out a cute chuckle before becoming a bit more serious again."
+        l "You came pretty close to the truth with that intuition, not entirely though."
     l "I wouldn't say I had really bad experiences with love. It's just that I tend to grow connected with people before they even had the chance to grow fond of me.
     I also do not need to be with someone every single moment, both as a friend or lover, once I'm connected I start to sort of withdraw a little bit."
-    if cafe_badLove_lowbar == True: #TODO: What is this supposed to do again? Check it out 
+    if cafe_badLove_lowbar == True:
         if persistent.lildeaths > 0:
             l "But it's strange, I feel as if you already know me pretty well even though this is our first date. Not that I'm complaining though, I really like it if I'm being honest with you."
     l "In the beginning I thought that I was weird for acting that way, I started trying to make sure that I didn't distance myself from anyone so I wouldn't hurt them.

@@ -89,9 +89,17 @@ label kokiri_talkAboutSomethingElse:
                                                 l "It's a relief to hear you haven't contacted my dad yet, I'd prefer if you never did at all, even if given the option somehow."
                                                 l "I'd prefer if you didn't  anyone of my family, but especially not David."
                                                 menu:
-                                                    "Of course! I would never contact someone of your family":
-                                                        #TODO: Fill this in, the narrator calls you a liar etc.
-                                                        "Filler"
+                                                    "Of course! I would never contact someone of your family. (Lie)":
+                                                        #Karma
+                                                        l "Thank you [name]!"
+                                                        l "It means a lot to me that I can trust you with something like this."
+                                                        n "I see..."
+                                                        n "So now you are just lying to her face?"
+                                                        n "You might think this doesn't have any consequences."
+                                                        n "Is that why you are doing this?"
+                                                        n "Or is it because you want to read each line of potentially new dialogue, no matter what you have to do to reach it?"
+                                                        n "..."
+                                                        n "Don't bother answering that, you got your consequence free new dialogue, now let's move you back on track."
                                                         $ kokiri_conversation_silent()
                                                     "And what if contacting someone of your family could potentially save you?":
                                                         #TODO: Fill in, I think there already exists something similiar in quest. Lilith is not really comfortable with the idea, she doesn't like to potentially harm her family like that.
@@ -214,8 +222,6 @@ label tellLilithAboutNar_push:
 
     #TODO: Check if the game indeed closes itself once
     return
-
-    $ kokiri_conversation_silent()
 label tellLilithAboutNar_doNotPush:
     n "Alright, I understand."
     n "All I can say is that He, the creator of this world and game, wants the player to find the answer to your question so surely they will stumble upon it eventually."
@@ -338,7 +344,18 @@ label askAboutAbigail_tellMeAbout_1:
                         It doesn't. You will have to live with it. You will have to keep trying to highten your resitance to it.
                         Promise me that if you ever doubt if a friend truly wants to do something together with you you'll ask them to be sure. It might sound silly but it helps, I promise."
                         n "You motion to Lilith that she doesn't have much time left."
-                        #TODO: Write her putting the phone down and saying goodbye to Abigail.
+                        l "I have to go now sis."
+                        l "You don't want to hear this next part..."
+                        l "I love you, thank you for confiding in me."
+                        a "{size=*0.5}I wish I could've done it sooner.{/size}"
+                        l "And I wish I would have asked you earlier, but what really matters is that it has happened at all."
+                        l "I really have to hang up now, I don't have much time left I think."
+                        a "Can't you just stay a little longer?"
+                        a "I don't want to lose you."
+                        l "You'll never lose me Abby, I'll always be near you as long as you can still treasure the memories we made together."
+                        a "I know... but I'm so scared."
+                        l "Oh I totally understand, so am I. But I think you'll be fine eventually."
+                        l "Afterall, you are one of the bravest people I know."
                         jump kokiri_death_3_death_dialogue
                     "*Shake your head*":
                         #TODO: Make Lilith come up with a different reason as to why she called.
@@ -617,8 +634,6 @@ label askAboutLila_tellMeAbout_1:
                         n "You motion to Lilith that she doesn't have much time left."
                         l "I'm going to hang up now mom, what comes next won't sound pretty..."
                         l "I love you."
-                        n "Lilith hangs up and for a moment the two of you sit in pure silence."
-                        n "The sharp tunes of the wind break the silence, as if to remind the both of you of the limited time you still have left."
                         jump kokiri_death_3_death_dialogue
                     "*Shake your head*":
                         #TODO: Make Lilith come up with a different reason as to why she called.

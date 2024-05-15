@@ -64,8 +64,8 @@ label restaurant_deaths:
         label restaurant_death_1_prevented:
 
             if burger == True:
-                n "Lilith gives you a sceptical look but decides to follow your instructions, right as she does so a gunshot is heard and a bullet flies where she would have been if you didn't warn her."
-                #TODO:Didn't they use a silencer? Not sure anymore.
+                n "Lilith gives you a sceptical look but decides to follow your instructions, right as she does so a cacophony of hellish sounds begins to emanate through the halls of the mall."
+                n " Knowing what is to come you try to pay attention to a specific sound, a gunshot is heard and a bullet flies where she would have been if you didn't warn her."
                 n "Alright that is crazy, how did you know that bullet would hit me?"
             elif cafe == True:
                 n "Lilith gives you a questioning look, as if she's trying to estimate if you are joking or not."
@@ -224,16 +224,26 @@ label kokiri_deaths:
         n "You're not sure which one would sting more, probably a combination of the two."
         n "She wipes the crumbs on her clothes away with a frightening speed and angrily storms down the hill."
         l "Goodbye [name], we are done here."
-        l "Do not come back if you have even the slightest slither of respect for me." #TODO: (Make this only appear if you made one really big mistake)
+        if major_love_offence >= 1:
+            l "Do not come back if you have even the slightest slither of respect for me."
         #TODO: "Check if the player has retryed after she says not to."
         #TODO: I feel as if there should be a line here because otherwise the flow is weird.
         n "She doesn't get far from the hill, maybe a metre or fifteen before she seemingly trips over a tree root."
         n "She does not get up."
-        n "When you rush to her you notice why." #TODO: Make this only happen the first time, because the second time you already know what happened.
-        n "Lilith hit her head pretty badly on a small rock."
-        n "The end result looks horifying."
-        n "You call an ambulance but when they arrive they tell you what you already knew deep down."
-        n "She didn't make it."
+        if persistent.kokiri_angryLilithDeath == False:
+            n "When you rush to her you notice why."
+            n "Lilith hit her head pretty badly on a small rock."
+            n "The end result looks horifying."
+            n "You call an ambulance but when they arrive they tell you what you already knew deep down."
+            n "She didn't make it."
+            $ persistent.kokiri_angryLilithDeath = True
+        else:
+            n "Deep down you already know it is too late."
+            n "But you can't help yourself, you call an ambulance hoping that this time is somehow slightly different."
+            n "That this time she is still alive by the time they arive."
+            n "After what feels like waiting for years the ambulance finally arives."
+            n "Sadly they tell you the same news they've already told you before."
+            n "She didn't make it."
         jump gameOver
 
     label kokiri_1:

@@ -14,8 +14,8 @@ label burger_start:
                     $ nightmare_chance = renpy.random.randint(1, nightmare_max)
                     if nightmare_chance >= 80:
                         $ burger_nightmare = True
- 
-                #TODO: Random percentage chance to trigger the burger nightmare. (Use a formula based on the amount of lilith deaths as a sort of guilt meter.)
+                    else: 
+                        $ burger_nightmare = False
     l "Burgers sure sound good, see you there!"
     n "You arrive a tad late, Lilith already has grabbed herself a seat and waves at you when she sees you."
     l "Heya! Almost was scared you wouldn't show up."

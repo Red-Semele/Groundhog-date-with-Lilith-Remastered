@@ -19,6 +19,7 @@ define q = Character("???")
 define p = Character("[name]")
 define dev = Character("Developer")
 define mt = Character("Mysterious Text")
+define ship = Character("Ship")
 
 
 
@@ -63,6 +64,7 @@ if persistent.firstboot == None:
      default persistent.cafe_car_death = False
      default persistent.burger_car_death = False
      # Kokiri deaths under here:
+     default persistent.kokiri_angryLilithDeath = True
      default persistent.kokiri_death_1 = False
      default persistent.kokiri_death_2 = False
      default persistent.kokiri_death_3 = False
@@ -91,7 +93,6 @@ if persistent.firstboot == None:
      default persistent.joke_knowledge = False
      default persistent.car_knowledge = False
      default persistent.bedcheck_knowledge = False
-     default persistent.kokiri_knowledge = False
      default persistent.ron_knowledge = False
      default persistent.quest_knowledge = False #TODO: Maybe change the Quest flag since it now has less use.
      default persistent.reality_knowledge = False
@@ -113,6 +114,7 @@ if persistent.firstboot == None:
      default persistent.easter_3 = False
      default persistent.plane_knowledge = False
      default persistent.teaseDeath_fakeOut_knowledge = False
+     default persistent.dice_counter = 0
      
      #Phone-numbers
      default persistent.david_call_knowledge = False
@@ -130,22 +132,18 @@ if persistent.firstboot == None:
      #Cafe related flags and counters
      default persistent.cafe_taste_knowledge = False
      default persistent.dice_knowledge = False
-     default persistent.joke_knowledge = False
      default persistent.song_knowledge = False
      #Chinese flags
      default persistent.chinese_phone_noretry = False #The noretry flags are meant to check if you replay the game after being asked not to do it.
      default persistent.pass_knowledge = False
      default persistent.need_pass_knowledge = False
      default persistent.peeked_phone = False
-     default persistent.bedcheck_knowledge = False
      #Chinese riddle flags
      default persistent.r1_knowledge = False
      default persistent.r2_knowledge = False
      default persistent.r3_knowledge = False
      #Kokiri flags
-     default persistent.car_knowledge = False
      default persistent.ron_knowledge = False
-     default persistent.kokiri_knowledge = False
      default persistent.kokiri_teacher_knowledge = False
      default persistent.kokiri_meteoritedistraction_knowledge = False
      default persistent.kokiri_call_death = False
@@ -299,6 +297,7 @@ $ minor_love_comfort = 0
 $ major_love_comfort = 0
 $ booklovertalked = False
 $ musiclovertalked = False
+$ phone_wrongPassword_graceSystem = False
 #QOL-settings:
 $ no_nightmare = False
 $ perm_nightmare = False
@@ -921,7 +920,7 @@ label phone_call_david:
 
 
 label phone_call_james:
-     if persistent.met_james = False:
+     if persistent.met_james == False:
           #TODO: Make it be said by j (james) if you don't know he is dead, otherwise it's said by q.
           q "Yo, who is this?"
           $ phone_caller = renpy.input("Enter your name.")
@@ -1564,7 +1563,7 @@ label youwouldntbelieveme_doNotteaseDeath:
 label youwouldntbelieveme_teaseDeath:
      $ teaseDeath = True
      n "Lilith and you high five eachother, you've won. Congratulatons!"
-     if persistent.teaseDeath_fakeOut_knowledge = False:
+     if persistent.teaseDeath_fakeOut_knowledge == False:
           n "That is what I would say if either of us thought that was the truth. Afterall, you came back here for a reason didn't you?"
      jump restaurant_death_2
 
@@ -1940,7 +1939,7 @@ label jamesChat_whyDidYouReturn:
                          #TODO: Fill the menu in with some questions they can ask.
                          #After it has been answered let James reask the question.
 
-label jameschat_whydidyoureturn_tobetogether_choices:
+label jamesChat_whyDidYouReturn_toBeTogether_choices:
      menu:
           "Who are they?":
                j "The first one you probably haven't met, not for long anyway. He is the one that created this world, gave you acces to it and made the second one.

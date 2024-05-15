@@ -415,7 +415,11 @@ label chinese_riddle_talk_abbyMemory:
                                                 "Then ask me a few questions to not make me a stranger anymore.":
                                                     jump chinese_lostSomeone_questions
 
-                                                #TODO: Add a third option where you can tell her it feels as if you already know here pretty well after X amount of retries.
+                                                "This might sound strange but I feel as if I've already known you for a lot longer than I actually do.":
+                                                    "Filler"
+                                                    #TODO: Fill this in and make this only appear if you have around 6 times reset.
+                                                    #Make her more likely to admit feeling that way aswell if you have high lovepoints.
+   
 label chinese_riddle_talk_abbyHobbies:
     n "Lilith chuckles slightly."
     $ persistent.quest_knowledge = True
@@ -631,6 +635,13 @@ label chinese_phone_peek:
                 n "I'll just jump forward to that scene and then we can all pretend nothing happened."
                 jump chinese_phone_caught
             n "You try to input a few other codes to see if those work instead."
+            #TODO: Check if this works and write it out a bit better.
+            $ phone_wrongPassword_graceSystem = renpy.random.randint(1,80)
+            $ phone_wrongPassword_graceSystem += (persistent.retry_counter* 10)
+            if phone_wrongPassword_graceSystem == 100:
+                n "You manage to somehow luck yourself into getting the correct password."
+                n "It is 81155."
+                $ persistent.pass_knowledge = True
             #TODO: Add a random chance that you accidentally type in the correct password. The chance increases at each attempt. (This way you give the player a way to get the phone number in an alternate way.)
             #Never let it work the first time though.
 
@@ -679,6 +690,7 @@ label chinese_phone_peek_numbers:
     You might just have enough time to learn one phone-number."
 
     $ peeked_phone_temp = True
+    #TODO: For some reason this menu throws some lint errors.
     menu:
         "Learn Abigail's phone number." if not persistent.abigail_call_knowledge:
             $ persistent.abigail_call_knowledge = True
@@ -693,7 +705,7 @@ label chinese_phone_peek_numbers:
             #TODO: For some reason it does not think this flag is defined.
             $ persistent.lisa_call_knowledge = True
             jump chinese_phone_caught
-        "Close the phone." if persistent.abigail_call_knowledge and persistent.david_call_knowledge andpersistent.james_call_knowledge and persistent.lisa_call_knowledge: #TODO: Rewrite this line slightly.
+        "Close the phone." if persistent.abigail_call_knowledge and persistent.david_call_knowledge and persistent.james_call_knowledge and persistent.lisa_call_knowledge: #TODO: Rewrite this line slightly.
             jump chinese_phone_caught
 
 

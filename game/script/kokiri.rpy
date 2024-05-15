@@ -743,6 +743,8 @@ label kokiri_death_3_prevented_talk_farthestWeHaveGone:
 
 label kokiri_death_3_death_dialogue:
     if kokiri_call == True:
+        n "Lilith hangs up and for a moment the two of you sit in pure silence."
+        n "The sharp tunes of the wind break the silence, as if to remind the both of you of the limited time you still have left."
         l "So after that call I am still going to die, right?"
         l "Forgive me if I am slightly nihilistic but what was the point of that?"
         l "After you retry everything of this is going to be undone and she won't even remember that I called her." 
@@ -798,7 +800,7 @@ label kokiri_death_dialogue_stillDying:
                                     "But you are not real, this is just a game...":
                                         #Do not use the script to update this love meter as it already normally moves you to a death now, the only reason I'm updating the love_meter is for extra text and the offence is for consistency.
                                         $ love_meter -= 2
-                                        $ major_love_offence += 1
+                                        $ love_meter_updater()
                                         l "Well, I feel pretty real to me and I can imagine every death I go through must feel equally real and very painful."
                                         l "So what if I'm in a game? Does that make me less real? You can talk with me, I can speak and I'm real enough to trick myself into thinking that I'm real."
                                         l "And I'm real enough to walk away from some monster who thinks they are justified in killing me over and over again just to get what they want."
@@ -950,7 +952,7 @@ label kokiri_death_dialogue_stillDying:
                     l "The stars shine like silver lights in the inkblack sky, they seem to form patterns if you look closely enough."
                     l "You can see a pan with a bent handle, a bathtub, a playful dog and a snake."
                     l "Am I doing a good job narrating?"
-                    n "You give her a thumbs up and she gives you a smile in return." #TODO: Make the narrator compliment Lilith's narration.
+                    n "You give her a thumbs up and she gives you a smile in return."
                     l "Alright, I'll narrate some more then, this is pretty fun!"
                     l "You can see a few falling stars, their tails of light are a visible trace of the projection from the past that uses the star itself in the present to project itself to the future, to beyond the place the star currently resides in."
                     l "This constant and neverending process is happening multiple times every single second. Your head hurts trying to think of it too much so you just try to enjoy the falling stars for their beauty."
@@ -1081,7 +1083,6 @@ label kokiri_notTheSameYou:
                     n "Lilith sighs."
                     l "Ah I see..."
                     l "But is this death at the very least not too painful?"
-                    #TODO: Add a menu here that eventually leads to the death_4 part.
                     menu:
                         "I'm not sure honestly." if not persistent.kokiri_death_4_hill_holdHand:
                             #TODO: Make that line change depending on if you have seen a version of the death that you didn't feel or if you just didn't see anything. If you didn't see anything then make it "I'm not sure how you would die, this is the furthest we have ever gotten."
@@ -1101,7 +1102,7 @@ label kokiri_notTheSameYou:
                             l "And though I am still terified it oddly helps that someone experienced the same thing, even if it merely was your character that felt it."
                             l "So thank you [name], thank you for trying to be there for me."
                             l "Still, thank you for telling me that [name], it helps to comfort me a little even though I still feel terified."
-                            #TODO: Jump to the correct next part.
+                            jump kokiri_death_4_hill
         "You got this!":
             #This is the most dumb one but in the quest version it is also treated as such.
             l "I...got this?"
@@ -1154,12 +1155,21 @@ label kokiri_scenery_choice:
                 #TODO: Change placeholder and put in more soul.
 
             "No. (Placeholder":
-                "Filler"
-                #TODO: Add something else to do when you decline, talking about something else would be a good idea, make this more adaptive based on what you were talking about so you get a few extra things for declining to watch the scenery.
-                #This should be slightly dynamic, if her head is hurting she will suggest to talk about something else.
-                #Otherwise she will ask you what to do and you can continue talking about a topic if it's available or you can talk about something else.
-
-        #TODO: Add a choice here where yes jumps you to scenery and no jumps to something else.
+                l "That's alright [name]."
+                if kokiri_scenery_headhurt == False:
+                    l "What would you like to do then?"
+                    #TODO: Check if this works properly.
+                    
+                    menu:
+                        "I'd like to talk about something else.":
+                            jump kokiri_talkAboutSomethingElse
+                        "I'd like to continue to talk about something.":
+                            jump kokiri_continue_talking
+                else:
+                    l "We can just talk about something else then."
+                    l "Afterall, I could use a change of topic because my head still hurts slightly."
+                    l "So, what would you like to talk about?"
+                    jump kokiri_talkAboutSomethingElse
 
 
 
@@ -1175,11 +1185,11 @@ label kokiri_scenery_choice:
                     jump kokiri_topic_questMade
         if conversationtracker_tellheraboutnarrator == True:
             "Filler"
-            #TODO: Fill in.
+            #TODO: Fill in. (Probably based on quest version)
         if conversationtracker_morepoems == True:
             "Filler"
             #Potentially check the counter here to see if you can still talk more.
-            #TODO: Fill in.
+            #TODO: Fill in. (Quest version?)
 
         #TODO: The second thing I want to do is to just enable the player to talk about something else, if they can't continue to talk about something
         menu:

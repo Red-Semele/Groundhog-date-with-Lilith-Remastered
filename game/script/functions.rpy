@@ -13,6 +13,7 @@ label gdwl_functions:
                     "Here should the angry lilith restaurant scene go."
                     #TODO: Do that, it probably already exist, check if it does.
         def love_meter_updater():
+            #TODO: Add an extra version of the minor/major offences/comforts to keep track of it in persistent ways.
             global love_points
             global love_meter
             global minor_love_offence
@@ -224,7 +225,6 @@ label gdwl_functions:
                     renpy.say (n, "It might not be right now.")
                     renpy.say (n, "But it will be something else.")
                     renpy.say (n, "It will happen soon.")
-                #TODO: Add a better segway in here to be more smooth, make the player get lost in their thoughts for the second death and get out of it by the speeding car.
                     if car_caught == True:
                         renpy.say (n, "While Lilith is engrossed in her conversation you notice the Red-Sedan isn't showing up. Looks like your call to the police worked wonderfully.")
 
