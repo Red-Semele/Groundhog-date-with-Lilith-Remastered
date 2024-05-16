@@ -28,7 +28,7 @@ label kokiri_hillSit:
     l "You know, this is really a beautiful view of the village we've got from here..."
     l "But how did you know about this place? I always gave it that name when I was a kid but I never told anyone."
     l "What's all of this about?"
-    play music "starsintheforest.mp3"
+    play music starsintheforest
     jump kokiri_explanation
 
 label kokiri_altSit:
@@ -45,7 +45,7 @@ label kokiri_altSit:
     l "You know, I'm really glad to be back here.."
     l "But how did you know about this place? I always gave it that name when I was a kid but I never told anyone."
     l "What's all of this about?"
-    play music "starsintheforest.mp3"
+    play music starsintheforest
     jump kokiri_explanation
 
 label kokiri_explanation:

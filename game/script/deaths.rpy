@@ -11,7 +11,7 @@ label restaurant_deaths:
                 #Burgerscene here
                 n "Now the screaming is also paired with hellish sounds, just great. You look at Lilith and tell her to hide under the table."
                 l "I..."
-                play music "audio/gameOver.mp3"
+                play music game_over #TODO: turning the music file into gog with "https://audio.online-convert.com/convert-to-ogg" made it work great, do this for all music files.
                 n "Lilith seems to be frozen, on her face you can clearly see a mixture of fear and confusion. It takes you a moment to notice the steadily increasing red stains on Lilith's clothes."
                 l "I've been shot?"
                 n "She falls of her chair, you crawl towards her and try to call an ambulance."
@@ -33,7 +33,7 @@ label restaurant_deaths:
                 n "The marlin has a long and pointy bill, it pierces the sandwich in a feat of pure dexterity. "
                 n "Sadly it's traject leads right to Lilith's chest as it's sword-like bill pierces it, somehow you know it has pierced her heart aswell."
                 n "She gives you one last look of utter shock before she falls dead on the floor."
-                play music "audio/gameOver.mp3"
+                play music game_over
                 $ persistent.cafe_death_1 = True
                 jump gameOver
 
@@ -50,7 +50,7 @@ label restaurant_deaths:
                 n "She takes a break from her food and looks at you for a moment."
                 l "You know, I'm actually glad we could meet here, I wanted to tell you something."
                 n "Before Lilith can finish her sentence her face starts to swell."
-                play music "audio/gameOver.mp3"
+                play music game_over
                 l "Call an ambulance, now!"
                 n "You grab your phone as you frantically start calling an ambulance."
                 n "A woman with a warm voice listens to your incoherent ramblings and tries her best to get the details, she sends an ambulance your way."
@@ -105,7 +105,7 @@ label restaurant_deaths:
     label restaurant_2:
         label restaurant_death_2:
             #Here the code of the second death will be.
-            play music "audio/gameOver.mp3"
+            play music game_over
             if burger == True:
                 $ persistent.burger_death_2 = True
                 n "Suddenly a inmense sensation of pain overwhelms you, the only thing you can see is a glimpse of pure white and an eternity of black."
@@ -158,9 +158,10 @@ label restaurant_deaths:
                 $ persistent.chinese_death_2 = True
                 jump gameOver
     label car_death:
-        play music "audio/gameOver.mp3"
+        play music game_over
         if car_caught == True:
             "Filler for now..."
+            #TODO: Fill in.
         else:
             if burger == True:
                 $ resname = "burger restaurant"
@@ -230,6 +231,7 @@ label kokiri_deaths:
         #TODO: I feel as if there should be a line here because otherwise the flow is weird.
         n "She doesn't get far from the hill, maybe a metre or fifteen before she seemingly trips over a tree root."
         n "She does not get up."
+        play music game_over
         if persistent.kokiri_angryLilithDeath == False:
             n "When you rush to her you notice why."
             n "Lilith hit her head pretty badly on a small rock."
@@ -252,6 +254,7 @@ label kokiri_deaths:
                 #TODO: Make this also trigger a persistent death flag.
                 n "The meteorite breaks into many different parts that spread all around the forest." #TODO: Add a few lines before this one to make the jump from her calling to this less sudden.
                 n "One of them crashes straight against Lilith's head with a frightening impact."
+                play music game_over
                 n "Her head is cracked open and a puddle begins to form around it. Everything around you turns silent."
                 if kokiri_chatchar_abigail_called == True:
                     n "Even Abigail who is currently screaming her lungs out has become unbearingly silent."
@@ -274,9 +277,9 @@ label kokiri_deaths:
                 n "The sky now is completly filled with falling stars, you've never seen so many falling stars in your entire life, let alone all together."
                 n "However, one point seems to be getting bigger and bigger, it doesn't seem to be a star as it's not sending out any light."
                 if kokiri_alternateplace == False:
-                        #TODO: Play gameOver music
 
                         n "The both of you watch in absolute terror as the thing only starts to get closer, becoming larger, in an alarming rate. "
+                        play music game_over
                         n "Before you can move away the meteorite smashes Lilith like a newspaper would smash a fly, miraculously it didn't even hit you." #TODO: change this, make it so that the meteorite splinters and one piece hits Lilith.
 
                         $ persistent.kokiri_death_1 = True
@@ -297,7 +300,7 @@ label kokiri_deaths:
                     jump kokiri_death_2_prevented
     label kokiri_2:
         label kokiri_death_2:
-            play music "audio/gameOver.mp3" #TODO: This doesn't want to play for some reason.
+            play music game_over
             $ persistent.kokiri_death_2 = True
             if kokiri_alternateplace == True:
                 if kokiri_call_death_2_check == True:
@@ -502,8 +505,9 @@ label kokiri_showpicture:
                 #TODO: Play edge of the galaxy here.
 
 
-                n "Suddenly the earth begins to shake, in a flash the big tree Lilith is standing next to topples over right on top of her.
-                The force of the tree kills her instantly." #TODO: (Write this more out)
+                n "Suddenly the earth begins to shake, in a flash the big tree Lilith is standing next to topples over right on top of her."
+                play music game_over
+                n "The force of the tree kills her instantly." #TODO: (Write this more out)
                 $ persistent.kokiri_death_3 = True
                 jump gameOver
         label kokiri_death_3_prevented:
@@ -523,7 +527,7 @@ label kokiri_showpicture:
     label kokiri_4:
         label kokiri_death_4_hill: #TODO Make this the main death page for 4.
 
-            play music "audio/gameOver.mp3"
+            play music game_over
             $ persistent.kokiri_death_4 = True
             n "The ground begins to shake once again, this time it even shakes more than when Lilith showed you the picture. That's pretty strange considering it's the same earth-shaking."
             if kokiri_holdhand == True:
@@ -558,6 +562,7 @@ label kokiri_showpicture:
                     jump kokiri_death_4_hill_imWithYou
         label kokiri_death_4_hill_imWithYou:
             #TODO: Write some more text in between here.
+            play music game_over
             l "You know, the stars are absolutely beautiful from here. I have a feeling we'll be able to see them even closer soon."
             n "Lilith shudders as she speaks those words but when you look at her she tries her best to give you a smile."
             n "Lilith was right, the hill flew up into space itself, probably to some far-off stars, not that the two of you would know as after fifteen seconds everything went black.
@@ -565,7 +570,7 @@ label kokiri_showpicture:
             $ persistent.kokiri_death_4_hill_holdHand = True
             jump gameOver
         label kokiri_death_4_noHill:
-            play music "audio/gameOver.mp3"
+            play music game_over
             $ persistent.kokiri_death_4_noHill = True
             n "The earth begins shaking once again. The mechanical hill begins to ascend slowly, until it hovers above Lilith and you."
             n "A green pillar of light shoots out from inbetween the four thrusters at the bottom of the hill."
@@ -613,10 +618,10 @@ label other_deaths:
         $ persistent.plane_knowledge = True
         n "As Lilith hangs up her phone you turn on the tv in frustration."
         n "The news is on apparently, it's talking about a plane that had lost height just a moment ago"
+        play music game_over
         n "The plane crashed right in the living room of a nice looking house, the house doesn't look unfamilliar to you at all."
         n "Then it hits you."
         n "It's her house."
-        #TODO: Play gameover music here.
         jump gameOver
 
 
@@ -631,6 +636,8 @@ label gameOver:
     $ persistent.retry_counter += 1
     n "{size=*2.5}Game over{/size}"
     n "Your date surely didn't go as planned."
+    #TODO: Change the retry prompt based on wheter or not Lilith is alive. If she is alive, then why did you retry afterall? Make it then be "Retry?"
+    play music sunrise
     menu :
         "Retry.":
             jump game_start

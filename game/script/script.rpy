@@ -372,6 +372,7 @@ label game_start:
           n "It is a beautiful day like the previous one, exactly like the previous one."
           n "Actually it's just the same day."
           n "Maybe you can make it just a tiny bit different."
+          stop music
  
      menu:
  
@@ -625,7 +626,7 @@ label phone_breakup:
      n "On a few pictures she stands next a blonde man while they both have the widest smiles you have ever seen."
      n "Apparently the man is called Ron, he is a semi-profesional photographer and his pictures surely show for it."
      n "Lilith and Ron got two kids that look like they had not a thing to worry about."
-     play music "gameOver.mp3"
+     play music game_over
      n "Looking at the pictures you can't help but feel tears coming up, you tried your best to move on but apparently that didn't work all too well."
      n "You know that this was probably the best thing to do, to keep Lilith safe and sound."
      n "But something deep inside you keeps wondering if there wasn't a way where you two could be together while she would be safe."
