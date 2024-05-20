@@ -639,14 +639,11 @@ label chinese_phone_peek:
             $ phone_wrongPassword_graceSystem = renpy.random.randint(1,80)
             $ phone_wrongPassword_graceSystem += (persistent.retry_counter* 10)
             if phone_wrongPassword_graceSystem == 100:
-                n "You manage to somehow luck yourself into getting the correct password."
+                n "You manage to somehow luck yourself into typing the correct password after a couple of tries."
                 n "It is 81155."
                 $ persistent.pass_knowledge = True
-            #TODO: Add a random chance that you accidentally type in the correct password. The chance increases at each attempt. (This way you give the player a way to get the phone number in an alternate way.)
-            #Never let it work the first time though.
-
-            #This is the code for if you don't get the random chance:
-            n "None of the other codes seem to result in anything either. You are not sure how many you tried, you decide to close the phone in case Lilith will come back."
+            else:
+                n "None of the other codes seem to result in anything either. You are not sure how many you tried, you decide to close the phone in case Lilith will come back."
             jump chinese_phone_caught
 
 
@@ -663,16 +660,16 @@ label chinese_phone_caught:
         Because if you've already gone this far you will only go further, right?"
         #TODO: Make the narrator mention this the first time you call aswell.
         n " No need to answer that, it was rhetorical. What you need to do is to close that phone."
-    n "Right at the moment when you close the phone and look back up you can see Lilith approaching.
-    Another thing you can also see is the very angry expression on her face.
-    As she walks up to the table she grabs her phone and puts it in her handbag"
-    l "What you just did was inexcusable [name]. I really didn't expect this from you.
-    I'm leaving, you can pay for our meals or try and cancel them but I am sticking up for myself.
-    Goodbye and do not ever contact me again."
+    n "Right at the moment when you close the phone and look back up you can see Lilith approaching."
+    n "Another thing you can also see is the very angry expression on her face."
+    n "As she walks up to the table she grabs her phone and puts it in her handbag"
+    l "What you just did was inexcusable [name]. I really didn't expect this from you."
+    l "I'm leaving, you can pay for our meals or try and cancel them but I am sticking up for myself."
+    l "Goodbye and do not ever contact me again."
     if persistent.chinese_phone_noretry == True:
         #TODO: Make this text slightly different based on how many times you've went through her phone.
-        n "And yet here you are once again, making the same mistake you've already made. And Lilith is none the wiser.
-        Is that why you came back to do the same thing she told you she didn't want you to do? Would you have acted differently if she could remember every action you took?"
+        n "And yet here you are once again, making the same mistake you've already made. And Lilith is none the wiser."
+        n "Is that why you came back to do the same thing she told you she didn't want you to do? Would you have acted differently if she could remember every action you took?"
         n "Don't worry [name], this is just all a game, right? Your actions here don't mean anything at all, right?"
         n "..."
     else:
@@ -685,9 +682,10 @@ label chinese_phone_noPeek:
 
 label chinese_phone_peek_numbers:
 
-    n "You see the family section of her phone numbers, four names are listed there.
-    If anyone besides Lilith will have some handy information about her it's them.
-    You might just have enough time to learn one phone-number."
+    n "You see the family section of her phone numbers, four names are listed there."
+    #TODO: Add something here if she already told you she wouldn't want to involve her family in the kokir_forest.
+    n "If anyone besides Lilith will have some handy information about her it's them."
+    n "You might just have enough time to learn one phone-number."
 
     $ peeked_phone_temp = True
     #TODO: For some reason this menu throws some lint errors.

@@ -359,27 +359,29 @@ label cafe_badLove:
         l "Hey, don't sell yourself or this date short!"
         l "So far I'm having a really good time [name]."
         l "Anyway, to answer your question..."
+
     elif cafe_badLove_justafeeling == True:
         l "Ah I see, are you sure you are not a psychic?"
         n "Lilith lets out a cute chuckle before becoming a bit more serious again."
         l "You came pretty close to the truth with that intuition, not entirely though."
-    l "I wouldn't say I had really bad experiences with love. It's just that I tend to grow connected with people before they even had the chance to grow fond of me.
-    I also do not need to be with someone every single moment, both as a friend or lover, once I'm connected I start to sort of withdraw a little bit."
+
+    l "I wouldn't say I had really bad experiences with love. It's just that I tend to grow connected with people before they even had the chance to grow fond of me."
+    l "I also do not need to be with someone every single moment, both as a friend or lover, once I'm connected I start to sort of withdraw a little bit."
     if cafe_badLove_lowbar == True:
         if persistent.lildeaths > 0:
             l "But it's strange, I feel as if you already know me pretty well even though this is our first date. Not that I'm complaining though, I really like it if I'm being honest with you."
-    l "In the beginning I thought that I was weird for acting that way, I started trying to make sure that I didn't distance myself from anyone so I wouldn't hurt them.
-    Of course this only made things worse, soon I began having almost no confidence in myself and messed up quite a few relationships and friendships."
-    l "It took me a while before I managed to find the courage in myself to try and fix my problems.
-    It didn't happen instantly, even now I sometimes come of as too distant, but little by little I managed to tell myself that there is nothing wrong with not needing an overdose of affection every second."
-    l "So, did I have bad experiences in love?
-    Maybe, but they were all quite necessary as without them I wouldn't be here with you today, I wouldn't even be myself if that makes sense.
-    Sorry for blabbering on by the way, I'm quite talkative when you get me going."
+    l "In the beginning I thought that I was weird for acting that way, I started trying to make sure that I didn't distance myself from anyone so I wouldn't hurt them."
+    l "Of course this only made things worse, soon I began having almost no confidence in myself and messed up quite a few relationships and friendships."
+    l "It took me a while before I managed to find the courage in myself to try and fix my problems."
+    l "It didn't happen instantly, even now I sometimes come of as too distant, but little by little I managed to tell myself that there is nothing wrong with not needing an overdose of affection every second."
+    l "So, did I have bad experiences in love?"
+    l "Maybe, but they were all quite necessary as without them I wouldn't be here with you today, I wouldn't even be myself if that makes sense."
+    l "Sorry for blabbering on by the way, I'm quite talkative when you get me going."
     menu:
         "No need to apologise for talking, I like listening to you.":
             l "Oh you flatterer! "
-            n "Lilith looks at you and gives you a big grin, you can clearly see she's blushing.
-            Suddenly the grin begins to make place for a slight frown."
+            n "Lilith looks at you and gives you a big grin, you can clearly see she's blushing."
+            n "Suddenly the grin begins to make place for a slight frown."
             l "Is it normal for me to be that happy because someone told me they don't mind me speaking?"
             l "..."
             l "I... kind of struggle with self-confidence."
@@ -392,4 +394,3 @@ label cafe_badLove:
                     l "Thank you [name], it really helps to hear someone say that from time to time."
                     n "Lilith gives give a thankfull smile."
                     jump restaurant_death_1
-                    #TODO: Maybe clean up the text above this starting from bad love slightly extra.

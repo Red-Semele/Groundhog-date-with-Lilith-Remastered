@@ -13,23 +13,31 @@ label gdwl_functions:
                     "Here should the angry lilith restaurant scene go."
                     #TODO: Do that, it probably already exist, check if it does.
         def love_meter_updater():
-            #TODO: Add an extra version of the minor/major offences/comforts to keep track of it in persistent ways.
             global love_points
             global love_meter
             global minor_love_offence
             global major_love_offence
             global minor_love_comfort
             global major_love_comfort
+            #TODO: Check if the code below (the four persistent ones work, it appears they wouldn't work but they are defined in the script.)
+            global persistent.minor_love_offence_counter
+            global persistent.major_love_offence_counter
+            global persistent.minor_love_comfort_counter
+            global persistent.major_love_comfort_counter
             love_meter = love_points + love_meter
             if love_points == -1:
                 minor_love_offence += 1
+                persistent.minor_love_offence_counter += 1
             elif love_points <= -2:
                 major_love_offence += 1
+                persistent.major_love_offence_counter += 1
 
             if love_points == 1:
                 minor_love_comfort += 1
+                persistent.minor_love_comfort_counter += 1
             elif love_points >= 2:
                 major_love_comfort += 1
+                persistent.major_love_comfort_counter += 1
             love_points = 0
             love_meter_result()
 

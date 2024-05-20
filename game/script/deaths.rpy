@@ -502,7 +502,6 @@ label kokiri_showpicture:
                 jump treeOfLife
             else:
 
-                #TODO: Play edge of the galaxy here.
 
 
                 n "Suddenly the earth begins to shake, in a flash the big tree Lilith is standing next to topples over right on top of her."
@@ -517,7 +516,6 @@ label kokiri_showpicture:
                     jump kokiri_death_4_noDeath
                 "I'm not sure to be honest, this is the farthest we've made it so far." if not persistent.kokiri_death_4:
                     jump kokiri_death_3_prevented_talk_farthestWeHaveGone
-                    #TODO: Use the part about thinking it's safer here instead.
                 "*Lie* Yup, it is." if persistent.kokiri_death_4:
                     jump kokiri_death_4_noDeath
                 "It isn't in fact, we should get off." if persistent.kokiri_death_4:
@@ -525,7 +523,7 @@ label kokiri_showpicture:
                 "It isn't but you are going to die either way." if persistent.kokiri_death_4:
                     jump kokiri_death_3_death_dialogue
     label kokiri_4:
-        label kokiri_death_4_hill: #TODO Make this the main death page for 4.
+        label kokiri_death_4_hill:
 
             play music game_over
             $ persistent.kokiri_death_4 = True
@@ -576,7 +574,7 @@ label kokiri_showpicture:
             n "A green pillar of light shoots out from inbetween the four thrusters at the bottom of the hill."
             n "The beam envelops the both of you and before you can do anything Lilith gets rapidly sucked into an opening of the hill that closes the moment she's inside. The hill begins ascending again, only this time much faster."
             n "All you can do is stand there, powerless, while you watch the hill and Lilith getting swallowed by the ink-black sky." #TODO: (Search other words for hill.)
-            jump gameOver #TODO: Probably merge this one with the death above it using a flag to check what alternate death it was.
+            jump gameOver 
 
 
 
@@ -598,14 +596,14 @@ label other_deaths:
     #TODO: Put all deaths that don't fit in the other categories here.
     label phone_untoldstory_planeDeath:
 
-        #TODO: Write this entire death from below out more.
-        #Also, don't forget to play the death music somewhere.
+        
         n "Just as she says that you hear a deafening noise come from your phone.
         It sounds like a sharp whisteling" #TODO: (how does a planecrash sound? Maybe research this a bit to be more accurate.) Also, make the segway between this and the text below a bit better.
+        play music game_over
         n "You try calling an ambulance to go to her house to make sure that she survives... "
         n "When the ambulance arrived there isn't much they could do, apparently a plane crashed on Lilith's house."
 
-        n "Lilith has been living alone for a year or two now and she had no real neighbours, not any that weren't a few kilometres away from her atleast. Which means their houses didn't sustain any damage."
+        n "Lilith has been living alone for a year or two now and she had no real neighbours, not any that weren't a few kilometres away from her atleast. Which means only her house got ruined by the plane."
         n "Sadly the same can't be said for both Lilith and most of the passengers of the plane..."
 
         n "There were luckily survivors of the plane crash, of the 139 people on board  86 people survived, most of them had minor injuries but where otherwise physically fine, if not mentally scarred."

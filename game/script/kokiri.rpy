@@ -111,34 +111,36 @@ label kokiri_explanation_game:
                             l "All these different roles form a web of half-truths and lies, and in the center of it all you can find our true self."
                             l "Not the self we think we are, not the self others see us as, but the self we inevitably are."
                             l "Speaking about that self, what do you really do for a living? I'd like to get to know you better, the one playing this game."
-                            #TODO: Get input via box and check if it contains the word "teach"
-                            #If it does:
-                            l "Ah so you are also a teacher? That's really cool! "
-                            #TODO: Add some more dialogue.
-                            #If it doesn't:
-                            l "Ah so you [player_job] for a living? That's interesting!" #TODO: Use player_job in that input box.
-                            l "Have I ever mentioned what I do for a living? "
-                            menu:
-                                    "No, not yet.":
-                                        $ persistent.kokiri_teacher_knowledge = True
-                                        l "Oh I see! Well, I actually teach the first year of our town's elementary school."
-                                        l "I just love working with those kids and helping them out as best as I can."
-                                        menu:
-                                            "That's really nice to hear! What other things do you like about teaching?":
-                                                "Filler"
-                                                #TODO: Fill out. (No quest precedent.)
-                                            "That's great to hear! Why did you choose to be a teacher specifically?":
-                                                "Filler"
-                                                #TODO: Fill this in about liking to help the children etc. But also really liking the vactations and more her-time.
+                            $ player_job = renpy.input("I (your answer) for a living.")
+                            $ player_job = player_job.strip()
+                            $ player_job = player_job.lower()
+                            if player_job == "teach":
+                                l "Ah so you are also a teacher? That's really cool! "
+                                #TODO: Add some more dialogue.
+                            else:
+                                l "Ah so you [player_job] for a living? That's interesting!"
+                                l "Have I ever mentioned what I do for a living? "
+                                menu:
+                                        "No, not yet.":
+                                            $ persistent.kokiri_teacher_knowledge = True
+                                            l "Oh I see! Well, I actually teach the first year of our town's elementary school."
+                                            l "I just love working with those kids and helping them out as best as I can."
+                                            menu:
+                                                "That's really nice to hear! What other things do you like about teaching?":
+                                                    "Filler"
+                                                    #TODO: Fill out. (No quest precedent.)
+                                                "That's great to hear! Why did you choose to be a teacher specifically?":
+                                                    "Filler"
+                                                    #TODO: Fill this in about liking to help the children etc. But also really liking the vactations and more her-time.
 
-                                    "You have mentioned you teach the first year of elementary when we had this talk before actually." if persistent.kokiri_teacher_knowledge:
-                                        l "Oh I see, so we already had this conversation?"
-                                        menu:
-                                            "Yes, we did, I just wanted to ask you something else about it.":
-                                                "Filler"
-                                                #TODO: Add the questions you can ask if you say you haven't talked about it yet here aswell.
-                                            "Sort of? I had this conversation with a version of you, but that was not the same version of you that you are now.":
-                                                jump kokiri_notTheSameYou
+                                        "You have mentioned you teach the first year of elementary when we had this talk before actually." if persistent.kokiri_teacher_knowledge:
+                                            l "Oh I see, so we already had this conversation?"
+                                            menu:
+                                                "Yes, we did, I just wanted to ask you something else about it.":
+                                                    "Filler"
+                                                    #TODO: Add the questions you can ask if you say you haven't talked about it yet here aswell.
+                                                "Sort of? I had this conversation with a version of you, but that was not the same version of you that you are now.":
+                                                    jump kokiri_notTheSameYou
                                         
                         else:
                             $ kokiri_norealname += 1
@@ -149,7 +151,7 @@ label kokiri_explanation_game:
                                 "Filler"
                                 #TODO: This is room for a pottential third part.
 
-                "Can we actually talk about something else? ":
+                "Can we actually talk about something else?":
                     "Filler"
                     #TODO: Fix the filler, make her say something.
                     jump kokiri_talkAboutSomethingElse
@@ -626,7 +628,6 @@ label kokiri_poems_recentPoems:
 label kokiri_poems_askOrRate:
     menu:
         "*Rate the poem*" if not kokiri_poems_rateblock:
-            #TODO: Fill in based on the quest stuff, use different reactions based on which poem you rate what.
             if kokiri_poems_rated_once == True:
                 $ kokiri_poems_rateblock = True
                 n "Just rating her poems without giving more input is probably not the best idea.
@@ -636,9 +637,6 @@ label kokiri_poems_askOrRate:
                 $ kokiri_poems_rated_once = True
                 menu:
                     "That was very good, I liked it a lot!":
-                        #Make this based on what poem has been read.
-                        #Create a sort of "current_poem" flag to determine what the last poem the player read was.
-                        #Then use the if function below to check for that poem.
                         if kokiri_poem_bang_recent == True:
                             l "Oh, thank you very much! "
                             l "Personally I don't find the poem very good but it does show some potential.
@@ -819,7 +817,7 @@ label kokiri_death_dialogue_stillDying:
                                         menu:
                                             "For myself ofcourse!":
                                                 l "Oh I see..."
-                                                l "You have to find it  for yourself?"
+                                                l "You have to find it for yourself?"
                                                 l "So you don't want it because you crave an impossibly good ending for us like I thought and feared?"
                                                 l "It's even worse than I thought... you're just needlessly throwing my lives away to see if there is anything that can saturate your unrelenting need for greater things."
                                                 l "Let me tell you a secret [name], it will never be enough for you." #TODO: Maybe change this line slightly, also the line below it.
@@ -883,11 +881,9 @@ label kokiri_death_dialogue_stillDying:
                                                         jump kokiri_semiEnding
 
                                             "I don't.":
-                                                #TODO: Lilith asks you why you are even pretending to search for something you know doesn't exist.
                                                 l "Then why are you searching for something that you know doesn't exist?"
                                                 menu:
-                                                    "Well, what if it existed? Even if I don't believe in it I had to continue playing to find out for sure.":
-                                                        #TODO: that link is pretty bad, rephrase it slightly as the player wanting to see every line of text just to be sure.
+                                                    "Well, what if it did exist? Even if I had my doubts I had to continue playing to find out for sure because it could always be hidden behind an obscure dialogue choice.":
                                                         l "I suppose that makes some sense... but that seems like a terrible way to go through the motions."
                                                         l "You were essentially sacrificing both your time and my lives for a goal you do not even know exists on the off chance that it might be real."
                                                         l "I'm glad you managed to come to your senses and wanted to listen to me. Thank you for that, [name]!" #TODO: Or is this just the player clicking on another link to see more content?
@@ -900,10 +896,10 @@ label kokiri_death_dialogue_stillDying:
                                                 l "Now that you mention that, that's actually a very interesting question."
                                                 l "How would the definitive good ending of this game look?"
                                                 l "I mean, I think I would probably survive in the good ending, right?"
-                                                l "And you would probably be able to be with me without risk of dying."
-                                                l "Or maybe you would learn a lesson about aceptance or something like that."
+                                                l "And you would probably be able to be with me without the risk of me dying."
+                                                l "Or maybe I always end up dying and in the good ending you would learn a lesson about aceptance or something like that."
                                                 #TODO: Maybe you can ask her a question about something she said?
-                                                l "Honestly, I think it might be the latter. From what I've heard so far it seems a bit hard to believe there might even be a good ending like that somewhere in this game." #TODO: Change this line a little.
+                                                l "Honestly, I think it might be the latter. From what I've heard so far it seems a bit hard to believe there might even be a good ending where I live and we end up together in this game." #TODO: If Lilith knows ypu have seen endings where she lived but you couldn't end up with her make it say this, otherwise make it say she doesn't think there is an ending where she lives.
                                                 l "But it's not like it matters much anymore." #TODO: Make this segway better.
                                                 jump kokiri_semiEnding
 
@@ -983,6 +979,7 @@ label kokiri_death_dialogue_stillDying:
                     l "I was always so focused on Abby, mom, my work, pretty much anything else that isn't me, that I forgot how good it feels to take some time to just relax."
                     #TODO: Maybe make this more indepth?
                     jump kokiri_death_4_hill
+
 label kokiri_notTheSameYou:                                    
     n "Lilith chuckles and gives you a confused look."
     l "I'm afraid I'm not really following you [name]."
@@ -997,8 +994,14 @@ label kokiri_notTheSameYou:
                 l "You remember Lilith telling you it was Heraclitus who said that."
             menu:
                 "Oh yeah, the one who said that is...":
-                    #TODO: Add input box here that checks on your answer. You can find this piece of the code on : "Heraclitus trigger response_yes"
-                    "Filler"
+                    $ r1 = renpy.input("Place your answer here.")
+                    $ r1 = r1.strip()
+                    $ r1 = r1.lower()
+                    if r1 == "heraclitus":
+                        n "Lilith, still laying down on your lap, gives you a big smile and a thumbs up."
+                        l "Yup, that's the guy!"
+                        l "I'm actually pretty surprise that you knew him. I guess you are just full of surprises, aren't you, [name]?"
+                        jump kokiri_death_4_hill
 
                 "I don't know.":
                     $ persistent.kokiri_heraclitus_knowledge = True

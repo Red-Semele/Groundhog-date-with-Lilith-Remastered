@@ -187,6 +187,14 @@ if persistent.firstboot == None:
      default persistent.amount_of_normal_other_links = 0
      default persistent.links_phone = 0
      default persistent.times_phone_declined = 0
+     #Additional stuff:
+     default persistent.minor_love_offence_counter = 0
+     default persistent.major_love_offence_counter = 0
+     default persistent.minor_love_comfort_counter = 0
+     default persistent.major_love_comfort_counter = 0
+     default persistent_jamestalk_ilikeher_knowledge = False
+     default persistent_jamestalk_iloveher_knowledge = False
+     default persistent_jamestalk_justgame_knowledge = False
      #TODO:Add the extra stuff on this page that is in the original.
 #NON-PERSISTENT FLAGS
 #Other:
@@ -1741,21 +1749,26 @@ label ufo_talk_favouriteFirstDate:
           "Filler"
      elif favouriteFirstDate == "kokiri":
           "Filler"
-     l "And what was your favourite moment of your favourite first date [name]?"
-     #TODO: Put an input box here.
-     #TODO: Also make the line about here becoming less real slower. Maybe you are free to use chatboxes to talk to her and she just keeps repeating "That's great, [name]!"? I LIKE THAT IDEA
+     l "And what was your favourite moment of that particular date [name]?"
+     $ renpy.input("My favourite moment was...")
+     l "That sounds really lovely [name]!"
+     $ renpy.input("")
+     l "That sounds great!"
+     $ renpy.input("")
      l "..."
-     n "Lilith is staring right into your soul without saying a word.
-     She somehow seems to have lost everything that made her feel human."
-     #TODO: An other input box here.
+     $ renpy.input("")
+     l "..."
+     n "Lilith is staring right into your soul without saying a word."
+     n "She somehow seems to have lost everything that made her feel human."
+     $ renpy.input("")
      l "..."
      n "Once every room she was in felt more warm because of her presence, now this iron ship feels colder than ever with her silence in it."
-     n "It's almost as if she has no new dialogue for this moment."
-     #TODO: An other input box here.
+     n "It's almost seems as if she has run out of things to say."
+     $ renpy.input("")
      n "In her frozen, wordless nature she seems more like a replica of the woman you once knew than the real deal."
      n "You have seen her die many times but this somehow feels even more wrong."
      n "A fate worse than death has befallen her."
-     #TODO: Put some more text here.
+     $ renpy.input("")
      n "Just then you hear something. Not Lilith, it's a loud beeping sound coming from the metal ship itself."
      ship "Alert: Universal inconsistency has been detected."
      ship "Previous stabilisation attempts proved fruitless."
@@ -1774,7 +1787,6 @@ label ufo_crash:
      n "You feel like you need to go back to sleep. Nothing makes sense anymore. <br/>Probably the result of the entire universe literally collapsing in on you."
      n "On you and on..."
      n "On Lilith"
-     #TODO: The text above this is unscrambled in the quest version but I'm not sure how to do that here.
      n "The thought of Lilith takes you out of this confused state of mind in an instant."
      n "You open your eyes and get back up."
      n "You look around in search of her but all you can find is bright white emptiness."
@@ -1826,23 +1838,27 @@ label ufo_crash_polaroids_James:
      menu:
           "Yes, you must be James. Lilith told me about you before.":
                #TODO: Only make this popup if she really told you about him before.
-               $ met_james = True #TODO: Check if this is the right flag. Also make it a persistent flag.
+               $ persistent.met_james = True
                j "Ah, I thought she might have mentioned me eventually."
                j "What are your thoughts  on Lilith [name]?" #TODO: Maybe don't make this so sudden.
                n "You are pretty surprised by that question."
                menu:
                     "I really love her.":
-                         "If that's the case then this talk might be easier then I thought."
-                         "You have seen Lilith die about [persistent.lildeaths] times, right?"
-                         "You nod, you can still remember all the times she died.<br/>That doesn't stop you from wishing you could forget though."
-                         "And you are trying to keep her safe so that she will not die, right?"
-                         "You nod."
-                         "And yet you came back after she didn't die, why?" #TODO: Check to see if you have seen any ending where she lives
+                         $ loveher
+                         j "If that's the case then this talk might be easier then I thought."
+                         j "You have seen Lilith die about [persistent.lildeaths] times, right?"
+                         n "You nod, you can still remember all the times she died."
+                         n "That doesn't stop you from wishing you could forget though."
+                         j "And you are trying to keep her safe so that she will not die, right?"
+                         n "You nod."
+                         j "And yet you came back after she didn't die, why?" #TODO: Check to see if you have seen any ending where she lives
                          $ persistent_jamestalk_iloveher_knowledge = True
                          jump jamesChat_whyDidYouReturn
    
                     "I really like her.":
+                         $ likeher
                          "Filler"
+                         $ persistent_jamestalk_ilikeher_knowledge = True
                          #TODO: Fill in, there is no quest precedent for this.
                     "I don't really think anything of her, she's just a game character.":
                          $ justgame = True
@@ -1866,6 +1882,7 @@ label ufo_crash_polaroids_James:
                          j "I never get the luxury of dreaming what will happen when I get out of the loop, this place is my loop."
                          j "The only way to break it would be to enter the Darkness but I'm not ready for that yet, I need to know that Lilith is happy and safe."
                          j "And for a brief moment I thought you wanted the same thing [name] but if that was truly the case, then why did you retry even after getting an ending where she was happy and alive?"
+                         $ persistent_jamestalk_justgame_knowledge = True
                          jump jamesChat_whyDidYouReturn
 
 
@@ -1873,7 +1890,6 @@ label jamesChat_whyDidYouReturn:
      menu:
           "I wanted to find an ending where we could be together and where she would be alive.":
                if justgame == True:
-                    #TODO: Check if that flag is right.
                     j "..."
                     j "That doesn't really surprise me."
                     j "But who do you want to reach the ending for?"  #TODO: (Make this check if the player has answered that question before but to Lilith to see if they would change their answer.)
@@ -1888,7 +1904,6 @@ label jamesChat_whyDidYouReturn:
                     jump jamesChat_whyDidYouReturn_toBeTogether_choices
  
                elif loveher == True:
-                    #TODO: Check if that flag is right.
                     j "..."
                     j "Oh [name], love is not about always being together. Sometimes it is about doing the best thing for the person you love, even if it's hard."
                     #TODO: (use flags to detect endings where she lived, the ones below this are endings where she lived that should only be mentioned if you saw them.)
@@ -1919,6 +1934,8 @@ label jamesChat_whyDidYouReturn:
                               j "Well, maybe I am or maybe I am not."
                               j "In the first case I am so desperate to not let you destroy her once again that I am lying to your face and in the other case there is truly no other ending here."
                               j "In both options it would be wise to reconsider before you move further towards a path you wouldn't like, right?"
+                              j "You might not have had much consequences for your actions yet, but let me assure you."
+                              j "There is no such thing as no consequences..."
                               #TODO: Continue writing this text.
     
                          else:
