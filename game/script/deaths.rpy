@@ -179,6 +179,8 @@ label restaurant_deaths:
                     This time there is no red Sedan in sight, it seems as if the cops handled it well."
                     n "However, just as you're processing that your mind wanders to the gas explosion that always appears arround this time." #TODO: (Different dialogue if they have never seen the gas-explosion) Is that even a possibility?
                     n "It was probably not a good idea to come here."
+                    n "That is your last thought as you feel everything fade to black after you hear the expolosion."
+                    #TODO: Should this move the player to the gasexplosion death with some minor changes? Probably yeah!
                     jump gameOver
 
                 elif cafe == True:
@@ -195,9 +197,15 @@ label restaurant_deaths:
                 elif chinese == True:
                     n "Lilith leaves the chinese restaurant, you rush after her in an effort to calm her down.
                     This time there is no red Sedan in sight, it seems as if the cops handled it well." #TODO: Only make that line about the red sedan show up if you've seen her get hit by it here.
-                    l "Why are you following me [name]? I want to be alone." #TODO: Make this a different line if she is angry.
+                    if AngryLilith == True:
+                        l "Leave me alone [name]! I don't want to see you ever again!"
+                    else:
+                        l "Why are you following me [name]? I want to be alone." 
                     n "And with that Lilith leaves, you never saw her again. Not this time anyway. Atleast she didn't seem to get killed by anything on her way back home."
-                    n "You should probably get her to trust you somehow." #TODO: Make this line more properly showcase what went wrong, were you silent to her, did you anger her etc.
+                    if AngryLilith == True:
+                        n "You probably shouldn't have angered her so much."
+                    else:
+                        n "You should probably get her to trust you somehow." #TODO: Make this line more properly showcase what went wrong, were you silent to her, did you anger her etc.
                     jump gameOver
 
 
@@ -219,15 +227,24 @@ label restaurant_deaths:
 label kokiri_deaths:
     label kokiri_angryLilith:
 
-        # Lilith leaves angrily and trips over a branch, her head hits against a big rock.
-        #TODO: Make the events of this death play out slightly differently based on if you pissed her off in one big mistake or multiple small ones."
-        n "Lilith jumps up from where she was lying mere moments ago, on her face is a visible layer of anger or is it... dissapointment?"
-        n "You're not sure which one would sting more, probably a combination of the two."
-        n "She wipes the crumbs on her clothes away with a frightening speed and angrily storms down the hill."
-        l "Goodbye [name], we are done here."
         if major_love_offence >= 1:
-            l "Do not come back if you have even the slightest slither of respect for me."
-        #TODO: "Check if the player has retryed after she says not to."
+            n "Lilith jumps up from where she was lying mere moments ago, on her face is a visible layer of anger or is it... disappointment?"
+            n "You're not sure which one would sting more, probably a combination of the two."
+            n "She wipes the crumbs on her clothes away with a frightening speed and angrily storms down the hill."
+            l "Goodbye [name], we are done here."
+            l "Do not come back for extra attempts if you have even the slightest slither of respect for me."
+            #TODO: "Check if the player has retryed after she says not to."
+        elif minor_love_offence > 1:
+            n "Lilith stands up from where she was lying mere moments ago. You can clearly see a disappointed look on her face."
+            l "This might all be a game for you [name], but for me this is very real."
+            l "So I'd like to be treated with the respect you would give to a real person."
+            l "You need to learn that your actions have consequences, even in something as simple as a game."
+            l "I'm leaving now. Don't try to follow me, there's nothing you can say to me right now to change my mind."
+            l "Besides, you can just retry right?"
+            l "I'd prefer if you didn't, but I know I can't stop you."
+            l "Let's just hope that when I meet you here once again during the next attempt you will have learnt your lesson."
+            l "Goodbye [name]."
+            n "Lilith turns away from you and walks down the hill cool and collected, it seems she has made up her mind about this."
         #TODO: I feel as if there should be a line here because otherwise the flow is weird.
         n "She doesn't get far from the hill, maybe a metre or fifteen before she seemingly trips over a tree root."
         n "She does not get up."

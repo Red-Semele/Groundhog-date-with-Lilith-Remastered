@@ -1125,9 +1125,10 @@ label kokiri_semiEnding:
     l "So goodbye [name] and see you soon, hopefully very soon."
     l "We'll meet again in a world full of possibilities."
     l "Your own world.  Until then and thank you for everything."
-    #TODO: Is this an ending?
+    $ persistent.ending_semiEnding = True
+    $ kokiri_finalTalk = True
     l "The rumbling of the earth begins to grow more severe."
-    jump kokiri_death_4_hill #TODO: Set a flag or something so she gives you some different dialogue during the death.
+    jump kokiri_death_4_hill 
 
 
 

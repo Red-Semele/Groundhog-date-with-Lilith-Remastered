@@ -171,6 +171,7 @@ if persistent.firstboot == None:
      default persistent.ending_anEnding = False
      default persistent.ending_lettinggo = False
      default persistent.game_credits = False
+     default persistent.ending_semiEnding = False
      #Phone_menu sortring related stuff:
      default persistent.amount_of_folder_links = 0 #This checks how many sub links I created in the phone menu to avoid clutter.
      n "[persistent.amount_of_folder_links]" #TODO: Remove this
@@ -238,7 +239,7 @@ $ kokiri_scenery_breakfrombreakingyourhead = False
 $ kokiri_scenery_gamegoal = False
 $ kokiri_meteorite_alert = False
 $ kokiri_meteorite_no_alert = False
-
+$ kokiri_finalTalk = False
 $ kokiri_call_death_2_check = False
 $ kokiri_call_death_1_check = False
 #TODO: Add the other recent poem checkers below here.

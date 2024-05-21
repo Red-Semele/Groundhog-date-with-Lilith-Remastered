@@ -21,8 +21,20 @@ label kokiri_talkAboutSomethingElse:
                         $ kokiri_conversation_silent()
 
             "Do you believe in determinism?" if persistent.kokiri_determinism_knowledge:
-                "Filler"
-                #TODO: Fill in, here you can have a chat about determinism.
+                l "That is a very interesting question [name]!"
+                l "I think it really depends on what you mean with that question."
+                l "If you are asking me wheter or not I think someone could predict the future perfectly I'd have to be inclined to say no."
+                l "I think it's kind of like billiard balls, picture like 100 of them all moving in a direction, how they would bounce of eachother."
+                l "That's already quite hard isn't it?"
+                l "Now picture every atom in our universe as a billiard ball, I'm not exactly sure how many atoms there are specifically but I know it's more than you could count in a lifetime."
+                l "Picture all of those billiard balls interacting with eachother, steering eachother in new directions constantly."
+                l "Could you tell me where each billiard ball would end up in the next 2 years?"
+                l "I don't think so."
+                l "What I do think is that you might be the perfect person to test that though."
+                l "I believe that even though it would be impossible to predict the state of the future from the past it is possible that the future would always be the same if the circumstances are the same."
+                l "So in other words, if you play the game once again from the start and you make the same choices like you did right now, you would once again read this conversation with me since I don't remember it and all circumstances are the same."
+                l "Does that sound like it might be true [name]?"
+                #TODO: Add a choice where you tell her about the dice puzzle always being the same as a way to confirm it, ask her about heraclitus and your varying emotions as a way to deny it.
 
 
 
