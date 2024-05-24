@@ -497,13 +497,13 @@ label Game_start2:
                          n "Abigail's plan worked exactly like expected. Lilith survived the plane crash since she was not there when it crashed and she didn't die on your date since there wasn't any."
                          n "There also wasn't a date at another time since, again like Abigail expected, Lilith forgot to call you back due to her little sister's situation." #TODO: Add a bit more explanation as to why and how she forgot.
                          n "Now she will probably be safe, as safe as a normal person is anyway."
-                                   menu: 
-                                        "Take care Lilith and goodbye...":
-                                             #TODO: Make this an ending.
-                                             $ lilithAliveEnding = True
-                                             $ persistent.lildeaths -= 1
-                                             jump gameOver
-                          
+                         menu: 
+                              "Take care Lilith and goodbye...":
+                                   #TODO: Make this an ending.
+                                   $ lilithAliveEnding = True
+                                   $ persistent.lildeaths -= 1
+                                   jump gameOver
+                    
           
 
 
@@ -1735,7 +1735,7 @@ label explanation_noTimeToExplain:
                elif persistent_fleeingDeaths_counter_knowledge == 10:
                     n "Death by crashlanding on a planet."
                     n "Retry."
-               $ persistent_fleeingDeaths_counter_knowledge += 1
+                    $ persistent_fleeingDeaths_counter_knowledge += 1
                else:
                     n "The universe grows calm for a moment, it seems like you got through the constant barrage of deaths." #These three lines only trigger in the quest version if "Starttalk" is not set, I'm not sure what that is anymore.
                     n "You set the ship on auto-pilot and move away from the controls."

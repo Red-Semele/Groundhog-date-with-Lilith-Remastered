@@ -19,11 +19,7 @@ label gdwl_functions:
             global major_love_offence
             global minor_love_comfort
             global major_love_comfort
-            #TODO: Check if the code below (the four persistent ones work, it appears they wouldn't work but they are defined in the script.)
-            global persistent.minor_love_offence_counter
-            global persistent.major_love_offence_counter
-            global persistent.minor_love_comfort_counter
-            global persistent.major_love_comfort_counter
+            #TODO: Check if the code below with the persistent counters works.
             love_meter = love_points + love_meter
             if love_points == -1:
                 minor_love_offence += 1
