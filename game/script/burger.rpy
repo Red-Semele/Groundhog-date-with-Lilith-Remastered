@@ -199,6 +199,7 @@ label burger_ordering:
     l"You know, my brother really used to love this place before..."
 
     n "Lilith freezes before she can continue the sentence."
+    l "{size=*0.5}Why did I have to bring that up now?{/size}"
 
     menu :
         "What was his name?":
@@ -215,6 +216,7 @@ label burger_ordering:
             l "I just would like to wait a little before I do that, maybe some other time [name]?"
             l "I do really appreciate your concern for me though!"
             #TODO: Talk about something slightly different after this and then move back to the main path so that everything goes smoothly again.
+            #Add one piece of extra conversation you can have here, not sure what yet, add it where you normally ask about the brother
 
 
 
@@ -233,8 +235,6 @@ label burger_joke:
 
     menu:
 
-
-        #The if jokeknowledge still seems to throw an error: TODO: Does this still throw an error?
         "So a priest, a monk and a rabbit enter a bar. Says the rabbit :\"Whoops, did you slip your tongue there [name]?\"" if persistent.joke_knowledge:
             jump burger_joke_Abigail
 

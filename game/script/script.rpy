@@ -196,6 +196,7 @@ if persistent.firstboot == None:
      default persistent_jamestalk_ilikeher_knowledge = False
      default persistent_jamestalk_iloveher_knowledge = False
      default persistent_jamestalk_justgame_knowledge = False
+     default persistent_fleeingDeaths_counter_knowledge = 0
      #TODO:Add the extra stuff on this page that is in the original.
 #NON-PERSISTENT FLAGS
 #Other:
@@ -280,12 +281,13 @@ $ conversationtracker_david = False
 $ conversationtracker_james = False
 $ conversationtracker_lila = False
 $ conversationtracker_blamedavid = False
-$ conversationtracker_poem_window = True
-$ conversationtracker_poem_snowwoman = True
-$ conversationtracker_poem_window = True
-$ conversationtracker_poem_shadowman = True
-$ conversationtracker_poem_lights = True
-$ conversationtracker_poem_bang = True
+$ conversationtracker_poem_window = False
+$ conversationtracker_poem_snowwoman = False
+$ conversationtracker_poem_window = False
+$ conversationtracker_poem_shadowman = False
+$ conversationtracker_poem_lights = False
+$ conversationtracker_poem_bang = False
+$ lilithAliveEnding = False
 #TODO: Put all conversationtracker flags here.
 
 
@@ -307,6 +309,7 @@ $ major_love_comfort = 0
 $ booklovertalked = False
 $ musiclovertalked = False
 $ phone_wrongPassword_graceSystem = False
+$ lilithAliveEnding = False
 #QOL-settings:
 $ no_nightmare = False
 $ perm_nightmare = False
@@ -394,92 +397,113 @@ label game_start:
 
 
 label Game_start2:
-#Here you can see how you insert a name.
-     l "Hey [name]!
-     It's me, Lilith.
-     I'm just calling you to see to which of the three places we mentioned you'd like to go for our date."
- 
- 
-     if persistent.locations_subfolder == False:
- 
-          if persistent.kokiri_knowledge == True: #KOKIRI LINK CHECKER
-               if persistent.kokiri_unlock == False:
-                    $ persistent.links_phone += 1
-                    $ persistent.amount_of_normal_location_links += 1
-                    $ persistent.kokiri_unlock = True
-   
-          if persistent.beach_knowledge == True: #BEACH LINK CHECKER
-               if persistent.beach_unlock == False:
-                    $ persistent.links_phone += 1
-                    $ persistent.amount_of_normal_location_links += 1
-                    $ persistent.beach_unlock = True
-  
-          if persistent.burger_death_1 == True and persistent.cafe_death_1 == True and persistent.chinese_death_1 == True: #POTENTIAL PARK LINK CHECKER
-               if persistent.otherPlans_unlock == False:
-                    $ persistent.links_phone += 1
-                    $ persistent.amount_of_normal_location_links += 1
-                    $ persistent.otherPlans_unlock = True
-  
-  
-          if persistent.amount_of_normal_location_links >= 2: #THIS CHECKS THE OTHER LINK CHECKERS OF LOCATIONS
+          #Here you can see how you insert a name.
+          if big_sis_mode == False:
+               l "Hey [name]!
+               It's me, Lilith.
+               I'm just calling you to see to which of the three places we mentioned you'd like to go for our date."
+          
+          
                if persistent.locations_subfolder == False:
-                    $ persistent.amount_of_folder_links += 1
-                    $ persistent.locations_subfolder = True
-                    $ persistent.amount_of_normal_location_links = 0
-                    #The code below basically makes sure that there are no "phantom" counters that count something which should be gone.
-                    if persistent.kokiri_unlock == True:
-                         $ persistent.amount_of_normal_location_links -= 1
-                         $ persistent.links_phone -= 1
-                    if persistent.beach_unlock == True:
-                         $ persistent.amount_of_normal_location_links -= 1
-                         $ persistent.links_phone -= 1
-                    if persistent.otherPlans_unlock == True:
-                         $ persistent.amount_of_normal_location_links -= 1
-                         $ persistent.links_phone -= 1
-  
- 
- 
- 
-     if persistent.other_subfolder == False: #This ensures that once the other subfolder is made the rest of the code doesn't trigger
- 
-          if persistent.burger_death_2 == True and persistent.cafe_death_2 == True and persistent.chinese_death_2 == True: # BREAKUP LINK CHECKER
-               if persistent.breakup_unlock == False:
-                    $ persistent.links_phone += 1
-                    $ persistent.amount_of_normal_other_links += 1
-                    $ persistent.breakup_unlock = True
-  
-          if persistent.peeked_phone == True or persistent.kokiri_death_2 == True: # CALL LINK CHECKER
-               if persistent.call_unlock == False:
-                    $ persistent.links_phone += 1
-                    $ persistent.amount_of_normal_other_links += 1
-                    $ persistent.call_unlock = True
-  
-          if persistent.amount_of_normal_other_links >= 2:
-               if persistent.other_subfolder == False:
-                    $ persistent.amount_of_folder_links += 1
-                    $ persistent.other_subfolder = True
-                    $ persistent.amount_of_normal_other_links = 0
-                    if persistent.breakup_unlock == True:
-                         $ persistent.amount_of_normal_location_links -= 1
-                         $ persistent.links_phone -= 1
-                    if persistent.call_unlock == True:
-                         $ persistent.amount_of_normal_location_links -= 1
-                         $ persistent.links_phone -= 1
- 
-     if persistent.amount_of_folder_links >= 2: #This sets the restaurant folder
-          label restaurant_subfolder_enabler:
-               if persistent.restaurant_subfolder == False:
-                    $ persistent.amount_of_folder_links += 1
-                    $ persistent.restaurant_subfolder = True
-                    jump phone_start_choices
-     elif persistent.amount_of_folder_links == 1:
-          if persistent.links_phone >= 1:
-               jump restaurant_subfolder_enabler
-     elif persistent.amount_of_folder_links == 0:
-          if persistent.links_phone >= 2:
-               jump restaurant_subfolder_enabler
- 
- 
+          
+                    if persistent.kokiri_knowledge == True: #KOKIRI LINK CHECKER
+                         if persistent.kokiri_unlock == False:
+                              $ persistent.links_phone += 1
+                              $ persistent.amount_of_normal_location_links += 1
+                              $ persistent.kokiri_unlock = True
+          
+                    if persistent.beach_knowledge == True: #BEACH LINK CHECKER
+                         if persistent.beach_unlock == False:
+                              $ persistent.links_phone += 1
+                              $ persistent.amount_of_normal_location_links += 1
+                              $ persistent.beach_unlock = True
+          
+                    if persistent.burger_death_1 == True and persistent.cafe_death_1 == True and persistent.chinese_death_1 == True: #POTENTIAL PARK LINK CHECKER
+                         if persistent.otherPlans_unlock == False:
+                              $ persistent.links_phone += 1
+                              $ persistent.amount_of_normal_location_links += 1
+                              $ persistent.otherPlans_unlock = True
+          
+          
+                    if persistent.amount_of_normal_location_links >= 2: #THIS CHECKS THE OTHER LINK CHECKERS OF LOCATIONS
+                         if persistent.locations_subfolder == False:
+                              $ persistent.amount_of_folder_links += 1
+                              $ persistent.locations_subfolder = True
+                              $ persistent.amount_of_normal_location_links = 0
+                              #The code below basically makes sure that there are no "phantom" counters that count something which should be gone.
+                              if persistent.kokiri_unlock == True:
+                                   $ persistent.amount_of_normal_location_links -= 1
+                                   $ persistent.links_phone -= 1
+                              if persistent.beach_unlock == True:
+                                   $ persistent.amount_of_normal_location_links -= 1
+                                   $ persistent.links_phone -= 1
+                              if persistent.otherPlans_unlock == True:
+                                   $ persistent.amount_of_normal_location_links -= 1
+                                   $ persistent.links_phone -= 1
+          
+          
+          
+          
+               if persistent.other_subfolder == False: #This ensures that once the other subfolder is made the rest of the code doesn't trigger
+          
+                    if persistent.burger_death_2 == True and persistent.cafe_death_2 == True and persistent.chinese_death_2 == True: # BREAKUP LINK CHECKER
+                         if persistent.breakup_unlock == False:
+                              $ persistent.links_phone += 1
+                              $ persistent.amount_of_normal_other_links += 1
+                              $ persistent.breakup_unlock = True
+          
+                    if persistent.peeked_phone == True or persistent.kokiri_death_2 == True: # CALL LINK CHECKER
+                         if persistent.call_unlock == False:
+                              $ persistent.links_phone += 1
+                              $ persistent.amount_of_normal_other_links += 1
+                              $ persistent.call_unlock = True
+          
+                    if persistent.amount_of_normal_other_links >= 2:
+                         if persistent.other_subfolder == False:
+                              $ persistent.amount_of_folder_links += 1
+                              $ persistent.other_subfolder = True
+                              $ persistent.amount_of_normal_other_links = 0
+                              if persistent.breakup_unlock == True:
+                                   $ persistent.amount_of_normal_location_links -= 1
+                                   $ persistent.links_phone -= 1
+                              if persistent.call_unlock == True:
+                                   $ persistent.amount_of_normal_location_links -= 1
+                                   $ persistent.links_phone -= 1
+          
+               if persistent.amount_of_folder_links >= 2: #This sets the restaurant folder
+                    label restaurant_subfolder_enabler:
+                         if persistent.restaurant_subfolder == False:
+                              $ persistent.amount_of_folder_links += 1
+                              $ persistent.restaurant_subfolder = True
+                              jump phone_start_choices
+               elif persistent.amount_of_folder_links == 1:
+                    if persistent.links_phone >= 1:
+                         jump restaurant_subfolder_enabler
+               elif persistent.amount_of_folder_links == 0:
+                    if persistent.links_phone >= 2:
+                         jump restaurant_subfolder_enabler
+     
+          else: 
+               l "Welcome back [name]! So, like I was saying before, where do you want to go-"
+               n "Lilith is silent for a moment."
+               l "Oh I'm really sorry but my little sister, Abigail, is calling. It's probably important so I will have to hang up for a bit. I'll call you back as soon as I can okay, [name]?"
+               menu:
+                    "Sure, take your time, I will be here when you call back.":
+                         n "She hung up."
+                         n "After a few minutes your phone begins blasting \"Baby it's cold outside\" once more, you pick up as quickly as you can."
+                         l "Hey [name], I'm back. I kind of have bad news for you..."
+                         l "I won't be able to go on our date today, my sister is heartbroken by a girl she had a crush on for a while now and I need to comfort her."
+                         l "But we can go on our date at another time, I got to go now but I will call you back. <br/>Take care {player.alias} and goodbye."
+                         n "Abigail's plan worked exactly like expected. Lilith survived the plane crash since she was not there when it crashed and she didn't die on your date since there wasn't any."
+                         n "There also wasn't a date at another time since, again like Abigail expected, Lilith forgot to call you back due to her little sister's situation." #TODO: Add a bit more explanation as to why and how she forgot.
+                         n "Now she will probably be safe, as safe as a normal person is anyway."
+                                   menu: 
+                                        "Take care Lilith and goodbye...":
+                                             #TODO: Make this an ending.
+                                             $ lilithAliveEnding = True
+                                             $ persistent.lildeaths -= 1
+                                             jump gameOver
+                          
           
 
 
@@ -641,6 +665,7 @@ label phone_breakup:
      n "But something deep inside you keeps wondering if there wasn't a way where you two could be together while she would be safe."
      n "There must be a way right?"
      $ persistent.ron_knowledge = True
+     $ lilithAliveEnding = True
      $ persistent.lildeaths -= 1
      jump gameOver
 
@@ -1030,6 +1055,7 @@ label doNotPickUpThePhone:
           #Ending
           "The quitter ending."
           $ persistent.ending_quitter = True
+          $ lilithAliveEnding = True
           $ persistent.game_credits = True
      #TODO: Add an ending for when you have 2-9 deaths, the narrator tells you that you are so close to a breakthrough.
  
@@ -1040,6 +1066,7 @@ label doNotPickUpThePhone:
                #Ending
                "An ending."
                $ persistent.ending_anEnding = True
+               $ lilithAliveEnding = True
                $ persistent.game_credits = True
  
      elif persistent.lildeaths > 20:
@@ -1056,13 +1083,13 @@ label doNotPickUpThePhone:
           #Ending
           "Letting go ending"
           $ persistent.ending_lettinggo = True
+          $ lilithAliveEnding = True
           $ persistent.game_credits = True
  
  
-     $ persistent.times_phone_declined = persistent.times_phone_declined + 1
-     menu:
-          "Retry?":
-               jump game_start
+     $ persistent.times_phone_declined += 1
+     $ persistent.lildeaths -= 1
+     jump gameOver
 
 
 
@@ -1086,6 +1113,7 @@ label restaurant_death_1_prevented_explanation:
 
 label prevented_joking:
      #TODO:Make her react weirded out by this, she leaves the restaurant.
+     #If the car is gone, use this aswell:$ lilithAliveEnding = True $ persistent.lildeaths -= 1
      "Filler"
 
 label prevented_groundhog:
@@ -1626,131 +1654,166 @@ label explanation_noTimeToExplain:
      #TODO add all the other ones, so burger, cafe, and chinese carcaught untrue ("no time to explain" in Quest version)
      if chinese == True:
           if car_caught == True:
-  
-               #TODO: Make all the retries manual and if you come back after the first time it just skips you straight to the end while describing how you beat all the obstacles.
+               #Write some small describing text that slowly grows on how you prevented all the other deaths.
+               #TODO: Make all the retries manual and if you come back after the first time it just skips you straight to the end while describing how you beat all the obstacles. Do this by setting a persistent counter and checking if it reaches 1, it it doesn't, trigger the death and set it to 1, then proceed until everything is done of this list.
                n "You run through the exit of the restaurant and brace yourself for the impact of a speeding car." #TODO: Only do this if you have not already seen that the car didn't show up once.
                n "Nothing happens, the police indeed managed to take care of the drunk driver."
                n "Lilith and you continue to run as if death itself is chasing you."
                n "Lilith is still very confused but she can feel the fear that is running through your body and she fears whatever made you so scared to begin with."
                n "As you are running along the side of an empty street you suddenly hear the screeching of wheels and loud laughter."
-               n "As you look behind you you see a bus full with elderly people coming straight towards you and her, you manage to jump away from it just as it would've hit you but Lilith ofcourse doesn't."
-               n "You know what you have to do, you've come too far to just give up now."
-               n "You retry."
-               n"This time you manage to push Lilith away just as she would get hit by the bus, you both make it out alive and well."
-               n "When she gets back up you both continue running, as if you were trying to escape fate."
-               n "Just moments after the first death you prevented you can see a truck coming towards you at full speed, Lilith doesn't make it once again."
-               n "You curse at the skies, trying to reach the one responsible for Lilith's countless deaths himself."
-               n "You retry."
-               n "This time Lilith makes it out alive, you've done these things so many times it almost just seems like you're back in an instant, time is blending together."
-               n "Lilith and you continue running untill you hear the sound of thunder, lightening strikes closer to Abigail then you like but she seems to escape unharmed."
-               n "That's when you notice oil leaking from the crashed truck, it's set ablaze by the lightening."
-               n "The fire tries to consume her, the hungry flames don't let off until she is beyond saving."
-               n "You retry once again."
-               n "You lead Lilith to a diverging street where the oil and the truck shouldn't be a problem."
-               n "As Lilith and you are running once again you can feel a terrible trembling coming from the ground."
-               n "It feels like an earthquake but it's far stronger that any earthquake you've ever gone through." #TODO: Make an allusion to the ufo coming out of kokiri woods making the same kind of feeling.
-               n "It also doesn't last as long as the earthquakes usually do, you feel thankful when the earth stops trembling and Lilith is still left unharmed."
-               n "However, you thought she was safe too soon and a safety hazard of a building that shouldn't have  been built in the first place collapses in on her."
-               n "Retry. Retry. Retry."
-               n "This time Lilith and you make it to your car which was parked a few streets away from the restaurant, you decided that it would be the best plan to just get away from this village as fast as you can."
-               n "As you are driving away from the village you finally arrive at a bigger city, maybe you and Lilith will be safe here?"
-               n "You look at Lilith for a moment, just hoping that death will have mercy on her."
-               n "Suddenly you hear a cacophony of animal sounds, as you look in the side mirrors of your car you can see a swarm of animals running towards your direction."
-               n "You try to go as fast as you can but then you realize something."
-               n "You forgot to fill up your car, just as you realize that it abruptly stops, you try to persuade the car into going a tad further but your efforts are futile."
-               n "The animals run on top of your car, now this isn't a problem except that there were also elephants among those animals."
-               n "Sigh, retry."
-               n "Now you've made sure to gas up your car for the inevitable chase scene, as you are driving away as fast as you can from the animals, more buildings start to collapse, now even the sturdier looking ones are doing so."
-               n "These scenarios are becoming more and more unjustified, you shake your head and try to focus on getting Lilith alive and well out of this mess."
-               l "Listen, I really don't think we are safe here. Even if we make it out of this city, where are we going to go then?"
-               l "It's not like we can just leave this planet so death will always follow me."
-               n "Lilith has given you the greatest idea, you give her a kiss on the lips and tell her she is genious."
-               n "Lilith turns beetred."
-               l "Oh I wouldn't know about that..." 
-               l "But hang on, you are not seriously thinking about leaving this planet, right?"
-               l "How would we even be able to do that?"
-               l "You stop the car for a moment, waiting for death to cath up with both of you, and it sure does so fast." #TODO: Maybe make this line a bit different.
-               n "Retry, this could be it!"
-               n "This time you don't leave the village, instead you remember the ufo that is hidden in Kokiri forest. Maybe you could use it to escape."
-               n "Eventually you find it, you and Lilith climb inside it."
-               n "However, an onslaught of buttons, levers and contraptions you can't identify await you."
-               n "I'll retry untill I get it right!"
-               n "After about a hundred or so attempts you manage to take of with the spaceship without plummeting to your death instantly."
-               n "As you and Lilith take of into space you can see the sun absorbing the earth, you know that that should've happened like a million or so years later but it happened now. These deaths are really getting out of hand aren't they?"
-               n "Suddenly you are hit by a speeding ufo, yes, they also have drunk drivers in space, deal with it."
-               n "Retry. Retry. Retry and retry once again."
-               n "Everything starts to blend together even more, sometimes you're not even sure if you are actually progressing in the story or not."
-               n "Death by colliding stars."
-               n "Retry."
-               n "Death by a storm of asteroïds."
-               n "Retry."
-               n "Death by crashlanding on a planet."
-               n "Retry."
-               n "The universe grows calm for a moment, it seems like you got through the constant barrage of deaths." #These three lines only trigger in the quest version if "Starttalk" is not set, I'm not sure what that is anymore.
-               n "You set the ship on auto-pilot and move away from the controls."
-               n "Lilith is standing there, she seems to be quite scared but is taking it pretty well all things considered."
-               menu:
-                    "*Talk with Lilith*":
-                         #TODO: Add some extra choices here? Not too much though!
-                         l "What just happened [name]?"
-                         l "How did you know about the Kokiri forest?"
-                         l "How did you know there was an ufo there?"
-                         l "And how in the world do you know how to fly it succesfully?"
-                         l "What is this all about?"
-                         l "{size=*0.5}Are you... an alien?{/size}"
-                         l "Or are your really INSERT ANSWER HERE?"
-                         #TODO: Make her ask if you really are pshyic or groundhog daying based on what you told her when you said you had no time to explain.
-                         
-                         menu:
-                              "So basically you are in a game and I need to keep you from dying.":
-                                   #TODO: Rewrite this choice.
-                                   l "The speed with which you said that..."
-                                   l "I assume we've had conversations like this a few times?"
-                                   n "You nod your head."
-                                   l "Where did we go over those many times you lived through [name]?" #TODO: Change this into her asking if you went to all of the three restaurants and then you can say that you also went to the kokiri woods and to the beach.
-                                   menu:
-                                        "Let's see, we went to all three of the restaurants you suggested so the burger restaurant, the cafe and the Chinese restaurant. Then we went to the Kokiri woods and we also visited the beach.":
-                                             #TODO: Change this line to better fit the question that also will be changed.
-                                             #TODO: Also make her question the fact that you went to the Kokiri forest.
-                                             l "Sounds like we did quite a lot on our first date."
-                                             n "Lilith laughs."
-                                             l "It's a shame I don't remember anything of it though..."
-                                             l "What was your favourite first date?"
-                                             menu:
-                                                  "My favourite part was the beach.":
-                                                       $ favouriteFirstDate = "beach"
-                                                       jump ufo_talk_favouriteFirstDate
-          
-                                                  "My favourite part was the burger restaurant.":
-                                                       $ favouriteFirstDate = "burger"
-                                                       jump ufo_talk_favouriteFirstDate
-          
-                                                  "My favourite part was the cafe.":
-                                                       $ favouriteFirstDate = "cafe"
-                                                       jump ufo_talk_favouriteFirstDate
-          
-                                                  "My favourite part was the Chinese restaurant.":
-                                                       $ favouriteFirstDate = "chinese"
-                                                       jump ufo_talk_favouriteFirstDate
-          
-                                                  "My favourite part was the Kokiri forest.":
-                                                       $ favouriteFirstDate = "kokiri"
-                                                       jump ufo_talk_favouriteFirstDate
- 
+               if persistent_fleeingDeaths_counter_knowledge == 0:
+                    n "As you look behind you you see a bus full with elderly people coming straight towards you and her, you manage to jump away from it just as it would've hit you but Lilith ofcourse doesn't."
+                    n "You know what you have to do, you've come too far to just give up now."
+                    n "You retry."
+                    $ persistent_fleeingDeaths_counter_knowledge += 1
+               elif persistent_fleeingDeaths_counter_knowledge == 1:
+                    n "This time you manage to push Lilith away just as she would get hit by the bus, you both make it out alive and well."
+                    n "When she gets back up you both continue running, as if you were trying to escape fate."
+                    n "Just moments after the first death you prevented you can see a truck coming towards you at full speed, Lilith doesn't make it once again."
+                    n "You curse at the skies, trying to reach the one responsible for Lilith's countless deaths himself."
+                    n "You retry."
+                    $ persistent_fleeingDeaths_counter_knowledge += 1
+               elif persistent_fleeingDeaths_counter_knowledge == 2:
+                    n "This time Lilith makes it out alive, you've done these things so many times it almost just seems like you're back in an instant, time is blending together."
+                    n "Lilith and you continue running untill you hear the sound of thunder, lightening strikes closer to Abigail then you like but she seems to escape unharmed."
+                    n "That's when you notice oil leaking from the crashed truck, it's set ablaze by the lightening."
+                    n "The fire tries to consume her, the hungry flames don't let off until she is beyond saving."
+                    n "You retry once again."
+                    $ persistent_fleeingDeaths_counter_knowledge += 1
+               elif persistent_fleeingDeaths_counter_knowledge == 3:
+                    n "You lead Lilith to a diverging street where the oil and the truck shouldn't be a problem."
+                    n "As Lilith and you are running once again you can feel a terrible trembling coming from the ground."
+                    n "It feels like an earthquake but it's far stronger that any earthquake you've ever gone through." #TODO: Make an allusion to the ufo coming out of kokiri woods making the same kind of feeling.
+                    n "It also doesn't last as long as the earthquakes usually do, you feel thankful when the earth stops trembling and Lilith is still left unharmed."
+                    n "However, you thought she was safe too soon and a safety hazard of a building that shouldn't have  been built in the first place collapses in on her."
+                    n "Retry. Retry. Retry."
+                    $ persistent_fleeingDeaths_counter_knowledge += 1
+               elif persistent_fleeingDeaths_counter_knowledge == 4:
+                    n "This time Lilith and you make it to your car which was parked a few streets away from the restaurant, you decided that it would be the best plan to just get away from this village as fast as you can."
+                    n "As you are driving away from the village you finally arrive at a bigger city, maybe you and Lilith will be safe here?"
+                    n "You look at Lilith for a moment, just hoping that death will have mercy on her."
+                    n "Suddenly you hear a cacophony of animal sounds, as you look in the side mirrors of your car you can see a swarm of animals running towards your direction."
+                    n "You try to go as fast as you can but then you realize something."
+                    n "You forgot to fill up your car, just as you realize that it abruptly stops, you try to persuade the car into going a tad further but your efforts are futile."
+                    n "The animals run on top of your car, now this isn't a problem except that there were also elephants among those animals."
+                    n "Sigh, retry."
+                    $ persistent_fleeingDeaths_counter_knowledge += 1
+               elif persistent_fleeingDeaths_counter_knowledge == 5:
+                    n "Now you've made sure to gas up your car for the inevitable chase scene, as you are driving away as fast as you can from the animals, more buildings start to collapse, now even the sturdier looking ones are doing so."
+                    n "These scenarios are becoming more and more unjustified, you shake your head and try to focus on getting Lilith alive and well out of this mess."
+                    l "Listen, I really don't think we are safe here. Even if we make it out of this city, where are we going to go then?"
+                    l "It's not like we can just leave this planet so death will always follow me."
+                    n "Lilith has given you the greatest idea, you give her a kiss on the lips and tell her she is genious."
+                    n "Lilith turns beetred."
+                    l "Oh I wouldn't know about that..." 
+                    l "But hang on, you are not seriously thinking about leaving this planet, right?"
+                    l "How would we even be able to do that?"
+                    l "You stop the car for a moment, waiting for death to cath up with both of you, and it sure does so fast." #TODO: Maybe make this line a bit different.
+                    n "Retry, this could be it!"
+                    $ persistent_fleeingDeaths_counter_knowledge += 1
+               elif persistent_fleeingDeaths_counter_knowledge == 6:
+                    n "This time you don't leave the village, instead you remember the ufo that is hidden in Kokiri forest. Maybe you could use it to escape."
+                    n "Eventually you find it, you and Lilith climb inside it."
+                    n "However, an onslaught of buttons, levers and contraptions you can't identify await you."
+                    n "I'll retry untill I get it right!"
+                    n "After about a hundred or so attempts you manage to take of with the spaceship without plummeting to your death instantly."
+                    $ persistent_fleeingDeaths_counter_knowledge += 1
+               elif persistent_fleeingDeaths_counter_knowledge == 7:
+                    n "As you and Lilith take of into space you can see the sun absorbing the earth, you know that that should've happened like a million or so years later but it happened now. These deaths are really getting out of hand aren't they?"
+                    n "Suddenly you are hit by a speeding ufo, yes, they also have drunk drivers in space, deal with it." #TODO: Make this line a lot less passive agressive.
+                    n "Retry. Retry. Retry and retry once again."
+                    $ persistent_fleeingDeaths_counter_knowledge += 1
+               elif persistent_fleeingDeaths_counter_knowledge == 8:
+                    n "Everything starts to blend together even more, sometimes you're not even sure if you are actually progressing in the story or not."
+                    n "Death by colliding stars."
+                    n "Retry."
+                    $ persistent_fleeingDeaths_counter_knowledge += 1
+               elif persistent_fleeingDeaths_counter_knowledge == 9:
+                    n "Death by a storm of asteroïds."
+                    n "Retry."
+                    $ persistent_fleeingDeaths_counter_knowledge += 1
+               elif persistent_fleeingDeaths_counter_knowledge == 10:
+                    n "Death by crashlanding on a planet."
+                    n "Retry."
+               $ persistent_fleeingDeaths_counter_knowledge += 1
+               else:
+                    n "The universe grows calm for a moment, it seems like you got through the constant barrage of deaths." #These three lines only trigger in the quest version if "Starttalk" is not set, I'm not sure what that is anymore.
+                    n "You set the ship on auto-pilot and move away from the controls."
+                    n "Lilith is standing there, she seems to be quite scared but is taking it pretty well all things considered."
+                    menu:
+                         "*Talk with Lilith*":
+                              #TODO: Add some extra choices here? Not too much though!
+                              l "What just happened [name]?"
+                              l "How did you know about the Kokiri forest?"
+                              l "How did you know there was an ufo there?"
+                              l "And how in the world do you know how to fly it succesfully?"
+                              l "What is this all about?"
+                              l "{size=*0.5}Are you... an alien?{/size}"
+                              l "Or are your really INSERT ANSWER HERE?"
+                              #TODO: Make her ask if you really are pshyic or groundhog daying based on what you told her when you said you had no time to explain.
+                              
+                              menu:
+                                   "So basically you are in a game and I need to keep you from dying.":
+                                        #TODO: Rewrite this choice.
+                                        l "The speed with which you said that..."
+                                        l "I assume we've had conversations like this a few times?"
+                                        n "You nod your head."
+                                        l "Where did we go over those many times you lived through [name]?" #TODO: Change this into her asking if you went to all of the three restaurants and then you can say that you also went to the kokiri woods and to the beach.
+                                        menu:
+                                             "Let's see, we went to all three of the restaurants you suggested so the burger restaurant, the cafe and the Chinese restaurant. Then we went to the Kokiri woods and we also visited the beach.":
+                                                  #TODO: Change this line to better fit the question that also will be changed.
+                                                  l "..."
+                                                  l "You know about the kokiri forest, the same one I'm thinking of right now?"
+                                                  l "I've never told anyone about that."
+                                                  l "I'm not sure how you managed to convince another version of me to tell you about it but that's quite clever nontheless [name]."
+                                                  l "Sounds like we did quite a lot on our first date."
+                                                  n "Lilith laughs."
+                                                  l "It's a shame I don't remember anything of it though..."
+                                                  l "What was your favourite first date?"
+                                                  menu:
+                                                       "My favourite part was the beach.":
+                                                            $ favouriteFirstDate = "beach"
+                                                            jump ufo_talk_favouriteFirstDate
+               
+                                                       "My favourite part was the burger restaurant.":
+                                                            $ favouriteFirstDate = "burger"
+                                                            jump ufo_talk_favouriteFirstDate
+               
+                                                       "My favourite part was the cafe.":
+                                                            $ favouriteFirstDate = "cafe"
+                                                            jump ufo_talk_favouriteFirstDate
+               
+                                                       "My favourite part was the Chinese restaurant.":
+                                                            $ favouriteFirstDate = "chinese"
+                                                            jump ufo_talk_favouriteFirstDate
+               
+                                                       "My favourite part was the Kokiri forest.":
+                                                            $ favouriteFirstDate = "kokiri"
+                                                            jump ufo_talk_favouriteFirstDate
+     
 
 label ufo_talk_favouriteFirstDate:
      #TODO: Give her like a small line about what she thinks about your favourite date
      if favouriteFirstDate == "beach":
           "Filler"
+          l "And what was your favourite moment of that particular date [name]?"
      elif favouriteFirstDate == "burger":
-          "Filler"
+          l "I knew you would love it there! Rose's burgers are just unbeatable when it comes to their amazing taste."
+          l "Just thinking about it now makes me really yearn for a juicy cheeseburger."
+          n "You can hear Lilith's stomach growl as she quickly places a hand on it as to quiet it down."
+          n "She turns beetred."
+          l "Uhm anyway, what was your favourite moment of that particular date [name]?"
      elif favouriteFirstDate == "cafe":
           "Filler"
+          l "And what was your favourite moment of that particular date [name]?"
      elif favouriteFirstDate == "chinese":
           "Filler"
+          l "And what was your favourite moment of that particular date [name]?"
      elif favouriteFirstDate == "kokiri":
           "Filler"
-     l "And what was your favourite moment of that particular date [name]?"
+          l "And what was your favourite moment of that particular date [name]?"
+          
+     
      $ renpy.input("My favourite moment was...")
      l "That sounds really lovely [name]!"
      $ renpy.input("")

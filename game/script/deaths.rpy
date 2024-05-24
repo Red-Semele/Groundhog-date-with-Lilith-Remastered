@@ -11,7 +11,7 @@ label restaurant_deaths:
                 #Burgerscene here
                 n "Now the screaming is also paired with hellish sounds, just great. You look at Lilith and tell her to hide under the table."
                 l "I..."
-                play music game_over #TODO: turning the music file into gog with "https://audio.online-convert.com/convert-to-ogg" made it work great, do this for all music files.
+                play music game_over
                 n "Lilith seems to be frozen, on her face you can clearly see a mixture of fear and confusion. It takes you a moment to notice the steadily increasing red stains on Lilith's clothes."
                 l "I've been shot?"
                 n "She falls of her chair, you crawl towards her and try to call an ambulance."
@@ -201,7 +201,9 @@ label restaurant_deaths:
                         l "Leave me alone [name]! I don't want to see you ever again!"
                     else:
                         l "Why are you following me [name]? I want to be alone." 
-                    n "And with that Lilith leaves, you never saw her again. Not this time anyway. Atleast she didn't seem to get killed by anything on her way back home."
+                    n "And with that Lilith leaves, you never saw her again. Not this time anyway. Atleast she didn't seem to get killed by anything on her way back home since you still heard people talk about her from time to time."
+                    $ lilithAliveEnding = True
+                    $ persistent.lildeaths -= 1
                     if AngryLilith == True:
                         n "You probably shouldn't have angered her so much."
                     else:
@@ -266,26 +268,9 @@ label kokiri_deaths:
         jump gameOver
 
     label kokiri_1:
+        #TODO: This coe has recently been re-aranged, check if it still works properly.
         label kokiri_death_1:
-            if kokiri_call_death_1_check == True: #If she was calling her mom/sis during this death:
-                #TODO: Make this also trigger a persistent death flag.
-                n "The meteorite breaks into many different parts that spread all around the forest." #TODO: Add a few lines before this one to make the jump from her calling to this less sudden.
-                n "One of them crashes straight against Lilith's head with a frightening impact."
-                play music game_over
-                n "Her head is cracked open and a puddle begins to form around it. Everything around you turns silent."
-                if kokiri_chatchar_abigail_called == True:
-                    n "Even Abigail who is currently screaming her lungs out has become unbearingly silent."
-                else:
-                    n "Even Lila who is currently screaming her lungs out has become unbearingly silent."   
-                n "You would also like to scream but all that manages to come out is the same silence that seems to have taken over the forest."
-                n "It's almost as if the forest itself is mourning her death."
-                n "Some dark clouds move in front of the moon as if to stop it from revealing the state of Lilith's corpse."
-                n "They are rather unsuccessful."
-                n "Even if they had been succesful you are sure you still could see her body engraved in your eyelids."
-                jump gameOver
-
-            else:
-
+            if kokiri_call_death_1_check == False: #If she wasn"t calling her mom/sis during this death:
                 #TODO: Make this death instead break the meteorite and make them land on places where she gets hit.
                 n "Lilith stops talking for a moment as she begins staring at the star-filled night, it seems like something has drawn her attention away from you."
                 #TODO: This is an alternate line for if she's not talking to you: n "Lilith diverts her look from your eyes from a moment and continues watching the star-filled night." thzt line will see a lot less use than the others but just to be safe use it.
@@ -294,22 +279,49 @@ label kokiri_deaths:
                 n "The sky now is completly filled with falling stars, you've never seen so many falling stars in your entire life, let alone all together."
                 n "However, one point seems to be getting bigger and bigger, it doesn't seem to be a star as it's not sending out any light."
                 if kokiri_alternateplace == False:
-
                         n "The both of you watch in absolute terror as the thing only starts to get closer, becoming larger, in an alarming rate. "
-                        play music game_over
-                        n "Before you can move away the meteorite smashes Lilith like a newspaper would smash a fly, miraculously it didn't even hit you." #TODO: change this, make it so that the meteorite splinters and one piece hits Lilith.
-
-                        $ persistent.kokiri_death_1 = True
-                        jump gameOver
+                        
 
                 else:
                         "The meteorite can't kill her because she is sitting somewhere else, FILLER"
                         #TODO: This part already exist somewhere in this game, I think it's based on calling someone or something? Probably try to search for this? Although there she is not aware of where it falls, so maybe write some slightly different text.
+            
+            play music game_over
+            n "The meteorite breaks into many different parts that spread all around the forest."
+            n "One of them crashes straight against Lilith's head with a frightening impact."
+            if persistent.kokiri_death_1 == True:
+                n "You close your eyes in an effort not to be subjected to the absolutely horifying state Lilith is in right now."
+                n "It's a very futile effort as her corpse is still engraved in your eyelids from the previous time."
+                #TODO: A bit more text here?
+
+            else:
+                $ persistent.kokiri_death_1 = True
+                n "Her head is cracked open and a puddle begins to form around it. Everything around you turns silent."
+                if kokiri_call_death_1_check == True: #Check wheter or not she was calling someone at the time of her death.
+                    if kokiri_chatchar_abigail_called == True:
+                        n "Even Abigail who is currently screaming her lungs out has become unbearingly silent."
+                        n "You would also like to scream but all that manages to come out is the same silence that seems to have taken over the forest."
+                    elif if kokiri_chatchar_lila_called == True:
+                        n "Even Lila who is currently screaming her lungs out has become unbearingly silent."
+                        n "You would also like to scream but all that manages to come out is the same silence that seems to have taken over the forest."
+                else:
+                    n "You would like to scream but all that manages to come out is the same silence that seems to have taken over the forest."
+                n "It's almost as if the forest itself is mourning her death."
+                n "Some dark clouds move in front of the moon as if to stop it from revealing the state of Lilith's corpse."
+                n "They are rather unsuccessful."
+                n "Even if they had been succesful you are sure you still could see her body engraved in your eyelids."
+            jump gameOver
+
+            
+
+               
 
         label kokiri_death_1_prevented:
             #if kokiri_prevented == 1: This is code that would have made it so that it triggers based on 1-4 and the deaths.
-                n "As she moves to the other side of the blanket, to your left, a meteorite crashes down just where she was sitting before." #TODO: Make it splinter and not land in one big clump.
-                l "Sorry, I can't get used to all this death stuff, even when I know it's coming." #TODO: change this line slightly because it is very dumb.
+                n "As she moves to the other side of the blanket, to your left, you once again see the same meteorite that killed her last time. It breaks of in many peaces, one of them falling right where she was sitting just a moment ago."
+                n "Lilith gives you a startled look."
+                l "Oh wow, a meteorite? That was what was going to kill me now? Seems like I woke up with some major bad luck today."
+                l "Although I suppose I am lucky enough to go through this with you, thank you for saving me once again [name]!"
                 #TODO: Create a better segway between these two parts.
                 if car_caught == False:
                     jump kokiri_death_2
@@ -367,7 +379,8 @@ label kokiri_deaths:
                     #TODO: Add some more dialogue.
                     jump kokiri_pictureChoice
 
-                "We're running out of time, can we please continue talking?":  #TODO:Change line slightly
+                "We're running out of time, can we please continue talking?":  
+                    #TODO:Change line slightly
                     jump kokiri_continue_talking
                     
 label kokiri_death_2_prevented_triedEverything:
@@ -651,8 +664,12 @@ label gameOver:
     $ persistent.retry_counter += 1
     n "{size=*2.5}Game over{/size}"
     n "Your date surely didn't go as planned."
-    #TODO: Change the retry prompt based on wheter or not Lilith is alive. If she is alive, then why did you retry afterall? Make it then be "Retry?"
     play music sunrise
     menu :
-        "Retry.":
+        "Retry." if not lilithAliveEnding:
+            jump game_start
+        "Retry?" if lilithAliveEnding:
+            $ lilithAliveEnding = False
+            #TODO: Check which ending the player has seen and retried to.
+            #Add a counter for how many endings where she is alive you retried in total and individually.
             jump game_start

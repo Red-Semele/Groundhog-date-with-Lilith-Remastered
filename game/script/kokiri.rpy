@@ -437,7 +437,9 @@ label kokiri_scenery:
     n "The same restaurant where Lilith got shot..."
     n "You point at the mall and tell her about the events that took place there."
     n "She gasps for a moment."
-    l "Sorry, I know that you relived many scenarios like the one you just mentioned and that I have no memory of those scenarios but it will still take some getting used to the idea." #TODO: change this line slightly because it's dumb.
+    l "Wow, it seems like we have gone through a lot together [name]. I'm not sure if it's a good or a bad thing that I can't remember."
+    n "You shudder for a moment, it's definetly a good thing that she can't remember the gruesome ways she died."
+    n "Ignorance is bliss afterall."
     n "In it's final act of destruction the car races at full speed and smashs against the entrance of the mall."
     n "The burger restaurant explodes due to the gasexplosion, taking a sizeable chunk of the mall with it. However the Sudan escapes without a scratch. After the explosion the village begins to turn calm once more, the whole ordeal seems to have finally ended."
     l "Has it... Has it ended?"
@@ -450,8 +452,10 @@ label kokiri_scenery:
 label kokiri_poems:
         #TODO: Put an option for the newest and more challenging poems of mine in here.
         #TODO: Once all poems have been read make the player able to ask for some more to which Lilith will decline if they've seen all the poems including the newer stuff. Otherwise she will suggest some of the newer stuff.
-        n "She gives you the pug-notebook with the poems, you can pick one and ask some questions about it."
-        #TODO: Change that line slightly.
+        n "She takes a notebook with a picture of a pug on it out of her handbag and hands it to you. You recognise the notebook from when you read her poem in the burger restaurant."
+        l "I think these ones will be like the one you read before, I've written them quite a long time ago."
+        n "Lilith points out a few poems that you can pick from."
+
         #Make it so that the normal poems are one menu and the harder ones are an additional menu, that way I can re-use the normal menu if I have to choose between normal and hard.
 
         #TODO: Fill in more and check if this works.
@@ -732,7 +736,7 @@ label kokiri_death_3_prevented_talk_farthestWeHaveGone:
     menu:
         "It is.":
             n "Lilith laughs."
-            l "I knew you would agree, so let's make the most of this unique moment." #TODO: Change this line up slightly.
+            l "I knew you would agree, let's make the most of this unique moment." #TODO: Change this line up slightly.
             jump kokiri_death_4_hill
         "Every moment we share is beautiful to me.":
             "Filler"
@@ -820,12 +824,14 @@ label kokiri_death_dialogue_stillDying:
                                                 l "You have to find it for yourself?"
                                                 l "So you don't want it because you crave an impossibly good ending for us like I thought and feared?"
                                                 l "It's even worse than I thought... you're just needlessly throwing my lives away to see if there is anything that can saturate your unrelenting need for greater things."
-                                                l "Let me tell you a secret [name], it will never be enough for you." #TODO: Maybe change this line slightly, also the line below it.
-                                                l "Although I suppose that that is not so much a secret to you as you would like it to be."
+                                                l "Let me tell you something [name], whatever you will find, it won't be enough for you."
+                                                l "Although I suppose that that you already know that deep down."
                                                 l "That feeling of chasing something impossible, you have already grown quite familiar with that, right?"
                                                 l "Well, let me tell you something else you already know."
                                                 l "I won't remember this conversation the next time you talk to me but you will, whether you like it or not, that is my curse to you."
-                                                l "I'm not sure if it'll have much effect on someone so selfish... but if you ever played this game to try to save me, not for you and I to be together but just to save me, then it might be worth a shot." #TODO: Change this line slightly.
+                                                l "I'm not sure if it'll have much effect on someone so selfish..."
+                                                l "But if you ever played this game to try to save me, not for you and I to be together but just to save me, then it might be worth a shot."
+                                                l "I'm really hoping you might learn a lesson from this."
                                                 l "Goodbye [name], until we inevitably meet again."
                                                 $ kokiri_angryLilith = True
                                                 jump kokiri_death_4_hill
@@ -1214,7 +1220,7 @@ label didYouInvolveFamily:
 
                     "Let's hope so!"
                     "That would be a very tidy sollution to our slight problem."
-                    if  persistent.abusedJamesInfo_knowledge == True:
+                    if persistent.abusedJamesInfo_knowledge == True:
                         l "You would just have to promise to not use James-related things for your own benefit."
 
                     else:
