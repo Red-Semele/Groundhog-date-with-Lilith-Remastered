@@ -605,8 +605,46 @@ label chinese_phone_peek:
         $ persistent.need_pass_knowledge = True
         menu:
             "*Put the phone back.*":
-                "Filler"
-                #TODO: Fill in this part. Make this still be salvageable, Lilith comes back and doesn't notice you were using your phone, she just seems to notice that something is up though.
+                n "You put the phone back and try to act as natural as you can."
+                n "You quickly glance around the restaurant to see if anyone might have caught you trying to check her phone."
+                n "Everyone seems to be too busy enjoying their food to pay you any attention. You are saved by the excellent cuisine."
+                n "Just as you let out a sigh of relief Lilith comes back to your table."
+                l "Hey [name], I'm back."
+                l "Did they not yet bring our food?"
+                l "That's okay, I'm just really looking forward to it, the food here is to die for."
+                if persistent.chinese_death_1 == True:
+                    n "It indeed seems to be that way doesn't it [name]?"
+                n "You play along with Lilith, hoping she doesn't suspect what you just did."
+                l "..."
+                n "Lilith squints her eyes and seems to be lost in thought for a moment."
+                l "Is everything alright [name]? You look pretty nervous."
+                menu:
+                    "Uhm yeah, I'm totally fine. (Lie)":
+                        n "Lilith squints her eyes slightly and looks at you with an almost soul-piercing look in her eyes."
+                        $ love_points -= 1
+                        $ love_meter_updater()
+                        l "Hmm, alright [name], if you say so."
+                        n "You have to stop yourself from shaking in your seat, did she buy that lie? The alternative gives you so much fear that you try to convince yourself that she did."
+                        n "Anyway, it's best to just move on now, you told the lie, you can always choose to not lie to her from now on, right?"
+                        #TODO: Jump the player to the right place now.
+
+
+                    "I'm just a bit nervous about this date to tell you the truth. I just don't want to mess this up and lose you. (Half-truth)":
+                        l "Oh [name], I had no idea you felt that way! That's completly okay, I'm glad you told me."
+                        #TODO: Make the below one be said if love is high enough.
+                        l "To be entirely honest with you aswell I feel the same way."
+                        l "This has been my first date in quite a while and I'm having a really good time."
+                        l "So it would be a shame if I somehow lost this."
+                        l "But right now we're both still here, right? So we should probably make the most out of it together."
+                        n "Lilith gives you a cute smile."
+                        #TODO: Cut to to right scene here.
+                    "Okay, I'll be honest. I was going through your phone to attempt to learn more about you. But I have a good reason!":
+                        menu: 
+                            "I need to save you. You are repeatedly dying over and over in some sort of loop.":
+                                l "Nope, I'm not having any of this [name]. First you go through my phone, without my consent, and then you make up some crazy argument to justify your action?"
+                                l "Even if you think that thing about saving me is true, you have to see how going behind my back to do so is really not the way to do it, right?"
+                                #TODO: Make this trigger angryLilith and make her leave the chinese restaurant.
+
             "*Try a code anyway.*":
                 jump chinese_phone_peek_code
     label chinese_phone_peek_code:
@@ -678,6 +716,7 @@ label chinese_phone_caught:
 
 label chinese_phone_noPeek:
     n "You didn't peek, this will just continue the events like they are meant to play out."
+    #TODO: Make those events play out properly, don't just cut to the death.
     jump restaurant_death_1
 
 label chinese_phone_peek_numbers:
@@ -713,7 +752,7 @@ label chinese_riddle_decline:
     l "No worries at all [name]!"
     l "Maybe you'd like giving me some riddles instead?"
     n "You nod." #TODO: Rework this line slightly
-    #TODO: Add one extra riddle.
+    #TODO: Add one extra riddle. + Make the riddles push you back on track to the normal stuff eventually.
     menu:
         "What has four legs in the morning, two legs at noon and three legs in the evening?":
             l "Ah that's a real classic! The answer is humans. The question originated from the myth of Orpheus if I'm not mistaken."
@@ -726,9 +765,13 @@ label chinese_riddle_decline:
                     l "And now recently I've been also interested in some other mythology. Right now I'm reading more about Finish mythology, the Kalevala to be specific."
                     l "That's why I'm happy to meet someone likeminded like you [name]!"
                     #TODO: Add a bit more text?
-                "Actually I found that riddle on the internet a while back and just kind of remembered it just now.":
-                    "Filler"
-                    #TODO: Fill in.
+                "Actually I just found that riddle on the internet a while back.":
+                    n "Lilith looks slightly disappointed."
+                    l "Oh... that's alright [name], I guess sometimes I forget that that riddle is practically used everywhere now."
+                    l "Tons of movies, books and games now kind of use that riddle as a placeholder because it's so well known. It's the \"lorum ipsum\" of riddles."
+                    n "Hey, is she complaining about my ability to write riddles? Uhm, I mean your ability to make riddles."
+                    l "But still, thank you for your riddle! Regardless of how many times it has been used, it's still remains a clasic."
+                    l "And I think you must've thought so aswell since you can still remember it after you first read it online."
         "What has five teeth, twelve eyes, four arms and a thousand legs?":
             l "..."
             n "Lilith scrathes her head, deep in thought."

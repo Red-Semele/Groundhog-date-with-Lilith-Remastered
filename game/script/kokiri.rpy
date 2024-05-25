@@ -678,15 +678,50 @@ label kokiri_poems_askOrRate:
         "*Ask something about the poem*":
             menu:
                 "There seems to be a connection between some of your poems. In one you close your eyes, in the other the shadows hope to open their eyes. Was that intentional?" if persistent.kokiri_poem_bang_knowledge and persistent.kokiri_poem_window_knowledge:
-                    "Filler"
-                    #TODO: Fill in. Also make a differing response checking if you read those poems this loop or not, that way Lilith has another line
+                    jump kokiri_poemConnections
                 "Is the poem about you?":
-                    "Filler"
-                    #TODO: Fill in. This question fits for pretty much every poem.
+                    #TODO: Fill in. This question fits for pretty much every poem. Make something up for most old ones.
+                    if kokiri_poem_window_recent == True:
+                            l "Well yes, or it used to be about me anyway."
+                            l "Most of these poems are quite old so they don't really apply to the person I am anymore."
+                            l "They are now just a part of my past that I sometimes like to look back on."
+                            l "Even if it sometimes hurts it's very interesting to get a glimpse into how I used to be."
+                            l "It's almost like a sort of archive of my mindset at a very specific moment in time."
+                            menu: 
+                                "So did you wake up?":
+                                    n "Lilith gives you a big smile and for a moment you could swear you saw something sparkle in her eyes."
+                                    l "I guess I did."
+                                    l "It's funny, because at that moment you are not really focussed on the shift in what you are feeling."
+                                    l "It sort of just... happens I suppose."
+                                    l "Sometimes it still feels as if I'm asleep, the feeling keeps haunting me."
+                                    l "But I've grown able to identify it better, so if I know the feeling has returned once again I'm able to better shield myself from it."
+                                    l "This life, even through all it's flaws, is still mine."
+                                    l "So I have to make sure it gets lived."
+                                    #TODO: Add extra dialogue.
+
+                                "What moment of your life does this poem capture?":
+                                    l "Most of these poems were made around the time James... passed away."
+                                    l "Since I couldn't hold a camera without it falling on the ground I needed another outlet for my feelings."
+                                    l "At that time I still used to play the trombone but that wasn't really enough for me, I needed another outlet."
+                                    l "That's when I really started trying to make poems, before I used to make some smaller and sillier ones."
+                                    l "Sometimes I still like to make a poem but as of late I kind of have no idea what I should write about."
+                                    l "Most of my best poems were made when I was kind of in a bad mindset."
+                                    l "But now that I'm doing pretty okay-ish in my life I can't write much more poems."
+                                    l "And the few things that do bother me have been so overdone as subjects of my poems that it feels wrong to write about them again."
+                                    #TODO: Add some extra dialogue.
 
                 "There seems to be a connection between some of your poems. In one you seem to be locked inside and in the other you are locked outside. Was this intentional?" if persistent.kokiri_poem_lights_knowledge and persistent.kokiri_poem_snowwoman_knowledge:
-                    "Filler"
-                    #TODO: Fill in and maybe make the link text slightly differently worded.
+                    jump kokiri_poemConnections
+
+label kokiri_poemConnections:
+        l "I am honestly not entirely sure."
+        l "I definetly see where you are coming from but I think that most similarities are actually a coincidence."
+        l  "I do really like to make some of my poems cyclical or make them reference eachother."
+        l "But the poems where I really started to do that actually were a lot more recent."
+        l  "Due to me referencing my past poems in them they are pretty inacessible for readers."
+        l "It doesn't help that most of them use quite a few references to mythology."
+        $ persistent.kokiri_newerPoems_knowledge = True
+        #TODO: Here show a menu where you can either talk about something else, read another normal poem or ask her if you can read a special one.
 
 label kokiri_scenery_allOver:
     l "That... That was quite the show wasn't it?"
