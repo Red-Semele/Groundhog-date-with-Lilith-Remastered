@@ -168,7 +168,13 @@ label cafe_dice_result:
                                     n "I even gave you a reminder about it."
                                     n "And yet you got it wrong, why is that?"
                                     n "Is it because you want to see these lines of new dialogue?"
-                                    #TODO: Check if the player never saw these lines and otherwise have the narrator say "no, that can't be the case, there mmust be a different reason..."
+                                    if persistent.narratorMonologue_dicePuzzleIntentionalyFailed == False:
+                                        $ persistent.narratorMonologue_dicePuzzleIntentionalyFailed = True
+                                    else: 
+                                        n "No that can't be the case, after all there is no new dialogue now that you returned once again to do the same thing."
+                                        n "So there must be a different reason, right?"
+                                        n "Although I suppose, what I am saying now could be considered extra dialogue."
+                                        n "Alright that's it, I'm not giving you anymore extra dialogue here, and I'm not changing my dialogue either, it will always be just this."
                             #TODO: Make this new segway a bit better because now it doesn't make much sense.
                             jump cafe_rateCafe
 
@@ -214,9 +220,6 @@ label cafe_dice_stop:
     #TODO: Make a slightly better segway for this.
     jump cafe_rateCafe
 
-
-
-#TODO: In the code, at exactly this place there is a "jump cafe_rateCafe" extra. Find out if it ever belonged to something.
 
 label cafe_rateCafe:
     n "Lilith looks around in pure awe, a bright smile forms on her face."

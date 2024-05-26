@@ -3,12 +3,11 @@ label kokiri_talkAboutSomethingElse:
     $ kokiri_conversation += 1
     $ kokiri_meteoritewarn()
     "kokiri_conversation = [kokiri_conversation]" #TODO: Remove this after all testing is complete.
-    #TODO: Fill in. Also make a very similair page for when you say that you want to continue talking, base yourself of the quest version for this. Most times she'sd get distracted by her prevented death to the point that you could ask her to continue.
+    #TODO: Fill in.
 
     if poem_conversation == True:
         $ poem_conversation = False
     if kokiri_conversation < 4:
-        #TODO: Add a function here based on the quest version that throws the deaths at you if you have a certain conversation value.
         menu:
 
             "I am a crosser, I basically travel across different realities like this one. So I don't really undo what I caused, you died [persistent.lildeaths] times already and I can only try to make sure you won't die again. ":
@@ -173,10 +172,9 @@ label tellLilithAboutNar_goodAndBusy:
         l "That's good to hear and wow that's really cool! "
         l "{size=*0.5} Even though technically you are now narrating him [name].{/size}"
         l "So do you control where our story leads Nar?"
-        l "Yeah, I basically steer the story in the right direction and when we are off track I try my best to get us back on track." #TODO: This is not entirely true, the dev controls the story, the narrator controls the flow.
+        n "Yeah, I basically steer the story in the right direction and when we are off track I try my best to get us back on track." #TODO: This is not entirely true, the dev controls the story, the narrator controls the flow.
         menu:
-            "(Tell her about how he steers the story back on track.)":
-                #TODO: rewrite this link-text.
+            "He said that he steerts the story in the right diection and when we somehow get off track he gets us back on track.":
                 jump tellLilithAboutNar_storySteerer
 label tellLilithAboutNar_storySteerer:
     
@@ -192,6 +190,7 @@ label tellLilithAboutNar_storySteerer:
 label tellLilithAboutNar_noEndingsWhereYouLive:
     n "So you are just going to lie to her now?"
     #TODO: Add some more text here before you move the player back.
+    #When you move the player back, move them to "tellLilithAboutNar_endingsWhereYouLive"
     $ kokiri_conversation_silent()
 
 
@@ -231,8 +230,6 @@ label tellLilithAboutNar_push:
     n "The truth is if you are reading this you probably haven't found it yet."
     n "Can't you see player? All you have to do is-"
     $ persistent.fakeoutnar_tip = True
-
-    #TODO: Check if the game indeed closes itself once
     return
 label tellLilithAboutNar_doNotPush:
     n "Alright, I understand."

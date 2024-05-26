@@ -29,8 +29,8 @@ label restaurant_deaths:
                 #Cafescene here
                 n "Suddenly you hear someone scream, you can turn your head just quick enough to see someone fall with a plate in their hands."
                 n "The plate flies in the air, with it the ham sandwich that was put on top of it."
-                n "You are apparently not the only one who has noticed, as you can see a beautiful blue marlin jump from an opening in the aquarium."
-                n "The marlin has a long and pointy bill, it pierces the sandwich in a feat of pure dexterity. "
+                n "You are apparently not the only one who has noticed, as you can see a beautiful blue merlin jump from an opening in the aquarium."
+                n "The merlin has a long and pointy bill, it pierces the sandwich in a feat of pure dexterity. "
                 n "Sadly it's traject leads right to Lilith's chest as it's sword-like bill pierces it, somehow you know it has pierced her heart aswell."
                 n "She gives you one last look of utter shock before she falls dead on the floor."
                 play music game_over
@@ -76,10 +76,10 @@ label restaurant_deaths:
                 n "Before you can answer her question you hear someone scream again, that's the sign.
                 You turn your head just quick enough to see someone fall with a plate in their hands."
                 n "The plate flies in the air, with it the ham sandwich that was put on top of it."
-                n "You are not the only one who has noticed, as you can see a beautiful blue marlin jump from an opening in the aquarium."
-                n "The marlin has a long and pointy bill, it pierces the sandwich in a feat of pure dexterity. "
+                n "You are not the only one who has noticed, as you can see a beautiful blue merlin jump from an opening in the aquarium."
+                n "The merlin has a long and pointy bill, it pierces the sandwich in a feat of pure dexterity. "
                 n "It's current trajectory leads it to pierce through the chair where Lilith was sitting just mere moments ago."
-                n "The staff quickly rush towards your table to take the marlin away and to see if it hasn't been hurt, they offer Lilith and you a short apology before disappearing."
+                n "The staff quickly rush towards your table to take the merlin away and to see if it hasn't been hurt, they offer Lilith and you a short apology before disappearing."
                 l "..."
                 n "Lilith looks as if she has seen a ghost, if you hadn't intervened she may have seen her own."
                 l "Alright, I'm trying my best to remain calm but how did you know that exact scenario would happen?"
@@ -119,7 +119,7 @@ label restaurant_deaths:
                 n "Suddenly you begin to hear the sound of shattering glass."
                 n "As you turn to look at the source of the sound you can see that the aquarium next to where Lilith was sitting has shattered."
                 n "The water is gushing out rapidly and it does not seem to be planning to stop."
-                n "It seems as if somehow the marlin must have made a crack form."
+                n "It seems as if somehow the merlin must have made a crack form."
                 n "You think about the pure shenanigans that were needed to even make this exact thing happen but you are soon interrupted by the water flowing past your shoes with some fish coming along for the ride."
                 l "Quick [name], we need to do something!"
                 if persistent.cafe_death_2 == True:
@@ -158,6 +158,7 @@ label restaurant_deaths:
                 $ persistent.chinese_death_2 = True
                 jump gameOver
     label car_death:
+        #TODO: Make her comment about how she should stand up for herself if you anger her enough, then she leaves like normal but with some more angry flavortext.
         play music game_over
         if car_caught == True:
             "Filler for now..."
@@ -184,7 +185,7 @@ label restaurant_deaths:
                     jump gameOver
 
                 elif cafe == True:
-                    n "Lilith leaves the burger restaurant, you rush after her in an effort to calm her down. "
+                    n "Lilith leaves the cafe restaurant, you rush after her in an effort to calm her down. "
                     n "When you set one foot outside of the doorframe a red Sedan drives head first into the both of you." #TODO: You know this red sedan, change the line to reflect that.
                     n "Luckily you managed to get flung to the side somehow. Lilith however was not so lucky."
                     n "She died on impact when the speeding car hit her."
@@ -268,50 +269,52 @@ label kokiri_deaths:
         jump gameOver
 
     label kokiri_1:
-        #TODO: This coe has recently been re-aranged, check if it still works properly.
+        #TODO: This code has recently been re-aranged, check if it still works properly.
         label kokiri_death_1:
-            if kokiri_call_death_1_check == False: #If she wasn"t calling her mom/sis during this death:
-                #TODO: Make this death instead break the meteorite and make them land on places where she gets hit.
-                n "Lilith stops talking for a moment as she begins staring at the star-filled night, it seems like something has drawn her attention away from you."
-                #TODO: This is an alternate line for if she's not talking to you: n "Lilith diverts her look from your eyes from a moment and continues watching the star-filled night." thzt line will see a lot less use than the others but just to be safe use it.
-                n "A gasp of amazement escapes her mouth."
-                l "You really need to see this, it's absolutely stunning!"
-                n "The sky now is completly filled with falling stars, you've never seen so many falling stars in your entire life, let alone all together."
-                n "However, one point seems to be getting bigger and bigger, it doesn't seem to be a star as it's not sending out any light."
-                if kokiri_alternateplace == False:
-                        n "The both of you watch in absolute terror as the thing only starts to get closer, becoming larger, in an alarming rate. "
-                        
+            if met_check != "meteorite_warn":
+                if kokiri_call_death_1_check == False: #If she wasn"t calling her mom/sis during this death:
+                    #TODO: Make this death instead break the meteorite and make them land on places where she gets hit.
+                    n "Lilith stops talking for a moment as she begins staring at the star-filled night, it seems like something has drawn her attention away from you."
+                    #TODO: This is an alternate line for if she's not talking to you: n "Lilith diverts her look from your eyes from a moment and continues watching the star-filled night." thzt line will see a lot less use than the others but just to be safe use it.
+                    n "A gasp of amazement escapes her mouth."
+                    l "You really need to see this, it's absolutely stunning!"
+                    n "The sky now is completly filled with falling stars, you've never seen so many falling stars in your entire life, let alone all together."
+                    n "However, one point seems to be getting bigger and bigger, it doesn't seem to be a star as it's not sending out any light."
+                    if kokiri_alternateplace == False:
+                            n "The both of you watch in absolute terror as the thing only starts to get closer, becoming larger, in an alarming rate. "
+                            
+
+                    else:
+                            "The meteorite can't kill her because she is sitting somewhere else, FILLER"
+                            #TODO: This part already exist somewhere in this game, I think it's based on calling someone or something? Probably try to search for this? Although there she is not aware of where it falls, so maybe write some slightly different text.
+                
+                play music game_over
+                n "The meteorite breaks into many different parts that spread all around the forest."
+                n "One of them crashes straight against Lilith's head with a frightening impact."
+                if persistent.kokiri_death_1 == True:
+                    n "You close your eyes in an effort not to be subjected to the absolutely horifying state Lilith is in right now."
+                    n "It's a very futile effort as her corpse is still engraved in your eyelids from the previous time."
+                    #TODO: A bit more text here?
 
                 else:
-                        "The meteorite can't kill her because she is sitting somewhere else, FILLER"
-                        #TODO: This part already exist somewhere in this game, I think it's based on calling someone or something? Probably try to search for this? Although there she is not aware of where it falls, so maybe write some slightly different text.
-            
-            play music game_over
-            n "The meteorite breaks into many different parts that spread all around the forest."
-            n "One of them crashes straight against Lilith's head with a frightening impact."
-            if persistent.kokiri_death_1 == True:
-                n "You close your eyes in an effort not to be subjected to the absolutely horifying state Lilith is in right now."
-                n "It's a very futile effort as her corpse is still engraved in your eyelids from the previous time."
-                #TODO: A bit more text here?
-
+                    $ persistent.kokiri_death_1 = True
+                    n "Her head is cracked open and a puddle begins to form around it. Everything around you turns silent."
+                    if kokiri_call_death_1_check == True: #Check wheter or not she was calling someone at the time of her death.
+                        if kokiri_chatchar_abigail_called == True:
+                            n "Even Abigail who is currently screaming her lungs out has become unbearingly silent."
+                            n "You would also like to scream but all that manages to come out is the same silence that seems to have taken over the forest."
+                        elif if kokiri_chatchar_lila_called == True:
+                            n "Even Lila who is currently screaming her lungs out has become unbearingly silent."
+                            n "You would also like to scream but all that manages to come out is the same silence that seems to have taken over the forest."
+                    else:
+                        n "You would like to scream but all that manages to come out is the same silence that seems to have taken over the forest."
+                    n "It's almost as if the forest itself is mourning her death."
+                    n "Some dark clouds move in front of the moon as if to stop it from revealing the state of Lilith's corpse."
+                    n "They are rather unsuccessful."
+                    n "Even if they had been succesful you are sure you still could see her body engraved in your eyelids."
+                jump gameOver
             else:
-                $ persistent.kokiri_death_1 = True
-                n "Her head is cracked open and a puddle begins to form around it. Everything around you turns silent."
-                if kokiri_call_death_1_check == True: #Check wheter or not she was calling someone at the time of her death.
-                    if kokiri_chatchar_abigail_called == True:
-                        n "Even Abigail who is currently screaming her lungs out has become unbearingly silent."
-                        n "You would also like to scream but all that manages to come out is the same silence that seems to have taken over the forest."
-                    elif if kokiri_chatchar_lila_called == True:
-                        n "Even Lila who is currently screaming her lungs out has become unbearingly silent."
-                        n "You would also like to scream but all that manages to come out is the same silence that seems to have taken over the forest."
-                else:
-                    n "You would like to scream but all that manages to come out is the same silence that seems to have taken over the forest."
-                n "It's almost as if the forest itself is mourning her death."
-                n "Some dark clouds move in front of the moon as if to stop it from revealing the state of Lilith's corpse."
-                n "They are rather unsuccessful."
-                n "Even if they had been succesful you are sure you still could see her body engraved in your eyelids."
-            jump gameOver
-
+                jump kokiri_death_1_prevented
             
 
                
@@ -379,8 +382,7 @@ label kokiri_deaths:
                     #TODO: Add some more dialogue.
                     jump kokiri_pictureChoice
 
-                "We're running out of time, can we please continue talking?":  
-                    #TODO:Change line slightly
+                "We're running out of time. Could we please continue talking?":  
                     jump kokiri_continue_talking
                     
 label kokiri_death_2_prevented_triedEverything:
@@ -669,6 +671,7 @@ label gameOver:
         "Retry." if not lilithAliveEnding:
             jump game_start
         "Retry?" if lilithAliveEnding:
+            $ persistent.lilithAliveAndRetriedCounter += 1
             $ lilithAliveEnding = False
             #TODO: Check which ending the player has seen and retried to.
             #Add a counter for how many endings where she is alive you retried in total and individually.

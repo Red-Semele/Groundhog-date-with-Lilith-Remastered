@@ -115,6 +115,7 @@ if persistent.firstboot == None:
      default persistent.plane_knowledge = False
      default persistent.teaseDeath_fakeOut_knowledge = False
      default persistent.dice_counter = 0
+     default persistent.chineseRiddlesSeenXTimesCounter = 0
      
      #Phone-numbers
      default persistent.david_call_knowledge = False
@@ -174,7 +175,6 @@ if persistent.firstboot == None:
      default persistent.ending_semiEnding = False
      #Phone_menu sortring related stuff:
      default persistent.amount_of_folder_links = 0 #This checks how many sub links I created in the phone menu to avoid clutter.
-     n "[persistent.amount_of_folder_links]" #TODO: Remove this
      default persistent.restaurant_subfolder = False
      default persistent.other_subfolder = False
      default persistent.locations_subfolder = False
@@ -197,6 +197,8 @@ if persistent.firstboot == None:
      default persistent_jamestalk_iloveher_knowledge = False
      default persistent_jamestalk_justgame_knowledge = False
      default persistent_fleeingDeaths_counter_knowledge = 0
+     default persistent.lilithAliveAndRetriedCounter = 0
+     default persistent.narratorMonologue_dicePuzzleIntentionalyFailed = False
      #TODO:Add the extra stuff on this page that is in the original.
 #NON-PERSISTENT FLAGS
 #Other:
@@ -243,6 +245,11 @@ $ kokiri_meteorite_no_alert = False
 $ kokiri_finalTalk = False
 $ kokiri_call_death_2_check = False
 $ kokiri_call_death_1_check = False
+$ big_sis_mode = False
+$ lilithAliveEnding = False
+$ playerCalledSomeone = False
+$ riddleAnswersTold = 0
+$ peeked_phone_temp = False
 #TODO: Add the other recent poem checkers below here.
 $ kokiri_poem_snowwoman_recent = False
 $ kokiri_poem_shadowman_recent = False
@@ -287,7 +294,7 @@ $ conversationtracker_poem_window = False
 $ conversationtracker_poem_shadowman = False
 $ conversationtracker_poem_lights = False
 $ conversationtracker_poem_bang = False
-$ lilithAliveEnding = False
+
 #TODO: Put all conversationtracker flags here.
 
 
@@ -337,7 +344,7 @@ label after_setup:
      # These display lines of dialogue.
 
      #Add the page before this that sets all the extra flags and asks you for your name
-
+     #TODO: Make name be a persistent variable because now it crashes the game since it is not set yet.
      if persistent.fakeoutnar_tip == True:
           dev "My excuses [name]. I didn't want to throw you out of the game, out of the story so abruptly."
           dev "I will admit it was quite an impulsive action..."
@@ -399,9 +406,12 @@ label game_start:
 label Game_start2:
           #Here you can see how you insert a name.
           if big_sis_mode == False:
-               l "Hey [name]!
-               It's me, Lilith.
-               I'm just calling you to see to which of the three places we mentioned you'd like to go for our date."
+               if playerCalledSomeone == True:
+                    l "Welcome back [name]! So, like I was saying before, where do you want to go to today?"
+               else: 
+                    l "Hey [name]!
+                    It's me, Lilith.
+                    I'm just calling you to see to which of the three places we mentioned you'd like to go for our date."
           
           
                if persistent.locations_subfolder == False:
@@ -580,8 +590,8 @@ label phone_otherPlans:
      #TODO: When you flee the restaurant the player can say that they are going for a walk if they have seen this path.
      menu:
           "Sure, that sounds like a great idea!":
-               "Filler"
-               #TODO: Fill in. Use the quest precedent.
+               "Alright, sounds like a deal then!"
+               #TODO: Jump to the menu where she asks you where to go.
           "No, we can't go to a restaurant.":
                l "Hmm what are you saying? Why are you so concerned with us going to a restaurant, it's not like it's going to kill us silly."
                $ persistent.needProof_knowledge = True
@@ -671,7 +681,7 @@ label phone_breakup:
 
 
 label phone_callMenu:
-     $ called = True
+     $ playerCalledSomeone = True
      l "Oh, no problem [name]. Just give me a call when you're done."
      n "You agree with her and hang up the phone."
      p "Now I just need to call..."
@@ -734,7 +744,6 @@ label phone_call_abigail:
                     a "..."
                     a "What? Lilly dying? What a twisted joke..."
                     a "Can you atleast prove that what you are saying is even remotely true?"
-                    $ abby_start = True #TODO: What does this flag do?
                     $ abby_phone_counter = 3
                     $ abby_phone_joke = False
                     $ abby_phone_bunfluff = False
@@ -1254,22 +1263,21 @@ label proof_giveAnswer:
                     "I knew you would die on a date in a burger restaurant because of a wandering bullet so I figured I would be your date so I would be able to warn you." if burger:
                               jump psychic_dateToSave
     
-                    "I knew you would die on a date in a burger restaurant because of a lost bullet so I figured I would be your date so I would be able to warn you." if burger:
-                              jump psychic_justHelpingOut
+                    "I knew you would die on a date in a cafe because of a shark's crushing weight so I figured I would be your date so I would be able to warn you." if cafe:
+                              jump psychic_dateToSave
+
+                    "I knew you would die on a date in a chinese restaurant because of an allergic reaction so I figured I would be your date so I would be able to warn you." if chinese:
+                              jump psychic_dateToSave
     
+                    "Well, while you were sitting there somehow I just felt that a merlin would escape the aquarium and kill you if I did nothing." if cafe:
+                              jump psychic_justHelpingOut
+                              #TODO: Make a joke about you knowing that such an unlikely situation would happen.
+
                     "Well, while you were sitting there somehow I just felt that you would get shot." if burger:
                               jump psychic_justHelpingOut
     
-                    "I knew you would die on a date in a cafe because of a shark's crushing weight so I figured I would be your date so I would be able to warn you." if cafe:
-                              jump psychic_dateToSave
     
-                    "Well, while you were sitting there somehow I just felt that that would happen." if cafe:
-                              jump psychic_justHelpingOut
-                              #TODO: Make a joke about you knowing that such an unlikely situation would happen.
-    
-    
-                    "I knew you would die on a date in a chinese restaurant because of an allergic reaction so I figured I would be your date so I would be able to warn you." if chinese:
-                              jump psychic_dateToSave
+                    
     
                     "Well, while you were saying you wanted to go for the Peking duck I suddenly knew there was something in it that would cause you sever allergic reactions." if chinese:
                               jump psychic_justHelpingOut
@@ -1423,7 +1431,7 @@ label groundhog_breakingLoop_loopStillExists:
                if burger == True:
                     l "So when I was killed by that loose bullet you had to relive this day again, right?"
                elif cafe == True:
-                    l "So when I was killed by that merlin you had to relive this day again, right?" #TODO: Was it a merlin?
+                    l "So when I was killed by that merlin you had to relive this day again, right?"
                elif chinese == True:
                     l "So when I died because of my allergy you had to relive this day again, right?"
                n "You nod."
@@ -1469,7 +1477,8 @@ label groundhog_escapeFate:
 label groundhog_escapeFate_myFault:
      n "Lilith bursts out laughing."
      l "Sorry, it's still a bit much to take in right now."
-     #Add some text in between these two parts.
+     l "Sometimes I laugh when I'm uncomfortable."
+     #TODO:Add some text in between these two parts.
      l "So, our dates always end up killing me, right?"
      l "Have you ever considered not dating me?"
 
@@ -1535,12 +1544,25 @@ label psychic_auraOfDeath:
           "I sure did!":
                jump explanation_stoppedDeath
  
-          "Actually you're still dying.":
+          "Actually you're still going to die, this time because of a swarm of geese." if chinese and persistent.chinese_death_2:
                jump explanation_stillDying
-               #TODO:Make this one adapt based on the restaurant you are in. (You're still dying to X)
+
+          "Actually you're still going to die, this time due to a gas explosion." if burger and persistent.burger_death_2:
+               jump explanation_stillDying
+
+          "Actually you're still going to die, this time you will drown." if cafe and persistent.cafe_death_2:
+               jump explanation_stillDying
+               
  
 label explanation_stoppedDeath:
-     #TODO: Add different dialogue based on if you know that was a lie or not.
+     if burger == True and persistent.burger_death_2 == True or cafe == True and persistent.cafe_death_2 == True or chinese == True and persistent.chinese_death_2:
+          n "I'm not entirely sure if you believe that player."
+          n "You have seen what comes next, right?"
+          n "Do you think something is going to change?"
+          n "Or are you just lying to yourself?"
+          n "..."
+          n "Or maybe you are lying to her?"
+          n "Either way, I guess we will soon see how things turn out."
      l "Great, now we can just continue enjoying our date!"
      #That is a really weird response, fix it a bit.
      n "Lilith gives you a wide smile, you feel like you could beat the universe itself."
@@ -1583,11 +1605,11 @@ label psychic_dateToSave_youWouldNotBelieveMe:
 
 
 
-          "Actually you are still going to die if we keep sitting here, this time it'll be a gas explosion." if burger and burger_death_2:
+          "Actually you're still going to die if we keep sitting here, this time it'll be a gas explosion." if burger and peristent.burger_death_2:
                jump explanation_stillDying
-          "Actually you're still going to die if we keep sitting here, this time by an army of angry geese." if chinese and chinese_death_2:
+          "Actually you're still going to die if we keep sitting here, this time by an army of angry geese." if chinese and persistent.chinese_death_2:
                jump explanation_stillDying
-          "Actually you are still going to drown, this time by drowning." if cafe and cafe_death_2:
+          "Actually you're still going to die, this time by drowning." if cafe and persistent.cafe_death_2:
                jump explanation_stillDying
 
 label youwouldntbelieveme_doNotteaseDeath:
@@ -1606,6 +1628,8 @@ label youwouldntbelieveme_teaseDeath:
      jump restaurant_death_2
 
 label psychic_justHelpingOut:
+     #TODO: Make a koke about something like that being really unlikely to just "feel" here.
+     #Also add a little bit more text based on what restaurant the two of you are in.
      l "Wow, that's quite the story. Luckily you somehow felt that because otherwise I'd be dead!"
      l "So am I in the clear now?"
      menu:
@@ -1632,7 +1656,7 @@ label prevented_psychic:
           l "So what you are saying is that you knew I was allergic to something in this dish because you are psychic?"
           l "Well unless you got any proof I'm not even sure if I'm really allergic to that Peking duck in the first place so you got to admit that this sounds very weird."
      if chinese == True:
-          l "So what you are saying is that you knew I was going to be skewered by a marlin because you are psychic?"
+          l "So what you are saying is that you knew I was going to be skewered by a merlin because you are psychic?"
           l "I mean, I'm thankful for you saving my life and all but you got to admit that sounds kind of far fetched."
           l "Do you have any proof to maybe show you're a psychic?"
  
@@ -1915,7 +1939,8 @@ label ufo_crash_polaroids_James:
                          n "That doesn't stop you from wishing you could forget though."
                          j "And you are trying to keep her safe so that she will not die, right?"
                          n "You nod."
-                         j "And yet you came back after she didn't die, why?" #TODO: Check to see if you have seen any ending where she lives
+                         if persistent.lilithAliveAndRetriedCounter >= 1:
+                              j "And yet you came back after she didn't die, why?"
                          $ persistent_jamestalk_iloveher_knowledge = True
                          jump jamesChat_whyDidYouReturn
    

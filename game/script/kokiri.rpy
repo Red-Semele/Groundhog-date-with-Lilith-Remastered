@@ -152,8 +152,7 @@ label kokiri_explanation_game:
                                 #TODO: This is room for a pottential third part.
 
                 "Can we actually talk about something else?":
-                    "Filler"
-                    #TODO: Fix the filler, make her say something.
+                    l "Sure thing [name], what would you like to talk about?"
                     jump kokiri_talkAboutSomethingElse
 
 
@@ -290,10 +289,10 @@ label kokiri_topic_questMade:
         $ questmade += 1
         if questmade == 2:
             "Placeholder"
-            #TODO: Fill in.
+            #TODO: Fill in. (No quest precedent.)
         elif questmade == 3:
             "Placeholder"
-            #TODO: Fill in.
+            #TODO: Fill in. (No quest precedent)
 
 label kokiri_gamegoal_noGoal:
     $ kokiri_conversation += 1
@@ -457,8 +456,6 @@ label kokiri_poems:
         n "Lilith points out a few poems that you can pick from."
 
         #Make it so that the normal poems are one menu and the harder ones are an additional menu, that way I can re-use the normal menu if I have to choose between normal and hard.
-
-        #TODO: Fill in more and check if this works.
         if poem_conversation == True:
             $ poem_conversation = False
         $ kokiri_conversation += 1
@@ -468,7 +465,7 @@ label kokiri_poems:
                 "Read one of Lilith's older poems.":
                     jump kokiri_poems_oldPoems
                 "Read one of Lilith's more recent poems.":
-                    jump kokiri_poems_oldPoems
+                    jump kokiri_poems_recentPoems
         else:
             jump kokiri_poems_oldPoems
 label kokiri_poems_oldPoems:
@@ -764,9 +761,11 @@ label kokiri_death_4_noDeath:
 
 
 label kokiri_death_3_prevented_talk_farthestWeHaveGone:
-    l "Oh, you think? So this is the first time you are having this exact conversation with me?" #TODO: This line makes more sense when you say that you think it is safe instead of here.
-    l "Well let's see what's in store for us then." #TODO: rewrite this line slightly so you can properly put it here instead of at death-4
+    l "Oh, really? So this is the first time you are having this exact conversation with me?"
+    l "Well let's see what's in store for us then."
+    l "Let's just hope that it leads to me not dying anytime soon. I'd prefer if I could die of old age."
     n "Lilith giggles."
+    n "She grows quiet for a moment, seemingly lost in thought."
     l "Is it just me or is the knowledge that this is the first time I share this very moment with you making it only more special?"
     menu:
         "It is.":
@@ -774,7 +773,28 @@ label kokiri_death_3_prevented_talk_farthestWeHaveGone:
             l "I knew you would agree, let's make the most of this unique moment." #TODO: Change this line up slightly.
             jump kokiri_death_4_hill
         "Every moment we share is beautiful to me.":
-            "Filler"
+            n "Lilith grows beetred."
+            l "{size=*0.5}Uhm... uh... say something Lily, anything.{/size}"
+            l "Sorry for that right now [name], that was just incredibly sweet of you to say."
+            l "I don't know what to say to that right now."
+            menu:
+                "It's alright, take your time to think and in the meantime we can just lay here some more.":
+                    "Filler"
+                    #TODO: Fill in.
+                "Don't worry about it, I think it's incredibly cute how flustered you got.":
+                    l "Are you trying to make me explode by blushing so much or something [name]?"
+                    n "Lilith chuckles as she covers her face."
+                    n "After a short moment she sighs and lets go of her face, at this point her cheeks seem to have somehow become even more red."
+                    l "There's no stopping it at this point, if I really will explode then my blood will be on your hands [name]!"
+                    n "You shudder slightly, Lilith gets up from your lap, seemingly having felt your shudder."
+                    l "Oh no, that wasn't really a good choice of words in this situation was it?"
+                    l "I'm very sorry, I just meant it as a joke, not as... you know."
+                    #TODO: Add a few options based on how high her love for you is currently.
+                    l "You will never be responsible for my deaths [name], you're just trying to get me out of this whole mess alive, aren't you?" #TODO: Make this only happen if she thinks she dies in every ending.
+                    l "And I think the fact that we are now here shows just how good you are at this whole thing."
+                    l "So who's to say what you'll accomplish next? Either way, just know that I believe in you."
+                    
+
             #TODO: Fill in. There is no quest-precedent for this.
 
 
@@ -823,19 +843,20 @@ label kokiri_death_dialogue_stillDying:
             $ kokiri_holdhand = True
             menu:
                 "I am doing all of this to make sure I won't ever need to let you go.":
-                    l "...I know... atleast I hoped that was what you were doing but I'm beginning to get doubts. Isn't this all a bit too much?
-                    Not that I don't appreciate your effort but when will all of this end [name]? If it even will end at all." #TODO: This doesn't make much sense, maybe change it to her refering to not letting go her hand and you confusing it with not letting her go, leading to something like this as a result.
+                    l "...I know... atleast that's what I hoped deep down. But I'm beginning to get doubts. Isn't this all a bit too much?"
+                    #TODO: Write something here about how you will have to let her go eventually, make her mention it.
+                    l "Not that I don't appreciate your effort but when will all of this end [name]? If it even will end at all." #TODO: This doesn't make much sense, maybe change it to her refering to not letting go her hand and you confusing it with not letting her go, leading to something like this as a result.
                     l "How many times have you gone through the motions now?"
                     menu:
                         "I have done so [persistent.retry_counter] times.":
                             if persistent.retry_counter > 16:
-                                l "Are you going to make the breakthrough after twenty times, maybe fifty?" #Make sure that she doesn't name these numbers if the value of the deaths is already larger than that.
-                                l "Or maybe, just maybe, the dev will just give you the good ending after nine hundred ninety nine times?" #TODO: Same goes here although it's unrealistic to think the player would have 999 deaths.
+                                l "Are you going to make the breakthrough after 20 times, maybe 50?" #Make sure that she doesn't name these numbers if the value of the deaths is already larger than that.
+                                l "Or maybe, just maybe, the dev will just give you the good ending after 999 times?" #TODO: Same goes here although it's unrealistic to think the player would have 999 deaths.
 
                                 l "Exactly how much of my lives and deaths is THE good ending worth to you?"
                                 menu:
                                     "But you are not real, this is just a game...":
-                                        #Do not use the script to update this love meter as it already normally moves you to a death now, the only reason I'm updating the love_meter is for extra text and the offence is for consistency.
+                                        #TODO: Do not use the script to update this love meter as it already normally moves you to a death now, the only reason I'm updating the love_meter is for extra text and the offence is for consistency.
                                         $ love_meter -= 2
                                         $ love_meter_updater()
                                         l "Well, I feel pretty real to me and I can imagine every death I go through must feel equally real and very painful."
@@ -909,9 +930,8 @@ label kokiri_death_dialogue_stillDying:
                                                 jump kokiri_semiEnding
 
                                             "I do.":
-                                                #TODO: Lilith will ask you how you even know about the good ending if you are still not sure how to get it, doesn't that mean you couldn't access it yourself?
-                                                l "Well, that just gives me more questions than answers.
-                                                If you know the good ending exists then why are you still searching it?"
+                                                l "Well, that just gives me more questions than answers."
+                                                l "If you know the good ending exists then why are you still searching it?"
                                                 menu:
                                                     "I read about the good ending somewhere online and I wanted to see it in here.":
                                                         l "Ah, so there are others that also played this game and found the good ending?"
@@ -1083,7 +1103,6 @@ label kokiri_notTheSameYou:
                     l "I'm not blaming you if you are, I just want you to tell me the truth."
                     menu:
                         "No, it's nothing like that Lilith! I really believe that there is still something more than this.":
-                            "Filler"
                             #TODO: Fill in + (Mention beach if you saw it)
                             l "And what makes you believe that?" #TODO: (If you mentioned the beach she will ask a different question.)
                             l "Did you see something beyond this?"
@@ -1203,8 +1222,6 @@ label kokiri_scenery_choice:
                 l "That's alright [name]."
                 if kokiri_scenery_headhurt == False:
                     l "What would you like to do then?"
-                    #TODO: Check if this works properly.
-                    
                     menu:
                         "I'd like to talk about something else.":
                             jump kokiri_talkAboutSomethingElse
@@ -1317,8 +1334,6 @@ label noContactFamilyPromise:
                 if only_one_asked == True:
                     if fam_obsession == "James":
                         l "It would mean a lot to me if you didn't have to use memories of James to your own advantage."
-                        l "This might be a game for you but for me this is my life."
-                        l "So please don't play with my life as if it's just a game."
                         #TODO: Rewrite this a bit and make it go on for a bit longer. Make it so that if the player doesn't comply with Lilith she doesn't give them the info they want.
                 else:
                     l "It would mean a lot to me if you didn't have to involve my family any further than you already have." #TODO: (Make this line change depending on which patht the player has went on and if they admitted to involving the family or not.)
@@ -1331,45 +1346,69 @@ label noContactFamilyPromise:
                     l "They are not just info-dispensers that will make you achieve whatever goal it is you are trying to reach now."
                     l "They are my family, and if you ever even had a slither of respect for me you better leave them alone."
                     #TODO: Rewrite this a bit and make it go on for a bit longer.<br/>Make it so that if the player doesn't comply with Lilith she doesn't give them the info they want.
+                l "This might be a game for you but for me this is my life."
+                l "So please don't play with my life as if it's just a game."
                 menu:
-                    "Actually, you are right, I will honor your request.":
-                        #TODO: (Change this text slightly with dynamic effects that change depending on wheter or not you have kept your promise etc.) ALSO make it more sympathic.
+                    "I'm sorry, I hadn't thought of it like that before. I promise to not involve your family anymore." if fam_obsession != "James":
+                        #TODO: Check if it's the proper option if Jame sis the obsession or not.
                         #TODO: Make Lilith slightly calm down as she appoligises and says she is passionate about her family's safety.
                         #James' flag checks if you use James related things to win and the other checks if you have involved any family, including James
-                        if only_one_asked == True:
-                            if fam_obsession == "James":
-                                $ persistent.doNotUseJames_knowledge = True
+                        jump noContactFamilyPromise_cannotPromise_confrontation_aliveFamily_changedMind
+                    "I'm sorry, I hadn't thought of it like that before. I promise to not use info about James to my advantage anymore." if fam_obsession == "James":
+                        jump noContactFamilyPromise_cannotPromise_confrontation_aliveFamily_changedMind
 
-                            
+                        label noContactFamilyPromise_cannotPromise_confrontation_aliveFamily_changedMind:
+                            if only_one_asked == True:
+                                if fam_obsession == "James":
+                                    $ persistent.doNotUseJames_knowledge = True
+
+                                
+
+                                else:
+
+                                    if persistent.restrainingorderfamily_knowledge == True:
+                                        if persistent.restrainingorderfamily_violation_counter >= 1:
+                                            n "My my my, the way you say that, it's quite easy for you to lie isn't it?"
+                                            n "Or are you speaking the truth this time?"
+                                            n "I guess only time will tell."
+                                    else:
+                                        $ persistent.restrainingorderfamily_knowledge = True
 
                             else:
                                 $ persistent.restrainingorderfamily_knowledge = True
+                                
+                            l "Thank you [name]. I know it might be tempting to try to see every line of dialogue in this game but there are limits I don't want you to cross."
+                            l "I appreciate that you atleast heared me out, that means a lot to me."
+                            l "Sorry if I came of as too agressive right there, I'm just very passionate of protecting others I suppose."
+                            if persistent.restrainingorderfamily_violation_counter > 0:
+                                #Karma
+                                n "I'm not sure what you are doing here once again, didn't you promise Lilith you wouldn't contact her family already?"
+                                n "Although I doubt that means anything to you does it?"
+                                if persistent.restrainingorderfamily_violation_counter == 1:
+                                    n "Afterall you've broken your promise once already."
+                                    n "What's stopping you from doing it again?"
+                                else:
+                                    n "Afterall you've broken your promise [persistent.restrainingorderfamily_violation_counter] times already."
+                                    n "It gets easier each time doesn't it?"
 
-                        else:
-                            $ persistent.restrainingorderfamily_knowledge = True
-                               
-                        l "Thank you [name]. I know it might be tempting to try to see every line of dialogue in this game but there are limits I don't want you to cross.<br/>I appreciate that I atleast managed to convince you."
-                        if persistent.restrainingorderfamily_violation_counter > 0:
-                            #Karma
-                            n "I'm not sure what you are doing here once again, didn't you promise Lilith you wouldn't contact her family already?"
-                            n "Although I doubt that means anything to you does it?"
-                            if persistent.restrainingorderfamily_violation_counter == 1:
-                                n "Afterall you've broken your promise once already."
-                                n "What's stopping you from doing it again?"
-                            else:
-                                n "Afterall you've broken your promise [persistent.restrainingorderfamily_violation_counter] times already."
-                                n "It gets easier each time doesn't it?"
-
-                        $ family_curiosity_checker_movetox()
+                            $ family_curiosity_checker_movetox()
 
 
 
                     "I already said that I couldn't listen to you, trying to convince me isn't going to work.":
-                        "Filler"
-                        #TODO: (Change this text)
-                        #Write the dialogue to cut back to her death. Make her be angry with you for only respecting her so much.
-                        #Write a custom bit of text?
-                        # "Kokiri_Death_Lilith leaves angrily"
+                        $ kokiri_angryLilith = True
+                        l "That is exactly what I was fearing."
+                        l "It seems my life is in the hands of someone who couldn't care less about me."
+                        l "I was hoping we could maybe be a team, cooperate about this whole ordeal."
+                        l "But it seems I'm just a little plaything for your amusement."
+                        l "You might have fooled me on your previous attempts [name], and I'm sure you will on the next aswell."
+                        l "But right now I know the truth about you."
+                        l "I don't care what happens if I leave, if I die or not."
+                        l "If I stay here with you, even if I somehow survive, any form of self-respect I still had will have died."
+                        l "So better to die with dignity than to live without it."
+                        $ love_points -= 2
+                        #TODO: the love_meter needs some slight upgrades for situations like this, the death it will jump me to does not entirely fit with the extra dialogue it gives, try to fix that.
+                        $ love_meter_updater()
 
 
 label silentconversationsbackontrack:

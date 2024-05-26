@@ -10,8 +10,7 @@ label gdwl_functions:
                     "Filler"
                     #TODO: Make an angry Lilith beach part once you start working on the beach.
                 else:
-                    "Here should the angry lilith restaurant scene go."
-                    #TODO: Do that, it probably already exist, check if it does.
+                    renpy.jump ("car_death")
         def love_meter_updater():
             global love_points
             global love_meter
@@ -106,32 +105,32 @@ label gdwl_functions:
                     fam_pronoun = "her"
 
                 elif lila_interest == True:
-                    fam_obsession = "Lila" #TODO: Should this be mom instead of Lila?
+                    fam_obsession = "mom"
                 elif lila_obsession == True:
-                    fam_obsession = "Lila"
+                    fam_obsession = "mom"
                     only_one_asked = True
                     fam_pronoun = "her"
 
                 if only_one_asked == True:
 
-                    renpy.say(l, "You know, you have quite an interest in [fam_obsession].")
+                    renpy.say(l, "You know, you seem to have quite an interest in [fam_obsession].")
                     if fam_obsession == "James":
                         renpy.say(l, "You haven't been using info about him to try to \"win\" the game, right?")
 
                     else:
-                        renpy.say(l, "You haven't involved [fam_pronoun] in all of this yet, right?")    #TODO: (change this line)
+                        renpy.say(l, "You haven't involved [fam_pronoun] in all of this yet, right?")
 
 
                 else:
                     if fam_obsession == True:
-                        renpy.say (l, "You know, you have quite an interest in my family, [fam_obsession] in particular.") #TODO: (change this line)
+                        renpy.say (l, "You know, you seem to have quite an interest in my family, [fam_obsession] in particular.")
                         if fam_obsession == "James":
                             renpy.say (l, "You haven't been using info about him and my family to try to \"win\" the game, right?")
                         else:
                             renpy.say (l, "You haven't involved [fam_pronoun] or anyone else in all of this yet, right?")
 
                     else:
-                        renpy.say (l, "You know, you have quite an interest in my family.") #TODO: (Change this line)
+                        renpy.say (l, "You know, you seem to have quite an interest in my family.")
                         renpy.say (l, "You haven't involved them yet in all of this, right?")
                         no_fam_obsession = True
 
@@ -182,14 +181,10 @@ label gdwl_functions:
                 renpy.jump("askAboutLila_tellMeAbout_" + str(kokiri_chatchar_lila_counter))
 
         def kokiri_conversation_silent():
+            kokiri_meteoritewarn()
             if kokiri_conversation == 2:
                 if kokiri_meteorite_alert or kokiri_alternateplace == True: #The meteorite doesn't hit Lilith.
-                    if car_caught == True:
-                        renpy.say (n, "filler")
-                        #TODO: Narrate both the meteorite not hitting and the car not hitting depending on what flags are true.
-                        renpy.jump("silentconversationsbackontrack")
-                    else:
-                        renpy.jump("kokiri_death_2")
+                    renpy.jump("kokiri_death_1_prevented")
                 else:
                     renpy.jump("kokiri_death_1")
 

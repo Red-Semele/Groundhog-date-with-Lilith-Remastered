@@ -10251,8 +10251,8 @@
           msg ("Suddenly you hear someone scream, you can turn your head just quick enough to see someone fall with a plate in their hands.")
           msg ("The plate flies in the air, with it the ham sandwich that was put on top of it.")
           wait {
-            msg ("You are apparently not the only one who has noticed, as you can see a beautiful blue marlin jump from an opening in the aquarium.")
-            msg ("The marlin has a long and pointy bill, it pierces the sandwich in a feat of pure dexterity. ")
+            msg ("You are apparently not the only one who has noticed, as you can see a beautiful blue merlin jump from an opening in the aquarium.")
+            msg ("The merlin has a long and pointy bill, it pierces the sandwich in a feat of pure dexterity. ")
             wait {
               msg ("Sadly it's traject leads right to Lilith's chest as it's sword-like bill pierces it, somehow you know it has pierced her heart aswell.")
               msg ("She gives you one last look of utter shock before she falls dead on the floor.")
@@ -10354,10 +10354,10 @@
                     SetForegroundColour (player.Narcolor)
                     msg ("Before you can answer her question you hear someone scream again, that's the sign.<br/>You turn your head just quick enough to see someone fall with a plate in their hands.")
                     msg ("The plate flies in the air, with it the ham sandwich that was put on top of it.")
-                    msg ("You are not the only one who has noticed, as you can see a beautiful blue marlin jump from an opening in the aquarium.")
-                    msg ("The marlin has a long and pointy bill, it pierces the sandwich in a feat of pure dexterity. ")
+                    msg ("You are not the only one who has noticed, as you can see a beautiful blue merlin jump from an opening in the aquarium.")
+                    msg ("The merlin has a long and pointy bill, it pierces the sandwich in a feat of pure dexterity. ")
                     msg ("It's current trajectory leads it to pierce through the chair where Lilith was sitting just mere moments ago.")
-                    msg ("The staff quickly rush towards your table to take the marlin away and to see if it hasn't been hurt, they offer Lilith and you a short apology before disappearing.")
+                    msg ("The staff quickly rush towards your table to take the merlin away and to see if it hasn't been hurt, they offer Lilith and you a short apology before disappearing.")
                     wait {
                       ClearScreen
                       SetForegroundColour (player.Lilcolor)
@@ -10607,7 +10607,7 @@
         else if (GetBoolean(game, "Cafe")) {
           ClearScreen
           SetForegroundColour (player.Narcolor)
-          msg ("Suddenly you begin to hear the sound of shattering glass.<br/>As you turn to look at the source of the sound you can see that the aquarium next to where Lilith was sitting has shattered.<br/>The water is gushing out rapidly and it does not seem to be planning to stop.<br/>It seems as if somehow the marlin must have made a crack form.<br/>You think about the pure shenanigans that were needed to even make this exact thing happen but you are soon interrupted by the water flowing past your shoes with some fish coming along for the ride.<br/>")
+          msg ("Suddenly you begin to hear the sound of shattering glass.<br/>As you turn to look at the source of the sound you can see that the aquarium next to where Lilith was sitting has shattered.<br/>The water is gushing out rapidly and it does not seem to be planning to stop.<br/>It seems as if somehow the merlin must have made a crack form.<br/>You think about the pure shenanigans that were needed to even make this exact thing happen but you are soon interrupted by the water flowing past your shoes with some fish coming along for the ride.<br/>")
           if (GetBoolean(game, "musicon")) {
             play sound ("gameOver and edgeofthegalaxy.wav", false, true)
           }
@@ -11287,7 +11287,7 @@
           }
           else if (GetBoolean(game, "Cafe")) {
             SetForegroundColour (player.Lilcolor)
-            msg ("So what you are saying is that you knew I was going to be skewered by a marlin because you are psychic?")
+            msg ("So what you are saying is that you knew I was going to be skewered by a merlin because you are psychic?")
             msg ("I mean, I'm thankful for you saving my life and all but you got to admit that sounds kind of far fetched.")
             msg ("Do you have any proof to maybe show you're a psychic?")
             SetForegroundColour (player.Narcolor)

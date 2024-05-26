@@ -85,6 +85,7 @@ label chinese_riddle_accept:
     $ rw2 = 0
     $ rw3 = 0
     $ rw_total = 0
+    $ persistent.chineseRiddlesSeenXTimesCounter += 1
     l "Alright, here is the first riddle.
     They are all based around Greek and Roman myths.
     So here we go."
@@ -141,25 +142,30 @@ label chinese_riddle_accept:
                             jump chinese_riddle_third
 
                     "I'd like to know the answer.":
-                        #TODO: Add extra text here, to make the "the answer is "x" not feel so robotic.
                             if rw3 == 0:
                                 if rw2 == 0:
                                     if rw1 == 0:
                                         "Error, you are not supposed to be here or something went wrong."
                                     else:
                                         $ persistent.r1_knowledge = True
+                                        l "Sure thing, that was a really tricky one."
                                         l "The answer is Arachne."
+                                        $ riddleAnswersTold += 1
                                         l "Let's move on to the next riddle."
                                         jump chinese_riddle_second
                                 else:
                                     $ persistent.r2_knowledge = True
+                                    l "Alright, that was quite a though one."
                                     l "The answer is Europa."
+                                    $ riddleAnswersTold += 1
                                     l "Let's move on to the next riddle."
                                     jump chinese_riddle_third
 
                             else:
                                 $ persistent.r3_knowledge = True
+                                l "That was quite a hard one wasn't it?"
                                 l "The answer is Orpheus."
+                                $ riddleAnswersTold += 1
                                 l "That was the final riddle!"
                                 jump chinese_riddle_evaluation
                 label riddle_tryAgain_loop:
@@ -255,7 +261,7 @@ label adriel_unanswered_chat:
         $ rw_total = rw1 + rw2 + rw3
         if rw_total == 0:
             l "Wow, you got them all right, color me impressed!"
-            if persistent.r1_knowledge == False and persistent.r2_knowledge == False and persistent.r3_knowledge == False and NMdetect == False: #TODO: Does this work? Check it out.
+            if persistent.r1_knowledge == False and persistent.r2_knowledge == False and persistent.r3_knowledge == False and NMdetect == False:
                             $ Mdetect = True
         else:
             $ NMdetect = True
@@ -269,14 +275,12 @@ label adriel_unanswered_chat:
                 l "Oh, did I make my riddles too hard?"
 
         l "What did you think of my riddles [name]?"
-        #TODO: Make these only appear at certain points. Add some extra text on each path to make for better segways.
-        #Also change the text between brackets.
         menu:
-            "They were pretty easy actually. (Rude version)" if rw_total == 0:
+            "You call those riddles? They were way too easy. Even a pre-schooler could answer them." if rw_total == 0:
                 $ easy_rude = True
                 jump chinese_riddle_easy
 
-            "They were pretty easy actually. (Non-rude version)" if rw_total == 0:
+            "They were pretty fun! I didn't have a hard time with them and yet still had to think about them." if rw_total == 0:
 
                 jump chinese_riddle_easy
 
@@ -287,7 +291,7 @@ label adriel_unanswered_chat:
 
                 jump chinese_riddle_hard
 
-            "How was I ever supposed to get those riddles? You made them way too hard." if rw_total > 0:
+            "How was I ever supposed to get those riddles? You made them way too hard. Not everyone has a degree in Folklore & Mythology" if rw_total > 0:
                 $ hard_rude = True
                 jump chinese_riddle_hard
     label chinese_riddle_easy:
@@ -297,23 +301,26 @@ label adriel_unanswered_chat:
             l "I was fearing that I might had asked you some impossible questions."
             l "So atleast that wasn't the case."
             l "{size=*0.5}But you didn't have to act so high and mighty [name].{/size}"
-            $ love_points = -1
+            $ love_points = -2
             $ love_meter_updater()
         else:
             l "Oh phew, what a relief!"
             l "I was kind of scared that I made my riddles too hard."
             l "But you handled them like a champ!"
             l "Have you ever learned about Greek and Roman myths before?"
-            #TODO: (Make the narrator say that you had in the previous loops at the very least.)
+            if persistent.chineseRiddlesSeenXTimesCounter >= 1:
+                n "I suppose you did, didn't you player?"
+                n "Who knew that timeloops could be so educational?"
             #TODO: Also make this a jump to a choice because this choice is asked twice in this part I think.
             
         jump chinese_riddle_railroad
     label chinese_riddle_hard:
         if hard_rude == True:
-            $ love_points = -1
+            $ love_points = -2
             $ love_meter_updater()
-            l "Oh I suppose they are quite hard...
-            But did you have to say it so rudely?..."
+            l "Oh I suppose they are quite hard..."
+            l "{size=*0.5}But did you have to say it so rudely?....{/size}"
+            
         else:
             l "I see, that makes total sense [name].
             Sometimes I forget that not everyone is as into Greek and Roman myths as I am.
@@ -321,20 +328,22 @@ label adriel_unanswered_chat:
             I hope you had fun trying to find the answers though!"
         jump chinese_riddle_railroad
     label chinese_riddle_good:
-        l "I'm really happy to hear that you liked them!
-        I was kind of scared that I might have made them too hard."
         l "I'm really happy to hear that you liked them!"
+        l "I was kind of scared that I might have made them too hard."
         #TODO: Add some varying text from here based on how many times you had to try.
         if rw_total == 0:
             l "But you seem like a natural with riddles. Have you ever learned about Greek and Roman myths before?"
             #TODO: (Make the narrator say that you had in the previous loops at the very least.)
         else:
-            l"But you seem to like a challenge." 
-            #TODO:(Make the narrator mention that maybe that's why you keep coming back to this game.)
+            l "But you seem to like a challenge." 
+            if persistent.lildeaths >= 9:
+                n "Perhaps that is why you keep retrying?"
+                n "Just to see if you can somehow win?"
+                n "I'm curious if you will, I suppose I would do good to keep an eye on your progress."
         jump chinese_riddle_railroad
 
 label chinese_riddle_railroad:
-    #TODO: Make this dialogue vary based on the amount of love points she has in her meter.
+    #TODO: Make this dialogue vary based on the amount of love points she has in her meter. (That way if you inslut her she will be a lot less sweet, and the situation will be very awkward.)
     l "You know, I thought it was kind of funny that you brought me here."
     l "Don't get me wrong, I really enjoy like it here but my sister, Abigail, adores this places."
     l "Since mom and me took her here for her twelfth birthday she insisted on coming again for five years in a row."
@@ -572,7 +581,7 @@ label chinese_phoneScene:
     n "Lilith stands up from her chair and pushes it back under the table."
     n "As she enters the bathroom stall you see that she has forgotten her phone, it is still laying on the table."
     if persistent.lildeaths >= 7:
-        if peeked_phone == True:
+        if persistent.peeked_phone == True:
             #TODO:Add some different text based on if you've reached a dead-end with the other numbers or not.
             n "You've already done it once, you might aswell do it again, right?
             Is that what you are thinking? That she won't remember any of this so that it doesn't matter?"
@@ -692,7 +701,7 @@ label chinese_phone_peek:
 
 label chinese_phone_caught:
     if peeked_phone_temp == True:
-        $ peeked_phone = True
+        $ persistent.peeked_phone = True
         #TODO: Add some varying text the other times you take the phone.
         n "You think you sucessfully memorised the phone-number, I guess only time will tell.
         Because if you've already gone this far you will only go further, right?"
@@ -722,7 +731,7 @@ label chinese_phone_noPeek:
 label chinese_phone_peek_numbers:
 
     n "You see the family section of her phone numbers, four names are listed there."
-    #TODO: Add something here if she already told you she wouldn't want to involve her family in the kokir_forest.
+    #TODO: Add something here if she already told you she wouldn't want to involve her family in the kokiri_forest.
     n "If anyone besides Lilith will have some handy information about her it's them."
     n "You might just have enough time to learn one phone-number."
 
@@ -742,7 +751,7 @@ label chinese_phone_peek_numbers:
             #TODO: For some reason it does not think this flag is defined.
             $ persistent.lisa_call_knowledge = True
             jump chinese_phone_caught
-        "Close the phone." if persistent.abigail_call_knowledge and persistent.david_call_knowledge and persistent.james_call_knowledge and persistent.lisa_call_knowledge: #TODO: Rewrite this line slightly.
+        "Put the phone back." if persistent.abigail_call_knowledge and persistent.david_call_knowledge and persistent.james_call_knowledge and persistent.lisa_call_knowledge:
             jump chinese_phone_caught
 
 
@@ -751,48 +760,49 @@ label chinese_phone_peek_numbers:
 label chinese_riddle_decline:
     l "No worries at all [name]!"
     l "Maybe you'd like giving me some riddles instead?"
-    n "You nod." #TODO: Rework this line slightly
-    #TODO: Add one extra riddle. + Make the riddles push you back on track to the normal stuff eventually.
-    menu:
-        "What has four legs in the morning, two legs at noon and three legs in the evening?":
-            l "Ah that's a real classic! The answer is humans. The question originated from the myth of Orpheus if I'm not mistaken."
-            l "I didn't know you were into mythology [name], that's really cool!"
+    menu: 
+        "Sure, that sounds good!":
+            #TODO: Add one extra riddle. + Make the riddles push you back on track to the normal stuff eventually.
             menu:
-                "Thanks Lilith! From your response I gather you are also into mythology, right?":
-                    l "Oh absolutely!"
-                    l "I practically live and breathe mythology."
-                    l "Ever since I was a little girl I just had a massive interest in all kinds of stories, then later my interest started to grow more towards myths when I revieved my first book about Greek and Roman myths."
-                    l "And now recently I've been also interested in some other mythology. Right now I'm reading more about Finish mythology, the Kalevala to be specific."
-                    l "That's why I'm happy to meet someone likeminded like you [name]!"
-                    #TODO: Add a bit more text?
-                "Actually I just found that riddle on the internet a while back.":
-                    n "Lilith looks slightly disappointed."
-                    l "Oh... that's alright [name], I guess sometimes I forget that that riddle is practically used everywhere now."
-                    l "Tons of movies, books and games now kind of use that riddle as a placeholder because it's so well known. It's the \"lorum ipsum\" of riddles."
-                    n "Hey, is she complaining about my ability to write riddles? Uhm, I mean your ability to make riddles."
-                    l "But still, thank you for your riddle! Regardless of how many times it has been used, it's still remains a clasic."
-                    l "And I think you must've thought so aswell since you can still remember it after you first read it online."
-        "What has five teeth, twelve eyes, four arms and a thousand legs?":
-            l "..."
-            n "Lilith scrathes her head, deep in thought."
-            l "I don't know [name], that's a really though one."
-            l "What is the answer?"
-            menu:
-                "Well, the answer is that I don't know either.":
-                    n "Lilith gives you a confused look before it all clicks and she burtst out in laughter."
-                    l "You sure got me there [name]!"
-                    l "Although, if you don't know the answer, and that is the answer, doesn't that mean that you know the answer?"
-                    n "You are not entirely sure what she means."
-                    n "Apparently Lilith must have been able to read just that from your face as she immediately turns beet-red."
-                    l "I'm sorry, that was way too much for a first date wasn't it?"
-                    l "Sometimes I just can't help myself and just say stuff like that way too soon."
-                    l "Please just forget what I said, alright [name]?"
+                "What has four legs in the morning, two legs at noon and three legs in the evening?":
+                    l "Ah that's a real classic! The answer is humans. The question originated from the myth of Orpheus if I'm not mistaken."
+                    l "I didn't know you were into mythology [name], that's really cool!"
                     menu:
-                        #TODO: Fill in.
-                        "I don't mind at all Lilith, you just kind of threw me for a loop with what you just said. It does sound interesting though.":
-                            "Filler"
-                        "Sure thing, if that's what you want. *Talk about something else.":
-                            "Filler"
+                        "Thanks Lilith! From your response I gather you are also into mythology, right?":
+                            l "Oh absolutely!"
+                            l "I practically live and breathe mythology."
+                            l "Ever since I was a little girl I just had a massive interest in all kinds of stories, then later my interest started to grow more towards myths when I revieved my first book about Greek and Roman myths."
+                            l "And now recently I've been also interested in some other mythology. Right now I'm reading more about Finish mythology, the Kalevala to be specific."
+                            l "That's why I'm happy to meet someone likeminded like you [name]!"
+                            #TODO: Add a bit more text?
+                        "Actually I just found that riddle on the internet a while back.":
+                            n "Lilith looks slightly disappointed."
+                            l "Oh... that's alright [name], I guess sometimes I forget that that riddle is practically used everywhere now."
+                            l "Tons of movies, books and games now kind of use that riddle as a placeholder because it's so well known. It's the \"lorum ipsum\" of riddles."
+                            n "Hey, is she complaining about my ability to write riddles? Uhm, I mean your ability to make riddles."
+                            l "But still, thank you for your riddle! Regardless of how many times it has been used, it's still remains a clasic."
+                            l "And I think you must've thought so aswell since you can still remember it after you first read it online."
+                "What has five teeth, twelve eyes, four arms and a thousand legs?":
+                    l "..."
+                    n "Lilith scrathes her head, deep in thought."
+                    l "I don't know [name], that's a really though one."
+                    l "What is the answer?"
+                    menu:
+                        "Well, the answer is that I don't know either.":
+                            n "Lilith gives you a confused look before it all clicks and she burtst out in laughter."
+                            l "You sure got me there [name]!"
+                            l "Although, if you don't know the answer, and that is the answer, doesn't that mean that you know the answer?"
+                            n "You are not entirely sure what she means."
+                            n "Apparently Lilith must have been able to read just that from your face as she immediately turns beet-red."
+                            l "I'm sorry, that was way too much for a first date wasn't it?"
+                            l "Sometimes I just can't help myself and just say stuff like that way too soon."
+                            l "Please just forget what I said, alright [name]?"
+                            menu:
+                                #TODO: Fill in.
+                                "I don't mind at all Lilith, you just kind of threw me for a loop with what you just said. It does sound interesting though.":
+                                    "Filler"
+                                "Sure thing, if that's what you want. *Talk about something else.":
+                                    "Filler"
 
 
 
