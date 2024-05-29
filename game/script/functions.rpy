@@ -1,17 +1,17 @@
 
 label gdwl_functions:
     init python:
-        def love_meter_result():
-            if love_meter <= 0:
+        def love_meter_result(alwaysJump):
+            if love_meter <= 0 or alwaysJump == True:
                 #Check for the location to send to the right place.
                 if kokiri == True:
-                    renpy.jump("kokiri_angryLilith")
+                    renpy.jump("angryLilith")
                 elif beach == True:
                     "Filler"
                     #TODO: Make an angry Lilith beach part once you start working on the beach.
                 else:
                     renpy.jump ("car_death")
-        def love_meter_updater():
+        def love_meter_updater(alwaysJump):
             global love_points
             global love_meter
             global minor_love_offence
@@ -34,7 +34,10 @@ label gdwl_functions:
                 major_love_comfort += 1
                 persistent.major_love_comfort_counter += 1
             love_points = 0
-            love_meter_result()
+            if alwaysJump == True:
+                love_meter_result(True)
+            else:
+                love_meter_result()
 
 
         def family_curiosity_checker():

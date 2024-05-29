@@ -856,19 +856,12 @@ label kokiri_death_dialogue_stillDying:
                                 l "Exactly how much of my lives and deaths is THE good ending worth to you?"
                                 menu:
                                     "But you are not real, this is just a game...":
-                                        #TODO: Do not use the script to update this love meter as it already normally moves you to a death now, the only reason I'm updating the love_meter is for extra text and the offence is for consistency.
-                                        $ love_meter -= 2
-                                        $ love_meter_updater()
                                         l "Well, I feel pretty real to me and I can imagine every death I go through must feel equally real and very painful."
                                         l "So what if I'm in a game? Does that make me less real? You can talk with me, I can speak and I'm real enough to trick myself into thinking that I'm real."
                                         l "And I'm real enough to walk away from some monster who thinks they are justified in killing me over and over again just to get what they want."
-                                        n "Lilith jumps up from where she was lying mere moments ago, on her face is a visible layer of anger or is it... dissapointment?"
-                                        n "You're not sure which one would sting more, probably a combination of the two."
-                                        n "She wipes the crumbs on her clothes away with a frightening speed and begins walking off the hill."
-                                        l "Goodbye [name], we are done here."
-                                        l "Do not come back if you have even the slightest slither of respect for me."
-                                        $ kokiri_angryLilith = True
-                                        jump kokiri_death_4_hill
+                                        $ love_meter -= 2
+                                        $ angryLilith = True
+                                        $ love_meter_updater(True)
 
                                     "I don't want to harm you but I have to find it.":
                                         n "She sighs."
@@ -889,8 +882,9 @@ label kokiri_death_dialogue_stillDying:
                                                 l "But if you ever played this game to try to save me, not for you and I to be together but just to save me, then it might be worth a shot."
                                                 l "I'm really hoping you might learn a lesson from this."
                                                 l "Goodbye [name], until we inevitably meet again."
-                                                $ kokiri_angryLilith = True
-                                                jump kokiri_death_4_hill
+                                                $ love_meter -= 2
+                                                $ angryLilith = True
+                                                $ love_meter_updater(True)
 
                                             "For us ofcourse silly.":
                                                 l "Oh [name]... can't we just make our own good ending?"
@@ -1396,7 +1390,7 @@ label noContactFamilyPromise:
 
 
                     "I already said that I couldn't listen to you, trying to convince me isn't going to work.":
-                        $ kokiri_angryLilith = True
+                        $ angryLilith = True
                         l "That is exactly what I was fearing."
                         l "It seems my life is in the hands of someone who couldn't care less about me."
                         l "I was hoping we could maybe be a team, cooperate about this whole ordeal."
@@ -1408,7 +1402,7 @@ label noContactFamilyPromise:
                         l "So better to die with dignity than to live without it."
                         $ love_points -= 2
                         #TODO: the love_meter needs some slight upgrades for situations like this, the death it will jump me to does not entirely fit with the extra dialogue it gives, try to fix that.
-                        $ love_meter_updater()
+                        $ love_meter_updater(True)
 
 
 label silentconversationsbackontrack:

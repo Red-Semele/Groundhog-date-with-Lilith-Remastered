@@ -33,8 +33,14 @@ label kokiri_talkAboutSomethingElse:
                 l "I believe that even though it would be impossible to predict the state of the future from the past it is possible that the future would always be the same if the circumstances are the same."
                 l "So in other words, if you play the game once again from the start and you make the same choices like you did right now, you would once again read this conversation with me since I don't remember it and all circumstances are the same."
                 l "Does that sound like it might be true [name]?"
-                #TODO: Add a choice where you tell her about the dice puzzle always being the same as a way to confirm it, ask her about heraclitus and your varying emotions as a way to deny it.
-
+                #TODO: Spilt the below links up into smaller links that lead to other links, to save the player from extreme long textstrings.
+                menu:
+                    "Well, there is this one thing you did that might support that. You threw 2 dice in cafe for some sort of puzzle. You have done it [persistent.dice_counter] times now and each time the results are the exact same." if persistent.dice_counter >= 2:
+                        l "Ooh, that is very very interesting [name]!"
+                        #TODO: Insert some more geeking out. Also rewrite the line below a bit.
+                        l "I'm sorry if I'm geeking out, I guess this is just a welcome distraction..."
+                    "I don't know, it might be slightly true yes, but even when I do the exact same things some very small things can change, like things the narrator says, or things I think. Pantha Rhei and all that, isn't it? While everything around us might be the same, the fact that both me and the narrator keep our memories changes the way the machine works. Because the both of us are cogs inside of it aswell." if peristent.kokiri_heraclitus_knowledge:
+                        "Filler"
 
 
             "*Tell her about the mayo easteregg*":

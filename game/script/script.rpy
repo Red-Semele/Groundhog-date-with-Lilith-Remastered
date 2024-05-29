@@ -212,6 +212,7 @@ $ burger = False
 $ burger_alt = False
 $ cafe = False
 $ kokiri = False
+$ beach = False
 $ brotherasked = 0
 $ dicenumber = 0
 $ dicenumber2 = 0

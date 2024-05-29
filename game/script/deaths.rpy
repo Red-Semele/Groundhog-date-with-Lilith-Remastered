@@ -153,12 +153,29 @@ label restaurant_deaths:
                 n "When you wake up again all the cutomers and staff have dissapeared, including Lilith."
                 n "The room is completely filled to the brim with geese feathers, you begin to sneeze just thinking about that."
                 n "While you are sneezing you notice that someone put a sticky note on your hand."
-                n "It reads a as following: \"We took everyone and you won't be seeing them back, let this be a lesson on why you should not eat or serve geese or ducks, as those are also part of our family.
+                n "It reads as following: \"We took everyone and you won't be seeing them back, let this be a lesson on why you should not eat or serve geese or ducks, as those are also part of our family.
                 - Sincerely, the geese\""
                 $ persistent.chinese_death_2 = True
                 jump gameOver
     label car_death:
-        #TODO: Make her comment about how she should stand up for herself if you anger her enough, then she leaves like normal but with some more angry flavortext.
+        if angryLilith == True:
+            l "Lilith stands up from her seat and shoves it back with a frightening speed."
+            l "I really didn't want it to come this far but you left me no other choice [name]."
+            if major_love_offence >= 1:
+                l "I just have one question for you."
+                l "Why go on this date with me at all?"
+                l "I was really looking forward to this date, but I'm not sure I can say the same for you."
+                l "I mean, if you really wanted to be here with me today, then why were you so rude to me?"
+                l "Don't bother answering that [name], no answer you could give would ever change what I'm going to do next."
+            elif minor_love_offence >= 2:
+                l "I could endure one rude remark, even though I probably shouldn't."
+                l "I guess I stayed because I hoped things would become better."
+                l "I guess I also stayed because I owed it to myself to go out once and I didn't want to ruin this date."
+                l "But now I know better. I will ruin this date if I stay here. Atleast when I walk out on you I can still feel some pride for myself afterwards."
+            l "Goodbye [name], and a tip for the future: if you ever go another date, try to develop manners beforehand. "
+            if persistent.lildeaths >= 1:
+                n "I guess we will see very soon wheter or not it is possible for you to do that, right player?"
+        
         play music game_over
         if car_caught == True:
             "Filler for now..."
@@ -189,7 +206,7 @@ label restaurant_deaths:
                     n "When you set one foot outside of the doorframe a red Sedan drives head first into the both of you." #TODO: You know this red sedan, change the line to reflect that.
                     n "Luckily you managed to get flung to the side somehow. Lilith however was not so lucky."
                     n "She died on impact when the speeding car hit her."
-                    n "Atleast the police showed up due to your call and locked the drunkard up." #TODO: Is this something that happens irl?
+                    n "Atleast the police showed up due to your call and locked the drunkard up."
                     n "If only they managed to come a tiny bit earlier.
                     It was probably not the best idea to go here with Lilith when the car is still on the loose."
                     jump gameOver
@@ -198,14 +215,14 @@ label restaurant_deaths:
                 elif chinese == True:
                     n "Lilith leaves the chinese restaurant, you rush after her in an effort to calm her down.
                     This time there is no red Sedan in sight, it seems as if the cops handled it well." #TODO: Only make that line about the red sedan show up if you've seen her get hit by it here.
-                    if AngryLilith == True:
+                    if angryLilith == True:
                         l "Leave me alone [name]! I don't want to see you ever again!"
                     else:
                         l "Why are you following me [name]? I want to be alone." 
                     n "And with that Lilith leaves, you never saw her again. Not this time anyway. Atleast she didn't seem to get killed by anything on her way back home since you still heard people talk about her from time to time."
                     $ lilithAliveEnding = True
                     $ persistent.lildeaths -= 1
-                    if AngryLilith == True:
+                    if angryLilith == True:
                         n "You probably shouldn't have angered her so much."
                     else:
                         n "You should probably get her to trust you somehow." #TODO: Make this line more properly showcase what went wrong, were you silent to her, did you anger her etc.
@@ -228,7 +245,7 @@ label restaurant_deaths:
             jump gameOver
 
 label kokiri_deaths:
-    label kokiri_angryLilith:
+    label angryLilith:
 
         if major_love_offence >= 1:
             n "Lilith jumps up from where she was lying mere moments ago, on her face is a visible layer of anger or is it... disappointment?"
@@ -392,9 +409,9 @@ label kokiri_death_2_prevented_triedEverything:
         p "I might have been selfish, in one timeline you end up with a guy called Ron and you two just have a great time together."
         p "But that wasn't enough for me, I want to go on this date and have you come out of it alive and well."
     p "I just want to share a nice, enjoyable date with you."
-    n "Lilith points at the village, the sun is setting once again." #TODO: Was the sun setting? What time is it in game?
+    n "Lilith points at the village, illuminated by the moon and the stars."
     l "With such a marvelous view I would surely call this a nice, enjoyable date."
-    n "She cuddles up to you."
+    n "She snuggles up to you."
     l "Thanks for going on this date with me! I'm having a really good time so far!"
     l "You know, I've been thinking..."
     l "If I'm going to die soon then what's stopping you from quitting this game? Or would I just lose consciousnes, like I'm dying?"
@@ -564,7 +581,7 @@ label kokiri_showpicture:
                 jump kokiri_death_4_hill_dieTogether
 
             else:
-                #TODO: Add the angry lilith flag and part. #kokiri_angryLilith #Make her not ask you for help but just accept her death.
+                #TODO: Add the angry lilith flag and part. #angryLilith #Make her not ask you for help but just accept her death.
                 #The part below is not that part.
                 l "What is happening [name]?"
                 n "The fear in her voice is palpable."
@@ -602,10 +619,10 @@ label kokiri_showpicture:
         label kokiri_death_4_noHill:
             play music game_over
             $ persistent.kokiri_death_4_noHill = True
-            n "The earth begins shaking once again. The mechanical hill begins to ascend slowly, until it hovers above Lilith and you."
+            n "The earth begins shaking once again. The mechanical mound begins to ascend slowly, until it hovers above Lilith and you."
             n "A green pillar of light shoots out from inbetween the four thrusters at the bottom of the hill."
-            n "The beam envelops the both of you and before you can do anything Lilith gets rapidly sucked into an opening of the hill that closes the moment she's inside. The hill begins ascending again, only this time much faster."
-            n "All you can do is stand there, powerless, while you watch the hill and Lilith getting swallowed by the ink-black sky." #TODO: (Search other words for hill.)
+            n "The beam envelops the both of you and before you can do anything Lilith gets rapidly sucked into an opening of the hill that closes the moment she's inside. It begins ascending again, only this time much faster."
+            n "All you can do is stand there, powerless, while you watch the hill and Lilith getting swallowed by the ink-black sky." #TODO: Use the word ufo here and there.)
             jump gameOver 
 
 

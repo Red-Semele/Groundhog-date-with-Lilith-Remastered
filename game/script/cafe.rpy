@@ -156,6 +156,8 @@ label cafe_dice_result:
                         "Yeah, please tell me what the answer was.":
                             $ persistent.dice_knowledge = True
                             l "The first dice was 6 and the second dice was 3."
+                            l "That was quite tricky wasn't it?"
+                            l "I hope it was fun though!"
                             #TODO: Make a better segway.
                             jump cafe_rateCafe
                         "No, if I ever learn the answer I want it to be because I solved it.":
@@ -222,6 +224,7 @@ label cafe_dice_stop:
 
 
 label cafe_rateCafe:
+    #TODO:create some slightly varying dialogue based on from where you jumped to this. (That way the segway feels more natural)
     n "Lilith looks around in pure awe, a bright smile forms on her face."
     l "So, what do you think of this place now that you've seen it for the first time?"
 
