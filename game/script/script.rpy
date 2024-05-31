@@ -157,6 +157,7 @@ if persistent.firstboot == None:
      default persistent.kokiri_heraclitus_knowledge = False
      default persistent.abusedJamesInfo_knowledge = False
      default persistent.doNotUseJames_knowledge = False
+     default persistent.LilaStillThinksAboutJames_knowledge = False
      #Kokiri poems
      default persistent.kokiri_poem_window_knowledge = False
      default persistent.kokiri_poem_bang_knowledge = False
@@ -165,6 +166,7 @@ if persistent.firstboot == None:
      default persistent.kokiri_poem_shadowman_knowledge = False
      default persistent.rp_detect = False #This flag will be used to try to check if a player is returning to the game after erasing their save-file.
      default persistent.met_james = False
+     
      #Beach:
      default persistent.beachroute_visited_knowledge = False
      #Endings:
@@ -993,23 +995,73 @@ label phone_call_james:
                #TODO: Add some more stuff to ask him, this will be the way you can chat with him"
  
                "I'd like to just have a chat with you if that's fine.":
-                    "Filler"
-                    #TODO: Fill in.
+                    j "Sure, I think I have enough energy to talk about one topic right now."
+                    j "So, what would you like to talk about with me?"
+                    menu:
+                         "I just wanted to tell you that Lila still thinks about you every day, I figured you might want to hear that." if persistent.LilaStillThinksAboutJames_knowledge:
+                              j "...Thank you for telling me that [name]."
+                              j "While I did know that already it's been a while since I last heard those words."
+                              j "I have been kind of avoiding them to be honest, those words."
+                              j "They make all of this a lot more...complicated."
+                              j "In here I am inbetween an almost infinite amounts of my two sisters, of my dad and my mom."
+                              j "All of them deeply missing me in their own ways."
+                              j "All of them filled with so much love for their son, for their brother."
+                              j "And yet I am here, inbetween of it all."
+                              j "All of their love can never truly reach me, it will always have to be through those bubbles."
+                              #TODO: Fill in.
+                              menu:
+                                   "I know what you mean James, playing this game feels the same way.":
+                                        "Filler"
+                                   "That sounds terrible James, you don't need to sacrifice yourself like that for them.":
+                                        j "It does sound far from ideal doesn't it?"
+                                        j "You are absolutely right."
+                                        j "And yet, knowing that if anything were ever to happen with them I could help them out from here..."
+                                        j "It's one of the only reasons I haven't crossed over yet."
+                                        j "Ever since my passing I've been here, watching over them."
+                                        j "And every other version of me who got killed is also in a place like this, watching over their own family."
+                                        j "Our minds kind of blend together sometimes, it's hard to know where my memories start and theirs end."
+                                        j "I don't mind though, that way it feels a little less lonely in here."
+                                        #TODO: Make james say "You know you don't owe Lilith anything either, do you? You also don't need to sacrifice yourself."" If you have done enough good things for her.
+                                        menu:
+                                             "You say you've been watching your family, have you ever reached out to them?":
+                                                  j "Oh constantly [name]. It hurts me to see how they are still affected by my death."
+                                                  j "I completely understand that they are, I just wish that I hadn't been playing on the road that day, maybe then..."
+                                                  j "I'd love to tell them that it isn't their fault. Dad especially, the guilt's been eating him up from the inside for years now."
+                                                  j "Yes, he made some bad choices afterwards, but none that would justify me being mad at him."
+                                                  j "Sadly I haven't reached out yet, when lingering ghosts like me communicate with the living it usually ends up in more death."
+                                                  #TODO: Make this text lead to something, probably james saying he doesn't have any energy left and leaving.
+                                                  menu:
+                                                       "It might be a good idea to reach out soon, lately I have seen so much deaths that I don't think a few more will end up mattering.":
+                                                            j "I might indeed try to contact a few of my family if the situation calls for it."
+                                                            j "But it's true, I have noticed an increase in deaths ever since Lilith started dating you."
+                                                            j "It's very peculiar."
+                                                            j "I should know what is causing it via my connection to my other selves."
+                                                            j "The problem is that the info seems to be overlapping."
+                                                            j "There are multiple causes and yet somehow only one."
+                                                       "Lately it seems like death just keeps happening to Lilith no matter what I do, could that be the result of a lingering ghost communicating with the living?":
+                                                            j "I suppose that could be possible."
+                                                            j "I doubt that's case though. Plenty of ghosts here but a lot of them grow out of being talkative after slowly having their mind degrade after hundered of years of lingering."
+                                                            j "I am one of the most recent additions to this place, so don't mistake my talent to chit-chat like something inherent to all ghosts here."
+                                                            j "But if this is truly caused by a lingering ghost there is not much you can do, just wait until they are either crossed over or until they simply lose their mind and can't talk anymore."
+                                                            j "Don't worry though, that just feels like bad game design, I'm sure the developer wouldn't make you go through all that waiting."
+                                                            
+
+                    
  
                "I need help to convince Lilith to listen to David. I figured she might listen to you." if persistent.david_apology_knowledge:
-                    d "She probably would..."
-                    d "Although I'd rather stay in the shadows. She already has had a hard time dealing with my dead."
-                    d "But on the other hand if it manages to atleast salvage her bond with dad slightly it will be worth it. "
-                    d "I'm going to tell you a story that you need to tell her, it seems like that tends to work out for you."
-                    d "The story takes place in the autumn, I think Lilith was eight years old."
-                    d "I was wandering through the forest of our village, the one Lilith likes to call the Kokiri woods. Suddenly I heard crying, familiar crying."
-                    d "Following the source of it I found her, Lilith, sitting on a treestump."
-                    d "When I sat next to her she told me that she had gotten a really bad grade for math."
-                    d "She felt like a failure and didn’t think she could go back home to Lila. I told her that that was absolutely ridiculous and that mom would always love us no matter what. "
-                    d "That seemed to calm her down a bit and she stopped crying. To further calm her down I asked her if she wanted to try to find fairies in the woods with me. "
-                    d "We spent an hour or so searching for fairies, ofcourse never finding one but at the end of it she forgot all about her bad grade."
+                    j "She probably would..."
+                    j "Although I'd rather stay in the shadows. She already has had a hard time dealing with my dead."
+                    j "But on the other hand if it manages to atleast salvage her bond with dad slightly it will be worth it. "
+                    j "I'm going to tell you a story that you need to tell her, it seems like that tends to work out for you."
+                    j "The story takes place in the autumn, I think Lilith was eight years old."
+                    j "I was wandering through the forest of our village, the one Lilith likes to call the Kokiri woods. Suddenly I heard crying, familiar crying."
+                    j "Following the source of it I found her, Lilith, sitting on a treestump."
+                    j "When I sat next to her she told me that she had gotten a really bad grade for math."
+                    j "She felt like a failure and didn’t think she could go back home to Lila. I told her that that was absolutely ridiculous and that mom would always love us no matter what. "
+                    j "That seemed to calm her down a bit and she stopped crying. To further calm her down I asked her if she wanted to try to find fairies in the woods with me. "
+                    j "We spent an hour or so searching for fairies, ofcourse never finding one but at the end of it she forgot all about her bad grade."
                     $ persistent.james_story_knowledge = True
-                    d "I have to go now, keeping up this connection asks a lot of energy from me."
+                    j "I have to go now, keeping up this connection asks a lot of energy from me."
                     n "James hung up."
                     jump Game_start2
  
@@ -1629,7 +1681,7 @@ label youwouldntbelieveme_teaseDeath:
      jump restaurant_death_2
 
 label psychic_justHelpingOut:
-     #TODO: Make a koke about something like that being really unlikely to just "feel" here.
+     #TODO: Make a joke about something like that being really unlikely to just "feel" here.
      #Also add a little bit more text based on what restaurant the two of you are in.
      l "Wow, that's quite the story. Luckily you somehow felt that because otherwise I'd be dead!"
      l "So am I in the clear now?"
@@ -1733,7 +1785,7 @@ label explanation_noTimeToExplain:
                     l "Oh I wouldn't know about that..." 
                     l "But hang on, you are not seriously thinking about leaving this planet, right?"
                     l "How would we even be able to do that?"
-                    l "You stop the car for a moment, waiting for death to cath up with both of you, and it sure does so fast." #TODO: Maybe make this line a bit different.
+                    n "You stop the car for a moment, waiting for death to cath up with both of you, and it sure does so fast."
                     n "Retry, this could be it!"
                     $ persistent_fleeingDeaths_counter_knowledge += 1
                elif persistent_fleeingDeaths_counter_knowledge == 6:
@@ -1745,7 +1797,8 @@ label explanation_noTimeToExplain:
                     $ persistent_fleeingDeaths_counter_knowledge += 1
                elif persistent_fleeingDeaths_counter_knowledge == 7:
                     n "As you and Lilith take of into space you can see the sun absorbing the earth, you know that that should've happened like a million or so years later but it happened now. These deaths are really getting out of hand aren't they?"
-                    n "Suddenly you are hit by a speeding ufo, yes, they also have drunk drivers in space, deal with it." #TODO: Make this line a lot less passive agressive.
+                    n "Suddenly you are hit by a speeding ufo. Your ship analyses the situation and informs you that the driver was drunk."
+                    n "It seems that even in space there are drunk drivers."
                     n "Retry. Retry. Retry and retry once again."
                     $ persistent_fleeingDeaths_counter_knowledge += 1
                elif persistent_fleeingDeaths_counter_knowledge == 8:
@@ -1783,9 +1836,10 @@ label explanation_noTimeToExplain:
                                         l "The speed with which you said that..."
                                         l "I assume we've had conversations like this a few times?"
                                         n "You nod your head."
-                                        l "Where did we go over those many times you lived through [name]?" #TODO: Change this into her asking if you went to all of the three restaurants and then you can say that you also went to the kokiri woods and to the beach.
+                                        l "I see..."
+                                        l "So if we've done this multiple times, does that mean we went to all three restaurants?"
                                         menu:
-                                             "Let's see, we went to all three of the restaurants you suggested so the burger restaurant, the cafe and the Chinese restaurant. Then we went to the Kokiri woods and we also visited the beach.":
+                                             "Yup we did. We also went to the Kokiri woods and visited the beach.":
                                                   #TODO: Change this line to better fit the question that also will be changed.
                                                   l "..."
                                                   l "You know about the kokiri forest, the same one I'm thinking of right now?"
@@ -1873,7 +1927,8 @@ label ufo_crash:
      #TODO: Have it only be your soul and not body that survived the crash.
      #TODO: Reality is glitching so that you won't have to draw every picture.
      n "After awakening from the dark slumber your eyelids are still shut close as if they want to go back to sleep."
-     n "You feel like you need to go back to sleep. Nothing makes sense anymore. <br/>Probably the result of the entire universe literally collapsing in on you."
+     n "You feel like you need to go back to sleep. Nothing makes sense anymore."
+     n" Probably the result of the entire universe literally collapsing in on you."
      n "On you and on..."
      n "On Lilith"
      n "The thought of Lilith takes you out of this confused state of mind in an instant."

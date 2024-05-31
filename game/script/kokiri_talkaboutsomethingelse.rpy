@@ -33,19 +33,44 @@ label kokiri_talkAboutSomethingElse:
                 l "I believe that even though it would be impossible to predict the state of the future from the past it is possible that the future would always be the same if the circumstances are the same."
                 l "So in other words, if you play the game once again from the start and you make the same choices like you did right now, you would once again read this conversation with me since I don't remember it and all circumstances are the same."
                 l "Does that sound like it might be true [name]?"
-                #TODO: Spilt the below links up into smaller links that lead to other links, to save the player from extreme long textstrings.
                 menu:
-                    "Well, there is this one thing you did that might support that. You threw 2 dice in cafe for some sort of puzzle. You have done it [persistent.dice_counter] times now and each time the results are the exact same." if persistent.dice_counter >= 2:
-                        l "Ooh, that is very very interesting [name]!"
-                        #TODO: Insert some more geeking out. Also rewrite the line below a bit.
-                        l "I'm sorry if I'm geeking out, I guess this is just a welcome distraction..."
-                    "I don't know, it might be slightly true yes, but even when I do the exact same things some very small things can change, like things the narrator says, or things I think. Pantha Rhei and all that, isn't it? While everything around us might be the same, the fact that both me and the narrator keep our memories changes the way the machine works. Because the both of us are cogs inside of it aswell." if peristent.kokiri_heraclitus_knowledge:
-                        "Filler"
+                    "Well, there is this one thing you did that might support that. You threw 2 dice in cafe for some sort of puzzle." if persistent.dice_counter >= 2:
+                        menu:
+                            "You have done it [persistent.dice_counter] times now and each time the results are the exact same.":
+                                l "Ooh, that is very very interesting [name]!"
+                                l "That would mean there is such a thing as fate, isn't there?"
+                                l "Maybe not a fate that dictates what is going to happen next, but one that makes sure that whatever has happened will happen again under the same consequences."
+                                l "Would that give us free will? Where we are free to choose what happens the first time and after that we are always bound to that?"
+                                l "Or was there a time before the first time that keeps us from doing what we truly want?"
+                                l "Is there a difference if each time we make the same choice, believing it to be our free will?"
+                                l "I suppose ignorance is bliss, isn't it [name]? So maybe it's better that we don't answer that question."
+                                #TODO: Insert some more geeking out. Also rewrite the line below a bit.
+                                l "I'm sorry if I'm geeking out, I guess this is just a welcome distraction from what is to come..."
 
+                    "I don't know, it might be slightly true yes, but even when I do the exact same things some very small things can change." if peristent.kokiri_heraclitus_knowledge:
+                        menu:
+                            "Like things the narrator says, or things I think. Pantha Rhei and all that, isn't it?":
+                                menu:
+                                "While everything around us might be the same, the fact that both me and the narrator keep our memories changes the way the machine works.":
+                                    menu:
+                                        "Because the both of us are cogs inside of it aswell.":
+                                            l "Ah I see, I guess that is a fair point to make."
+                                            l "You could peace a machine back together under the exact same circumstances, cog by cog, piece by piece."
+                                            l "But you would atleast need an observator to notice that nothing changed"
+                                            l "But for that observator to notice that they would need to remember how the machine functioned previously."
+                                            l "Which means it might not be possible to ever witness the same exact thing twice." 
+                                            l "They might get very very close, so close that it's hard to tell the differences."
+                                            l "And yet, there is one striking difference, the observator themselves, they remember the previous state of the machine and thus the machine is not perfectly resembling the one before it, because that one was the first for the observator. "
+                                            l "It seems like it's the same thing for you, things seem to be very very similair to each attempt if you do the same things but there are some minor differences."
+                                            l "Even if there weren't, you'd still remember your past attempts, which means something did indeed change."
+                                            l "Pantha Rhei and all that, just like you said."
 
             "*Tell her about the mayo easteregg*":
                     #TODO: change the link text slightly and fill this in. (No quest precedent)
-                    "Filler"
+                    l "Interesting, so you managed to \"fight\" the narrator?"
+                    l "And you {b}won{/b}?"
+                    l "Even if it's about something so silly as eating nothing but mayo."
+                    l "It might be a lead for us to get through this whole ordeal."
                     $ kokiri_conversation_silent()
 
             "You actually showed me a poem of yours on one date we had in the burger restaurant. I really liked it, could you show me another one?" if not conversationtracker_morepoems and persistent.burger_poem_knowledge:
@@ -644,7 +669,8 @@ label askAboutLila_tellMeAbout_1:
                         li "Just like James."
                         l "I'd like that, maybe I will get to see him soon."
                         l "I will never forget both of you aswell."
-                        li "If you see James... can you tell him I still think about him all the time?" #TODO: Make this a flag you can learn and then later tell James' ghost about.
+                        li "If you see James... can you tell him I still think about him all the time?" 
+                        $ persistent.LilaStillThinksAboutJames_knowledge = True
                         l "I'm sure he knows mom... but I will tell him."
                         n "You motion to Lilith that she doesn't have much time left."
                         l "I'm going to hang up now mom, what comes next won't sound pretty..."

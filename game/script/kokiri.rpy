@@ -1096,16 +1096,11 @@ label kokiri_notTheSameYou:
                     l "Or are you just doing this to speak to me once again no matter what it costs?"
                     l "I'm not blaming you if you are, I just want you to tell me the truth."
                     menu:
-                        "No, it's nothing like that Lilith! I really believe that there is still something more than this.":
-                            #TODO: Fill in + (Mention beach if you saw it)
-                            l "And what makes you believe that?" #TODO: (If you mentioned the beach she will ask a different question.)
-                            l "Did you see something beyond this?"
-                            l "Then why are you coming back here?"
-                            l "Or maybe you didn't do it yourself but someone else found something beyond and you wanted to check for yourself?
-                            That also seems strange to me, isn't reading about what lies beyond this moment the same as seeing it for yourself here?
-                            Are both options not equally real to you?"
-                            #TODO: fill in a bit more? + segway "You want to answer all of her questions when suddenly:"
-                            jump kokiri_death_4_hill
+                        "No, it's nothing like that Lilith! I really believe that there is still something more than this." if not persistent.beachroute_visited_knowledge:
+                            jump kokiri_thereIsMore
+                       
+                        "No, it's nothing like that Lilith! I really believe that there is still something more than this. There is another location I unlocked after this forest, the beach. I'm hoping there are more things I will be able to unlock." if persistent.beachroute_visited_knowledge:
+                            jump kokiri_thereIsMore
 
                         "It's true, I tried pretty much everything I could but nothing worked. I just wanted to spend some extra time with you.":
                             l "We don't need to go through all of this, [name]. You know I'll always be with you as long as you can remember me, right?"
@@ -1183,6 +1178,32 @@ label kokiri_semiEnding:
     $ kokiri_finalTalk = True
     l "The rumbling of the earth begins to grow more severe."
     jump kokiri_death_4_hill 
+
+label kokiri_thereIsMore:
+    if persistent.beachroute_visited_knowledge == False:
+        l "And what makes you believe that?"
+        l "Did you see something beyond this?"
+        l "Then why are you coming back here?"
+        l "Or maybe you didn't do it yourself but someone else found something beyond and you wanted to check for yourself?"
+        l "That also seems strange to me, isn't reading about what lies beyond this moment the same as seeing it for yourself here?"
+        l "Are both options not equally real to you?"
+        #TODO: fill in a bit more? + segway "You want to answer all of her questions when suddenly:"
+    else:
+        l "I see, and what makes you come back here then?"
+        l "Do you think you will be able to unlock the next location here?"
+        menu:
+            "I do, I unlocked the beach here aswell so I am hoping there might be another unlock here.":
+                menu:
+                    "The fact that I have new lines to say about the beach here might be a good sign that the developer intended for me to come back here.":
+                        l "That very well might be the case [name]. Although, what if this is just a red herring? Or a sort of consolidation price?"
+                        l "I'm not sure I'm entirely fine with you going on this wild goose chase. Although I suppose this is currently our best lead to get out of this whole ordeal isn't it?"
+                        l "Sorry if I'm a bit sceptical, I guess I just am scared to die for no purpose at all."
+                        l "Although now that I think about it, that might just be most deaths, right?"
+                        l "..."
+                        l "You know, as long as you feel like your making progress, and you're still doing this for the right reasons you have my permission to continue with this [name]."
+                        l "That way, when I die I'll atleast have the idea that it serves a greater purpose."
+                        l "Just remember, even if I am sceptical in this whole thing, I'm not sceptical in you. I believe in you [name]."
+    jump kokiri_death_4_hill
 
 
 
