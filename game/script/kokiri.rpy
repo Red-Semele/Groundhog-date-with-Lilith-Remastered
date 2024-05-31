@@ -11,11 +11,14 @@ label kokiri_start:
     l "When you're done you drive to the Kokiri woods, hoping that things will be different there.
     You arrive in the woods."
     #TODO: Add the nightmare code in between here, base yourself of the burger nightmare code to do this.
-    if persistent.kokiri_meteoritedistraction_knowledge == True:
+    if persistent.kokiri_death_1 == True:
+        n "You could go sit on the hill and warn Lilith about the meteorite when it will show up."
+        n "Or you could sit somewhere else entirely to begin with."
+        n "Both choices sound like they could work, the choice is up to you."
         menu:
             "*Go sit on the hill where you normally sit.*":
                 jump kokiri_hillSit
-            "*Pick a different place to slightly prevent the distraction of the meteorite.*":
+            "*Pick a different place to prevent the meteorite hitting Lilith.*":
                 jump kokiri_altSit
     else:
         jump kokiri_hillSit

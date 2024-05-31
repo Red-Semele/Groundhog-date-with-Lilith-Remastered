@@ -146,7 +146,6 @@ if persistent.firstboot == None:
      #Kokiri flags
      default persistent.ron_knowledge = False
      default persistent.kokiri_teacher_knowledge = False
-     default persistent.kokiri_meteoritedistraction_knowledge = False
      default persistent.kokiri_call_death = False
      default persistent.restrainingorderfamily_violation_counter = 0
      default persistent.restrainingorderfamily_knowledge = False
@@ -235,6 +234,7 @@ $ kokiri_psychic_lie = False
 $ family_ask = 0
 $ poem_conversation = False
 $ teaseDeath = False
+$ angryLilith = False
 
 $ kokiri_poems_rated_once = False
 $ kokiri_poems_rateblock = False

@@ -51,19 +51,19 @@ label kokiri_talkAboutSomethingElse:
                         menu:
                             "Like things the narrator says, or things I think. Pantha Rhei and all that, isn't it?":
                                 menu:
-                                "While everything around us might be the same, the fact that both me and the narrator keep our memories changes the way the machine works.":
-                                    menu:
-                                        "Because the both of us are cogs inside of it aswell.":
-                                            l "Ah I see, I guess that is a fair point to make."
-                                            l "You could peace a machine back together under the exact same circumstances, cog by cog, piece by piece."
-                                            l "But you would atleast need an observator to notice that nothing changed"
-                                            l "But for that observator to notice that they would need to remember how the machine functioned previously."
-                                            l "Which means it might not be possible to ever witness the same exact thing twice." 
-                                            l "They might get very very close, so close that it's hard to tell the differences."
-                                            l "And yet, there is one striking difference, the observator themselves, they remember the previous state of the machine and thus the machine is not perfectly resembling the one before it, because that one was the first for the observator. "
-                                            l "It seems like it's the same thing for you, things seem to be very very similair to each attempt if you do the same things but there are some minor differences."
-                                            l "Even if there weren't, you'd still remember your past attempts, which means something did indeed change."
-                                            l "Pantha Rhei and all that, just like you said."
+                                    "While everything around us might be the same, the fact that both me and the narrator keep our memories changes the way the machine works.":
+                                        menu:
+                                            "Because the both of us are cogs inside of it aswell.":
+                                                l "Ah I see, I guess that is a fair point to make."
+                                                l "You could peace a machine back together under the exact same circumstances, cog by cog, piece by piece."
+                                                l "But you would atleast need an observator to notice that nothing changed"
+                                                l "But for that observator to notice that they would need to remember how the machine functioned previously."
+                                                l "Which means it might not be possible to ever witness the same exact thing twice." 
+                                                l "They might get very very close, so close that it's hard to tell the differences."
+                                                l "And yet, there is one striking difference, the observator themselves, they remember the previous state of the machine and thus the machine is not perfectly resembling the one before it, because that one was the first for the observator. "
+                                                l "It seems like it's the same thing for you, things seem to be very very similair to each attempt if you do the same things but there are some minor differences."
+                                                l "Even if there weren't, you'd still remember your past attempts, which means something did indeed change."
+                                                l "Pantha Rhei and all that, just like you said."
 
             "*Tell her about the mayo easteregg*":
                     #TODO: change the link text slightly and fill this in. (No quest precedent)

@@ -333,7 +333,9 @@ label adriel_unanswered_chat:
         #TODO: Add some varying text from here based on how many times you had to try.
         if rw_total == 0:
             l "But you seem like a natural with riddles. Have you ever learned about Greek and Roman myths before?"
-            #TODO: (Make the narrator say that you had in the previous loops at the very least.)
+            if persistent.chineseRiddlesSeenXTimesCounter >= 3:
+                n "I guess you did in your previous attempts here, didn't you?"
+                n "Does that mean this game needs an educational tag?"
         else:
             l "But you seem to like a challenge." 
             if persistent.lildeaths >= 9:
@@ -736,7 +738,6 @@ label chinese_phone_peek_numbers:
     n "You might just have enough time to learn one phone-number."
 
     $ peeked_phone_temp = True
-    #TODO: For some reason this menu throws some lint errors.
     menu:
         "Learn Abigail's phone number." if not persistent.abigail_call_knowledge:
             $ persistent.abigail_call_knowledge = True
@@ -747,11 +748,10 @@ label chinese_phone_peek_numbers:
         "Learn James' phone number." if not persistent.james_call_knowledge:
             $ persistent.james_call_knowledge = True
             jump chinese_phone_caught
-        "Learn Lisa's phone number." if not persistent.lisa_call_knowledge: 
-            #TODO: For some reason it does not think this flag is defined.
-            $ persistent.lisa_call_knowledge = True
+        "Learn Lisa's phone number." if not persistent.lila_call_knowledge: 
+            $ persistent.lila_call_knowledge = True
             jump chinese_phone_caught
-        "Put the phone back." if persistent.abigail_call_knowledge and persistent.david_call_knowledge and persistent.james_call_knowledge and persistent.lisa_call_knowledge:
+        "Put the phone back." if persistent.abigail_call_knowledge and persistent.david_call_knowledge and persistent.james_call_knowledge and persistent.lila_call_knowledge:
             jump chinese_phone_caught
 
 
