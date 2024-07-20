@@ -47,7 +47,7 @@ label kokiri_talkAboutSomethingElse:
                                 #TODO: Insert some more geeking out. Also rewrite the line below a bit.
                                 l "I'm sorry if I'm geeking out, I guess this is just a welcome distraction from what is to come..."
 
-                    "I don't know, it might be slightly true yes, but even when I do the exact same things some very small things can change." if peristent.kokiri_heraclitus_knowledge:
+                    "I don't know, it might be slightly true yes, but even when I do the exact same things some very small things can change." if persistent.kokiri_heraclitus_knowledge:
                         menu:
                             "Like things the narrator says, or things I think. Pantha Rhei and all that, isn't it?":
                                 menu:
@@ -71,9 +71,10 @@ label kokiri_talkAboutSomethingElse:
                     l "And you {b}won{/b}?"
                     l "Even if it's about something so silly as eating nothing but mayo."
                     l "It might be a lead for us to get through this whole ordeal."
+                    l "I wonder if there are any other ways to deal with the narrator."
                     $ kokiri_conversation_silent()
 
-            "You actually showed me a poem of yours on one date we had in the burger restaurant. I really liked it, could you show me another one?" if not conversationtracker_morepoems and persistent.burger_poem_knowledge:
+            "You actually showed me a poem of yours on one date we had in the burger restaurant. I really liked it, could you show me another one?" if not conversationtracker_poems and persistent.burger_poem_knowledge:
                     $ kokiri_conversation -= 1
                     jump kokiri_poems
 
@@ -148,7 +149,34 @@ label kokiri_talkAboutSomethingElse:
                                                         "Filler"
                                                         $ kokiri_conversation_silent()
                         "Ask about James":
-                            jump askAboutJames_tellMeAbout
+                            menu: 
+                                "Can you tell me more about James?":
+                                    jump askAboutJames_tellMeAbout
+                                #TODO: Fill in this link below and the third option for the ask about james thingy.
+                                "I know that you kept James' number in your phone after he..." if persistent.keptJamesNumber_knowledge:
+                                    #TODO: Make that link above also check if you know he died.
+                                    menu:
+                                        "Are you the one who keeps calling that number?" if persistent.lilithKeepsCalling_knowledge:
+                                            "Filler"
+                                "This will sound weird but I'm asking to understand better. In your phone you saved James' number, right? But when I called that number the person claimed to be someone else, and they had never heard of you before." if not persistent.keptJamesNumber_knowledge and persistent.lilithKeepsCalling_knowledge and persistent.jamesFakoutNumber_knowledge:
+                                    $ love_points = -2
+                                    $ love_meter_updater()
+                                    l "You did what?"
+                                    l "I guess I appreciate your honesty but what I don't appreciate is you trying to involve my family in all of this."
+                                    l "And don't try to fool me into thinking another version of me agreed to this, I think no version of me would ever do something like that."
+                                    n "Lilith takes a few deep breaths in and out."
+                                    l "Sorry if I got a bit too agressive there [name], I guess I'm just defensive about my family."
+                                    l "Just to be clear, don't ever involve them in any of this, alright?"
+                                    $ persistent.restrainingorderfamily_knowledge = True
+                                    n "You give her a quick nod, scared of invoking her fury once again."
+                                    l "Good, now that that's settled I guess I owe you an explanation."
+                                    l "It is true that that number doesn't belong to James anymore, but it used to one day."
+                                    l "I'm surprised you haven't heard this before during your previous dates with me but James, well, he... died a long time ago."
+                                    l "I know I should probably try to move on and delete the number but I just can't bring myself to do it."
+                                    l "It's as if another piece of him would die when I delete it."
+                                    l "Sometimes I indeed even call the number, just to pretend that I can hear him on the other side."
+                                    l "But each time I do that I feel so ashamed of what I'm doing that I just hang up the phone as fast as I can."
+
                         "Ask about Lila":
                             menu:
                                 "Can you tell me about Lila?":
@@ -221,7 +249,6 @@ label tellLilithAboutNar_storySteerer:
 label tellLilithAboutNar_noEndingsWhereYouLive:
     n "So you are just going to lie to her now?"
     #TODO: Add some more text here before you move the player back.
-    #When you move the player back, move them to "tellLilithAboutNar_endingsWhereYouLive"
     $ kokiri_conversation_silent()
 
 
@@ -616,6 +643,9 @@ label askAboutLila_tellMeAbout_1:
                 l "Oh no, everything went-"
                 l "Everything is going great!"
                 li "Oh... that's fantastic news!"
+                li "{size=*2}But doesn't that mean that your date can hear our call?{/size}"
+                l "Oh no, it's fine, [name] just went to the toilet, so we have some time."
+                n "Lilith gives you a wink, it's a lie but you're impressed how convincing she made it sound."
                 li "So, what did you want to ask me then sweetie?"
                 l "Well, I have been wondering something for quite a while."
                 l "You took up an inmense burden with taking care of us on your own right? "
@@ -638,8 +668,6 @@ label askAboutLila_tellMeAbout_1:
                 li "Of course not! The three of you made my life much more rich."
                 li "I loved going on our little trips together, the memories still make me feel warm and fuzzy if I try to recall them."
                 $ kokiri_call_potentialdeathcheck()
-                #Put that in this version of the game.
-                #TODO: Write a little bit extra conversation between these two green blocks
                 li "I'm very sorry to hear that you've been carying this sort of guilt with you for so long sweetie."
                 li "I wanted to prevent that exact thing from happening, that's why I tried to not show the stress I'd feel."
                 li "But you were always quite good at figuring people out, I guess it was silly of me to think that shielding you from my stress would work."
@@ -650,15 +678,22 @@ label askAboutLila_tellMeAbout_1:
                 l "Lilith gives you a questioning look, she seems unsure of what to say."
                 menu:
                     "*Nod your head*":
+                        n "She gives you a nod back, it might not be easy news to bring but her mom deserves to hear the truth."
                         l "This might sound weird but I  have very good reasons to believe I won't survive past today."
                         li "...What?"
                         li "And what are those good reasons?"
                         li "This is very hard to explain..."
                         li "Basically, I already have died before on this day."
                         li "We are in a sort of loop where I keep dying over and over."
-                        li "Oh no, that's horrible"
-                        li "Is there anything I can do to help?"
-                        l"You've already done enough, you helped me ease my mind a bit."
+                        li "Oh no, that's horrible."
+                        li "Not my daughter, not you..."
+                        li "I can't lose another child, I don't think I could deal with that."
+                        n "Lila seems to be in a panicked state."
+                        l "Mom, I don't have much time, please take some deep breaths and try to calm down a bit, I know it is way too much to take all at once, but can you do that for me?"
+                        li "I... Yes I can sweetie."
+                        n "She takes such deep breaths in and out that you can hear it through the phone."
+                        li "Is there anything I can do to help? Something that can fix all of this?"
+                        l "I'm afraid nothing can fix this... You've already done enough, you helped me ease my mind a bit."
                         l "Not to forget that you took care of me so wondefully all my life."
                         l "Thank you mom."
                         l "I love you."
@@ -675,11 +710,34 @@ label askAboutLila_tellMeAbout_1:
                         n "You motion to Lilith that she doesn't have much time left."
                         l "I'm going to hang up now mom, what comes next won't sound pretty..."
                         l "I love you."
-                        jump kokiri_death_3_death_dialogue
+                        
                     "*Shake your head*":
-                        #TODO: Make Lilith come up with a different reason as to why she called.
-                        #She tried to talk to her mom about this as a child but that she wouldn't listen and she now has to do it as an adult.
-                        "Filler."
+                        n "She nods, this is too much to burden her mom with."
+                        l "Well, I used to ask you about it when I was younger but you never really answered my question."
+                        l "And I guess my date with [name] inspired me to give you a call about it."
+                        li "Did I?... I'm so sorry I did Lilly, I guess even then I was trying to protect you in my own way."
+                        li "I hope you never were angry with me because of that."
+                        li "Seeing how even after all this time, you still remember that happening..."
+                        li "It must have affected you very deeply."
+                        l "It's alright mom, I'm fine."
+                        l "You said I was good at figuring out people, right?"
+                        l "Well, I always knew that you loved us, that you tried to do what you thought was right for us."
+                        l "So how could I ever be mad at that?"
+                        l "So how could I ever be mad at you?"
+                        li "Lilly... thank you. I ...I don't really know what to say."
+                        l "That's alright mom, you don't need to say anything."
+                        l "I understand."
+                        l "I'm also glad we could clear this up."
+                        li "I'm like an open book to my little girl."
+                        l "Mom, I'm far from little now."
+                        li "I guess you're right sweetie, if anything this call made that all the more clear."
+                        li "I'm proud of you, you know?"
+                        li "Now, I'll hang up, alright?"
+                        li "I don't want to interrupt your date too much after all."
+                        l "Good thinking mom, although you never interrupt."
+                        li "I know, I know. Love you sweetie, take care!"
+                        n "And with that Lilith's mom hung up the phone."
+                jump kokiri_death_3_death_dialogue
             else:
                 n "Lilith won't have enough time to call if she calls now."
                 n "I suggest talking about the same thing again as quickly as possible the next time."
@@ -697,7 +755,7 @@ label askAboutLila_tellMeAbout_2:
     l "Abby and I like to make fun of her for being too trusting."
     l "It's a beautiful quality of her to be entirely fair but sometimes she just takes it way too far."
     l "I remember this one time where she got a mail from someone claiming to be a rich relative from Canada."
-    l "They said that they were going to soon die and that mom was the nearest heir of his fortune."
+    l "They said that they were going to soon die and that mom was the nearest heir of his fortune." #TODO: Slightly rewrite this story as it's a bit weird Lila would be estatic by someone dying.
     l "Mom was ecstatic, after dad, I mean David, left us money has always been rather tight."
     l "So the prospect of being able to get more money to support us probably increased her trust in the situation."
     l "The \"rich relative from Canada\" said they just needed her to send a hundred euros so he could send her his fortune."

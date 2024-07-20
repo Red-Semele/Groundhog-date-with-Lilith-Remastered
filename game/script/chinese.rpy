@@ -296,11 +296,12 @@ label adriel_unanswered_chat:
                 jump chinese_riddle_hard
     label chinese_riddle_easy:
         if easy_rude == True:
-            #TODO: Fill in the rude path here.
+            n "Lilith seems to be very saddened by your remark."
+            n "She just looks at the table for a second and then speaks again."
             l "Oh I see..."
             l "I was fearing that I might had asked you some impossible questions."
             l "So atleast that wasn't the case."
-            l "{size=*0.5}But you didn't have to act so high and mighty [name].{/size}"
+            l "{size=*0.5}But you didn't have to act so high and mighty about it [name]...{/size}"
             $ love_points = -2
             $ love_meter_updater()
         else:
@@ -345,7 +346,7 @@ label adriel_unanswered_chat:
         jump chinese_riddle_railroad
 
 label chinese_riddle_railroad:
-    #TODO: Make this dialogue vary based on the amount of love points she has in her meter. (That way if you inslut her she will be a lot less sweet, and the situation will be very awkward.)
+    #TODO: Make this dialogue vary based on the amount of love points she has in her meter. (That way if you insult her she will be a lot less sweet, and the situation will be very awkward.)
     l "You know, I thought it was kind of funny that you brought me here."
     l "Don't get me wrong, I really enjoy like it here but my sister, Abigail, adores this places."
     l "Since mom and me took her here for her twelfth birthday she insisted on coming again for five years in a row."
@@ -364,8 +365,8 @@ label chinese_riddle_railroad:
 
 
 label chinese_riddle_talk_abbyMemory:
-    if tracker == 2:
-        $ tracker2 = True
+    if persistent.tracker == 2:
+        $ persistent.tracker2 = True
     #The code above this works for an easteregg
     l "I think I have a story you'll find quite funny, just stop me when I'm talking too much alright?"
     l "Abigail was like five years old at the time of our story.
@@ -584,9 +585,9 @@ label chinese_phoneScene:
     n "As she enters the bathroom stall you see that she has forgotten her phone, it is still laying on the table."
     if persistent.lildeaths >= 7:
         if persistent.peeked_phone == True:
-            #TODO:Add some different text based on if you've reached a dead-end with the other numbers or not.
-            n "You've already done it once, you might aswell do it again, right?
-            Is that what you are thinking? That she won't remember any of this so that it doesn't matter?"
+            n "You've already done it before, you might aswell do it again, right?"
+            n "After all, this might help give you another lead on how to solve all of this."
+            n "Is that what you are thinking? That she won't remember any of this so that it doesn't matter?"
             n "Go on. I won't stop you, not as long as this remains my story."
         else:
             $ nopeek = True
@@ -632,29 +633,57 @@ label chinese_phone_peek:
                 menu:
                     "Uhm yeah, I'm totally fine. (Lie)":
                         n "Lilith squints her eyes slightly and looks at you with an almost soul-piercing look in her eyes."
-                        $ love_points -= 1
+                        $ love_points = -1
                         $ love_meter_updater()
                         l "Hmm, alright [name], if you say so."
                         n "You have to stop yourself from shaking in your seat, did she buy that lie? The alternative gives you so much fear that you try to convince yourself that she did."
                         n "Anyway, it's best to just move on now, you told the lie, you can always choose to not lie to her from now on, right?"
-                        #TODO: Jump the player to the right place now.
+                        jump chinese_phone_noPeek
 
 
                     "I'm just a bit nervous about this date to tell you the truth. I just don't want to mess this up and lose you. (Half-truth)":
-                        l "Oh [name], I had no idea you felt that way! That's completly okay, I'm glad you told me."
-                        #TODO: Make the below one be said if love is high enough.
-                        l "To be entirely honest with you aswell I feel the same way."
-                        l "This has been my first date in quite a while and I'm having a really good time."
-                        l "So it would be a shame if I somehow lost this."
-                        l "But right now we're both still here, right? So we should probably make the most out of it together."
-                        n "Lilith gives you a cute smile."
-                        #TODO: Cut to to right scene here.
+                        if love_meter >= 2:
+                            l "Oh [name], I had no idea you felt that way! That's completly okay, I'm glad you told me."
+                            l "To be entirely honest with you aswell I feel the same way."
+                            l "This has been my first date in quite a while and I'm having a really good time."
+                            l "So it would be a shame if I somehow lost this."
+                            l "But right now we're both still here, right? So we should probably make the most out of it together."
+                            n "Lilith gives you a cute smile."
+                            n "You feel guilty for lying to her, because even if it was a half-truth, that still means it's a half-lie."
+                            n "You try to ignore that feeling and just try to get the most of your remaining time with her."
+                            jump chinese_phone_noPeek
+                        else: 
+                            l "Oh, I see."
+                            l "{size=*0.5}That actually might explain some of your behaviour...{/size}"
+                            l "{size=*0.5}Although it's definetly no excuse.{/size}"
+                            l "Is that why you are acting quite \"tough\" [name]?"
+                            l "If I can give you a small piece of advice, I don't really like being treated like that."
+                            l "You seemed way nicer to me when we first talked about arranging this date. So I know there's someone nice underneath that mask you are wearing."
+                            l "Just allow yourself to relax a bit and enjoy your time with me here, alright?"
+                            l "You don't have to prove yourself to me. After all, I came here to go on a date with you, didn't I?"
+                            n "Lilith flashes you a cute smile, you can see some slight worry in her eyes."
+                            n "What affects you the most is that the worry does not seem to be for herself, it seems to be for you."
+                            menu:
+                                "I... I guess you're right. Sorry for that Lilith. I'm sorry if I hurt you by trying to act more tough.":
+                                    l "It's alright [name]! I won't pretend that you didn't hurt me at all, but apoligizing is a good first step."
+                                    l "I know it can sometimes be difficult dealing with insecurities, and sometimes they can manifest in ways that harm ourselves and other people."
+                                    l "Just know that if you feel a thought like that pop up again you can always try to talk to me about it, alright?"
+                                    l "I've been going through something similair a while ago and I find that talking it through really tends to help."
+                                    l "I won't pretend that that fixes it completely, I'm even still sometimes dealing with it."
+                                    l "But it helps me to control my own insecurity a little better."
+                                    menu:
+                                        "Thank you for being so patient with me. That means a lot.":
+                                            n "Lilith gives you a cute smile."
+                                            l "Hey, don't mention it [name]. I know I wouldn't be the same person I am now if a lot of people didn't have patience with me."
+                                            l "I'm just glad that I was able to get through to you."
+                                            jump chinese_phone_noPeek
                     "Okay, I'll be honest. I was going through your phone to attempt to learn more about you. But I have a good reason!":
                         menu: 
                             "I need to save you. You are repeatedly dying over and over in some sort of loop.":
                                 l "Nope, I'm not having any of this [name]. First you go through my phone, without my consent, and then you make up some crazy argument to justify your action?"
                                 l "Even if you think that thing about saving me is true, you have to see how going behind my back to do so is really not the way to do it, right?"
-                                #TODO: Make this trigger angryLilith and make her leave the chinese restaurant.
+                                $ angryLilith = True
+                                $ love_meter_updater(True)
 
             "*Try a code anyway.*":
                 jump chinese_phone_peek_code
@@ -671,24 +700,61 @@ label chinese_phone_peek:
                 n "Although, I suppose you were atleast engaged enough to keep playing and didn't give up..."
                 n "Forget I said anything."
                 n "Just promise me you'll try to look for the answers yourself first before looking stuff up, alright?"
+            if persistent.passWrongOnPurpose_narratorRant == True:
+                if persistent.passWrongOnPurpose_narratorRant_wrongTimesInARowCounter >= 5:
+                    n "... Wait, you entered the right password? I forgot how it felt to have that happen."
+                    n "I'm so happy I finally get to narrate something different."
+                    n "Let's just forget that torture ever happened at all and move on to with the story."
+                $ persistent.passWrongOnPurpose_narratorRant_wrongTimesInARowCounter = 0
+
             jump chinese_phone_peek_numbers
         else:
             n "Wrong password."
             if persistent.pass_knowledge == True:
                 #TODO: Add a line here where it just says: Again? each time you see this text again.
-                n "Wait, that can't be right."
-                n "You knew the password, right?"
-                n "I even told you what it was in case you would have forgotten it."
-                n "Did you just want to see the scene where you get caught once again?"
-                n "I guess you win, I can't afford to derail this story even more, not for something so minor."
-                n "I'll just jump forward to that scene and then we can all pretend nothing happened."
+                if persistent.passWrongOnPurpose_narratorRant == False:
+                    n "Wait, that can't be right."
+                    n "You knew the password, right?"
+                    n "I even told you what it was in case you would have forgotten it."
+                    n "Did you just want to see the scene where you get caught once again?"
+                    n "I guess you win, I can't afford to derail this story even more, not for something so minor."
+                    n "I'll just jump forward to that scene and then we can all pretend nothing happened."
+                else:
+                    
+                    n "Again?"
+                    n "Fine, as you wish."
+                    if persistent.passWrongOnPurpose_narratorRant_counter == 1:
+                        n "Just enter the right code next time, alright?"
+                    elif persistent.passWrongOnPurpose_narratorRant_counter == 2:
+                        n "You're really going to keep doing it aren't you?"
+                    elif persistent.passWrongOnPurpose_narratorRant_counter <= 5:
+                        n "Can you stop that please?"
+                        if not persistent.beachroute_visited_knowledge:
+                            n "You're not going to make any progress like this, can't you do something that will actually move the story further?"
+                        else: 
+                            n "I get that you're starved for more story but this can hardly be called story at this point, right?"
+                            n "You just get an extra dialogue line, two if you're lucky."
+                            n "Is that really worth all of this to you?"
+                    else:
+                        if persistent.passWrongOnPurpose_narratorRant_wrongTimesInARowCounter > 1:
+                            if persistent.passWrongOnPurpose_narratorRant_counter !== persistent.passWrongOnPurpose_narratorRant_wrongTimesInARowCounter:
+                                n "You've been doing this [persistent.passWrongOnPurpose_narratorRant_counter] times now, your current streak is [persistent.passWrongOnPurpose_narratorRant_wrongTimesInARowCounter]."
+                            else:
+                                n "Really?"
+                                n "You're just going to keep doing this?"
+                                n "You have a streak of [persistent.passWrongOnPurpose_narratorRant_wrongTimesInARowCounter] now, you didn't stop once since you started getting the answer wrong on purpose."
+                                n "At this point I'm wondering if this is just a personal attack against me or something."
+                            n "That's right, I'm keeping track."
+                            n "And still, no matter what you do, this will always end the same way."
+                            n "So why do you keep coming back?"
+                $ persistent.passWrongOnPurpose_narratorRant_counter += 1
+                $ persistent.passWrongOnPurpose_narratorRant_wrongTimesInARowCounter += 1 
                 jump chinese_phone_caught
             n "You try to input a few other codes to see if those work instead."
-            #TODO: Check if this works and write it out a bit better.
             $ phone_wrongPassword_graceSystem = renpy.random.randint(1,80)
             $ phone_wrongPassword_graceSystem += (persistent.retry_counter* 10)
             if phone_wrongPassword_graceSystem == 100:
-                n "You manage to somehow luck yourself into typing the correct password after a couple of tries."
+                n "Avoiding the previous wrong passwords you remember from your previous attempst you manage to somehow luck yourself into typing the correct password after a couple of tries."
                 n "It is 81155."
                 $ persistent.pass_knowledge = True
             else:
@@ -704,11 +770,18 @@ label chinese_phone_peek:
 label chinese_phone_caught:
     if peeked_phone_temp == True:
         $ persistent.peeked_phone = True
-        #TODO: Add some varying text the other times you take the phone.
-        n "You think you sucessfully memorised the phone-number, I guess only time will tell.
-        Because if you've already gone this far you will only go further, right?"
-        #TODO: Make the narrator mention this the first time you call aswell.
-        n " No need to answer that, it was rhetorical. What you need to do is to close that phone."
+        if persistent.playerCalledAbigail == False and persistent.playerCalledDavid == False and persistent.playerCalledJames == False and persistent.playerCalledLila == False:
+            n "You think you sucessfully memorised the phone-number, I guess only time will tell.
+            Because if you've already gone this far you will only go further, right?"
+            
+        else:
+            if persistent.restrainingorderfamily_knowledge == True:
+                n "You succesfully memorised the number of the next person you are going to involve into this whole mess, the exact thing Lilith asked you not to do."
+                n "How do you think that would make her feel if she knew?"
+            else:
+                n "You succesfully memorised the number of the next person you are going to involve into this already way too complicated situation."
+                n "Do you really think that that's a good idea?"
+    n "No need to answer that, it was rhetorical. What you need to do is to close that phone."
     n "Right at the moment when you close the phone and look back up you can see Lilith approaching."
     n "Another thing you can also see is the very angry expression on her face."
     n "As she walks up to the table she grabs her phone and puts it in her handbag"
@@ -716,7 +789,6 @@ label chinese_phone_caught:
     l "I'm leaving, you can pay for our meals or try and cancel them but I am sticking up for myself."
     l "Goodbye and do not ever contact me again."
     if persistent.chinese_phone_noretry == True:
-        #TODO: Make this text slightly different based on how many times you've went through her phone.
         n "And yet here you are once again, making the same mistake you've already made. And Lilith is none the wiser."
         n "Is that why you came back to do the same thing she told you she didn't want you to do? Would you have acted differently if she could remember every action you took?"
         n "Don't worry [name], this is just all a game, right? Your actions here don't mean anything at all, right?"
@@ -733,9 +805,14 @@ label chinese_phone_noPeek:
 label chinese_phone_peek_numbers:
 
     n "You see the family section of her phone numbers, four names are listed there."
-    #TODO: Add something here if she already told you she wouldn't want to involve her family in the kokiri_forest.
-    n "If anyone besides Lilith will have some handy information about her it's them."
-    n "You might just have enough time to learn one phone-number."
+    if persistent.restrainingorderfamily_knowledge == True:
+        n "You remember that Lilith told you to not involve her family."
+        n "She probably wouldn't appreciate this."
+        n "But then again, it could really help you out in the long-term."
+        $ restrainingorderfamily_violation_counter += 1
+    else:
+        n "If anyone besides Lilith will have some handy information about her it's them."
+        n "You might just have enough time to learn one phone-number."
 
     $ peeked_phone_temp = True
     menu:
@@ -752,6 +829,7 @@ label chinese_phone_peek_numbers:
             $ persistent.lila_call_knowledge = True
             jump chinese_phone_caught
         "Put the phone back." if persistent.abigail_call_knowledge and persistent.david_call_knowledge and persistent.james_call_knowledge and persistent.lila_call_knowledge:
+            $ restrainingorderfamily_violation_counter -= 1
             jump chinese_phone_caught
 
 
@@ -762,7 +840,7 @@ label chinese_riddle_decline:
     l "Maybe you'd like giving me some riddles instead?"
     menu: 
         "Sure, that sounds good!":
-            #TODO: Add one extra riddle. + Make the riddles push you back on track to the normal stuff eventually.
+            #TODO:  Make the riddles push you back on track to the normal stuff eventually.
             menu:
                 "What has four legs in the morning, two legs at noon and three legs in the evening?":
                     l "Ah that's a real classic! The answer is humans. The question originated from the myth of Orpheus if I'm not mistaken."
@@ -785,7 +863,7 @@ label chinese_riddle_decline:
                 "What has five teeth, twelve eyes, four arms and a thousand legs?":
                     l "..."
                     n "Lilith scrathes her head, deep in thought."
-                    l "I don't know [name], that's a really though one."
+                    l "I don't know [name], that's a really tough one."
                     l "What is the answer?"
                     menu:
                         "Well, the answer is that I don't know either.":
@@ -793,17 +871,53 @@ label chinese_riddle_decline:
                             l "You sure got me there [name]!"
                             l "Although, if you don't know the answer, and that is the answer, doesn't that mean that you know the answer?"
                             n "You are not entirely sure what she means."
-                            n "Apparently Lilith must have been able to read just that from your face as she immediately turns beet-red."
+                            n "Apparently Lilith must have been able to read just that from your face as she immediately turns beet-red and tenses up a bit."
                             l "I'm sorry, that was way too much for a first date wasn't it?"
-                            l "Sometimes I just can't help myself and just say stuff like that way too soon."
+                            l "I didn't mean to sound like a know-it-all."
                             l "Please just forget what I said, alright [name]?"
                             menu:
                                 #TODO: Fill in.
                                 "I don't mind at all Lilith, you just kind of threw me for a loop with what you just said. It does sound interesting though.":
-                                    "Filler"
+                                    n "Lilith lets out a sigh of relief as she relaxes a bit more once again."
+                                    l "I already was fearing the worst."
+                                    l "A lot of people have told me that I come off as info-dumping way too much, especially when I get to know someone at first."
+                                    l "It's just that I love to think about things a lot, especially if they fascinate me."
+                                    l "And I enjoy sharing those thoughts, it's just, most people don't seem to enjoy listening to them."
+                                    l "So thank you [name], now I know that I can release my full arsenal on you!"
+                                    n "Lilith let's out a mischevious little chuckle."
+                                    l "I'm only joking, I wouldn't want you to run away from me after all."
+                                    #TODO: Add this line if she ever left you/ran away: n "Usually when it comes to running away it's the opposite way, isn't it player?"
+                                    menu:
+                                        "Running away? From such good company? I would never forgive myself of that.":
+                                            n "And just like that she turns completely beetred once again."
+                                            l "{size=*0.5}Uhm...uhm... uhm...{/size}"
+                                            n "She covers her face for a short moment, takes a deep breath in and then continues."
+                                            l "My, you are quite a flatterer aren't you?"
+                                            l "But seriously, that means a lot to me, to hear that you consider me good company."
+                                            l "Normally I probably wouldn't tell you that, but I'm trying to become a bit more direct lately."
+                                            l "..."
+                                            #TODO: Show the below line only if her love is high enough.
+                                            l "You know, for what it is worth, I also really like your company [name]."
+                                            l "I'm having a really good time here with you so far."
                                 "Sure thing, if that's what you want. *Talk about something else.":
                                     "Filler"
-
-
-
+                                    #TODO: Give like a few very lightweight questions and answers here before she moves on to something else.
+                "A man is in a metal room without a door and with a barred window. How does he leave?":
+                    l "Hmm, that seems to be a tough one, let me think about it for a second [name]!"
+                    n "Lilith seems to happily be going through potential solutions."
+                    l "{size=*0.5}Maybe he needs to do something with the window?{/size}"
+                    l "{size=*0.5}But it's barred...{/size}"
+                    l "{size=*0.5}Then again, it must have to do something with the window, right?{/size}"
+                    l "{size=*0.5}After all, there is no door.{/size}"
+                    l "{size=*0.5}But then how did he get in?{/size}"
+                    l "{size=*0.5}Wait a second...{/size}"
+                    l "I think I got the answer!"
+                    n "She is practically bouncing on her seat as she is saying this."
+                    l "I think the answer is that there is no door but there is a doorframe!"
+                    l "So that means he just has to walk out through there."
+                    l "Did I get it right?"
+                    menu:
+                        "Yes you did, great job Lilith!":
+                            n "Lilith fist pumps the air."
+                            l "Yes! That was a very fun riddle [name], not what I was expecting but it forced me to think outside the box a little bit."
 return

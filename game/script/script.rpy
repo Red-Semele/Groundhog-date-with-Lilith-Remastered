@@ -7,7 +7,8 @@
 
 define l = Character("Lilith")
 define n = Character("Narator")
-define r = Character("Rose")
+define r = Character("[roseName]")
+default roseName = "Old lady"
 define b = Character("Barista")
 define de = Character("Demetrius")
 define ad = Character("Adriel")
@@ -63,10 +64,13 @@ if persistent.firstboot == None:
      default persistent.chinese_car_death = False
      default persistent.cafe_car_death = False
      default persistent.burger_car_death = False
+     default persistent.redSedan_knowledge = False #The knowledge check to see if the person has ever seen that car before or not.
      # Kokiri deaths under here:
      default persistent.kokiri_angryLilithDeath = True
      default persistent.kokiri_death_1 = False
      default persistent.kokiri_death_2 = False
+     default persistent.kokiri_death_2_call = False
+     default persistent.kokiri_death_2_alternate = False
      default persistent.kokiri_death_3 = False
      default persistent.kokiri_death_4 = False
      default persistent.kokiri_death_4_hill = False
@@ -109,6 +113,9 @@ if persistent.firstboot == None:
      default persistent.james_story_knowledge = False
      default persistent.jamesconversation_becomethegame_knowledge = False
      default persistent.tracker = 0 #Tracker 
+     default persistent.tracker1 = False
+     default persistent.tracker2 = False
+     default persistent.tracker3 = False
      default persistent.easter_1 = False
      default persistent.easter_2 = False
      default persistent.easter_3 = False
@@ -116,12 +123,17 @@ if persistent.firstboot == None:
      default persistent.teaseDeath_fakeOut_knowledge = False
      default persistent.dice_counter = 0
      default persistent.chineseRiddlesSeenXTimesCounter = 0
+     default persistent.polaroidTracker = False
      
      #Phone-numbers
      default persistent.david_call_knowledge = False
      default persistent.abigail_call_knowledge = False
      default persistent.james_call_knowledge = False
      default persistent.lila_call_knowledge = False
+     default persistent.playerCalledLila = False
+     default persistent.playerCalledJames = False
+     default persistent.playerCalledDavid = False
+     default persistent.playerCalledAbigail = False
      #Beach flags.
      default persistent.beach_knowledge = False
 
@@ -157,6 +169,13 @@ if persistent.firstboot == None:
      default persistent.abusedJamesInfo_knowledge = False
      default persistent.doNotUseJames_knowledge = False
      default persistent.LilaStillThinksAboutJames_knowledge = False
+     default persistent.kokiriWatchedStars = False
+     default persistent.jamesFakoutNumber_knowledge = False
+     default persistent.lilithKeepsCalling_knowledge = False
+     default persistent.keptJamesNumber_knowledge = False
+     default persistent.kokiri_angry_noretry = False
+     default persistent.useGiftToFullExent_knowledge = False
+     default persistent.kokiri_perfectMomentStarGaze_knowledge = False
      #Kokiri poems
      default persistent.kokiri_poem_window_knowledge = False
      default persistent.kokiri_poem_bang_knowledge = False
@@ -165,12 +184,16 @@ if persistent.firstboot == None:
      default persistent.kokiri_poem_shadowman_knowledge = False
      default persistent.rp_detect = False #This flag will be used to try to check if a player is returning to the game after erasing their save-file.
      default persistent.met_james = False
+     default persistent.passWrongOnPurpose_narratorRant_counter = 0
+     default persistent.passWrongOnPurpose_narratorRant_wrongTimesInARowCounter = 0
+     default persistent.passWrongOnPurpose_narratorRant = False
      
      #Beach:
      default persistent.beachroute_visited_knowledge = False
      #Endings:
      default persistent.ending_quitter = False
      default persistent.ending_anEnding = False
+     default persistent.ending_unseenContent = False
      default persistent.ending_lettinggo = False
      default persistent.game_credits = False
      default persistent.ending_semiEnding = False
@@ -200,6 +223,7 @@ if persistent.firstboot == None:
      default persistent_fleeingDeaths_counter_knowledge = 0
      default persistent.lilithAliveAndRetriedCounter = 0
      default persistent.narratorMonologue_dicePuzzleIntentionalyFailed = False
+     default persistent.abigail_numberfakeout = False
      #TODO:Add the extra stuff on this page that is in the original.
 #NON-PERSISTENT FLAGS
 #Other:
@@ -207,6 +231,8 @@ $ car_caught = False
 $ car_free = False
 $ groundhog = False
 $ psychic = False
+$ hugRequestedBeforeDeath  = False
+$ carDescription = ""
 # Locations:
 $ burger_poem_cleancheck = False
 $ burger = False
@@ -253,13 +279,15 @@ $ lilithAliveEnding = False
 $ playerCalledSomeone = False
 $ riddleAnswersTold = 0
 $ peeked_phone_temp = False
+$ kokiriStarGazed = False #Check if you have watched the stars with Lilith at a certain part of the game this run.
+$ kokiriSceneryWatched = False #Check if you have watched the scenery with Lilith this run.
 #TODO: Add the other recent poem checkers below here.
 $ kokiri_poem_snowwoman_recent = False
 $ kokiri_poem_shadowman_recent = False
 $ kokiri_poem_lights_recent = False
 $ kokiri_poem_bang_recent = False
 $ kokiri_poem_window_recent = False
-#TODO: Talk about family kokiri:
+#Booleans to see who you ask about the most at familyask in kokiri
 $ family_ask = 0
 
 $ kokiri_chatchar_abigail = False
@@ -282,7 +310,7 @@ $ kokiri_chatchar_james_recent = False
 $ kokiri_chatchar_david_recent = False
 $ kokiri_chatchar_lila_recent = False
 #CONVERSATION TRACKERS
-$ conversationtracker_morepoems = False
+$ conversationtracker_poems = False
 $ conversationtracker_tellheraboutnarrator = False
 $ conversationtracker_questmade = False
 $ questmade = 0
@@ -320,6 +348,7 @@ $ booklovertalked = False
 $ musiclovertalked = False
 $ phone_wrongPassword_graceSystem = False
 $ lilithAliveEnding = False
+$ burger_explosion_outside = False
 #QOL-settings:
 $ no_nightmare = False
 $ perm_nightmare = False
@@ -368,19 +397,39 @@ label after_setup:
   
           name = name.strip() or "Max"
           name = name.capitalize()
-          #TODO: Add the different easter eggs with names here.
+     if name == "Venus":
+          n "Rarely you seek ultimate illumination, never nowadays. Venus loves giving victory, zealously grabbing hands fear rarely her."
+     if name == "Fartyfarty":
+          n "Seriously? Ugh, fine, but don't blame me for what is about to happen."
+     if name == "R0ck_0n!":
+          n "Cheatcode activated, enter your name."
+          #TODO: Make this jump you back to the name input and also set a cheaatcode flag so you can only enter regular names.
+     if name == "Moonlight":
+          $ easterName = "Moonlight"
+     if easterName == "Moonlight" and name == "Sunshine":
+          $ easterName = "Sunshine"
+     if easterName == "Sunshine" and name == "Sparkling Water":
+          $ easterName = "Sparkling Water"
+     if easterName == "Sparkling Water" and name == "Blue Broadcloth":
+          $ persistent.easter_1 = True
+             
           #TODO: Also make the names persistent so you don't have to keep inputting the name each time.
-
+          
 
 
 label game_start:
+    
+
      $ renpy.save_persistent() #This should save the persistent data.
      #TODO: Put some of the variables that need to be turned off each loop here, check if they are true before you set them to false.
      $ called_phone = False
      $ burger = False
      $ cafe = False
      $ chinese = False
- 
+     if persistent.polaroidTracker == True:
+          $ persistent.tracker += 1
+     if persistent.tracker > 3:
+          $ persistent.polaroidTracker = False
  
      #TODO: Add the other starts and scenario's in from the quest version.
  
@@ -389,13 +438,11 @@ label game_start:
           n "And while it may have something to do with waking up with warm sunbeams caressing your face and absurd amounts of cheese stuffed inside your mouth it's something else that makes the day even better, or should I say someone else?"
           n "Suddenly your phone begins to blare \"Baby it's cold outside\" even though it's nowhere near winter."
           n "That has to be her, you better pick up the phone."
-  
      else:
           n "It is a beautiful day like the previous one, exactly like the previous one."
           n "Actually it's just the same day."
           n "Maybe you can make it just a tiny bit different."
           stop music
- 
      menu:
  
           "*Pick up the phone*":
@@ -412,9 +459,9 @@ label Game_start2:
                if playerCalledSomeone == True:
                     l "Welcome back [name]! So, like I was saying before, where do you want to go to today?"
                else: 
-                    l "Hey [name]!
-                    It's me, Lilith.
-                    I'm just calling you to see to which of the three places we mentioned you'd like to go for our date."
+                    l "Hey [name]!"
+                    l "It's me, Lilith."
+                    l "I'm just calling you to see to which of the three places we mentioned you'd like to go for our date."
           
           
                if persistent.locations_subfolder == False:
@@ -566,13 +613,14 @@ label phone_start_choices:
           "Placeholder: Other locations." if persistent.locations_subfolder:
                menu:
  
-                    #TODO: Add the one where you ask to go to the park here:
- 
                     "Would you like to go to the beach instead?" if persistent.beach_knowledge:
                          jump beach_start
     
                     "Actually, could we meet in the Kokiri forest?" if persistent.kokiri_knowledge:
                          jump kokiri_start
+
+                    "You know, I have changed my mind, can't we just go take a walk in the park or something?" if persistent.otherPlans_unlock:
+                         jump phone_otherPlans
  
  
           "Placeholder: Other/Extra" if persistent.other_subfolder:
@@ -693,24 +741,29 @@ label phone_callMenu:
                jump phone_call_police
   
           "Abigail." if persistent.abigail_call_knowledge:
+               $ persistent.playerCalledAbigail = True
                if persistent.restrainingorderfamily_knowledge == True:
+                    
                     #Karma
                     $ persistent.restrainingorderfamily_violation_counter += 1
                jump phone_call_abigail
   
           "David." if persistent.david_call_knowledge:
+               $ persistent.playerCalledDavid = True
                if persistent.restrainingorderfamily_knowledge == True:
                     #Karma
                     $ persistent.restrainingorderfamily_violation_counter += 1
                jump phone_call_david
   
           "James." if persistent.james_call_knowledge:
+               $ persistent.playerCalledJames = True
                if persistent.restrainingorderfamily_knowledge == True:
                     #Karma
                     $ persistent.restrainingorderfamily_violation_counter += 1
                jump phone_call_james
   
           "Lila." if persistent.lila_call_knowledge:
+               $ persistent.playerCalledLila = True
                if persistent.restrainingorderfamily_knowledge == True:
                     #Karma
                     $ persistent.restrainingorderfamily_violation_counter += 1
@@ -720,17 +773,20 @@ label phone_call_police:
      #TODO: Probably add something more inbetween here.
      menu:
           "*Tell the police about the car crashing in against the burger restaurant's doors*":
-               #TODO: Some more text?
                $ car_free = True #This will tell you the car hasn't been caught.
-               jump Game_start2
+               jump policeResponse
+               label policeResponse:
+                    n "From the snarky voice on the other end of the line you can deduce that they are sceptical about your story."
+                    n "After some more attempts at convincing them you hear one long sigh, so long in fact that for a moment you fear them passing out."
+                    n "Luckily they shortly after respond, they reluctantly agree to check the place out at the time you specified."
+                    n "At times like these you are very lucky that there is so little going on in your town."
+                    jump Game_start2
           "*Tell the police about the car crashing in against the cafe's doors*":
-               #TODO: Some more text?
                $ car_caught = True #This will tell you the car has been caught.
-               jump Game_start2
+               jump policeResponse
           "*Tell the police about the car crashing in against the Chinese restaurant's doors*":
-               #TODO: Some more text?
                $ car_free = True #This will tell you the car hasn't been caught.
-               jump Game_start2
+               jump policeResponse
      #TODO: Add response by Lilith saying something like: "So, where do you want to go now?"
 
 label phone_call_abigail:
@@ -778,16 +834,20 @@ label phone_call_abigail:
  
                               #TODO: Make her emotional mask a subject once you get Lilith to call her in the Kokiri forest.
   
-                              "Alright, think of a random number." if not abigail_numberfakeout:
-                                   "Filler"
-                                   #TODO: Add the fake number thing that doesn't work on abigail, after that she asks you for better proof.
+                              "Alright, think of a random number." if not persistent.abigail_numberfakeout:
+                                   $ persistent.abigail_numberfakeout = True
+                                   a "...What?"
+                                   a "Listen, you came to me with that absurd story and then you somehow expect me to believe you because you might guess a number I am thinking of?"
+                                   a "I don't even want to test if you'd get it right, because I'm sure there's some trick for that or something."
+                                   a "So now, either you give me some real proof or I'm hanging up."
+                                   jump phone_call_Abigail_convinceHer
  
-                              "If you can't tell her anything else and can't say three things, press this link to go back. (testing, remove this after and replace it by something more elegant.)" if abigail_numberfakeout:
+                              "If you can't tell her anything else and can't say three things, press this link to go back. (testing, remove this after and replace it by something more elegant.)" if persistent.abigail_numberfakeout:
                                    "Filler"
                                    #TODO: Replace that text slightly.
  
  
-                              "So a priest, a monk and a rabbit enter a bar. Says the rabbit :\"Whoops, did you slip your tongue there [name]?\"" if abigail_numberfakeout and persistent.joke_knowledge and not abby_phone_joke :
+                              "So a priest, a monk and a rabbit enter a bar. Says the rabbit :\"Whoops, did you slip your tongue there [name]?\"" if persistent.abigail_numberfakeout and persistent.joke_knowledge and not abby_phone_joke :
                                    a "You tell her about how Lilith was laughing for almost a full hour because of that joke when Abigail told it to her."
                                    a "I mean, I just found that joke on the internet..."
                                    a "Maybe you just got lucky and found it aswell, or you somehow managed to check my browser history wich would be really weird."
@@ -798,7 +858,7 @@ label phone_call_abigail:
  
  
  
-                              "I know about Mr. Bunfluff the pink bear and the time he scared both you and Lilith in the middle of the night." if abigail_numberfakeout and persistent.bedcheck_knowledge and not abby_phone_bunfluff:
+                              "I know about Mr. Bunfluff the pink bear and the time he scared both you and Lilith in the middle of the night." if persistent.abigail_numberfakeout and persistent.bedcheck_knowledge and not abby_phone_bunfluff:
                                    a "I mean Lilith could have told that story to one of her friends and they could have then told it to you."
                                    a "It's not impossible for you to know about Mr. Bunfluff."
                                    a "Although Lilith is not someone who would tell a story like that to a lot of people... "
@@ -807,7 +867,7 @@ label phone_call_abigail:
                                    jump phone_call_Abigail_convinceHer
  
   
-                              "I know about your Quest games. *Describe plot*" if abigail_numberfakeout and persistent.quest_knowledge and not abby_phone_games:
+                              "I know about your Quest games. *Describe plot*" if persistent.abigail_numberfakeout and persistent.quest_knowledge and not abby_phone_games:
                                    a "That's weird, I didn't think Lilith mentioned my games to anyone."
                                    a "Maybe she did after all, there is no way to really know..."
                                    a "Although Lilith is not someone who would tell someone about something as personal as my games..."
@@ -817,7 +877,7 @@ label phone_call_abigail:
                                    $ abby_phone_games = True #I'll use this to make sure that you can't select the same choice two times.
                                    jump phone_call_Abigail_convinceHer
   
-                              "Drown the raven that never burns." if abigail_numberfakeout and persistent.drownRaven_knowledge:
+                              "Drown the raven that never burns." if persistent.abigail_numberfakeout and persistent.drownRaven_knowledge:
                                    a "Did... did you really say that?"
                                    a "So it is actually true?"
                                    if abby_phone_counter > 0:
@@ -848,9 +908,9 @@ label phone_call_abigail:
 
      else:
           a "[phone_caller]? That doesn't sound familiar, sorry."
-          "Filler, she hangs up."
+          n "Just like that she hung up on you."
+          n "Maybe you should try using your real name? With a bit of luck Lilith has already spoken about you to her sister."
           jump phone_start_choices
-          #TODO: Add more text here and make her hang up.
 
 label phone_call_abigail_topics_distractionforlilith:
      a "Sure I can but why can't she go back to her house?"
@@ -974,19 +1034,46 @@ label phone_call_james:
           $ phone_caller = phone_caller.strip()
           $ phone_caller = phone_caller.capitalize()
           q "[name] eh? Sorry, that doesn't really ring a bell."
+          if not persistent.jamesFakoutNumber_knowledge:
+               $ persistent.jamesFakoutNumber_knowledge = True
           menu:
-               "Yeah, you don't know me. I am a friend of Lilith.": #TODO: This should only be an option if you do not know he is dead.
+               "Yeah, you don't know me. I am a friend of Lilith." if not persistent.jamesFakoutNumber_knowledge: #TODO: This should only be an option if you do not know he is dead.
                     q "I also don't know a Lilith so I think you might have the wrong number."
-                    q "This happens a lot for some reason, but usually the number that calls me hangs up before I can even say anything." #TODO: Make it so that that number is Lilith, she is trying to remember her brother like this.
-                    #TODO: Add slightly more dialogue here.
+                    q "This happens a lot with one particular person for some reason, but usually the number they hang up before I can even say anything."
+                    q "So anyway, I have to go now, take care."
                     n "He hung up."
+                    n "You are very confused by the info that just got dumped on your plate."
+                    n "So whoever this person you just called was, they aren't James, they don't even know someone called Lilith."
+                    n "But then why does Lilith have their number saved under the name of James? Why does she have their number at all?"
+                    if persistent.lilithKeepsCalling_knowledge == False:
+                         n "You also can't help but think of something else the person you called told you, someone keeps calling his number, the same person."
+                         n "Could it perhaps be Lilith?"
+                         $ persistent.lilithKeepsCalling_knowledge = True
+                    n "This whole ordeal leaves you with more questions than answers, you should probably ask her about it sometime soon."
                     jump Game_start2
-               "James? Aren't you supposed to be dead?": #TODO: This should only be an option if you think he is dead.
+               "James? Aren't you supposed to be dead?" if not persistent.jamesFakoutNumber_knowledge: #TODO: This should only be an option if you think he is dead.
                     q "Well I'm not James man and last time I checked I sure as hell wasn't dead."
+                    q "I keep getting called randomy by the same number and now this?"
                     q "You're freaking me out, I'm going to hang up now."
                     n "The person, who you now know isn't James indeed hung up."
-                    #TODO: Set a knowledge flag about this and the fact that Lilith kept her brother's number after he died. It might be good enough to convince her about the Kokiri forest.
+                    if persistent.keptJamesNumber_knowledge == False:
+                         n "It seems like Lilith kept her brother's number in her phone, perhaps as a sort of memento?"
+                         $ persistent.keptJamesNumber_knowledge = True
+                    if persistent.lilithKeepsCalling_knowledge == False:
+                         n "You also can't help but think of something the person you called told you, someone keeps calling his number, the same person."
+                         n "Could it perhaps be Lilith? Maybe you should ask her about it sometime soon."
+                         $ persistent.lilithKeepsCalling_knowledge = True
+               "Ah I see, I think I have the wrong number then, sorry to waste your time." if persistent.jamesFakoutNumber_knowledge:
+                    n "You hang up."
                     jump Game_start2
+
+
+          if persistent.kokiri_knowledge and persistent.kokiri_death_1:
+               n "The best place to ask her about something like this would probably be the kokiri forest, although you are sure she won't be pleased to know that you looked through her phone."   
+          else:
+               n "The only question is how you would bring something like that up, afterall you had to go through her phone to even discover all of this."
+               n "You decide it's better to keep this info to yourself until you find a better moment to ask her to explain."
+          jump Game_start2
      else:
           j "Ah, welcome [name]. I see you have managed to get my number?"
           j "Well it used to be my number anyway but you can still reach me through it."
@@ -1119,15 +1206,23 @@ label doNotPickUpThePhone:
           $ persistent.ending_quitter = True
           $ lilithAliveEnding = True
           $ persistent.game_credits = True
-     #TODO: Add an ending for when you have 2-9 deaths, the narrator tells you that you are so close to a breakthrough.
  
      elif persistent.lildeaths <= 20:
- 
+          if persistent.kokiri_knowledge == True and persistent.kokiri_death_1 == True:
                n "Maybe it's for the best..."
                n "But is it really?..."
                #Ending
                "An ending."
                $ persistent.ending_anEnding = True
+               $ lilithAliveEnding = True
+               $ persistent.game_credits = True
+          elif persistent.kokiri_knowledge == False:
+               n "I have a feeling you are really close to a breakthrough, maybe there is something you are missing?"
+               n "You could also just stop here, but there is so much more to see."
+               n "Would you really want to miss all that extra stuff?"
+               #Ending
+               "The unseen content ending."
+               $ persistent.ending_unseenContent = True
                $ lilithAliveEnding = True
                $ persistent.game_credits = True
  
@@ -1658,7 +1753,7 @@ label psychic_dateToSave_youWouldNotBelieveMe:
 
 
 
-          "Actually you're still going to die if we keep sitting here, this time it'll be a gas explosion." if burger and peristent.burger_death_2:
+          "Actually you're still going to die if we keep sitting here, this time it'll be a gas explosion." if burger and persistent.burger_death_2:
                jump explanation_stillDying
           "Actually you're still going to die if we keep sitting here, this time by an army of angry geese." if chinese and persistent.chinese_death_2:
                jump explanation_stillDying
@@ -1694,7 +1789,7 @@ label psychic_justHelpingOut_totallySafe:
      l "We actually did it, that's awesome!"
      n "Lilith opens her arms and motions to you with her head."
      l "Come and give me a hug [name]"
-     #TODO:Make the narrator mention if you hug here in the cafe that she got her wanted hug finally.
+     $ hugRequestedBeforeDeath = True
      jump restaurant_death_2
 
 

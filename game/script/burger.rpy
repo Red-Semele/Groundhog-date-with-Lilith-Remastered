@@ -162,10 +162,10 @@ label burger_ordering:
         n "You were expecting having to order them from a screen most fastfood places tend to have but as you looked around you couldn't spot any. Instead Lilith walks to a counter.
         You decide to follow her."
     if persistent.rosename_knowledge == True:
+        $ roseName = "Rose"
         n "An old lady, who you remember is called Rose, smiles at the both of you."
     else:
         n "An old lady smiles at the both of you."
-    #TODO:Also find a way to make rose her name be "???" instead of Rose if you do not yet know her name.
     r "Hey Lilith, glad to see you here once more!"
     r "I'm almost surprised to see you here, it's been quite a while hasn't it?"
     if persistent.rosename_knowledge == True:
@@ -206,7 +206,7 @@ label burger_ordering:
             jump burger_brother_question
 
         "Are you alright Lilith? You don't need to share this story if it hurts you too much.":
-            $ love_points += 1
+            $ love_points = 1
             $ love_meter_updater()
             l "Honestly I'm not sure if I'll ever be fully alright because of what happened."
             l "And I think telling that story will always hurt."
@@ -330,7 +330,8 @@ label burger_living_showWriting:
             jump burger_living_showWriting_poem
 
 label burger_living_showWriting_poem:
-    #TODO:Add the tracker code on this page, it's on the clean fingers quest page.
+    if persistent.tracker == 1:
+        $ persistent.tracker1 = True
     if burger_poem_cleancheck == True:
         n "Lilith seems thankful that you cleaned your fingers.
         You take the notebook out of her hand and begin to read.
@@ -518,8 +519,18 @@ label burger_alt_askHerAQuestion_musicLover:
     l "It's very hard to keep adding to something like an album with song after song and still make it as special as the first one someone has heard."
     l "After a while it might seem like some artists are just going through the motions of pumping out song after song that they know will do great, but that they aren't happy with."
     l "And their fans will be going through the motions of listening to each and every single song to relive that sense of wonder they had at first, but it is never going to be the same."
-    #TODO: Add some choices about what she said here, before she asks you what your favourite band is.
-    l "What are your favourite bands and genres of music? "
+    menu: 
+        "What do you think is the best way to restore that feeling of wonder?":
+            l "Honestly? I think it would be to break the loop. To just try something else."
+            l "It could be as simple as listening to a cover of the song that got stale but in a different style."
+            l "Or you might need to be more drastic and find another band with different songs."
+            l "I think as long as you can enjoy yourself once again, that you're not just going through the motions of pretending, then you are on the right track."
+            l "After all, there is no shame in falling out of love with a certain band or number, as long as you don't get something out of them anymore, why should you listen to them?"
+        "I'll definetly have to check some of those bands out one day, thank you for the tip Lilith!":
+            l "You're totally welcome [name], I always love recommending music to people, I like to think music has a really strong impact."
+            l "After all, it can make you feel all kinds of emotions, calm you down, energise you, even relief pain slightly."
+            l "Isn't that wonderful?"
+    l "But anyway, what are your favourite bands and genres of music [name]? "
     menu:
         "My favourite band is-":
             jump restaurant_death_2

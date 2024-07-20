@@ -108,11 +108,13 @@ label restaurant_deaths:
             play music game_over
             if burger == True:
                 $ persistent.burger_death_2 = True
-                n "Suddenly a inmense sensation of pain overwhelms you, the only thing you can see is a glimpse of pure white and an eternity of black."
+                if not burger_explosion_outside == True:
+                    n "Suddenly a inmense sensation of pain overwhelms you, the only thing you can see is a glimpse of pure white and an eternity of black."
                 n "When you awaken you find yourself surrounded by doctors, they tell you that with the force of sheer luck the stray bullet that would've hit Lilith managed to cause a gas leak."
                 n "The gas explosion that followed was quite severe, you were in a coma and had to have your wounds cleaned with some surgical procedures."
                 n "After a week you got out of your coma, Lilith however didn't have such luck."
                 n "The doctors tell you that she atleast went out pretty quickly, almost like dying in your sleep but with more explosions."
+                $ burger_explosion_outside = False
                 jump gameOver
 
             elif cafe == True:
@@ -127,10 +129,11 @@ label restaurant_deaths:
                     if lilithlike == True:
                         l "If I have to go now I atleast get some comfort out of the fact that you are here for me."
                         l "Goodbye [name], thank you for everything."
-                        jump gameOver
+                        
                     else:
                         n "And so the both of you wait, in eachothers arms, for certain death. And it comes as expected."
-                        jump gameOver
+                    
+                
                 else:
                     $ persistent.cafe_death_2 = True
                     n "You try to open the main exit of the restaurant but it doesn't seem to be giving in, almost as if something is blocking it."
@@ -140,7 +143,9 @@ label restaurant_deaths:
                     n "You give Lilith a firm hug and tell her that there's nothing else you two can do except for waiting."
                     n "And so the both of you wait, in eachothers arms, for certain death.
                     And it surely came."
-                    jump gameOver
+                if hugRequestedBeforeDeath == True:
+                    n "it seems Lilith got the hug she asked for afterall, just not in the way she thought she would."
+                jump gameOver
 
             elif chinese == True:
                 n "Suddenly you hear the faint sound of quacking."
@@ -177,72 +182,75 @@ label restaurant_deaths:
                 n "I guess we will see very soon wheter or not it is possible for you to do that, right player?"
         
         play music game_over
+        if burger == True:
+            $ resname = "burger restaurant"
+            $ resname2 = "burger"
+            $ currentcar = "persistent." + resname2 + "_car_death"
+        elif cafe == True:
+            $ resname = "cafe"
+            $ resname2 = "cafe"
+        elif chinese == True:
+            $ resname = "chinese restaurant"
+            $ resname2 = "chinese"
         if car_caught == True:
-            "Filler for now..."
-            #TODO: Fill in.
-        else:
             if burger == True:
-                $ resname = "burger restaurant"
-                $ resname2 = "burger"
-                $ currentcar = "persistent." + resname2 + "_car_death"
+                n "Lilith leaves the burger restaurant, you rush after her in an effort to calm her down.
+                This time there is no red Sedan in sight, it seems as if the cops handled it well."
+                n "However, just as you're processing that your mind wanders to the gas explosion that always appears arround this time."
+                n "It was probably not a good idea to come here."
+                n "That is your last thought as you feel everything fade to black after you hear the explosion."
+                $ burger_explosion_outside = True
+                jump restaurant_death_2
+
             elif cafe == True:
-                $ resname = "cafe"
-                $ resname2 = "cafe"
+                n "Lilith leaves the cafe restaurant, you rush after her in an effort to calm her down. "
+                n "When you set one foot outside of the doorframe the red Sedan that always thwarts your plans drives head first into the both of you."
+                n "Luckily you managed to get flung to the side somehow. Lilith however was not so lucky."
+                n "She died on impact when the speeding car hit her."
+                n "Atleast the police showed up due to your call and locked the drunkard up."
+                n "If only they managed to come a tiny bit earlier.
+                It was probably not the best idea to go here with Lilith when the car is still on the loose."
+                jump gameOver
+
+
             elif chinese == True:
-                $ resname = "chinese restaurant"
-                $ resname2 = "chinese"
-            if car_caught == True:
-                if burger == True:
-                    n "Lilith leaves the burger restaurant, you rush after her in an effort to calm her down.
-                    This time there is no red Sedan in sight, it seems as if the cops handled it well."
-                    n "However, just as you're processing that your mind wanders to the gas explosion that always appears arround this time." #TODO: (Different dialogue if they have never seen the gas-explosion) Is that even a possibility?
-                    n "It was probably not a good idea to come here."
-                    n "That is your last thought as you feel everything fade to black after you hear the expolosion."
-                    #TODO: Should this move the player to the gasexplosion death with some minor changes? Probably yeah!
-                    jump gameOver
-
-                elif cafe == True:
-                    n "Lilith leaves the cafe restaurant, you rush after her in an effort to calm her down. "
-                    n "When you set one foot outside of the doorframe a red Sedan drives head first into the both of you." #TODO: You know this red sedan, change the line to reflect that.
-                    n "Luckily you managed to get flung to the side somehow. Lilith however was not so lucky."
-                    n "She died on impact when the speeding car hit her."
-                    n "Atleast the police showed up due to your call and locked the drunkard up."
-                    n "If only they managed to come a tiny bit earlier.
-                    It was probably not the best idea to go here with Lilith when the car is still on the loose."
-                    jump gameOver
+                n "Lilith leaves the chinese restaurant, you rush after her in an effort to calm her down."
+                if persistent.chinese_car_death == True:
+                    "This time there is no red Sedan in sight, it seems as if the cops handled it well."
+                if angryLilith == True:
+                    l "Leave me alone [name]! I don't want to see you ever again!"
+                else:
+                    l "Why are you following me [name]? I want to be alone." 
+                n "And with that Lilith leaves, you never saw her again. Not this time anyway. Atleast she didn't seem to get killed by anything on her way back home since you still heard people talk about her from time to time."
+                $ lilithAliveEnding = True
+                $ persistent.lildeaths -= 1
+                if angryLilith == True:
+                    n "You probably shouldn't have angered her so much."
+                else:
+                    n "You should probably get her to trust you somehow." #TODO: Make this line more properly showcase what went wrong, were you silent to her, did you anger her etc.
+                jump gameOver
 
 
-                elif chinese == True:
-                    n "Lilith leaves the chinese restaurant, you rush after her in an effort to calm her down.
-                    This time there is no red Sedan in sight, it seems as if the cops handled it well." #TODO: Only make that line about the red sedan show up if you've seen her get hit by it here.
-                    if angryLilith == True:
-                        l "Leave me alone [name]! I don't want to see you ever again!"
-                    else:
-                        l "Why are you following me [name]? I want to be alone." 
-                    n "And with that Lilith leaves, you never saw her again. Not this time anyway. Atleast she didn't seem to get killed by anything on her way back home since you still heard people talk about her from time to time."
-                    $ lilithAliveEnding = True
-                    $ persistent.lildeaths -= 1
-                    if angryLilith == True:
-                        n "You probably shouldn't have angered her so much."
-                    else:
-                        n "You should probably get her to trust you somehow." #TODO: Make this line more properly showcase what went wrong, were you silent to her, did you anger her etc.
-                    jump gameOver
 
-
+        else:
+            if currentcar == True:
+                n "Lilith leaves the [resname], you can not bare seeing what happens next so you decide to stay inside.
+                Even from inside you can still hear the car crash into her."
+                #TODO:Account for the notangry flag in the original here:
 
             else:
-                if currentcar == True:
-                    n "Lilith leaves the [resname], you can not bare seeing what happens next so you decide to stay inside.
-                    Even from inside you can still hear the car crash into her."
-                    #TODO:Account for the notangry flag in the original here:
-
+                $ currentcar = True
+                if persistent.redSedan_knowledge == True:
+                    $ carDescription = "the same red Sedan that you encountered before" #TODO: Check if this updates the description properly.
                 else:
-                    $ currentcar = True
-                    n "Lilith leaves the [resname], you rush after her in an effort to calm her down.
-                    When you set one foot outside of the doorframe a red Sedan drives head first into the both of you."
-                    n "Luckily you managed to get flung to the side somehow. Lilith however was not so lucky."
-                    n "She died on impact when the speeding car hit her."
-            jump gameOver
+                    $ carDescription = "a red Sedan"
+                n "Lilith leaves the [resname], you rush after her in an effort to calm her down.
+                When you set one foot outside of the doorframe [carDescription] drives head first into the both of you."
+                n "Luckily you managed to get flung to the side somehow. Lilith however was not so lucky."
+                n "She died on impact when the speeding car hit her."
+                if persistent.redSedan_knowledge == False:
+                    $ persistent.redSedan_knowledge = True
+        jump gameOver
 
 label kokiri_deaths:
     label angryLilith:
@@ -253,7 +261,7 @@ label kokiri_deaths:
             n "She wipes the crumbs on her clothes away with a frightening speed and angrily storms down the hill."
             l "Goodbye [name], we are done here."
             l "Do not come back for extra attempts if you have even the slightest slither of respect for me."
-            #TODO: "Check if the player has retryed after she says not to."
+            $ persistent.kokiri_angry_noretry = True
         elif minor_love_offence > 1:
             n "Lilith stands up from where she was lying mere moments ago. You can clearly see a disappointed look on her face."
             l "This might all be a game for you [name], but for me this is very real."
@@ -265,7 +273,6 @@ label kokiri_deaths:
             l "Let's just hope that when I meet you here once again during the next attempt you will have learnt your lesson."
             l "Goodbye [name]."
             n "Lilith turns away from you and walks down the hill cool and collected, it seems she has made up her mind about this."
-        #TODO: I feel as if there should be a line here because otherwise the flow is weird.
         n "She doesn't get far from the hill, maybe a metre or fifteen before she seemingly trips over a tree root."
         n "She does not get up."
         play music game_over
@@ -286,11 +293,9 @@ label kokiri_deaths:
         jump gameOver
 
     label kokiri_1:
-        #TODO: This code has recently been re-aranged, check if it still works properly.
         label kokiri_death_1:
             if met_check != "meteorite_warn":
                 if kokiri_call_death_1_check == False: #If she wasn"t calling her mom/sis during this death:
-                    #TODO: Make this death instead break the meteorite and make them land on places where she gets hit.
                     n "Lilith stops talking for a moment as she begins staring at the star-filled night, it seems like something has drawn her attention away from you."
                     #TODO: This is an alternate line for if she's not talking to you: n "Lilith diverts her look from your eyes from a moment and continues watching the star-filled night." thzt line will see a lot less use than the others but just to be safe use it.
                     n "A gasp of amazement escapes her mouth."
@@ -311,11 +316,21 @@ label kokiri_deaths:
                 if persistent.kokiri_death_1 == True:
                     n "You close your eyes in an effort not to be subjected to the absolutely horifying state Lilith is in right now."
                     n "It's a very futile effort as her corpse is still engraved in your eyelids from the previous time."
-                    #TODO: A bit more text here?
+                    n "That's right, her corpse. You already know that it is too late for her."
+                    n "And yet you still hope that you are proven wrong, that she might show any signs of life."
+                    n "But no matter how long you wait the only thing that you can hear is pure silence."
+                    if kokiri_call_death_1_check == True: #Check wheter or not she was calling someone at the time of her death.
+                        if kokiri_chatchar_abigail_called == True:
+                            n "You can vaguely sense Abigial's screaming but somehow it gets almost drown out by the silence of the forest."
+                        elif if kokiri_chatchar_lila_called == True:
+                            n "You can vaguely sense Lila's screaming but somehow it gets almost drown out by the silence of the forest."
+                    n "It is hard to imagine that just a few moments ago the forest felt so lively since it now feels so lonely and cold."
+                    n "You feel so lonely and cold."
+                    n "You lay down next to Lilith in a futile effort to feel less alone, to cope with the situation."
 
                 else:
                     $ persistent.kokiri_death_1 = True
-                    n "Her head is cracked open and a puddle begins to form around it. Everything around you turns silent."
+                    n "Her head is cracked open and a puddle of blood begins to form around it. Everything around you turns silent."
                     if kokiri_call_death_1_check == True: #Check wheter or not she was calling someone at the time of her death.
                         if kokiri_chatchar_abigail_called == True:
                             n "Even Abigail who is currently screaming her lungs out has become unbearingly silent."
@@ -340,9 +355,26 @@ label kokiri_deaths:
             #if kokiri_prevented == 1: This is code that would have made it so that it triggers based on 1-4 and the deaths.
                 n "As she moves to the other side of the blanket, to your left, you once again see the same meteorite that killed her last time. It breaks of in many peaces, one of them falling right where she was sitting just a moment ago."
                 n "Lilith gives you a startled look."
-                l "Oh wow, a meteorite? That was what was going to kill me now? Seems like I woke up with some major bad luck today."
+                l "Oh wow, a meteorite? That was what was going to kill me now?"
+                l "So you spoke the truth... I keep on dying over and over on this date?"
+                l "Seems like I woke up with some major bad luck today."
                 l "Although I suppose I am lucky enough to go through this with you, thank you for saving me once again [name]!"
-                #TODO: Create a better segway between these two parts.
+                n "Lilith pauses for a moment."
+                l "Alright, I have to put the levity aside for a moment and be honest with you."
+                l "I might look and sound calm right now but that's just because I kind of freeze in situations like this."
+                l "This..."
+                l "It's a lot to deal with right now."
+                l "I knew {b}something{/b} strange was going on when you told me about the kokiri forest."
+                l "That's why I came here I suppose, to figure out how you knew about this place."
+                l "But I guess even when you explained it to me, a part of me didn't believe you."
+                l "A part of me didn't want to believe you."
+                l "Even if deep down I knew you were telling the truth."
+                l "..."
+                l "I just need a moment to gather my thoughts [name], after that we can continue our conversation if you'd like."
+                n "You give a slight nod, the corners of Lilith's mouth subtly move up, you almost didn't quite catch it."
+                n "You're not quite sure how long the moment lasts, but after a while she shifts her postion and gives you a nod."
+                l "I think I am ready now, this is still a lot but I might be able to see it through now."
+                l "Thank you for staying here with me, it helped me calm down a little while I was thinking."
                 if car_caught == False:
                     jump kokiri_death_2
                 else:
@@ -350,13 +382,14 @@ label kokiri_deaths:
     label kokiri_2:
         label kokiri_death_2:
             play music game_over
-            $ persistent.kokiri_death_2 = True
             if kokiri_alternateplace == True:
                 if kokiri_call_death_2_check == True:
-                    n "While Lilith is engrossed in her call you notice the Red-Sedan that rode up the hill and hit Lilith riding up the hill once again."
-                #TODO: Add one line here for when she's not calling, maybe you see the car over her shoulder?
-                n "You chuckle to yourself, you just prevented two deaths with one choice." #TODO: Only make this line play if you haven't seen the death with the car in the alternate location.
-                n "That's not bad at all."
+                    n "While Lilith is engrossed in her call you notice the red Sedan that rode up the hill and hit Lilith riding up the hill once again."
+                else:
+                    n "As you and Lilith are talking you suddenly glimpse the red Sedan that hit Lilith on the hill driving up the hill once again."
+                if persistent.kokiri_death_2_alternate == False:
+                    n "You chuckle to yourself, you just prevented two deaths with one choice."
+                    n "That's not bad at all."
                 n "And yet, as the car drives fully up the hill you notice something."
                 n "The car turns around and comes towards Lilith and you with an even more frightening speed than it had on the hill."
                 n "The car appears to have gained momentum from the down-ward slope of the hill."
@@ -371,32 +404,71 @@ label kokiri_deaths:
                 n "Sadly it seems Lilith did not do the same, she instead froze."
                 n "And now she is forever frozen as she lays there on the floor, unmoving."
             if kokiri_call_death_2_check == True:
-                n "You call an ambulance with shaking hands as you hear screaming coming from her phone." #TODO: Narrate who this screaming is from etc.
+                if kokiri_chatchar_abigail_called == True:
+                    n "You call an ambulance with shaking hands as you hear Abigail's neverending screaming coming from Lilith's phone."
+                elif if kokiri_chatchar_lila_called == True:
+                    n "You call an ambulance with shaking hands as you hear Lila's neverending screaming coming from Lilith's phone."
             else:
                 n "You call an ambulance with shaking hands."
             n "Your suspicion was proven true by the paramedics, she was dead as soon as that car hit her."
             if car_free == True:
                 n "It appears calling the cops didn't accomplish much this time. Maybe you need to send them to another location?"
+            
+            if kokiri_alternateplace == True:
+                if kokiri_call_death_2_check == True:
+                    $ persistent.kokiri_death_2_call = True
+                else: 
+                    $ persistent.kokiri_death_2_alternate = True
+            else: 
+                $ persistent.kokiri_death_2 = True
             jump gameOver
 
         label kokiri_death_2_prevented:
             n "You tell Lilith about how the red Sedan would've hit her if you wouldn't have called the police." #TODO Make that an optional choice and continue working from here.
-            l "I see...
-            Well thank you for going through such efforts to help me!"
-            n "Lilith gives you a big smile, a look of gratitude is plastered across her face."
+            if kokiri_alternateplace == False:
+                if kokiriSceneryWatched == True:
+                    $ carDescription = "that car we just watched"
+                else:
+                    $ carDescriptiion = "a car"
+                l "I see... first a meteorite and now [carDescription]?... It really seems like the universe has it out for me today."
+                l "Well thank you for going through such efforts to help me!"
+                n "Lilith gives you a big smile, a look of gratitude is plastered across her face."
+            else:
+                l "A car?..."
+                if love_meter <= 2:
+                    l "It sounds unlikely to be honest."
+                    l "And yet you knew about this place, so I guess you might be right..."
+                    n "Lilith seems to be thinking about something, everything turns quiet for a moment."
+                    l "I suppose I owe you a thank you for helping me out today. So thank you [name]."
+                else:
+                    l "Wow, it really sounds as if death is following me wherever I go."
+                    l "Thank you for helping me survive this whole ordeal [name]!"
+
+
             menu:
                 "I tried everything Lilith, I even took you to space but it didn't work out, no matter wich path I choose you still end up dying." if persistent.reality_knowledge:
-                    jump kokiri_death_2_prevented_youDiedATon
+                    jump kokiri_death_2_prevented_triedEverything
 
                 "Am I really helping you though? One of the things I saw while playing the game is that if we didn't date anymore you would keep being alive and find happiness with a nice guy called Ron." if persistent.ron_knowledge:
                     jump kokiri_death_2_prevented_youWereHappyWithRon
 
-                "Am I really helping you though? It's true that I keep saving you but because of that you also keep dying. You've died [persistent.lildeaths] times now and I'm not sure how many more times I can see you die without breaking down entirely." if persistent.lildeaths > 9:
+                "Am I really helping you though? It's true that I keep saving you but because of that you also keep dying. You've died [persistent.lildeaths] times now and I'm not sure how many more times I can see you die without breaking down entirely." if persistent.lildeaths > 25:
                     jump kokiri_death_2_prevented_youDiedATon
 
                 "You are welcome Lilith, I'll try to get us out of this mess.":
                     l "And I just know that you will succeed, I got a good feeling about it."
-                    #TODO: Add some more dialogue.
+                    l "Do you know why I have that feeling?"
+                    l "Because despite everything going on right now, being bombarded with the knowledge that I keep dying and probably will do so again, I feel at ease."
+                    l "Well, as at ease as that knowledge allows me to be."
+                    l "But still, you being here helps me calm down just that extra bit I need to not start absolutely freaking out right now."
+                    l "You know, the idea that you are here to help protect me I suppose."
+                    l "It might sound silly, but it's nice to know that there is someone repeatedly coming back for me."
+                    l "I had to deal with both my father and my brother leaving, albeit in very different ways."
+                    l "I guess this feels refreshing?"
+                    l "Deep down I guess I always blamed myself for what happened, for them leaving."
+                    l "As if there some curse cast on me that would make all my loved ones leave me."
+                    l "If anything, I am thankful that I now have another piece of evidence to hold on to whenever I experience that thought again."
+                    l "So thank you very much for that [name], that means more to me than I could ever express fully."
                     jump kokiri_pictureChoice
 
                 "We're running out of time. Could we please continue talking?":  
@@ -436,21 +508,22 @@ label kokiri_death_2_prevented_triedEverything:
             n "But what if you didn't have to ignore it?"
             n "What if it wasn't there at all?"
             l "So... has it already happened? Are you now making our story?"
-            menu:
-                "No, we're still in the game.":
-                    n "Lilith looks at you with a puzzled look on her face."
-                    l "Oh... I thought you had already started. Why are you still playing this game instead of making your own story?"
-                    menu:
-                        "I just want to see what happens when I choose this path.":
-                            n "It appears you got your wish, this path only leads to death. " #TODO: (connect it to the appropriate kak death) + write that line after the death itself. And maybe add some more text from nar.
+            label kokiri_makingOwnStory:
+                menu:
+                    "No, we're still in the game.":
+                        n "Lilith looks at you with a puzzled look on her face."
+                        l "Oh... I thought you had already started. Why are you still playing this game instead of making your own story?"
+                        menu:
+                            "I just want to see what happens when I choose this path.":
+                                n "It appears you got your wish, this path only leads to death. " #TODO: (connect it to the appropriate kak death, which would probably be 4) + write that line after the death itself. And maybe add some more text from nar.
 
 
-                "Yes, I'm now in full control of it.":
-                    n "Lilith gives you a warm embrace and jumps up in the air after she stops hugging you."
-                    l "Perfect! So now we can just do whatever we want without having to fear being killed right?"
-                    menu:
-                        "Absolutely!":
-                            n "Just as you said that something kills Lilith since you lied to her and were actually still in the game that has a habbit of killing her of." #TODO: Link to the right death and also change this line.
+                    "Yes, I'm now in full control of it.":
+                        n "Lilith gives you a warm embrace and jumps up in the air after she stops hugging you."
+                        l "Perfect! So now we can just do whatever we want without having to fear being killed right?"
+                        menu:
+                            "Absolutely!":
+                                n "Just as you said that something kills Lilith since you lied to her and were actually still in the game that has a habbit of killing her of." #TODO: Link to the right death, which would probably be 4 and also change this line.
 
 label kokiri_death_2_prevented_youWereHappyWithRon:
 
@@ -468,12 +541,42 @@ label kokiri_death_2_prevented_youDiedATon:
     l "You are just trying to find a way out and I'm sure you'll find it. Your intentions are pure."
     l "I don't blame you for anything [name], please don't blame yourself either."
     l "Afterall, is it worth it to live with me if you can't live with yourself?"
-    #TODO: Add some more text?
-    #Probably make her react more heavily when she is told this.
-    jump kokiri_pictureChoice
-
+    n "Lilith seems to be lost in thought for a moment."
+    l "However, if you truly feel like I keep dying every time, maybe there is no way for us to be together and for me to be alive?"
+    l "Did you ever consider that option [name]?"
+    menu: 
+        "I did, the more this goes on the more I think you might be correct.":
+            l "I see, so you don't think there is a way for both us to be together and for me to be alive?"
+            l "Hearing through how much trouble you had to go only to have me die over and over again makes me think the same to be entirely honest with you."
+            l "Still, I wonder what the purpose of that is."
+            l "It feels a bit weird to set up a sort of challenge, in the form of the premise of this game, and to then just make the player unable to beat it."
+            l "Or maybe we're looking at it wrong, maybe the challenge is something else."
+            l "Like accepting what is going to happen to me?"
+            n "Lilith sighs."
+            l "Or maybe we're looking at it all wrong, maybe instead of accepting it we have to somehow push back even more against it happening."
+            l "But how would we change the course of this game?"
+            l "It's not like I can just yell \"You won, I didn't die!\" and make that come true, right?"
+            l "I guess it does have to come from the game itself before it feels true."
+            l "Hang on!"
+            n "Lilith gives you a very mischevious smile."
+            l "I might have an idea, the things the game directly tells you feel true, right?"
+            l "Like they are just a part of the narrative, you don't really question them."
+            l "What if you just, ignored them?"
+            l "Is there a difference between the game telling you I died or me and you saying I didn't?"
+            l "In any case, the game needs you as much as you need it, maybe even more."
+            l "It needs you to hear it's story and to interact with it, and you need it to tell it's story so you can interact with it."
+            l "But you might even be able to skip out on the game part entirely and just take all the pieces you like of this story, combine them and tell your own story, just the way you want to."
+            l "In your own story anything would be possible, we wouldn't need to folow any rules you don't like, doesn't that sound nice?"
+            l "Let's try to give it  a shot, alright?"
+            n "You give a quick, assured nod."
+            l "So, are we now outside of the game?"
+            l "Are you making your own story?"
+            jump kokiri_makingOwnStory
+        "I did, but I genuinely think there is a way, it's just that I'm begining to lose hope.":
+            "Filler"
+            #TODO: To give you some more hope Lilith shows you the picture of the beach.
+            jump kokiri_pictureChoice
 label kokiri_pictureChoice:
-    #TODO: Add a few different ways to be shown this picture, as it unlocks the beach.
     l "You know what? I want to show you something..."
     n "Lilith stands up from the blanket, some shards of the meteorite still laying on it and extends her hand to you."
     menu:
@@ -499,12 +602,23 @@ label kokiri_showpicture:
     l "I still have Abigail and my mother of course, both of them are just so important to me and together we are trying to slowly but surely make new happy days."
     l "But anyway, what I'm trying to say is that you have something special, a way to prevent me from dying and a whole boat-load of determination."
     l "So don't feel guilty about your gift but use it to the fullest extent."
-    #TODO: Make it so that you can tell Lilith she mentioned to use your gift to the fullest extent when she says not to involve her family.
+    $ persistent.useGiftToFullExent_knowledge = True
     menu:
         "I will Lilith, I promise.":
             n "Lilith gives you a lovely smile."
             l "Give it your best shot"
             jump kokiri_death_3
+        "This might sound weird, but when you say to the fullest extent, do you mean I can also contact your family to gain more potential leads?" if persistent.useGiftToFullExentLimit_knowledge:
+            n "Lilith grows quiet for a moment, she seems shocked by what you just asked."
+            l "Well... I'm not sure how you would even contact them unless I give you their number."
+            if persistent.peeked_phone == True:
+                n "That's not a problem for you, you have their number, but it wasn't exactly {b}given{/b} to you, was it?"
+            l "But even if you somehow were able to contact them I'd really prefer if you didn't."
+            l "This is already a lot to take in for me, I don't want to place that burden on anyone else."
+            n "Everything turns quiet for a moment once again."
+            l "So, do you promise to never contact my family even if you somehow were able to [name]?"
+            jump noContactFamilyPromise
+
 
     label treeOfLife:
         mt "What do you seek so deep into this code?"
@@ -561,7 +675,7 @@ label kokiri_showpicture:
         label kokiri_death_3_prevented:
             l "Oh I see, so it's safer on this hill?"
             menu:
-                "Yeah, atleast I think so." if not persistent.kokiri_death_4: #TODO: Maybe word this a bit differently.
+                "Yeah, it should probably be fine here." if not persistent.kokiri_death_4:
                     jump kokiri_death_4_noDeath
                 "I'm not sure to be honest, this is the farthest we've made it so far." if not persistent.kokiri_death_4:
                     jump kokiri_death_3_prevented_talk_farthestWeHaveGone
@@ -585,11 +699,11 @@ label kokiri_showpicture:
                 #The part below is not that part.
                 l "What is happening [name]?"
                 n "The fear in her voice is palpable."
-                "Suddenly you feel the hill shooting upwards. The increased force of the gravity is pinning you against the hill but not for long, you begin to roll off the hill and fall down in the middle of a lake close to where the hill used to sit. "
+                "Suddenly you feel the hill shooting upwards. The increased force of the gravity is pinning you against the hill but not for long, you begin to roll off the hill and fall down in the middle of a lake close to where it used to sit. "
                 p "Lilith, it's safe in here, jump down!"
                 l "I.... I can't... it's already too high..."
                 n "She's right, you can barely hear her words anymore from that height."
-                n "All you can do is float there, powerless, while you watch the hill and Lilith getting swallowed by the ink-black sky. As you do you notice that there are some sort of thrusters sticking out from the bottom of the hill." #TODO: other words for hill, find them.
+                n "All you can do is float there, powerless, while you watch the hill and Lilith getting swallowed by the ink-black sky. As you do you notice that there are some sort of thrusters sticking out from the bottom of it."
                 jump gameOver
 
         label kokiri_death_4_hill_dieTogether:
@@ -620,9 +734,9 @@ label kokiri_showpicture:
             play music game_over
             $ persistent.kokiri_death_4_noHill = True
             n "The earth begins shaking once again. The mechanical mound begins to ascend slowly, until it hovers above Lilith and you."
-            n "A green pillar of light shoots out from inbetween the four thrusters at the bottom of the hill."
+            n "A green pillar of light shoots out from inbetween the four thrusters at the bottom of the ufo."
             n "The beam envelops the both of you and before you can do anything Lilith gets rapidly sucked into an opening of the hill that closes the moment she's inside. It begins ascending again, only this time much faster."
-            n "All you can do is stand there, powerless, while you watch the hill and Lilith getting swallowed by the ink-black sky." #TODO: Use the word ufo here and there.)
+            n "All you can do is stand there, powerless, while you watch the ufo and Lilith getting swallowed by the ink-black sky."
             jump gameOver 
 
 
@@ -674,11 +788,14 @@ label other_deaths:
 
 
 label gameOver:
+    if kokiriStarGazed == True:
+        $ persistent.kokiriWatchedStars = True
     if teaseDeath == True:
         if persistent.teaseDeath_fakeOut_knowledge == False:
             n "It seems like I was wrong when I said you won. Maybe an other approach would work?"
             $ persistent.teaseDeath_fakeOut_knowledge = True
-    
+    if hugRequestedBeforeDeath == True:
+        $ hugRequestedBeforeDeath = False
     $ persistent.lildeaths += 1
     $ persistent.retry_counter += 1
     n "{size=*2.5}Game over{/size}"
@@ -686,6 +803,9 @@ label gameOver:
     play music sunrise
     menu :
         "Retry." if not lilithAliveEnding:
+            if  persistent.kokiri_angry_noretry == True or persistent.chinese_phone_noretry == True:
+                n "So you are going back even when she asked you not to?"
+                n "In that case I hope you at the very least don't make the same mistake you did last time."
             jump game_start
         "Retry?" if lilithAliveEnding:
             $ persistent.lilithAliveAndRetriedCounter += 1

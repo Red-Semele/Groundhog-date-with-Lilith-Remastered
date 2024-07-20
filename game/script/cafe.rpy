@@ -141,44 +141,52 @@ label cafe_dice_result:
             "Yes, that's right.":
                 if dicenumber2 == 3:
                     label cafe_dice_right:
-                    l "Wow, you managed to figure it out. Nicely done [name]!"
-                    $ persistent.dice_knowledge = True
-                    #TODO: Make a better segway for this.
-                    jump cafe_rateCafe
+                        l "Wow, you managed to figure it out. Nicely done [name]!"
+                        $ persistent.dice_knowledge = True
+                        l "For a moment I thought this puzzle might have been a little too hard but you handled it like a champ!"
+                        l "I'm actually very impressed."
+                        l "I love puzzles like these that really make you put your brain to good use so it's always fun to someone else who has the same mindset."
+                        l "But anyway, enough about me, let's move on to another question for you, what do you think about this place?"
+                        jump cafe_rateCafe
                 else:
                     label cafe_dice_wrong:
-                    l "Nope, that's not the answer."
-                    l "You gave it your best shot [name]!
-                    I might have made this a bit too hard.
+                        l "Nope, that's not the answer."
+                        l "You gave it your best shot [name]!
+                        I might have made this a bit too hard.
 
-                    Would you like to know the answer?"
-                    menu:
-                        "Yeah, please tell me what the answer was.":
-                            $ persistent.dice_knowledge = True
-                            l "The first dice was 6 and the second dice was 3."
-                            l "That was quite tricky wasn't it?"
-                            l "I hope it was fun though!"
-                            #TODO: Make a better segway.
-                            jump cafe_rateCafe
-                        "No, if I ever learn the answer I want it to be because I solved it.":
-                            l "That's respectable but I'm not sure when you'll get your next chance, this is not something I do all of the time."
-                            if persistent.dice_counter >= 2:
-                                n "Oh I think she doesn't have to worry about that at all..."
-                                n "Afterall, isn't this the [persistent.dice_counter] time you try this puzzle?"
-                                if persistent.dice_knowledge == True:
-                                    n "But what is peculiar to me is that you already know the correct answer, right?"
-                                    n "I even gave you a reminder about it."
-                                    n "And yet you got it wrong, why is that?"
-                                    n "Is it because you want to see these lines of new dialogue?"
-                                    if persistent.narratorMonologue_dicePuzzleIntentionalyFailed == False:
-                                        $ persistent.narratorMonologue_dicePuzzleIntentionalyFailed = True
-                                    else: 
-                                        n "No that can't be the case, after all there is no new dialogue now that you returned once again to do the same thing."
-                                        n "So there must be a different reason, right?"
-                                        n "Although I suppose, what I am saying now could be considered extra dialogue."
-                                        n "Alright that's it, I'm not giving you anymore extra dialogue here, and I'm not changing my dialogue either, it will always be just this."
-                            #TODO: Make this new segway a bit better because now it doesn't make much sense.
-                            jump cafe_rateCafe
+                        Would you like to know the answer?"
+                        menu:
+                            "Yeah, please tell me what the answer was.":
+                                $ persistent.dice_knowledge = True
+                                l "Sure thing [name], I won't keep you in suspense any longer."
+                                l "The first dice was 6 and the second dice was 3."
+                                l "That was quite tricky wasn't it?"
+                                l "I hope it was fun for you though!"
+                                n "Lilith gives you a cute smile."
+                                l "Oh, I almost forgot to ask you!"
+                                l "What do you think about this place?"
+                                jump cafe_rateCafe
+                            "No, if I ever learn the answer I want it to be because I solved it.":
+                                l "That's respectable but I'm not sure when you'll get your next chance, this is not something I do all of the time."
+                                if persistent.dice_counter >= 2:
+                                    n "Oh I think she doesn't have to worry about that at all..."
+                                    n "Afterall, isn't this the [persistent.dice_counter] time you try this puzzle?"
+                                    if persistent.dice_knowledge == True:
+                                        n "But what is peculiar to me is that you already know the correct answer, right?"
+                                        n "I even gave you a reminder about it."
+                                        n "And yet you got it wrong, why is that?"
+                                        n "Is it because you want to see these lines of new dialogue?"
+                                        if persistent.narratorMonologue_dicePuzzleIntentionalyFailed == False:
+                                            $ persistent.narratorMonologue_dicePuzzleIntentionalyFailed = True
+                                        else: 
+                                            n "No that can't be the case, after all there is no new dialogue now that you returned once again to do the same thing."
+                                            n "So there must be a different reason, right?"
+                                            n "Although I suppose, what I am saying now could be considered extra dialogue."
+                                            n "Alright that's it, I'm not giving you anymore extra dialogue here, and I'm not changing my dialogue either, it will always be just this."
+                                l "Anyway, I've been meaning to ask you something."
+                                l "What do you think about this place?"
+
+                                jump cafe_rateCafe
 
             "No, that's not right.":
                 l "Oh,so what number do you think the second dice is [name]?"
@@ -219,15 +227,18 @@ label cafe_dice_result:
 label cafe_dice_stop:
     l "Oh no worries [name]!
     I might have made this a bit too daunting so I completely understand."
-    #TODO: Make a slightly better segway for this.
+    l "We can just continue talking if you'd like to."
+    l "After all, we are hopefully not running out of topics already."
+    n "Lilith lets out a cute chuckle."
+    l "Don't stress it [name], it's alright if you can't think of anything for a moment."
+    l "I completely get it, to be honest I'm quite stressed about this date too."
+    l "Well... maybe stressed is not the right word. Moreso excited?"
+    l "But let's just see where things go and just enjoy ourselves, together."
+    l "Speaking about enjoying this, I've been meaning to ask you, what do you think of this place now that it's the first time you've seen it?"
     jump cafe_rateCafe
 
 
 label cafe_rateCafe:
-    #TODO:create some slightly varying dialogue based on from where you jumped to this. (That way the segway feels more natural)
-    n "Lilith looks around in pure awe, a bright smile forms on her face."
-    l "So, what do you think of this place now that you've seen it for the first time?"
-
     menu:
         "Actually it's not the first time I've seen this place." if persistent.cafe_death_1:
             jump cafe_notTheFirstTimeISaw
@@ -249,9 +260,12 @@ label cafe_notTheFirstTimeISaw:
             jump cafe_backOnTrack
 
 label cafe_backOnTrack:
-    n "Lilith lets out a polite chuckle."
-    l "Oh, my bad then!"
-    #TODO: ADD a better segway
+    n "Lilith lets out a polite and also confused chuckle."
+    l "Oh, my bad then."
+    n "For a moment there's a slightly awkward silence."
+    l "So uhm, anyway, would you like to hear a joke?"
+    n "You nod, you are thankfull for the icebreaker to get this conversation back on track."
+    l "Perfect, here it comes!"
     jump cafe_abigailJoke
 
 
