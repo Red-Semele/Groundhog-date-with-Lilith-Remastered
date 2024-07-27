@@ -140,10 +140,10 @@ label gdwl_functions:
                 if fam_obsession == "David":
                     renpy.say(l, "I don't want to have anything to do with him ever again or I atleast don't want to have him involved in any of this.")
                 elif fam_obsession == "Lila":
-                    renpy.say (l, "I don't want to involve her in any of this. She has looked out for me for my entire life [name]")
+                    renpy.say (l, "I don't want to involve her in any of this. She has looked out for me for my entire life [persistent.name]")
                     renpy.say (l, "She doesn't deserve to be dragged into this mess.")
                 elif fam_obsession == "Abigail":
-                    renpy.say(l, "I don't want to involve her [name]. She means too much to me and I would hate to make her go through the same situation we are currently in.")
+                    renpy.say(l, "I don't want to involve her [persistent.name]. She means too much to me and I would hate to make her go through the same situation we are currently in.")
                 else:
                     renpy.say(l, "It doesn't really impact them directly, I am the only one that keeps dying so I think it's better to leave them out of this mess.")
 
@@ -192,7 +192,7 @@ label gdwl_functions:
                     renpy.jump("kokiri_death_1")
 
             else:
-                renpy.say (n, "Lilith grows quiet for a moment. She seems to be waiting on you to say something.") #TODO: (change this line)
+                renpy.say (n, "Lilith grows quiet for a moment. She gives you an expecting look, as if she's waiting for you to say something.")
                 #TODO: Make this line also change depending on the meteorite and the car, check the kokiri_conversation value.If the kokiri chat value is 2 this can jump to the scne where she notices the meteorite.
                 renpy.jump("silentconversationsbackontrack")
 

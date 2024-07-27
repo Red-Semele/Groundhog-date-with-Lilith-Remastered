@@ -1054,8 +1054,8 @@ translate None strings:
     new "No Gamepads Available"
 
     # renpy/common/00gamepad.rpy:54
-    old "Calibrating [name] ([i]/[total])"
-    new "Calibrating [name] ([i]/[total])"
+    old "Calibrating [persistent.name] ([i]/[total])"
+    new "Calibrating [persistent.name] ([i]/[total])"
 
     # renpy/common/00gamepad.rpy:58
     old "Press or move the '[control!s]' [kind]."
@@ -1190,12 +1190,12 @@ translate None strings:
     new "Speech Bubble Editor (Shift+B)"
 
     # renpy/common/_developer/developer.rpym:97
-    old "[name] [attributes] (hidden)"
-    new "[name] [attributes] (hidden)"
+    old "[persistent.name] [attributes] (hidden)"
+    new "[persistent.name] [attributes] (hidden)"
 
     # renpy/common/_developer/developer.rpym:101
-    old "[name] [attributes]"
-    new "[name] [attributes]"
+    old "[persistent.name] [attributes]"
+    new "[persistent.name] [attributes]"
 
     # renpy/common/_developer/developer.rpym:151
     old "Nothing to inspect."

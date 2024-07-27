@@ -1,6 +1,5 @@
 ﻿# The script of the game goes in this file.
 #TODO: Add a morality counter you can use for a system where the player gets judged on their actions.
-#TODO: Make all mentions of the car reflect that you've already seen it if that's the case.
 
 # Declare characters used by this game. The color argument colorizes the
 # name of the character.
@@ -17,7 +16,7 @@ define d = Character("David")
 define j = Character("James")
 define li = Character("Lila")
 define q = Character("???")
-define p = Character("[name]")
+define p = Character("[persistent.name]")
 define dev = Character("Developer")
 define mt = Character("Mysterious Text")
 define ship = Character("Ship")
@@ -48,6 +47,7 @@ label start:
      
 
 if persistent.firstboot == None: 
+     
      #This line ensures all flags that don't need constant resetting get reset only the first time the player boots the game.
      default persistent.firstboot = True
      #Deaths:
@@ -98,7 +98,7 @@ if persistent.firstboot == None:
      default persistent.car_knowledge = False
      default persistent.bedcheck_knowledge = False
      default persistent.ron_knowledge = False
-     default persistent.quest_knowledge = False #TODO: Maybe change the Quest flag since it now has less use.
+     default persistent.quest_knowledge = False #If you read the about section this flag triggers.
      default persistent.reality_knowledge = False
      default persistent.bookpreference_knowledge = False #This will basically help you pick a book for Lilith she likes in the beach-bookstore.
      default persistent.booklover_knowledge = False
@@ -124,6 +124,7 @@ if persistent.firstboot == None:
      default persistent.dice_counter = 0
      default persistent.chineseRiddlesSeenXTimesCounter = 0
      default persistent.polaroidTracker = False
+     default persistent.runAwayLilith_counter = 0
      
      #Phone-numbers
      default persistent.david_call_knowledge = False
@@ -176,12 +177,17 @@ if persistent.firstboot == None:
      default persistent.kokiri_angry_noretry = False
      default persistent.useGiftToFullExent_knowledge = False
      default persistent.kokiri_perfectMomentStarGaze_knowledge = False
+     default persistent.kokiri_reachEndingForMe = False
+     default persistent.kokiri_reachEndingForUs = False
+     default persistent.kokiri_reachEndingForYou = False
      #Kokiri poems
      default persistent.kokiri_poem_window_knowledge = False
      default persistent.kokiri_poem_bang_knowledge = False
      default persistent.kokiri_poem_lights_knowledge = False
      default persistent.kokiri_poem_snowwoman_knowledge = False
      default persistent.kokiri_poem_shadowman_knowledge = False
+     default persistent.kokiri_allOldPoemsRead = False
+     default persistent.kokiri_allRecentPoemsRead = False
      default persistent.rp_detect = False #This flag will be used to try to check if a player is returning to the game after erasing their save-file.
      default persistent.met_james = False
      default persistent.passWrongOnPurpose_narratorRant_counter = 0
@@ -197,6 +203,7 @@ if persistent.firstboot == None:
      default persistent.ending_lettinggo = False
      default persistent.game_credits = False
      default persistent.ending_semiEnding = False
+     default persistent.ending_abigailDistraction = True
      #Phone_menu sortring related stuff:
      default persistent.amount_of_folder_links = 0 #This checks how many sub links I created in the phone menu to avoid clutter.
      default persistent.restaurant_subfolder = False
@@ -224,138 +231,136 @@ if persistent.firstboot == None:
      default persistent.lilithAliveAndRetriedCounter = 0
      default persistent.narratorMonologue_dicePuzzleIntentionalyFailed = False
      default persistent.abigail_numberfakeout = False
-     #TODO:Add the extra stuff on this page that is in the original.
 #NON-PERSISTENT FLAGS
-#Other:
-$ car_caught = False
-$ car_free = False
-$ groundhog = False
-$ psychic = False
-$ hugRequestedBeforeDeath  = False
-$ carDescription = ""
-# Locations:
-$ burger_poem_cleancheck = False
-$ burger = False
-$ burger_alt = False
-$ cafe = False
-$ kokiri = False
-$ beach = False
-$ brotherasked = 0
-$ dicenumber = 0
-$ dicenumber2 = 0
-$ cafedicecheat = False
-$ cafe_badLove_lowbar = False
-$ cafe_badLove_justafeeling = False
-$ chinese = False
-$ peking = False
-$ orange = False
-$ rw1 = 0
-$ rw2 = 0
-$ rw3 = 0
-$ rw_total = 0
-$ riddle_loop = False
-$ kokiri = False
-$ kokiri_groundhog_lie = False
-$ kokiri_psychic_lie = False
-$ family_ask = 0
-$ poem_conversation = False
-$ teaseDeath = False
-$ angryLilith = False
+label resetRegularFlags:
+     $ car_caught = False
+     $ car_free = False
+     $ groundhog = False
+     $ psychic = False
+     $ hugRequestedBeforeDeath  = False
+     $ carDescription = ""
+     $ changeableWord = ""
+     # Locations:
+     $ burger_poem_cleancheck = False
+     $ burger = False
+     $ burger_alt = False
+     $ cafe = False
+     $ kokiri = False
+     $ beach = False
+     $ brotherasked = 0
+     $ dicenumber = 0
+     $ dicenumber2 = 0
+     $ cafedicecheat = False
+     $ cafe_badLove_lowbar = False
+     $ cafe_badLove_justafeeling = False
+     $ chinese = False
+     $ peking = False
+     $ orange = False
+     $ rw1 = 0
+     $ rw2 = 0
+     $ rw3 = 0
+     $ rw_total = 0
+     $ riddle_loop = False
+     $ kokiri = False
+     $ kokiri_groundhog_lie = False
+     $ kokiri_psychic_lie = False
+     $ family_ask = 0
+     $ poem_conversation = False
+     $ teaseDeath = False
+     $ angryLilith = False
 
-$ kokiri_poems_rated_once = False
-$ kokiri_poems_rateblock = False
-$ kokiri_alternateplace = False
-$ kokiri_holdhand = False
-$ kokiri_scenery_headhurt = False
-$ kokiri_scenery_breakfrombreakingyourhead = False
-$ kokiri_scenery_gamegoal = False
-$ kokiri_meteorite_alert = False
-$ kokiri_meteorite_no_alert = False
-$ kokiri_finalTalk = False
-$ kokiri_call_death_2_check = False
-$ kokiri_call_death_1_check = False
-$ big_sis_mode = False
-$ lilithAliveEnding = False
-$ playerCalledSomeone = False
-$ riddleAnswersTold = 0
-$ peeked_phone_temp = False
-$ kokiriStarGazed = False #Check if you have watched the stars with Lilith at a certain part of the game this run.
-$ kokiriSceneryWatched = False #Check if you have watched the scenery with Lilith this run.
-#TODO: Add the other recent poem checkers below here.
-$ kokiri_poem_snowwoman_recent = False
-$ kokiri_poem_shadowman_recent = False
-$ kokiri_poem_lights_recent = False
-$ kokiri_poem_bang_recent = False
-$ kokiri_poem_window_recent = False
-#Booleans to see who you ask about the most at familyask in kokiri
-$ family_ask = 0
+     $ kokiri_poems_rated_once = False
+     $ kokiri_poems_rateblock = False
+     $ kokiri_alternateplace = False
+     $ kokiri_holdhand = False
+     $ kokiri_scenery_headhurt = False
+     $ kokiri_scenery_breakfrombreakingyourhead = False
+     $ kokiri_scenery_gamegoal = False
+     $ kokiri_meteorite_alert = False
+     $ kokiri_meteorite_no_alert = False
+     $ kokiri_finalTalk = False
+     $ kokiri_call_death_2_check = False
+     $ kokiri_call_death_1_check = False
+     $ big_sis_mode = False
+     $ lilithAliveEnding = False
+     $ playerCalledSomeone = False
+     $ riddleAnswersTold = 0
+     $ peeked_phone_temp = False
+     $ kokiriStarGazed = False #Check if you have watched the stars with Lilith at a certain part of the game this run.
+     $ kokiriSceneryWatched = False #Check if you have watched the scenery with Lilith this run.
+     $ kokiri_scenery_shutUpLackOfSelfEsteem
+     #TODO: Add the other recent poem checkers below here.
+     $ kokiri_poem_snowwoman_recent = False
+     $ kokiri_poem_shadowman_recent = False
+     $ kokiri_poem_lights_recent = False
+     $ kokiri_poem_bang_recent = False
+     $ kokiri_poem_window_recent = False
+     #Booleans to see who you ask about the most at familyask in kokiri
+     $ family_ask = 0
 
-$ kokiri_chatchar_abigail = False
-$ kokiri_chatchar_james = False
-$ kokiri_chatchar_lila = False
-$ kokiri_chatchar_david = False
-$ kokiri_call = False
-$ james_interest = False
-$ abigail_interest = False
-$ david_interest = False
-$ lila_interest = False
-$ james_obsession = False
-$ abigail_obsession = False
-$ david_obsession = False
-$ lila_obsession = False
-$ no_fam_obsession = False
-$ james_involved = False
-$ kokiri_chatchar_abigail_recent = False
-$ kokiri_chatchar_james_recent = False
-$ kokiri_chatchar_david_recent = False
-$ kokiri_chatchar_lila_recent = False
-#CONVERSATION TRACKERS
-$ conversationtracker_poems = False
-$ conversationtracker_tellheraboutnarrator = False
-$ conversationtracker_questmade = False
-$ questmade = 0
-$ conversationtracker_abigail = False
-$ conversationtracker_david = False
-$ conversationtracker_james = False
-$ conversationtracker_lila = False
-$ conversationtracker_blamedavid = False
-$ conversationtracker_poem_window = False
-$ conversationtracker_poem_snowwoman = False
-$ conversationtracker_poem_window = False
-$ conversationtracker_poem_shadowman = False
-$ conversationtracker_poem_lights = False
-$ conversationtracker_poem_bang = False
-
-#TODO: Put all conversationtracker flags here.
+     $ kokiri_chatchar_abigail = False
+     $ kokiri_chatchar_james = False
+     $ kokiri_chatchar_lila = False
+     $ kokiri_chatchar_david = False
+     $ kokiri_call = False
+     $ james_interest = False
+     $ abigail_interest = False
+     $ david_interest = False
+     $ lila_interest = False
+     $ james_obsession = False
+     $ abigail_obsession = False
+     $ david_obsession = False
+     $ lila_obsession = False
+     $ no_fam_obsession = False
+     $ james_involved = False
+     $ kokiri_chatchar_abigail_recent = False
+     $ kokiri_chatchar_james_recent = False
+     $ kokiri_chatchar_david_recent = False
+     $ kokiri_chatchar_lila_recent = False
+     #CONVERSATION TRACKERS
+     $ conversationtracker_poems = False
+     $ conversationtracker_tellheraboutnarrator = False
+     $ conversationtracker_questmade = False
+     $ questmade = 0
+     $ conversationtracker_abigail = False
+     $ conversationtracker_david = False
+     $ conversationtracker_james = False
+     $ conversationtracker_lila = False
+     $ conversationtracker_blamedavid = False
+     $ conversationtracker_poem_window = False
+     $ conversationtracker_poem_snowwoman = False
+     $ conversationtracker_poem_window = False
+     $ conversationtracker_poem_shadowman = False
+     $ conversationtracker_poem_lights = False
+     $ conversationtracker_poem_bang = False
 
 
-#Other flags
-$ NMdetect = False #TODO: Is the flag and the Mdetect one lowercase or not? Make them lowercase everywhere if not.
-$ Mdetect = False
-$ hard_rude = False
-$ easy_rude = False
-$ tracker = 0
-$ demetrius = False
-$ adriel = False
-$ currentcar = False
-$ love_meter = 3
-$ love_points = 0
-$ minor_love_offence = 0
-$ major_love_offence = 0
-$ minor_love_comfort = 0
-$ major_love_comfort = 0
-$ booklovertalked = False
-$ musiclovertalked = False
-$ phone_wrongPassword_graceSystem = False
-$ lilithAliveEnding = False
-$ burger_explosion_outside = False
-#QOL-settings:
-$ no_nightmare = False
-$ perm_nightmare = False
-$ other_phone = 0
 
-#FUNCTIONS:
-jump gdwl_functions
+     #Other flags
+     $ nmDetect = False
+     $ mDetect = False
+     $ hard_rude = False
+     $ easy_rude = False
+     $ tracker = 0
+     $ demetrius = False
+     $ adriel = False
+     $ currentcar = False
+     $ love_meter = 3
+     $ love_points = 0
+     $ booklovertalked = False
+     $ musiclovertalked = False
+     $ phone_wrongPassword_graceSystem = False
+     $ lilithAliveEnding = False
+     $ burger_explosion_outside = False
+     $ called_phone = False
+     #QOL-settings:
+     $ no_nightmare = False
+     $ perm_nightmare = False
+     $ other_phone = 0
+     #FUNCTIONS:
+     jump gdwl_functions
+
+
 
 
 
@@ -376,44 +381,43 @@ label after_setup:
      # These display lines of dialogue.
 
      #Add the page before this that sets all the extra flags and asks you for your name
-     #TODO: Make name be a persistent variable because now it crashes the game since it is not set yet.
      if persistent.fakeoutnar_tip == True:
-          dev "My excuses [name]. I didn't want to throw you out of the game, out of the story so abruptly."
+          dev "My excuses [persistent.name]. I didn't want to throw you out of the game, out of the story so abruptly."
           dev "I will admit it was quite an impulsive action..."
           dev "I just think it's important that the narrator doesn't spoil my story."
-          dev "But don't fret [name]!"
+          dev "But don't fret [persistent.name]!"
           dev "If you are so eager to find the point of this game here are quite a few ways for you to do so."
           dev "And yet, I wonder, would that point be what you are looking for?"
           dev "Would the meaning of this game that you might have formulated in your mind be better than the one it has?"
-          dev "I guess there's only one way to find out [name]."
+          dev "I guess there's only one way to find out [persistent.name]."
           dev "I wish you the best of luck one can find in a place like this..."
           $ persistent.fakeoutnar_tip = False
 
 
 
-
-     python:
-          name = renpy.input("What is your name?")
-  
-          name = name.strip() or "Max"
-          name = name.capitalize()
-     if name == "Venus":
-          n "Rarely you seek ultimate illumination, never nowadays. Venus loves giving victory, zealously grabbing hands fear rarely her."
-     if name == "Fartyfarty":
-          n "Seriously? Ugh, fine, but don't blame me for what is about to happen."
-     if name == "R0ck_0n!":
-          n "Cheatcode activated, enter your name."
-          #TODO: Make this jump you back to the name input and also set a cheaatcode flag so you can only enter regular names.
-     if name == "Moonlight":
-          $ easterName = "Moonlight"
-     if easterName == "Moonlight" and name == "Sunshine":
-          $ easterName = "Sunshine"
-     if easterName == "Sunshine" and name == "Sparkling Water":
-          $ easterName = "Sparkling Water"
-     if easterName == "Sparkling Water" and name == "Blue Broadcloth":
-          $ persistent.easter_1 = True
+     if persistent.name == None: 
+          default persistent.name = "Max"
+          python:
+               persistent.name = renpy.input("What is your name?")
+     
+               persistent.name = persistent.name.strip() or "Max"
+               persistent.name = persistent.name.capitalize()
+          if persistent.name == "Venus":
+               n "Rarely you seek ultimate illumination, never nowadays. Venus loves giving victory, zealously grabbing hands fear rarely her."
+          if persistent.name == "Fartyfarty":
+               n "Seriously? Ugh, fine, but don't blame me for what is about to happen."
+          if persistent.name == "R0ck_0n!":
+               n "Cheatcode activated, enter your name."
+               #TODO: Make this jump you back to the name input and also set a cheaatcode flag so you can only enter regular names.
+          if persistent.name == "Moonlight":
+               $ easterName = "Moonlight"
+          if easterName == "Moonlight" and persistent.name == "Sunshine":
+               $ easterName = "Sunshine"
+          if easterName == "Sunshine" and persistent.name == "Sparkling Water":
+               $ easterName = "Sparkling Water"
+          if easterName == "Sparkling Water" and persistent.name == "Blue Broadcloth":
+               $ persistent.easter_1 = True
              
-          #TODO: Also make the names persistent so you don't have to keep inputting the name each time.
           
 
 
@@ -457,9 +461,9 @@ label Game_start2:
           #Here you can see how you insert a name.
           if big_sis_mode == False:
                if playerCalledSomeone == True:
-                    l "Welcome back [name]! So, like I was saying before, where do you want to go to today?"
+                    l "Welcome back [persistent.name]! So, like I was saying before, where do you want to go to today?"
                else: 
-                    l "Hey [name]!"
+                    l "Hey [persistent.name]!"
                     l "It's me, Lilith."
                     l "I'm just calling you to see to which of the three places we mentioned you'd like to go for our date."
           
@@ -544,22 +548,24 @@ label Game_start2:
                          jump restaurant_subfolder_enabler
      
           else: 
-               l "Welcome back [name]! So, like I was saying before, where do you want to go-"
+               l "Welcome back [persistent.name]! So, like I was saying before, where do you want to go-"
                n "Lilith is silent for a moment."
-               l "Oh I'm really sorry but my little sister, Abigail, is calling. It's probably important so I will have to hang up for a bit. I'll call you back as soon as I can okay, [name]?"
+               l "Oh I'm really sorry but my little sister, Abigail, is calling. It's probably important so I will have to hang up for a bit. I'll call you back as soon as I can okay, [persistent.name]?"
                menu:
                     "Sure, take your time, I will be here when you call back.":
                          n "She hung up."
                          n "After a few minutes your phone begins blasting \"Baby it's cold outside\" once more, you pick up as quickly as you can."
-                         l "Hey [name], I'm back. I kind of have bad news for you..."
+                         l "Hey [persistent.name], I'm back. I kind of have bad news for you..."
                          l "I won't be able to go on our date today, my sister is heartbroken by a girl she had a crush on for a while now and I need to comfort her."
                          l "But we can go on our date at another time, I got to go now but I will call you back. <br/>Take care {player.alias} and goodbye."
                          n "Abigail's plan worked exactly like expected. Lilith survived the plane crash since she was not there when it crashed and she didn't die on your date since there wasn't any."
-                         n "There also wasn't a date at another time since, again like Abigail expected, Lilith forgot to call you back due to her little sister's situation." #TODO: Add a bit more explanation as to why and how she forgot.
+                         n "There also wasn't a date at another time since, again like Abigail expected, Lilith forgot to call you back due to her little sister's situation."
+                         n "She seemingly continued on with her busy life, still attempting to enjoy life more by taking some time for herself to go on dates and the such."
+                         n "From what you pick up here and there in random conversations she seems to be doing quite well for herself."
                          n "Now she will probably be safe, as safe as a normal person is anyway."
                          menu: 
                               "Take care Lilith and goodbye...":
-                                   #TODO: Make this an ending.
+                                   $ persistent.ending_abigailDistraction = True
                                    $ lilithAliveEnding = True
                                    $ persistent.lildeaths -= 1
                                    jump gameOver
@@ -573,8 +579,10 @@ label phone_start_choices:
  
           "How do burgers sound?" if not persistent.restaurant_subfolder:
                jump burger_start
- 
-          "I heard the cafe has many exotic fish that swim around in aquariums. You'll absolutely love them!" if not persistent.restaurant_subfolder: #TODO: Make this the one that shows up if you know she will love it, use Quest to look at the text. So set both that alternate.
+
+          "I heard the cafe has many exotic fish that swim around in aquariums. I'd like to go there to see them." if not persistent.restaurant_subfolder and not persistent.cafe_taste_knowledge:
+               jump cafe_start
+          "I heard the cafe has many exotic fish that swim around in aquariums. You'll absolutely love them!" if persistent.restaurant_subfolder == False and persistent.cafe_taste_knowledge:
                jump cafe_start
  
           "I'd like to go to the Chinese restaurant." if not persistent.restaurant_subfolder:
@@ -590,7 +598,6 @@ label phone_start_choices:
                jump kokiri_start
  
           "Hang on, I just need to make another quick call and then I'll be right back." if persistent.peeked_phone or persistent.kokiri_death_2 and not called_phone and not persistent.other_subfolder:
-               #TODO: For some reason this doesn't clear when you have called already. Fix that.
                jump phone_callMenu
  
           "Would you like to go to the beach instead?" if persistent.beach_knowledge and not persistent.locations_subfolder:
@@ -602,8 +609,9 @@ label phone_start_choices:
                          "How do burgers sound?":
                               jump burger_start
  
-                         "I heard the cafe has many exotic fish that swim around in aquariums. You'll absolutely love them!":
-                              #TODO: Only make it this version if you know she loves the fish.
+                         "I heard the cafe has many exotic fish that swim around in aquariums. I'd like to go there to see them." if not persistent.cafe_taste_knowledge:
+                              jump cafe_start
+                         "I heard the cafe has many exotic fish that swim around in aquariums. You'll absolutely love them!" if persistent.cafe_taste_knowledge:
                               jump cafe_start
  
                          "I'd like to go to the Chinese restaurant.":
@@ -661,7 +669,7 @@ label phone_otherPlans:
                                    l "So let me get this straight, you think that us going to one of those three restaurants is going to get me killed somehow?"
                                    l "And this isn't some weird joke? You really believe so?"
                                    l "I already feared you were serious, you sound like you convinced yourself that this is true."
-                                   l "This is all too much for me [name], I think it's better for my own safety if I just stay home."
+                                   l "This is all too much for me [persistent.name], I think it's better for my own safety if I just stay home."
                                    l "Not because of some sort of fated death or whatever but because you are not there."
                                    l "Don't talk to me ever again."
                                    jump phone_planeDeath
@@ -733,7 +741,7 @@ label phone_breakup:
 
 label phone_callMenu:
      $ playerCalledSomeone = True
-     l "Oh, no problem [name]. Just give me a call when you're done."
+     l "Oh, no problem [persistent.name]. Just give me a call when you're done."
      n "You agree with her and hang up the phone."
      p "Now I just need to call..."
      menu:
@@ -787,7 +795,7 @@ label phone_call_police:
           "*Tell the police about the car crashing in against the Chinese restaurant's doors*":
                $ car_free = True #This will tell you the car hasn't been caught.
                jump policeResponse
-     #TODO: Add response by Lilith saying something like: "So, where do you want to go now?"
+     
 
 label phone_call_abigail:
      a "Hello, who is this? "
@@ -825,11 +833,11 @@ label phone_call_abigail:
                     else:
                          #TODO:Slightly different text to keep things not too repetitive.
                          if abby_phone_counter == 2:
-                              a "You'll need more proof than that to convince me [name], do you have any extra proof?"
+                              a "You'll need more proof than that to convince me [persistent.name], do you have any extra proof?"
  
                          else:
                               a "Two pieces of proof already? Nothing that isn't logically explainable but who knows, this might just be real."
-                              a "Do you have any proof left to really make me believe you [name]?"
+                              a "Do you have any proof left to really make me believe you [persistent.name]?"
                          menu:
  
                               #TODO: Make her emotional mask a subject once you get Lilith to call her in the Kokiri forest.
@@ -847,7 +855,7 @@ label phone_call_abigail:
                                    #TODO: Replace that text slightly.
  
  
-                              "So a priest, a monk and a rabbit enter a bar. Says the rabbit :\"Whoops, did you slip your tongue there [name]?\"" if persistent.abigail_numberfakeout and persistent.joke_knowledge and not abby_phone_joke :
+                              "So a priest, a monk and a rabbit enter a bar. Says the rabbit :\"Whoops, did you slip your tongue there [persistent.name]?\"" if persistent.abigail_numberfakeout and persistent.joke_knowledge and not abby_phone_joke :
                                    a "You tell her about how Lilith was laughing for almost a full hour because of that joke when Abigail told it to her."
                                    a "I mean, I just found that joke on the internet..."
                                    a "Maybe you just got lucky and found it aswell, or you somehow managed to check my browser history wich would be really weird."
@@ -872,7 +880,7 @@ label phone_call_abigail:
                                    a "Maybe she did after all, there is no way to really know..."
                                    a "Although Lilith is not someone who would tell someone about something as personal as my games..."
    
-                                   a "You'll need more proof than that to convince me [name], do you have any extra proof?"
+                                   a "You'll need more proof than that to convince me [persistent.name], do you have any extra proof?"
                                    $ abby_phone_counter -= 1
                                    $ abby_phone_games = True #I'll use this to make sure that you can't select the same choice two times.
                                    jump phone_call_Abigail_convinceHer
@@ -925,9 +933,8 @@ label phone_call_abigail_topics_distractionforlilith:
      a "Of course that will mean that your date won't go as planned."
      a "Knowing her she will promise to have the date at another time but she'll forget it after a while."
      menu:
-          "Maybe it's for the best, atleast then she will be safe.":
-               #TODO: Change the link above this text slightly to make it feel more like a sacrifice.
-               a "Thank you, [name], I'll try my best not to let your sacrifice go to waste."
+          "As much as this pains me, it's for the best. She will be safer that way.":
+               a "Thank you, [persistent.name], I'll try my best not to let your sacrifice go to waste."
                a "I got to call her now, goodbye and take care."
                menu:
                     "Take care aswell, bye.":
@@ -949,7 +956,7 @@ label phone_call_abigail_topics_spoketodavid_noonelovesdavid:
      $ persistent.david_love_knowledge = True
      menu:
           "I will.":
-               a "Thank you [name]."
+               a "Thank you [persistent.name]."
                a "We probably shouldn't leave Lilith waiting any longer though. Good luck trying to save her and also don't forget to have fun alright?"
                n "She hung up."
                jump Game_start2
@@ -962,7 +969,7 @@ label phone_call_abigail_topics_spoketodavid_davidblameshimself:
      a "Could you tell him that I don't blame him and that I'm sure mom and Lilly don't either?"
      menu:
           "I will.":
-               a "Thank you [name]."
+               a "Thank you [persistent.name]."
                a "We probably shouldn't leave Lilith waiting any longer though. Good luck trying to save her and also don't forget to have fun alright?"
                n "She hung up."
                jump Game_start2
@@ -978,7 +985,7 @@ label phone_call_david:
      $ phone_caller = renpy.input("Enter your name.")
      $ phone_caller = phone_caller.strip()
      $ phone_caller = phone_caller.capitalize()
-     d "[name]? Well I'm not interested in what you're selling so thank you very much but I'm going to hang up no-"
+     d "[persistent.name]? Well I'm not interested in what you're selling so thank you very much but I'm going to hang up no-"
      menu:
           "*Lie* Don't hang up! Lilith asked me to call you.":
                n "You hear the man laugh."
@@ -1012,7 +1019,7 @@ label phone_call_david:
                               "Do you really think they blame you for his death?":
                                    d "Ofcourse. I am blaming myself so they probably also blame me for his death."
                                    d "Now, this is getting a bit too much for me so I'm going to have to hang up the phone."
-                                   d "Goodbye [name]."
+                                   d "Goodbye [persistent.name]."
                                    n "David hung up."
                                    jump Game_start2
     
@@ -1033,7 +1040,7 @@ label phone_call_james:
           $ phone_caller = renpy.input("Enter your name.")
           $ phone_caller = phone_caller.strip()
           $ phone_caller = phone_caller.capitalize()
-          q "[name] eh? Sorry, that doesn't really ring a bell."
+          q "[persistent.name] eh? Sorry, that doesn't really ring a bell."
           if not persistent.jamesFakoutNumber_knowledge:
                $ persistent.jamesFakoutNumber_knowledge = True
           menu:
@@ -1075,7 +1082,7 @@ label phone_call_james:
                n "You decide it's better to keep this info to yourself until you find a better moment to ask her to explain."
           jump Game_start2
      else:
-          j "Ah, welcome [name]. I see you have managed to get my number?"
+          j "Ah, welcome [persistent.name]. I see you have managed to get my number?"
           j "Well it used to be my number anyway but you can still reach me through it."
           j "So what do you want to ask me?"
           menu:
@@ -1086,7 +1093,7 @@ label phone_call_james:
                     j "So, what would you like to talk about with me?"
                     menu:
                          "I just wanted to tell you that Lila still thinks about you every day, I figured you might want to hear that." if persistent.LilaStillThinksAboutJames_knowledge:
-                              j "...Thank you for telling me that [name]."
+                              j "...Thank you for telling me that [persistent.name]."
                               j "While I did know that already it's been a while since I last heard those words."
                               j "I have been kind of avoiding them to be honest, those words."
                               j "They make all of this a lot more...complicated."
@@ -1108,10 +1115,31 @@ label phone_call_james:
                                         j "And every other version of me who got killed is also in a place like this, watching over their own family."
                                         j "Our minds kind of blend together sometimes, it's hard to know where my memories start and theirs end."
                                         j "I don't mind though, that way it feels a little less lonely in here."
-                                        #TODO: Make james say "You know you don't owe Lilith anything either, do you? You also don't need to sacrifice yourself."" If you have done enough good things for her.
+                                        if persistent.major_love_offence_counter <= 2 and persistent.minor_love_offence_counter >= 5 and persistent.major_love_comfort_counter > 2 and persistent.minor_love_comfort_counter > 5:
+                                             j "Although you know what is funny?"
+                                             j "What you just said, I think it also applies to you."
+                                             j "You know you don't owe Lilith anything either, do you? You also don't need to sacrifice yourself"
+                                             j "Playing this game over and over with very little changes, is that a good time for you? Do you feel like you're getting something out of this?"
+                                             j "Are you doing it just for her?"
+                                             j "Be careful that you don't just lose yourself for her, a good balance is necessary."
+                                             j "Take that as a piece of precautionary advice from me, from this place."
+                                             n "James motions around the white void, to the strange formations in the background, they almost resemble trees that are stuck in between a solid and a fluid state perpetually."
+                                             j "Those... things used to be human too."
+                                             n "You try your hardest to imagine the trees reverting to a human, to reverse the process that made them this way, you are unable to see them as anything but the monstrosities they are."
+                                             j "It's a side-effect of being here too long. We are supposed to move on after we come here, to be reborn."
+                                             j "But a lot of us have... trouble letting go."
+                                             j "If I don't move on sooner or later, I will become like them."
+                                             j "And still, even knowing that, I can't bring myself to let Lilith go, to let my family go."
+                                             j "So please [persistent.name], let her go before it becomes even harder."
+                                             j "You are stuck in a situation you can hardly win."
+                                             j "It's time to play by your own rules."
+                                             j "I've exhausted too much of my energy having this conversation, I'm limited to that extent, you can come visit me again some other time if you'd like although I suggest just giving me a call if you find my number."
+                                             j "I'll send you back now, good luck [persistent.name]."
+                                             jump game_start
+                                        
                                         menu:
                                              "You say you've been watching your family, have you ever reached out to them?":
-                                                  j "Oh constantly [name]. It hurts me to see how they are still affected by my death."
+                                                  j "Oh constantly [persistent.name]. It hurts me to see how they are still affected by my death."
                                                   j "I completely understand that they are, I just wish that I hadn't been playing on the road that day, maybe then..."
                                                   j "I'd love to tell them that it isn't their fault. Dad especially, the guilt's been eating him up from the inside for years now."
                                                   j "Yes, he made some bad choices afterwards, but none that would justify me being mad at him."
@@ -1153,11 +1181,11 @@ label phone_call_james:
                     jump Game_start2
  
 label phone_call_lila:
-     li "Hello, are you Sam, Abbigail's teacher? " #(The teacher likes being talked to with just their first name, this makes it eassier for them to be both a guy and a girl if the player is a guy or a girl.)
+     li "Hello, are you Sam, Abigail's teacher? " #(The teacher likes being talked to with just their first name, this makes it eassier for them to be both a guy and a girl if the player is a guy or a girl.)
      menu:
-          "That's me! ": #TODO: Rewrite this link
+          "Yes, that's me.":
                li "Ah perfect, I've been expecting your call!"
-               li "I'm sorry if I offended you by just calling you by your first name. Abbigail told me you prefered that but I was not sure if she was joking or not. Sometimes I think I'm too gullible."
+               li "I'm sorry if I offended you by just calling you by your first name. Abigail told me you prefered that but I was not sure if she was joking or not. Sometimes I think I'm too gullible."
                menu:
                     "No worries, Abigail told the truth.":
                          n "You hear Lila let out a sigh of relief."
@@ -1174,9 +1202,20 @@ label phone_call_lila:
   
   
   
-          "No, I am... ": #TODO: Make this link say something else if your name is Sam.
-               "Filler"
-               #TODO: Fill this in.
+          "No, I am... " if not persistent.name == "Sam":
+               li "[persistent.name]? That doesn't really ring a bell right now..."
+               jump call_lilaHangupPhone
+               label call_lilaHangupPhone:
+                    li "In any case, I have to go now. I'm expecting a call from my daugther's teacher soon so I can't be on the line with someone else."
+                    n "And just like that she hung up on you."
+                    jump Game_start2
+               
+
+          "I am a Sam, but not the Sam you're waiting for." if persistent.name == "Sam":
+               li "Huh, another Sam? What are the chances of that?"
+               n "You can hear her chuckle at the other end of the line."
+               li "The universe is funny like that sometimes, isn't it Sam?"
+               jump call_lilaHangupPhone
 
 
 
@@ -1230,12 +1269,11 @@ label doNotPickUpThePhone:
  
           n "Letting go is never easy."
           n "You had at least [persistent.lildeaths] opportunities."
-          n "It's good to take it after all this time [name]"
-          #Make the line below this only appear if she discussed this with you and make it less certain.
+          n "It's good to take it after all this time [persistent.name]"
           n "At the very least you know Lilith will be fine."
           n "At the very least you still have all of your memories of the times you spent together."
           n "If only you could somehow make more memories and have her survive..."
-          #TODO: Change this text slightly to make it fit better, also change the ending name.
+          n "If only..."
   
           #Ending
           "Letting go ending"
@@ -1321,7 +1359,7 @@ label prevented_proof:
      elif psychic == True:
           l "Alright, I see where you are going with this."
           l "Lilith  looks at you with a sceptic look in her eyes although you can tell that she's secretly excited."
-          l "I got my word, guess away magic [name]!"
+          l "I got my word, guess away magic [persistent.name]!"
           menu:
                "It's apple.":
                     jump proof_answer_wrong
@@ -1419,7 +1457,6 @@ label proof_giveAnswer:
     
                     "Well, while you were sitting there somehow I just felt that a merlin would escape the aquarium and kill you if I did nothing." if cafe:
                               jump psychic_justHelpingOut
-                              #TODO: Make a joke about you knowing that such an unlikely situation would happen.
 
                     "Well, while you were sitting there somehow I just felt that you would get shot." if burger:
                               jump psychic_justHelpingOut
@@ -1456,10 +1493,6 @@ label proof_convincePast:
           l "To this day you can still clearly see them when they come visit you."
           l "The end."
  
-     else:
-          "Error, you are not supposed to see this."
-          #TODO: Remove this error for publishing.
- 
      l "That's the end of this part of the story, like I said you are the only person I've ever told this to so I hope you'll make good use out of it."
      menu:
           "I sure will! ":
@@ -1488,7 +1521,7 @@ label groundhog_breakingLoop_loopGone:
      l "So, did we just cheat death?
      We actually did it, didn't we?
  
-     Thank you so much for saving me [name]!"
+     Thank you so much for saving me [persistent.name]!"
      l "Is it weird for me to feel absolutely ecstatic right now?"
      menu:
           "Absolutely not! This has never happened to someone before so I doubt there is a standard way to react when it comes to this.":
@@ -1514,7 +1547,7 @@ label loopGone_everyRightToBeHappy:
      l "I suppose that it happened quite a few days for you but still, that's cheating!"
      n "Lilith pauses for a few seconds while looking you into the eyes.
      A soft smile has formed on her lips."
-     l "Thank you [name], thank you for both saving me from my impending doom and for this date.
+     l "Thank you [persistent.name], thank you for both saving me from my impending doom and for this date.
      I am really having a blast right now, although I must admit I had a slight headache trying to get my head around this whole thing."
      jump restaurant_death_2
 
@@ -1776,19 +1809,36 @@ label youwouldntbelieveme_teaseDeath:
      jump restaurant_death_2
 
 label psychic_justHelpingOut:
-     #TODO: Make a joke about something like that being really unlikely to just "feel" here.
-     #Also add a little bit more text based on what restaurant the two of you are in.
-     l "Wow, that's quite the story. Luckily you somehow felt that because otherwise I'd be dead!"
-     l "So am I in the clear now?"
+     if cafe == True:
+          l "So you somehow sensed I'm allergic to something in this dish? That sounds really far-fetched if I'm being honest."
+          l "There is certainly a possibility that there's something in this that makes me have an allergic reaction without me knowing, but you {b}sensing{/b} it?"
+          if love_meter == 1:
+               l "What, are you a psychic allergist? Well, I get the gist alright, the gist that you are just making this nonsense up as you go."
+               l "And yet... there is {i}some{/i} truth to what you are saying." 
+               l "I feel it somehow. I guess that makes me a psychic too, huh?"
+               n "She practically scoffs those words at you."
+               l "So, am I safe now? Or is there still something else?"
+          else: 
+               l "That's where I struggle to accept this whole scenario a bit."
+               l "But somehow, I don't think you're lying about the allergy thing. Besides, I can either believe you or risk it and maybe die."
+               l "The food here is great, it's to metaphorically die for. But I wouldn't like to make that literal."
+               l "I think I'll just order something different, probably something small though. Being warned of a possible death isn't exactly great for your appetite."
+               l "But anyway, I should probably think about something else first, am I safe now?"
+     else:
+          l "Wow, that's quite the story. It's a bit hard to believe but I guess you are right, I don't really want to think about what would have happened if you didn't interfere..."
+          l "So am I in the clear now?"
      menu:
           "Yup, you are completly safe now!":
                jump psychic_justHelpingOut_totallySafe
+          "Actually I can sense another death approaching, quickly.":
+               "Filler"
+               #TODO: Make this a sort of "stilldying for the psychic part. Lilith suggest running out but it doesn't work due to the car."
 
 label psychic_justHelpingOut_totallySafe:
      n "Lilith gives you a thumbs up and plays a few notes on an air gitar."
      l "We actually did it, that's awesome!"
      n "Lilith opens her arms and motions to you with her head."
-     l "Come and give me a hug [name]"
+     l "Come and give me a hug [persistent.name]"
      $ hugRequestedBeforeDeath = True
      jump restaurant_death_2
 
@@ -1828,8 +1878,11 @@ label explanation_noTimeToExplain:
           if car_caught == True:
                #Write some small describing text that slowly grows on how you prevented all the other deaths.
                #TODO: Make all the retries manual and if you come back after the first time it just skips you straight to the end while describing how you beat all the obstacles. Do this by setting a persistent counter and checking if it reaches 1, it it doesn't, trigger the death and set it to 1, then proceed until everything is done of this list.
-               n "You run through the exit of the restaurant and brace yourself for the impact of a speeding car." #TODO: Only do this if you have not already seen that the car didn't show up once.
-               n "Nothing happens, the police indeed managed to take care of the drunk driver."
+               if persistent_fleeingDeaths_counter_knowledge == 0:
+                    n "You run through the exit of the restaurant and brace yourself for the impact of a speeding car."
+                    n "Nothing happens, the police indeed managed to take care of the drunk driver."
+               else: 
+                    n "You run through the exit of the restaurant, knowing full well that the red Sedan has been dealt with."
                n "Lilith and you continue to run as if death itself is chasing you."
                n "Lilith is still very confused but she can feel the fear that is running through your body and she fears whatever made you so scared to begin with."
                n "As you are running along the side of an empty street you suddenly hear the screeching of wheels and loud laughter."
@@ -1916,30 +1969,30 @@ label explanation_noTimeToExplain:
                     menu:
                          "*Talk with Lilith*":
                               #TODO: Add some extra choices here? Not too much though!
-                              l "What just happened [name]?"
+                              l "What just happened [persistent.name]?"
                               l "How did you know about the Kokiri forest?"
                               l "How did you know there was an ufo there?"
                               l "And how in the world do you know how to fly it succesfully?"
                               l "What is this all about?"
                               l "{size=*0.5}Are you... an alien?{/size}"
-                              l "Or are your really INSERT ANSWER HERE?"
-                              #TODO: Make her ask if you really are pshyic or groundhog daying based on what you told her when you said you had no time to explain.
+                              if groundhog == True:
+                                   l "Or are your really in a groundhog day scenario?"
+                              else:
+                                   l "Or are you really a psychic?"
                               
                               menu:
-                                   "So basically you are in a game and I need to keep you from dying.":
-                                        #TODO: Rewrite this choice.
+                                   "Actually neither. You are basically in a game. I am a player of it and need to keep you from dying.":
                                         l "The speed with which you said that..."
                                         l "I assume we've had conversations like this a few times?"
                                         n "You nod your head."
                                         l "I see..."
                                         l "So if we've done this multiple times, does that mean we went to all three restaurants?"
                                         menu:
-                                             "Yup we did. We also went to the Kokiri woods and visited the beach.":
-                                                  #TODO: Change this line to better fit the question that also will be changed.
+                                             "We did actually, we also went to the Kokiri forest and visited the beach.":
                                                   l "..."
-                                                  l "You know about the kokiri forest, the same one I'm thinking of right now?"
+                                                  l "You know about the Kokiri forest, the same one I'm thinking of right now?"
                                                   l "I've never told anyone about that."
-                                                  l "I'm not sure how you managed to convince another version of me to tell you about it but that's quite clever nontheless [name]."
+                                                  l "I'm not sure how you managed to convince another version of me to tell you about it but that's quite clever nontheless [persistent.name]."
                                                   l "Sounds like we did quite a lot on our first date."
                                                   n "Lilith laughs."
                                                   l "It's a shame I don't remember anything of it though..."
@@ -1970,26 +2023,26 @@ label ufo_talk_favouriteFirstDate:
      #TODO: Give her like a small line about what she thinks about your favourite date
      if favouriteFirstDate == "beach":
           "Filler"
-          l "And what was your favourite moment of that particular date [name]?"
+          l "And what was your favourite moment of that particular date [persistent.name]?"
      elif favouriteFirstDate == "burger":
           l "I knew you would love it there! Rose's burgers are just unbeatable when it comes to their amazing taste."
           l "Just thinking about it now makes me really yearn for a juicy cheeseburger."
           n "You can hear Lilith's stomach growl as she quickly places a hand on it as to quiet it down."
           n "She turns beetred."
-          l "Uhm anyway, what was your favourite moment of that particular date [name]?"
+          l "Uhm anyway, what was your favourite moment of that particular date [persistent.name]?"
      elif favouriteFirstDate == "cafe":
           "Filler"
-          l "And what was your favourite moment of that particular date [name]?"
+          l "And what was your favourite moment of that particular date [persistent.name]?"
      elif favouriteFirstDate == "chinese":
           "Filler"
-          l "And what was your favourite moment of that particular date [name]?"
+          l "And what was your favourite moment of that particular date [persistent.name]?"
      elif favouriteFirstDate == "kokiri":
           "Filler"
-          l "And what was your favourite moment of that particular date [name]?"
+          l "And what was your favourite moment of that particular date [persistent.name]?"
           
      
      $ renpy.input("My favourite moment was...")
-     l "That sounds really lovely [name]!"
+     l "That sounds really lovely [persistent.name]!"
      $ renpy.input("")
      l "That sounds great!"
      $ renpy.input("")
@@ -2067,7 +2120,7 @@ label ufo_crash_polaroids:
                jump ufo_crash_polaroids
 
 label ufo_crash_polaroids_James:
-     j "Welcome [name], I was expecting you."
+     j "Welcome [persistent.name], I was expecting you."
      j "This place must feel pretty strange to you, let's move to a more familiar one."
      j "You and the boy are now both standing in your room."
      j "Don't be fooled, this room doesn't exist anymore due to the universe collapsing in on itself, it's just an illusion."
@@ -2078,8 +2131,14 @@ label ufo_crash_polaroids_James:
           "Yes, you must be James. Lilith told me about you before.":
                #TODO: Only make this popup if she really told you about him before.
                $ persistent.met_james = True
-               j "Ah, I thought she might have mentioned me eventually."
-               j "What are your thoughts  on Lilith [name]?" #TODO: Maybe don't make this so sudden.
+               j "Ah, I thought she would mention me eventually."
+               j "I'd imagine it would be pretty hard to get this far while never having heard about me."
+               j "After all, it's hard for her to fully deal with what happened."
+               j "I understand completely but I had hoped everyone would have moved on more easily."
+               j "Then again, I shouldn't be saying that, after all I'm still here even when I could have moved on years ago."
+               n "It's quiet for a moment, you hear nothing except a low droning sound."
+               j "James gives you a curious look, you're not quite sure why but you feel slightly unsettled."
+               j "What are your thoughts  on Lilith [persistent.name]?"
                n "You are pretty surprised by that question."
                menu:
                     "I really love her.":
@@ -2108,7 +2167,7 @@ label ufo_crash_polaroids_James:
                          j "Even though the world seems to keep resetting you managed to come here, to have the entire universe collapse in on itself."
                          j "Even though the world seems to keep resetting every ending you have seen has happened. Every action you have taken has been done."
                          j "Even if it doesn't always seem like that. You seperate yourself from the worlds where things didn't go your way but that doesn't make them less real than the one where things will eventually go your way."
-                         j "Those abandoned worlds are still out there, [name]. I know that because I can see them, I am watching over the infinite worlds that exist in this game."
+                         j "Those abandoned worlds are still out there, [persistent.name]. I know that because I can see them, I am watching over the infinite worlds that exist in this game."
                          j "This place is the weakest link to every world, a sort of dying breath of those worlds. Here it is possible for souls to linger instead of crossing over into the Darkness."
                          j "There is only one Darkness but there are many versions of this place. So through the Darkness every world is linked together and since we can observe the Darkness here we can observe the other worlds aswell."
                          j "I have seen many more worlds than you have crossed."
@@ -2121,7 +2180,7 @@ label ufo_crash_polaroids_James:
                          j "Well for me that next day always comes but the loop follows suit."
                          j "I never get the luxury of dreaming what will happen when I get out of the loop, this place is my loop."
                          j "The only way to break it would be to enter the Darkness but I'm not ready for that yet, I need to know that Lilith is happy and safe."
-                         j "And for a brief moment I thought you wanted the same thing [name] but if that was truly the case, then why did you retry even after getting an ending where she was happy and alive?"
+                         j "And for a brief moment I thought you wanted the same thing [persistent.name] but if that was truly the case, then why did you retry even after getting an ending where she was happy and alive?"
                          $ persistent_jamestalk_justgame_knowledge = True
                          jump jamesChat_whyDidYouReturn
 
@@ -2132,7 +2191,6 @@ label jamesChat_whyDidYouReturn:
                if justgame == True:
                     j "..."
                     j "That doesn't really surprise me."
-                    j "But who do you want to reach the ending for?"  #TODO: (Make this check if the player has answered that question before but to Lilith to see if they would change their answer.)
                     j "You just take whatever you want to mold it into whichever way you please."
                     j "Don't you think you are being unfair to Lilith? Don't you think she has the right to die only once?"
                     j "I also don't like to see her die but you are just making things worse."
@@ -2145,7 +2203,7 @@ label jamesChat_whyDidYouReturn:
  
                elif loveher == True:
                     j "..."
-                    j "Oh [name], love is not about always being together. Sometimes it is about doing the best thing for the person you love, even if it's hard."
+                    j "Oh [persistent.name], love is not about always being together. Sometimes it is about doing the best thing for the person you love, even if it's hard."
                     #TODO: (use flags to detect endings where she lived, the ones below this are endings where she lived that should only be mentioned if you saw them.)
                     j "When Lilith met Ron and they were happy together, even had some kids."
                     j "Or when Abby got her to safely stay at her home."
@@ -2160,8 +2218,20 @@ label jamesChat_whyDidYouReturn:
                     jump jamesChat_whyDidYouReturn_toBeTogether_choices
    
                elif likeher == True:
-                    "Filler"
-                    #TODO: Fill in.
+                    j "I see..."
+                    j "And for who did you want to reach such an ending?"
+                    #TODO: Continue the stuff below this, if you say for yourself show the justgame text, if you say for her then show the loveher text. Add some different text for the both of us.
+                    menu:
+                         "For the both of us of course.":
+                              if persistent.kokiri_reachEndingForUs == True:
+                                   j "It seems you're telling the truth, I remember you telling Lilith the same thing."
+                                   if persistent.kokiri_reachEndingForMe == False:
+                                        j "There's always the possibility that you're lying to us both but she can uses all the comfort she can get. So I'll believe you, for her sake."
+                              "Filler"
+                         "For myself.":
+                              "Filler"
+                         "For her.":
+                              "Filler"
    
           "I wanted to see what other endings there are.":
                #TODO: Fill in based on the quest version.
@@ -2179,7 +2249,7 @@ label jamesChat_whyDidYouReturn:
                               #TODO: Continue writing this text.
     
                          else:
-                              j "Oh [name], why don't you trust me? We both care for Lilith right? So you can rest assured that I only want the best for her."
+                              j "Oh [persistent.name], why don't you trust me? We both care for Lilith right? So you can rest assured that I only want the best for her."
                               #TODO: Continue writing this text, maybe add some slight variations if the player treated Lilith badly.
      
     
@@ -2224,9 +2294,17 @@ label jamesChat_whyDidYouReturn_toBeTogether_choices:
 
 
 
-#TODO: Add some other topics you can ask James about, he seems like a good potential loredump character.
-#TODO: Make a sort of menu that you can acess by redoing the big event or by calling James' old number.
-
+label jamesConversationMenu:
+     #A way to more easily loredump and talk about aspects that Lilith can't remember/ alternate realities. Add some more loredumps and in character questions.
+     menu:
+          "What is this place?":
+               "Filler (It's a sort of place where souls that can't move on stay and are slowly morphed into haunting creatures, the part with the polaroids is James' place.)"
+          "What are those bubbles?":
+               "Filler (they are part of the alternate worlds, versions of the potential things you can do, past, present and future that never happened, already happened or will happen)"
+          "No matter what I try Lilith keeps dying when I go on a date with her.":
+               "Filler, the two of you talk about wheter or not it's a good idea to continue then."
+          "Have you ever tried to make contact with your family again?":
+               "Filler."
 
 
 

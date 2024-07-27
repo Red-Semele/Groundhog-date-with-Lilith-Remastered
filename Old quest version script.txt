@@ -2729,7 +2729,7 @@
             <inherit name="scripttext" />
             <script type="script">
               SetForegroundColour (player.Lilacolor)
-              msg ("Hello, are you Sam, Abbigail's teacher? (The teacher likes being talked to with just their first name, this makes it eassier for them t be both a guy and a girl if the player is a guy or a girl.)")
+              msg ("Hello, are you Sam, Abigail's teacher? (The teacher likes being talked to with just their first name, this makes it eassier for them t be both a guy and a girl if the player is a guy or a girl.)")
               MovePlayer (Call_Lila_choice)
             </script>
             <object name="Call_Lila_choice">
@@ -2743,7 +2743,7 @@
                 <inherit name="scripttext" />
                 <script type="script">
                   SetForegroundColour (player.Lilacolor)
-                  msg ("I'm sorry if I offended you by just calling you by your first name. Abbigail told me you prefered that but I was not sure if she was joking or not. Sometimes I think I'm too gullible.")
+                  msg ("I'm sorry if I offended you by just calling you by your first name. Abigail told me you prefered that but I was not sure if she was joking or not. Sometimes I think I'm too gullible.")
                   MovePlayer (Call_Lila_choice_2)
                 </script>
               </object>
@@ -3749,8 +3749,8 @@
                     if (not GetBoolean(game, "R1knowledge")) {
                       if (not GetBoolean(game, "R2knowledge")) {
                         if (not GetBoolean(game, "R3knowledge")) {
-                          if (not GetBoolean(game, "NMdetect")) {
-                            SetFlagOn ("Mdetect")
+                          if (not GetBoolean(game, "nmDetect")) {
+                            SetFlagOn ("mDetect")
                           }
                         }
                       }
@@ -3761,22 +3761,22 @@
               else if (GetInt(game, "RW") = 1) {
                 SetForegroundColour (player.Lilcolor)
                 msg ("Only one riddle wrong, not shabby at all!")
-                SetFlagOn ("NMdetect")
+                SetFlagOn ("nmDetect")
               }
               else if (GetInt(game, "RW") <= 3) {
                 SetForegroundColour (player.Lilcolor)
                 msg ("You did pretty great, you gave it your best shot!")
-                SetFlagOn ("NMdetect")
+                SetFlagOn ("nmDetect")
               }
               else if (GetInt(game, "RW") <= 6) {
                 SetForegroundColour (player.Lilcolor)
                 msg ("You are pretty determined, I like that!")
-                SetFlagOn ("NMdetect")
+                SetFlagOn ("nmDetect")
               }
               else if (GetInt(game, "RW") > 6) {
                 SetForegroundColour (player.Lilcolor)
                 msg ("Oh, did I make my riddles too hard?")
-                SetFlagOn ("NMdetect")
+                SetFlagOn ("nmDetect")
               }
               SetCounter ("R1W", 0)
               SetCounter ("R2W", 0)

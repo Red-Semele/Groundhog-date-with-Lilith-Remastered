@@ -49,7 +49,7 @@ label burger_start:
             n "The image of her laying there, on the brink of life and death, is burned into your mind."
             n "You shudder."
             n "It's probably best to try and focus on the present, not the past."
-            l "Are you alright [name]?"
+            l "Are you alright [persistent.name]?"
             l "You look like you have just seen a ghost."
             n "She's not far off."
             menu:
@@ -104,7 +104,7 @@ label burger_beenBeforeXTimes:
         elif persistent.burgerwent < 22:
             n "Lilith lets out a joyful laugh."
             l "Wow! I almost feel like I should let you choose my burger with all that burger knowledge you must have."
-            l "Almost though, this is far from my first rodeo either [name]!"
+            l "Almost though, this is far from my first rodeo either [persistent.name]!"
         else:
             l "Wow... is it weird to be impressed by that?"
             n "Lilith lets out a small laugh."
@@ -174,10 +174,10 @@ label burger_ordering:
         n "The old lady looks at you for a brief moment and continues."
 
     r "Who did you bring along for the ride?"
-    l "Oh right, you two haven't met. Rose, this is [name] and [name] this is Rose."
+    l "Oh right, you two haven't met. Rose, this is [persistent.name] and [persistent.name] this is Rose."
     $ persistent.rosename_knowledge = True
     n "Rose gives you a sincere smile."
-    r "Nice to meet you [name]."
+    r "Nice to meet you [persistent.name]."
     r "So, what can I get the two of you?"
     n "You and Lilith tell her your choices."
     r "A juicy cheeseburger and a [burger_choice] coming up! I'll bring them to you when they are done alright?"
@@ -190,7 +190,7 @@ label burger_ordering:
     n "She quickly brushes one hand over her left cheek and somehow manages to turn even more red at the realisation that she is still blusing."
     n "Right then she lets out a few small coughs as she tries to somehow divert attention from what just happened."
     #TODO: Add a better segway?
-    l "Thank you for choosing this place [name].
+    l "Thank you for choosing this place [persistent.name].
     It has been too long since I've been here, to tell you the truth I actually was avoiding this place.
     But now the happy memories come flooding back to me."
 
@@ -213,7 +213,7 @@ label burger_ordering:
             l "But that doesn't mean I wouldn't like to tell you about it."
             l "In fact, I think it might be good for me to eventually tell you."
             l "Just..."
-            l "I just would like to wait a little before I do that, maybe some other time [name]?"
+            l "I just would like to wait a little before I do that, maybe some other time [persistent.name]?"
             l "I do really appreciate your concern for me though!"
             #TODO: Talk about something slightly different after this and then move back to the main path so that everything goes smoothly again.
             #Add one piece of extra conversation you can have here, not sure what yet, add it where you normally ask about the brother
@@ -235,7 +235,7 @@ label burger_joke:
 
     menu:
 
-        "So a priest, a monk and a rabbit enter a bar. Says the rabbit :\"Whoops, did you slip your tongue there [name]?\"" if persistent.joke_knowledge:
+        "So a priest, a monk and a rabbit enter a bar. Says the rabbit :\"Whoops, did you slip your tongue there [persistent.name]?\"" if persistent.joke_knowledge:
             jump burger_joke_Abigail
 
         "You know, I've dated rocks before but they always tend to take things for granite.":
@@ -262,7 +262,7 @@ label burger_joke_Abigail:
     n "Lilith bursts out in laughter."
     l "I really love that joke, my sister Abigail told me it once and I kept laughing and laughing for hat seemed like an eternity.
     Just thinking about it again, it fills me with a warm feeling, like a blanket you wrap around yourself in the coldest of winters."
-    l "Thank you for cracking me up [name]!"
+    l "Thank you for cracking me up [persistent.name]!"
     n "Lilith flashes you a cute smile, she seems pretty much completely composed once again."
     jump burger_living
 
@@ -355,7 +355,7 @@ label burger_living_showWriting_poem:
     l "Has something that has not been seen or heard really happened?"
     if burger_poem_cleancheck == True:
         n "When you get done reading your eyes linger on the notebook a bit longer before returning it to Lilith."
-        l "So [name], what did you think of it?"
+        l "So [persistent.name], what did you think of it?"
         n "She seems eager to find out what your thoughts are on her writing."
         jump burger_poem_rating
     else:
@@ -390,7 +390,7 @@ label burger_poem_rating_terrible:
 
 label burger_poem_rating_fantastic:
     l "A wide smile appears on Lilith's face."
-    l "Thanks [name]! I'm glad you like it so much."
+    l "Thanks [persistent.name]! I'm glad you like it so much."
     #TODO: Maybe put some extra text here since it feels a bit barren right now. She can talk about how she was in a edgy stage of her life when she wrote it for example.
     jump burger_Brotherasked
 
@@ -460,7 +460,7 @@ label burger_Brotherasked:
             #TODO Make this a flag. Also rewrite that line slightly.
             n "She lets out a sigh of relief."
             l "As much as it hurts me to talk about James it feels good to finally let it all out once again.
-            Thank you for listening to me ramble on [name]."
+            Thank you for listening to me ramble on [persistent.name]."
             jump burger_deathBuildup
 
 label burger_deathBuildup:
@@ -510,7 +510,7 @@ label burger_alt_askHerAQuestion:
                     jump burger_alt_askHerAQuestion_bookLover
 
 label burger_alt_askHerAQuestion_musicLover:
-    l "Oh, I'm glad you asked [name]!"
+    l "Oh, I'm glad you asked [persistent.name]!"
     l "I like quite a few genres and bands, it mostly depends on how I am feeling at the time."
     l "The genres I tend to listen to the most are jazz, rock, and heavy metal."
     l "My favourite bands shift around all of the time but for this moment I think King Crimson, I Monster and Smashing Pumpkins are in my top three."
@@ -527,10 +527,10 @@ label burger_alt_askHerAQuestion_musicLover:
             l "I think as long as you can enjoy yourself once again, that you're not just going through the motions of pretending, then you are on the right track."
             l "After all, there is no shame in falling out of love with a certain band or number, as long as you don't get something out of them anymore, why should you listen to them?"
         "I'll definetly have to check some of those bands out one day, thank you for the tip Lilith!":
-            l "You're totally welcome [name], I always love recommending music to people, I like to think music has a really strong impact."
+            l "You're totally welcome [persistent.name], I always love recommending music to people, I like to think music has a really strong impact."
             l "After all, it can make you feel all kinds of emotions, calm you down, energise you, even relief pain slightly."
             l "Isn't that wonderful?"
-    l "But anyway, what are your favourite bands and genres of music [name]? "
+    l "But anyway, what are your favourite bands and genres of music [persistent.name]? "
     menu:
         "My favourite band is-":
             jump restaurant_death_2
@@ -549,7 +549,7 @@ label burger_alt_askHerAQuestion_bookLover:
     l "I also really enjoy to read Haruki Murakami's works, an old friend of mine introduced me to them and since then I've read 'First person singular', 'After dark' and '1q94'."
     l "He has a hauntingly beautiful way of describing even the most mundane things. It's like I can see the world for the first time again but not through my eyes, through his instead."
     l "I love it when someone can make me look at mundane things in a whole new perspective."
-    l "So, which books do you like to read [name]?"
+    l "So, which books do you like to read [persistent.name]?"
     menu:
         "I really like-":
             jump restaurant_death_2

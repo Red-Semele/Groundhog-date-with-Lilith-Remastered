@@ -19,7 +19,7 @@ label cafe_start:
     n "You get lost in the thoughts of how life was when you still were 17 until Lilith gives you a playful nudge."
     b "What could I get the both of you?"
     l " Hmm, I think I'm going for the ham and cheese sandwich and a cafe cubano.
-    What are you choosing [name]? "
+    What are you choosing [persistent.name]? "
     menu:
         "I'll have the same as you.":
             jump cafe_food_choiceSame
@@ -37,7 +37,7 @@ label cafe_food_choice2:
     jump cafe_food_result
 
 label cafe_food_choiceSame:
-    l "You know what they say [name], great minds think alike. I guess that also counts for hungry stomachs."
+    l "You know what they say [persistent.name], great minds think alike. I guess that also counts for hungry stomachs."
     n "Lilith lets out a small chuckle."
 label cafe_food_result:
     n "The barista smiles and says: \"Coming right up!\""
@@ -141,7 +141,7 @@ label cafe_dice_result:
             "Yes, that's right.":
                 if dicenumber2 == 3:
                     label cafe_dice_right:
-                        l "Wow, you managed to figure it out. Nicely done [name]!"
+                        l "Wow, you managed to figure it out. Nicely done [persistent.name]!"
                         $ persistent.dice_knowledge = True
                         l "For a moment I thought this puzzle might have been a little too hard but you handled it like a champ!"
                         l "I'm actually very impressed."
@@ -151,14 +151,14 @@ label cafe_dice_result:
                 else:
                     label cafe_dice_wrong:
                         l "Nope, that's not the answer."
-                        l "You gave it your best shot [name]!
+                        l "You gave it your best shot [persistent.name]!
                         I might have made this a bit too hard.
 
                         Would you like to know the answer?"
                         menu:
                             "Yeah, please tell me what the answer was.":
                                 $ persistent.dice_knowledge = True
-                                l "Sure thing [name], I won't keep you in suspense any longer."
+                                l "Sure thing [persistent.name], I won't keep you in suspense any longer."
                                 l "The first dice was 6 and the second dice was 3."
                                 l "That was quite tricky wasn't it?"
                                 l "I hope it was fun for you though!"
@@ -189,7 +189,7 @@ label cafe_dice_result:
                                 jump cafe_rateCafe
 
             "No, that's not right.":
-                l "Oh,so what number do you think the second dice is [name]?"
+                l "Oh,so what number do you think the second dice is [persistent.name]?"
                 $ dicenumber2 = renpy.input("Place your guess here", length=5)
                 $ dicenumber2 = dicenumber2.strip()
 
@@ -225,12 +225,12 @@ label cafe_dice_result:
 
 
 label cafe_dice_stop:
-    l "Oh no worries [name]!
+    l "Oh no worries [persistent.name]!
     I might have made this a bit too daunting so I completely understand."
     l "We can just continue talking if you'd like to."
     l "After all, we are hopefully not running out of topics already."
     n "Lilith lets out a cute chuckle."
-    l "Don't stress it [name], it's alright if you can't think of anything for a moment."
+    l "Don't stress it [persistent.name], it's alright if you can't think of anything for a moment."
     l "I completely get it, to be honest I'm quite stressed about this date too."
     l "Well... maybe stressed is not the right word. Moreso excited?"
     l "But let's just see where things go and just enjoy ourselves, together."
@@ -272,7 +272,7 @@ label cafe_backOnTrack:
 label cafe_rateCafe_great:
     n "Lilith let's out a small giggle."
     l " I knew you would love it as much as me when I saw your smile.
-    I've never seen so many colors at the same time, thank you for taking me here [name]!
+    I've never seen so many colors at the same time, thank you for taking me here [persistent.name]!
     Just the fish on their own made this one of the best dates I ever had, it can only get better from here."
     $ persistent.cafe_taste_knowledge = True
     jump cafe_rateCafe_result
@@ -281,7 +281,7 @@ label cafe_rateCafe_okayish:
     n "Lilith flashes you an understanding smile."
     l "Ah, sorry to hear that, but I am really loving this place if that's worth something.
     Maybe we can go to a place you like next time?"
-    l "I've never seen so many colors at the same time, thank you for taking me here [name].
+    l "I've never seen so many colors at the same time, thank you for taking me here [persistent.name].
     So far this is one of the best dates I ever had!"
     $ persistent.cafe_taste_knowledge = True
     jump cafe_rateCafe_result
@@ -305,7 +305,7 @@ label cafe_rateCafe_bad:
 label cafe_rateCafe_result:
     menu:
         "Sorry to ask you this, but did you have bad experiences in love?":
-            l "That's quite an unusual question to ask [name], why do you think I did?"
+            l "That's quite an unusual question to ask [persistent.name], why do you think I did?"
             #Maybe rephrase it slightly, comes of as a bit defensive.
             menu:
                 "Well, you said this was one of the best dates you've ever had. It seems as if your bar is set pretty low.":
@@ -319,7 +319,7 @@ label cafe_rateCafe_result:
             l "Did you just counter my thank you with another thank you?"
             l "Well, in that case I'll retaliate with a \"You are very welcome.\" aswell!"
             l "Lilith let's out a cute giggle. She has a gleeful look in her eyes."
-            l "You know, you made laugh quite good there [name], now it's my turn! Would you like to hear a joke?"
+            l "You know, you made laugh quite good there [persistent.name], now it's my turn! Would you like to hear a joke?"
             menu:
                 "Sure, I'd love to!":
                     jump cafe_abigailJoke
@@ -377,7 +377,7 @@ label cafe_badLove:
 
     if cafe_badLove_lowbar == True:
         l "Hey, don't sell yourself or this date short!"
-        l "So far I'm having a really good time [name]."
+        l "So far I'm having a really good time [persistent.name]."
         l "Anyway, to answer your question..."
 
     elif cafe_badLove_justafeeling == True:
@@ -411,6 +411,6 @@ label cafe_badLove:
                     jump restaurant_death_1_prevented
 
                 "Well, I really enjoy our time together!":
-                    l "Thank you [name], it really helps to hear someone say that from time to time."
+                    l "Thank you [persistent.name], it really helps to hear someone say that from time to time."
                     n "Lilith gives give a thankfull smile."
                     jump restaurant_death_1

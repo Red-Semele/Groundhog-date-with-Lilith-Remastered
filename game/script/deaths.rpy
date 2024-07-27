@@ -72,7 +72,7 @@ label restaurant_deaths:
                 l "Eventually she decides to not take any chances.
                 She stands up and moves to your side of the table."
                 l "So..."
-                l "What is this all about [name]?"
+                l "What is this all about [persistent.name]?"
                 n "Before you can answer her question you hear someone scream again, that's the sign.
                 You turn your head just quick enough to see someone fall with a plate in their hands."
                 n "The plate flies in the air, with it the ham sandwich that was put on top of it."
@@ -123,12 +123,12 @@ label restaurant_deaths:
                 n "The water is gushing out rapidly and it does not seem to be planning to stop."
                 n "It seems as if somehow the merlin must have made a crack form."
                 n "You think about the pure shenanigans that were needed to even make this exact thing happen but you are soon interrupted by the water flowing past your shoes with some fish coming along for the ride."
-                l "Quick [name], we need to do something!"
+                l "Quick [persistent.name], we need to do something!"
                 if persistent.cafe_death_2 == True:
                     n "You give Lilith a firm hug and tell her that there's nothing else you two can do except for waiting."
                     if lilithlike == True:
                         l "If I have to go now I atleast get some comfort out of the fact that you are here for me."
-                        l "Goodbye [name], thank you for everything."
+                        l "Goodbye [persistent.name], thank you for everything."
                         
                     else:
                         n "And so the both of you wait, in eachothers arms, for certain death. And it comes as expected."
@@ -163,21 +163,22 @@ label restaurant_deaths:
                 $ persistent.chinese_death_2 = True
                 jump gameOver
     label car_death:
+        $ persistent.runAwayLilith_counter += 1
         if angryLilith == True:
             l "Lilith stands up from her seat and shoves it back with a frightening speed."
-            l "I really didn't want it to come this far but you left me no other choice [name]."
+            l "I really didn't want it to come this far but you left me no other choice [persistent.name]."
             if major_love_offence >= 1:
                 l "I just have one question for you."
                 l "Why go on this date with me at all?"
                 l "I was really looking forward to this date, but I'm not sure I can say the same for you."
                 l "I mean, if you really wanted to be here with me today, then why were you so rude to me?"
-                l "Don't bother answering that [name], no answer you could give would ever change what I'm going to do next."
+                l "Don't bother answering that [persistent.name], no answer you could give would ever change what I'm going to do next."
             elif minor_love_offence >= 2:
                 l "I could endure one rude remark, even though I probably shouldn't."
                 l "I guess I stayed because I hoped things would become better."
                 l "I guess I also stayed because I owed it to myself to go out once and I didn't want to ruin this date."
                 l "But now I know better. I will ruin this date if I stay here. Atleast when I walk out on you I can still feel some pride for myself afterwards."
-            l "Goodbye [name], and a tip for the future: if you ever go another date, try to develop manners beforehand. "
+            l "Goodbye [persistent.name], and a tip for the future: if you ever go another date, try to develop manners beforehand. "
             if persistent.lildeaths >= 1:
                 n "I guess we will see very soon wheter or not it is possible for you to do that, right player?"
         
@@ -218,9 +219,9 @@ label restaurant_deaths:
                 if persistent.chinese_car_death == True:
                     "This time there is no red Sedan in sight, it seems as if the cops handled it well."
                 if angryLilith == True:
-                    l "Leave me alone [name]! I don't want to see you ever again!"
+                    l "Leave me alone [persistent.name]! I don't want to see you ever again!"
                 else:
-                    l "Why are you following me [name]? I want to be alone." 
+                    l "Why are you following me [persistent.name]? I want to be alone." 
                 n "And with that Lilith leaves, you never saw her again. Not this time anyway. Atleast she didn't seem to get killed by anything on her way back home since you still heard people talk about her from time to time."
                 $ lilithAliveEnding = True
                 $ persistent.lildeaths -= 1
@@ -241,7 +242,7 @@ label restaurant_deaths:
             else:
                 $ currentcar = True
                 if persistent.redSedan_knowledge == True:
-                    $ carDescription = "the same red Sedan that you encountered before" #TODO: Check if this updates the description properly.
+                    $ carDescription = "the same red Sedan that you encountered before"
                 else:
                     $ carDescription = "a red Sedan"
                 n "Lilith leaves the [resname], you rush after her in an effort to calm her down.
@@ -254,24 +255,24 @@ label restaurant_deaths:
 
 label kokiri_deaths:
     label angryLilith:
-
+        $ persistent.runAwayLilith_counter += 1
         if major_love_offence >= 1:
             n "Lilith jumps up from where she was lying mere moments ago, on her face is a visible layer of anger or is it... disappointment?"
             n "You're not sure which one would sting more, probably a combination of the two."
             n "She wipes the crumbs on her clothes away with a frightening speed and angrily storms down the hill."
-            l "Goodbye [name], we are done here."
+            l "Goodbye [persistent.name], we are done here."
             l "Do not come back for extra attempts if you have even the slightest slither of respect for me."
             $ persistent.kokiri_angry_noretry = True
         elif minor_love_offence > 1:
             n "Lilith stands up from where she was lying mere moments ago. You can clearly see a disappointed look on her face."
-            l "This might all be a game for you [name], but for me this is very real."
+            l "This might all be a game for you [persistent.name], but for me this is very real."
             l "So I'd like to be treated with the respect you would give to a real person."
             l "You need to learn that your actions have consequences, even in something as simple as a game."
             l "I'm leaving now. Don't try to follow me, there's nothing you can say to me right now to change my mind."
             l "Besides, you can just retry right?"
             l "I'd prefer if you didn't, but I know I can't stop you."
             l "Let's just hope that when I meet you here once again during the next attempt you will have learnt your lesson."
-            l "Goodbye [name]."
+            l "Goodbye [persistent.name]."
             n "Lilith turns away from you and walks down the hill cool and collected, it seems she has made up her mind about this."
         n "She doesn't get far from the hill, maybe a metre or fifteen before she seemingly trips over a tree root."
         n "She does not get up."
@@ -358,7 +359,7 @@ label kokiri_deaths:
                 l "Oh wow, a meteorite? That was what was going to kill me now?"
                 l "So you spoke the truth... I keep on dying over and over on this date?"
                 l "Seems like I woke up with some major bad luck today."
-                l "Although I suppose I am lucky enough to go through this with you, thank you for saving me once again [name]!"
+                l "Although I suppose I am lucky enough to go through this with you, thank you for saving me once again [persistent.name]!"
                 n "Lilith pauses for a moment."
                 l "Alright, I have to put the levity aside for a moment and be honest with you."
                 l "I might look and sound calm right now but that's just because I kind of freeze in situations like this."
@@ -370,7 +371,7 @@ label kokiri_deaths:
                 l "A part of me didn't want to believe you."
                 l "Even if deep down I knew you were telling the truth."
                 l "..."
-                l "I just need a moment to gather my thoughts [name], after that we can continue our conversation if you'd like."
+                l "I just need a moment to gather my thoughts [persistent.name], after that we can continue our conversation if you'd like."
                 n "You give a slight nod, the corners of Lilith's mouth subtly move up, you almost didn't quite catch it."
                 n "You're not quite sure how long the moment lasts, but after a while she shifts her postion and gives you a nod."
                 l "I think I am ready now, this is still a lot but I might be able to see it through now."
@@ -439,10 +440,10 @@ label kokiri_deaths:
                     l "It sounds unlikely to be honest."
                     l "And yet you knew about this place, so I guess you might be right..."
                     n "Lilith seems to be thinking about something, everything turns quiet for a moment."
-                    l "I suppose I owe you a thank you for helping me out today. So thank you [name]."
+                    l "I suppose I owe you a thank you for helping me out today. So thank you [persistent.name]."
                 else:
                     l "Wow, it really sounds as if death is following me wherever I go."
-                    l "Thank you for helping me survive this whole ordeal [name]!"
+                    l "Thank you for helping me survive this whole ordeal [persistent.name]!"
 
 
             menu:
@@ -468,7 +469,7 @@ label kokiri_deaths:
                     l "Deep down I guess I always blamed myself for what happened, for them leaving."
                     l "As if there some curse cast on me that would make all my loved ones leave me."
                     l "If anything, I am thankful that I now have another piece of evidence to hold on to whenever I experience that thought again."
-                    l "So thank you very much for that [name], that means more to me than I could ever express fully."
+                    l "So thank you very much for that [persistent.name], that means more to me than I could ever express fully."
                     jump kokiri_pictureChoice
 
                 "We're running out of time. Could we please continue talking?":  
@@ -536,14 +537,14 @@ label kokiri_death_2_prevented_youWereHappyWithRon:
     jump kokiri_pictureChoice
 
 label kokiri_death_2_prevented_youDiedATon:
-    l "Oh, [name], it certainly has been a lot to wrap my head around  but I never had to constantly deal with this whole scenario like you. I truly suppose ignorance is bliss."
+    l "Oh, [persistent.name], it certainly has been a lot to wrap my head around  but I never had to constantly deal with this whole scenario like you. I truly suppose ignorance is bliss."
     l "I can completely understand that you are dealing with a lot throughout this whole thing. I really don't blame you for trying to keep coming back."
     l "You are just trying to find a way out and I'm sure you'll find it. Your intentions are pure."
-    l "I don't blame you for anything [name], please don't blame yourself either."
+    l "I don't blame you for anything [persistent.name], please don't blame yourself either."
     l "Afterall, is it worth it to live with me if you can't live with yourself?"
     n "Lilith seems to be lost in thought for a moment."
     l "However, if you truly feel like I keep dying every time, maybe there is no way for us to be together and for me to be alive?"
-    l "Did you ever consider that option [name]?"
+    l "Did you ever consider that option [persistent.name]?"
     menu: 
         "I did, the more this goes on the more I think you might be correct.":
             l "I see, so you don't think there is a way for both us to be together and for me to be alive?"
@@ -616,7 +617,7 @@ label kokiri_showpicture:
             l "But even if you somehow were able to contact them I'd really prefer if you didn't."
             l "This is already a lot to take in for me, I don't want to place that burden on anyone else."
             n "Everything turns quiet for a moment once again."
-            l "So, do you promise to never contact my family even if you somehow were able to [name]?"
+            l "So, do you promise to never contact my family even if you somehow were able to [persistent.name]?"
             jump noContactFamilyPromise
 
 
@@ -697,7 +698,7 @@ label kokiri_showpicture:
             else:
                 #TODO: Add the angry lilith flag and part. #angryLilith #Make her not ask you for help but just accept her death.
                 #The part below is not that part.
-                l "What is happening [name]?"
+                l "What is happening [persistent.name]?"
                 n "The fear in her voice is palpable."
                 "Suddenly you feel the hill shooting upwards. The increased force of the gravity is pinning you against the hill but not for long, you begin to roll off the hill and fall down in the middle of a lake close to where it used to sit. "
                 p "Lilith, it's safe in here, jump down!"
@@ -707,15 +708,15 @@ label kokiri_showpicture:
                 jump gameOver
 
         label kokiri_death_4_hill_dieTogether:
-            l "Is this it, [name]?"
+            l "Is this it, [persistent.name]?"
             n "You give a silent nod, as you do so you can feel her squeeze your hand even more as her's begins to tremble.
             Suddenly you feel the hill shooting upwards. The increased force of the gravity is pinning you against the hill but not for long, you begin start to slide off the hill."
             n "You would probably have fallen if Lilith wasn't holding your hand with all of her strength. She pulls you up slowly, while she does so she has to look down at the rapidly shrinking forest and you can see the fear in her eyes."
-            l "Hold on [name], I got you and I'm not letting you go."
+            l "Hold on [persistent.name], I got you and I'm not letting you go."
             l "{size=*0.5}Phew, we 're really high... I'm getting dizzy but I must keep going... just a little bit longer...{/size}"
             n "She has managed to pull you up but it costed a lot of her strength."
             n "The both of you flop down on the hill like a few moments ago, the only difference being that the hill is now soaring in the sky, oh and also that two of you are still holding hands."
-            l "You know what's funny [name]?
+            l "You know what's funny [persistent.name]?
             I felt more scared when I thought you were going to fall than I am now thinking about how I'm going to die.
             I suppose it's because if you fell I would have to go through this all alone."
             menu:
@@ -761,7 +762,7 @@ label other_deaths:
 
         
         n "Just as she says that you hear a deafening noise come from your phone.
-        It sounds like a sharp whisteling" #TODO: (how does a planecrash sound? Maybe research this a bit to be more accurate.) Also, make the segway between this and the text below a bit better.
+        It sounds like a sharp whisteling" #TODO: Make the segway between this and the text below a bit better.
         play music game_over
         n "You try calling an ambulance to go to her house to make sure that she survives... "
         n "When the ambulance arrived there isn't much they could do, apparently a plane crashed on Lilith's house."
