@@ -1,6 +1,7 @@
  #Add the rest of the kokiri part here, including the nightmare. also  in the quest version like the ability to talk about other things.
 
 label kokiri_start:
+    $ love_meter = 3
     n "Lilith gasps for a second."
     l "You mean the Kokiri woods? The same as I am thinking of right now?"
     l "You know what, let's both go to the Kokiri woods, if we are at the same spot then I'll know for sure."
@@ -308,7 +309,7 @@ label kokiri_gamegoal_noGoal:
     $ kokiri_conversation += 1
     l "Lilith chuckles."
     l "So sort of like life in general?"
-    l "I mean, I might not be the best person to make this comparison since I'm not entirely sure wether I am alive or not due to me being in a game, I feel alive for what it's worth."
+    l "I mean, I might not be the best person to make this comparison since I'm not entirely sure wether I am alive or not due to me being in a game, but hey, I feel alive for what it's worth."
     l "But anyway, from my potentially flawed point of view our very existence is absurd."
     l "Born without objective purpose and gone before we recieve one, a joke without a punchline."
     l "Maybe this existence is the punchline? "
@@ -319,9 +320,9 @@ label kokiri_gamegoal_noGoal:
     l "But that doesn't mean there is no hope at all [persistent.name]!"
     l "We can create our own subjective purpose to compensate the lack of an objective one."
     l "We exists to help our family, friends and loved ones.
-    To be able to experience the small joys in life like a warm hug, a good book or a eating some cheese while still being in your bed."
+    To be able to experience the small joys in life like a warm hug, a good book or eating some cheese while still being in your bed."
     l "We exist because we already existed so we might aswell keep going at it, right?"
-    l "And even if the universe doesn't care about us, even if we are unfathomably small in it's eyes, we care about eachother and in our eyes we are unfathomably large."
+    l "And even if the universe doesn't care about us, even if we are unfathomably small in it's eyes, we care about eachother and in eachother's eyes we are unfathomably large."
     l "Maybe that is the purpose of this game? To show you that it is possible to make your own purpose?"
     l "If you consider that I can tell you about this, it's at the very least programmed into the game."
     l "It could be a red herring but I think it might be worth thinking about more later."
@@ -421,7 +422,7 @@ label kokiri_scenery:
         n "From the spot you picked on the hill you have a gorgeous view of the village where most of your dates with Lilith took place."
         n "It's pretty calm in the village, here and there you might catch a rare glimpse of a car or a pedestrian but other than that the streets are completly empty."
         l "This view is absolutely fantastic isn't it?"
-        l "When my parents used to take walks with me and my brother in this forrest I knew that I just had to keep coming back here."
+        l "When my parents used to take walks with me and my brother in this forest I knew that I just had to keep coming back here."
         l "And I did! Many times actually. I like to come here whenever I have some spare time or when I really need to get some time away from things."
         l "The sunrise here is absolutely beautiful, maybe we'll be able to share that moment today."
         l "I'd like that..."
@@ -499,7 +500,7 @@ label kokiri_scenery:
                     n "Lilith bursts out in laughter."
                     l "I see how it is [persistent.name]!"
                     l "Did you watch the stars with me again just so you could tell me you knew?"
-                    l "Or did you come back because you agree?... That this moment right now is perfect?..."
+                    l "Or did you come back because you agree?... Do you think this moment right now is perfect aswell?"
                     menu:
                         "If I'm being honest... I came back to see your reaction to me already knowing what you'd say.":
                             l "Hey, that's totally fair [persistent.name], I'd probably be doing the same thing if I were you to be honest."
@@ -509,7 +510,7 @@ label kokiri_scenery:
                             #TODO: Fill this out a bit more.
                         "I think all our moments together are perfect, but I agree, this one has something magical to it.":
                             $ love_points += 2
-                            $ love_meter_updater()
+                            $ love_meter_updater(False)
                             l "..."
                             l "..."
                             l "..."
@@ -889,9 +890,10 @@ label kokiri_death_3_prevented_talk_farthestWeHaveGone:
     l "Is it just me or is the knowledge that this is the first time I share this very moment with you making it only more special?"
     menu:
         "It is.":
-            n "Lilith laughs."
-            l "I knew you would agree, let's make the most of this unique moment." #TODO: Change this line up slightly.
-            #TODO: Add some more text here to sell the moment better.
+            n "Lilith laughs slightly."
+            l "I knew you would agree [persistent.name], I can imagine you might even be more excited than me to experience a new moment."
+            l "Repeatedly doing all of this over and over again, it might make it lose it's charm for you, doesn't it?"
+            #TODO: Add some more text here to sell the moment better. An option where you agree, an option where you tell her it's actually still very nice even if you repeatedly have done it.
             jump kokiri_death_4_hill
         "Every moment we share is beautiful to me.": 
             #TODO: If you told her this run that all moments are beautiful when you looked at the scenery you can reference that in the link above this. Lilith will also have some slightly diffeent dialogye.
@@ -918,8 +920,6 @@ label kokiri_death_3_prevented_talk_farthestWeHaveGone:
                     l "So who's to say what you'll accomplish next? Either way, just know that I believe in you."
                     jump kokiri_death_4_hill
                     
-
-            #TODO: Fill in. There is no quest-precedent for this.
 
 
 label kokiri_death_3_death_dialogue:
@@ -967,17 +967,52 @@ label kokiri_death_dialogue_stillDying:
             $ kokiri_holdhand = True
             menu:
                 "I am doing all of this to make sure I won't ever need to let you go.":
-                    l "...I know... atleast that's what I hoped deep down. But I'm beginning to get doubts. Isn't this all a bit too much?"
-                    #TODO: Write something here about how you will have to let her go eventually, make her mention it.
-                    l "Not that I don't appreciate your effort but when will all of this end [persistent.name]? If it even will end at all." #TODO: This doesn't make much sense, maybe change it to her refering to not letting go her hand and you confusing it with not letting her go, leading to something like this as a result.
+                    l "I... I was talking about not letting my hand go."
+                    l "But from the way you said that... I get the feeling you are talking about something else entirely, aren't you?"
+                    l "Don't get me wrong, I am thankful for you taking saving me so serious, but isn't this all a bit too much?"
+                    l "Not that I don't appreciate your effort but when will all of this end [persistent.name]? If it even will end at all."
                     l "How many times have you gone through the motions now?"
                     menu:
                         "I have done so [persistent.retry_counter] times.":
                             if persistent.retry_counter > 16:
-                                l "Are you going to make the breakthrough after 20 times, maybe 50?" #Make sure that she doesn't name these numbers if the value of the deaths is already larger than that.
-                                l "Or maybe, just maybe, the dev will just give you the good ending after 999 times?" #TODO: Same goes here although it's unrealistic to think the player would have 999 deaths.
+                                if persistent.retry_counter < 50:
+                                    l "Are you going to make the breakthrough after 50 times, maybe 100?" 
+                                else:
+                                    if persistent.retry_counter < 1000:
+                                        l "Are you going to make the breakthrough after 100 extra attempts?"
+                                if persistent.retry_counter < 1000:
+                                    l "Or maybe, just maybe, the dev will just give you the good ending after 1000 times?"
+                                else: 
+                                    l "Is it going to take a thousand more of my deaths?... This is too much [persistent.name]."
 
                                 l "Exactly how much of my lives and deaths is THE good ending worth to you?"
+                                #TODO: Put the stuff below with the retry counter either somewhere else a bit higher, or put it in one of the branches below, here it just doesn't enitrely fit.
+                                if persistent.retry_counter < 50:
+                                    l "While I do understand that it can be hard to let go, you might need to let me go eventually."
+                                    l "After all, this game is only so big isn't it?"
+                                    l "What if you've explored every branch and you still can't save me?"
+                                    l "What if this game never wanted you to save me?"
+                                    l "With all these different attempts... I'm begining to get my doubts honestly."
+                                    l "I think we might both need to accept what's going to happen."
+                                else:
+                                    l "Look [persistent.name], like I already said, I really appreciate you attempting to continously save me."
+                                    l "But, aren't you also begining to get doubts after so many attempts?"
+                                    l "Either I'm really destined to die over and over and..."
+                                    n "Lilith grows quiet for a moment."
+                                    l "Or we are missing the point of all of this."
+                                    l "But you can't keep doing this forever."
+                                    l "Or well, you very much can, but I'm asking you not to."
+                                    if love_meter > 2:
+                                        l "I know that you can do whatever you want at the end of the day, but I'm counting on the fact that you are willing to hear me out on this."
+                                        l "It's not easy, but together we can move on to something better."
+                                    else:
+                                        l "I know it's almost ridiculous of me to ask but I'm trying to get through you somehow."
+                                        l "I'm not sure when you started treating me pretty bad."
+                                        l "Wheter it was from the very first attempt onwards or if you slowly grew more resentful or bored and wanted to take it out on me."
+                                        l "But this can't be fun for you, right?"
+                                        l "Just constantly having to sit through the same dialogue over and over, bashing your head against the wall each time."
+                                        l "Why are you still doing this [persistent.name]?"
+
                                 menu:
                                     "But you are not real, this is just a game...":
                                         l "Well, I feel pretty real to me and I can imagine every death I go through must feel equally real and very painful."
@@ -1091,7 +1126,7 @@ label kokiri_death_dialogue_stillDying:
                             else:
                                 "Filler"
                                 #TODO: Put alternative text here.
-                "I won't.":
+                "Don't worry, I won't.":
                     n "Her smile grows even wider."
                     l "Thank you [persistent.name], that really helps comfort me a little."
                     l "Whatever happens next, we're facing it together."
@@ -1168,55 +1203,6 @@ label kokiri_death_dialogue_stillDying:
                     l "I had a blast so far, even if the concept that I'm in a game still is a bit much to wrap my head around."
                     l "I was always so focused on Abby, mom, my work, pretty much anything else that isn't me, that I forgot how good it feels to take some time to just relax."
                     jump kokiri_death_4_hill
-
-label kokiri_notTheSameYou:                                    
-    n "Lilith chuckles and gives you a confused look."
-    l "I'm afraid I'm not really following you [persistent.name]."
-    l "If you were at the exact same place and time with a version of me and you told her the same things you are telling me up to this point, doesn't that make me essentially her?"
-    menu:
-        "That might be true but you are forgetting one thing, my time isn't frozen, it keeps going and so do my memories. So my perception of you keeps shifting and with that you do aswell.":
-            l "Ah I hadn't thought about it like that!"
-            l "I guess I feel like a different person to you depending on what you learn about me but unlike me you can't forget it."
-            l "It's almost like that saying I suppose: \"You can't step into the same river twice.\""
-            l "Do you know who said that?"
-            if persistent.kokiri_heraclitus_knowledge == True:
-                l "You remember Lilith telling you it was Heraclitus who said that."
-            menu:
-                "Oh yeah, the one who said that is...":
-                    $ r1 = renpy.input("Place your answer here.")
-                    $ r1 = r1.strip()
-                    $ r1 = r1.lower()
-                    if r1 == "heraclitus":
-                        n "Lilith, still laying down on your lap, gives you a big smile and a thumbs up."
-                        l "Yup, that's the guy!"
-                        l "I'm actually pretty surprise that you knew him. I guess you are just full of surprises, aren't you, [persistent.name]?"
-                        jump kokiri_death_4_hill
-
-                "I don't know.":
-                    $ persistent.kokiri_heraclitus_knowledge = True
-                    $ persistent.kokiri_determinism_knowledge = True
-                    l "No worries [persistent.name]! It's not like I'm going to leave you because you don't know the name of that guy."
-                    n "Lilith chuckles slightly."
-                    l "He believed that everything flows and moves, that nothing stays the same. I believe the right words are: \"Panta rhei\""
-                    l "I think he certainly has a point, especially when you start to think of all the cogs and parts that interact with eachother every single second of our lives and even beyond them."
-                    l "Then again, I wonder if you put those exact cogs and parts in the exact same place and under the same circumstances if you would get other results or if everything would go the same way."
-                    l "I tend to believe the latter, what do you think [persistent.name]?"
-                    jump kokiri_death_4_hill
-
-
-
-        "Actually, what you're saying makes a lot of sense, I hadn't considered that.":
-            $ persistent.kokiri_determinism_knowledge = True
-            l "I always found that a fascinating thing to ponder, if you had two universes that so far are identical in every way. Can they go in different directions?"
-            l "Or is there such a thing as fate always steering them in the same direction?"
-            l "I believe they would follow the same direction if every single little detail up to that point was the same but that's the fun part in this whole speculation, the idea that I could be wrong!"
-            n "You give Lilith a questioning look and she burst out in laughter."
-            n "After a few moments she finds her calm once again."
-            l "Where would be the fun if I could just know how the universe itself worked? I think it is way more interesting to try to think of new interesting ways that can be explained with logic than to just cling to it being unknowable as an excuse to not think of explanations. Don't you think so aswell [persistent.name]?"
-            jump kokiri_death_4_hill
-
-                
-
 
         "You need to go through this, it's the only way I might be able to save you.":
             l "I know [persistent.name], but are you sure I have to die here?"
@@ -1298,6 +1284,56 @@ label kokiri_notTheSameYou:
             l "I don't think saying that I \"got this\" is a good response for such a situation."
             #TODO: Fill this out more make atleast one pair of choices for this, with atleast one of them leading to the angry lilith flag and to the death 4 page.
 
+label kokiri_notTheSameYou:                                    
+    n "Lilith chuckles and gives you a confused look."
+    l "I'm afraid I'm not really following you [persistent.name]."
+    l "If you were at the exact same place and time with a version of me and you told her the same things you are telling me up to this point, doesn't that make me essentially her?"
+    menu:
+        "That might be true but you are forgetting one thing, my time isn't frozen, it keeps going and so do my memories. So my perception of you keeps shifting and with that you do aswell.":
+            l "Ah I hadn't thought about it like that!"
+            l "I guess I feel like a different person to you depending on what you learn about me but unlike me you can't forget it."
+            l "It's almost like that saying I suppose: \"You can't step into the same river twice.\""
+            l "Do you know who said that?"
+            if persistent.kokiri_heraclitus_knowledge == True:
+                l "You remember Lilith telling you it was Heraclitus who said that."
+            menu:
+                "Oh yeah, the one who said that is...":
+                    $ r1 = renpy.input("Place your answer here.")
+                    $ r1 = r1.strip()
+                    $ r1 = r1.lower()
+                    if r1 == "heraclitus":
+                        n "Lilith, still laying down on your lap, gives you a big smile and a thumbs up."
+                        l "Yup, that's the guy!"
+                        l "I'm actually pretty surprise that you knew him. I guess you are just full of surprises, aren't you, [persistent.name]?"
+                        jump kokiri_death_4_hill
+
+                "I don't know.":
+                    $ persistent.kokiri_heraclitus_knowledge = True
+                    $ persistent.kokiri_determinism_knowledge = True
+                    l "No worries [persistent.name]! It's not like I'm going to leave you because you don't know the name of that guy."
+                    n "Lilith chuckles slightly."
+                    l "He believed that everything flows and moves, that nothing stays the same. I believe the right words are: \"Panta rhei\""
+                    l "I think he certainly has a point, especially when you start to think of all the cogs and parts that interact with eachother every single second of our lives and even beyond them."
+                    l "Then again, I wonder if you put those exact cogs and parts in the exact same place and under the same circumstances if you would get other results or if everything would go the same way."
+                    l "I tend to believe the latter, what do you think [persistent.name]?"
+                    jump kokiri_death_4_hill
+
+
+
+        "Actually, what you're saying makes a lot of sense, I hadn't considered that.":
+            $ persistent.kokiri_determinism_knowledge = True
+            l "I always found that a fascinating thing to ponder, if you had two universes that so far are identical in every way. Can they go in different directions?"
+            l "Or is there such a thing as fate always steering them in the same direction?"
+            l "I believe they would follow the same direction if every single little detail up to that point was the same but that's the fun part in this whole speculation, the idea that I could be wrong!"
+            n "You give Lilith a questioning look and she burst out in laughter."
+            n "After a few moments she finds her calm once again."
+            l "Where would be the fun if I could just know how the universe itself worked? I think it is way more interesting to try to think of new interesting ways that can be explained with logic than to just cling to it being unknowable as an excuse to not think of explanations. Don't you think so aswell [persistent.name]?"
+            jump kokiri_death_4_hill
+
+                
+
+
+        
 label kokiri_semiEnding:
     l "So, this is it? Our last time together in this game?"
     l "You know, that doesn't mean we won't be able to see each other again."

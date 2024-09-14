@@ -2182,8 +2182,8 @@
               msg ("Lilith coughs for a second.")
               SetForegroundColour (player.Lilcolor)
               msg ("Hold on, this is a bit much, can we meet somewhere?")
-              msg ("I got the perfect place in mind, it's a forest near the village where all three of those restaurants you just mentioned are, as a kid i called it Kokiri forrest as a refference to a game I liked to play.")
-              msg ("If I die on you again just mention Kokiri forrest, that should pique past me's interest.")
+              msg ("I got the perfect place in mind, it's a forest near the village where all three of those restaurants you just mentioned are, as a kid i called it Kokiri forest as a refference to a game I liked to play.")
+              msg ("If I die on you again just mention Kokiri forest, that should pique past me's interest.")
               SetFlagOn ("Kokiri")
               msg ("Here she dies once more, I still got to implement the death into the game.")
               AddPageLink (Tell_the_untold_story, Game_start, "Retry")
@@ -4113,7 +4113,7 @@
                             msg ("<br/>She makes tons of those games but barely manages to finish them.<br/>Even is she finishes them eventually, she almost never does anything with them.")
                             wait {
                               SetForegroundColour (player.Lilcolor)
-                              msg ("<br/>She asks me to play a select few of those that get finished every now and then, they are not really complex at the slightest but I always find them strangely intriguing nontheless.")
+                              msg ("<br/>She asks me to play a select few of those that get finished every now and then, they are not really complex at the slightest but I always find them strangely intriguing nonetheless.")
                               wait {
                                 MovePlayer (Chinese_Abby_game choice)
                               }
@@ -5248,7 +5248,7 @@
                                       <script type="script"><![CDATA[
                                         Love_decrease
                                         SetForegroundColour (player.Narcolor)
-                                        msg ("Lilith frowns when she sees your dirty fingers.<br/>Nontheless you take the notebook out of her hand and begin to read.<br/>You can read the entire thing in her voice somehow.")
+                                        msg ("Lilith frowns when she sees your dirty fingers.<br/>nonetheless you take the notebook out of her hand and begin to read.<br/>You can read the entire thing in her voice somehow.")
                                         if (GetInt(game, "tracker") = 1) {
                                           SetFlagOn ("tracker1")
                                         }
@@ -6634,7 +6634,7 @@
                           MovePlayer (Kokiri_scenery choice)
                         }
                       </script>
-                      <object name="scenery forrest">
+                      <object name="scenery forest">
                         <inherit name="scripttext" />
                         <script type="script">
                           SetForegroundColour (player.Narcolor)
@@ -6643,7 +6643,7 @@
                           wait {
                             SetForegroundColour (player.Lilcolor)
                             msg ("This view is absolutely fantastic isn't it?")
-                            msg ("When my parents used to take walks with me and my brother in this forrest I knew that I just had to keep coming back here.")
+                            msg ("When my parents used to take walks with me and my brother in this forest I knew that I just had to keep coming back here.")
                             msg ("And I did! Many times actually. I like to come here whenever I have some spare time or when I really need to get some time away from things.")
                             wait {
                               msg ("The sunrise here is absolutely beautiful, maybe we'll be able to share that moment today.")
@@ -6821,7 +6821,7 @@
                         SetForegroundColour (player.Lilcolor)
                         msg ("I'm sorry, this is all just a bit much to process. Imagine if someone you just met told you that your entire world is in a game and that the engine the game is running on also exists in that world.")
                         msg ("Theoretically speaking the game your playing right now could even exist in my world... that's a really strange idea to wrap your head around. (Scenry, maybe add some extra dialogue before and during the scenery)")
-                        MovePlayer (scenery forrest)
+                        MovePlayer (scenery forest)
                       }
                     }
                     else {
@@ -7603,7 +7603,7 @@
                                                 <script type="script">
                                                   SetForegroundColour (player.Lilcolor)
                                                   msg ("An excellent choice if I say so myself! (change this dialogue, it triggers the scenery.)")
-                                                  MovePlayer (scenery forrest)
+                                                  MovePlayer (scenery forest)
                                                 </script>
                                               </object>
                                               <object name="no make_no watch the view">
@@ -9068,7 +9068,7 @@
                 SetForegroundColour (player.Lilcolor)
                 msg ("You know walking here with you brings back so many happy memories. (Give a story or two about her.)")
                 msg ("Thank you for taking me here {player.alias}!")
-                msg ("It may not be the best weather but I'm happy to be here nontheless.")
+                msg ("It may not be the best weather but I'm happy to be here nonetheless.")
                 if (GetBoolean(game, "rainlover")) {
                   if (not GetBoolean(game, "rain")) {
                     AddPageLink (Beachtrue_walk near sand, Beachtrue_sand_secretly love rain, "I don't mind the rain at all. In fact, I secretly like it.")
@@ -9160,7 +9160,7 @@
                 SetForegroundColour (player.Lilcolor)
                 msg ("You know walking here with you brings back so many happy memories. (Give a story or two about her.)")
                 msg ("Thank you for taking me here {player.alias}!")
-                msg ("It may not be the best weather but I'm happy to be here nontheless.")
+                msg ("It may not be the best weather but I'm happy to be here nonetheless.")
                 if (GetBoolean(game, "rainlover")) {
                   if (not GetBoolean(game, "rain")) {
                     AddPageLink (Beachtrue_walk near sea, Beachtrue_water_secretly love rain, "I don't mind the rain at all. In fact, I secretly like it.")
@@ -10222,8 +10222,8 @@
                 msg ("With trembling hands you type the emergency-number and beg for help.")
                 msg ("Everything seems to fade away, even the continuous  barage of gunshots, all you can hear is the sound of Lilith's breathing as it gets harder and harder for her to live.")
                 wait {
-                  msg ("You've been here for what feels like aeons but in all reality was probably 5 minutes when an ambulance finally arives.")
-                  msg ("A young man with eyes that have grown old from all the things they saw places Liliths still body on a stretcher and rushes off with it to the ambulance.")
+                  msg ("You've been here for what feels like aeons but in all reality was probably 5 minutes when an ambulance finally arrives.")
+                  msg ("A young man with eyes that have grown old from all the things they saw places Lilith's still body on a stretcher and rushes off with it to the ambulance.")
                   msg ("The kind man throws some words at you, he tells you that everything will be just fine but you both know that he is lying.<br/>You have see her suffering for what seemed like an eternity and a second at the same time.")
                   wait {
                     msg ("You've gotten no clue what caused all those gunshots that inadvertently killed her. Some robbery in a neighbouring store, or a gang war, or something else.")
@@ -10279,10 +10279,10 @@
         else if (GetBoolean(game, "Chinese")) {
           SetForegroundColour (player.Narcolor)
           if (GetBoolean(game, "Peking")) {
-            msg ("When the waitress arives with your double plates of Peking duck you and Lilith immediately dig in.")
+            msg ("When the waitress arrives with your double plates of Peking duck you and Lilith immediately dig in.")
           }
           else if (GetBoolean(game, "Orange")) {
-            msg ("When the waitress arives with your orange chicken and Lilith's peking duck the two of you immediately dig in.")
+            msg ("When the waitress arrives with your orange chicken and Lilith's peking duck the two of you immediately dig in.")
           }
           wait {
             SetForegroundColour (player.Narcolor)
@@ -16735,7 +16735,7 @@
     <inherit name="scripttext" />
     <script type="script">
       SetForegroundColour (player.playcolor)
-      AddPageLink (Kokiri_scenery choice, scenery forrest, "Sure, I'd love to watch the scenery with you!")
+      AddPageLink (Kokiri_scenery choice, scenery forest, "Sure, I'd love to watch the scenery with you!")
       AddPageLink (Kokiri_scenery choice, scenerey decline, "I'd rather continue talking.")
     </script>
     <object name="scenerey decline">
@@ -19082,7 +19082,7 @@
         else {
           if (GetBoolean(game, "Meteorite_alert")) {
             SetForegroundColour (player.Narcolor)
-            msg ("The meteorite breaks into many different parts that spread all around the forest. One of them lands right where Lilith was sitting.<br/>For a brief moment you are reminded of the horible state she was in when it hit her head. You try to shake the feeling it gives you away and you half-succeed.<br/><br/>Lilith looks at you with visible shock in her eyes, knowing that she doesn't have much time left you point at the phone and motion her to continue calling.<br/>She nods and frowns slightly, she understands very well what you are not saying directly but thinking nontheless.<br/>The end is near.<br/>Her end is near.")
+            msg ("The meteorite breaks into many different parts that spread all around the forest. One of them lands right where Lilith was sitting.<br/>For a brief moment you are reminded of the horible state she was in when it hit her head. You try to shake the feeling it gives you away and you half-succeed.<br/><br/>Lilith looks at you with visible shock in her eyes, knowing that she doesn't have much time left you point at the phone and motion her to continue calling.<br/>She nods and frowns slightly, she understands very well what you are not saying directly but thinking nonetheless.<br/>The end is near.<br/>Her end is near.")
             if (GetBoolean(game, "Car_caught")) {
               SetFlagOn ("Continue_call_one")
               SetForegroundColour (player.Narcolor)

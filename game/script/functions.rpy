@@ -19,7 +19,7 @@ label gdwl_functions:
             global minor_love_comfort
             global major_love_comfort
             #TODO: Check if the code below with the persistent counters works.
-            love_meter = love_points + love_meter
+            love_meter += love_points
             if love_points == -1:
                 minor_love_offence += 1
                 persistent.minor_love_offence_counter += 1
@@ -37,7 +37,7 @@ label gdwl_functions:
             if alwaysJump == True:
                 love_meter_result(True)
             else:
-                love_meter_result()
+                love_meter_result(False)
 
 
         def family_curiosity_checker():
@@ -220,7 +220,7 @@ label gdwl_functions:
                     renpy.say (n, "For a brief moment you are reminded of the horible state she was in when it hit her head.")
                     renpy.say (n, "You try to shake the feeling it gives you away and you half-succeed.")
                     renpy.say (n, "Lilith looks at you with visible shock in her eyes, knowing that she doesn't have much time left you point at the phone and motion her to continue calling.")
-                    renpy.say (n, "She nods and frowns slightly, she understands very well what you are not saying directly but thinking nontheless.")
+                    renpy.say (n, "She nods and frowns slightly, she understands very well what you are not saying directly but thinking nonetheless.")
                     renpy.say (n, "The end is near.")
                     renpy.say (n, "Her end is near.")
                     renpy.say (n, "It might not be the meteorite.")

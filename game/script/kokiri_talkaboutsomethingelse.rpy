@@ -78,8 +78,7 @@ label kokiri_talkAboutSomethingElse:
                                                 l "Even if there weren't, you'd still remember your past attempts, which means something did indeed change."
                                                 l "Pantha Rhei and all that, just like you said."
 
-            "*Tell her about the mayo easteregg*":
-                    #TODO: change the link text slightly and fill this in. (No quest precedent)
+            "I managed to threaten the narrator into letting me eat pure mayo and nothing else.":
                     l "Interesting, so you managed to \"fight\" the narrator?"
                     l "And you {b}won{/b}?"
                     l "Even if it's about something so silly as eating nothing but mayo."
@@ -167,14 +166,14 @@ label kokiri_talkAboutSomethingElse:
                                     jump askAboutJames_tellMeAbout
                                 #TODO: Fill in this link below and the third option for the ask about james thingy.
                                 "I know that you kept James' number in your phone after he..." if persistent.keptJamesNumber_knowledge:
-                                    #TODO: Make that link above also check if you know he died.
                                     menu:
                                         "Are you the one who keeps calling that number?" if persistent.lilithKeepsCalling_knowledge:
                                             "Filler"
                                 "This will sound weird but I'm asking to understand better. In your phone you saved James' number, right? But when I called that number the person claimed to be someone else, and they had never heard of you before." if not persistent.keptJamesNumber_knowledge and persistent.lilithKeepsCalling_knowledge and persistent.jamesFakoutNumber_knowledge:
                                     $ love_points = -2
-                                    $ love_meter_updater()
+                                    $ love_meter_updater(False)
                                     l "You did what?"
+                                    l "First you looked into my phone and then you just called my family?"
                                     l "I guess I appreciate your honesty but what I don't appreciate is you trying to involve my family in all of this."
                                     l "And don't try to fool me into thinking another version of me agreed to this, I think no version of me would ever do something like that."
                                     n "Lilith takes a few deep breaths in and out."
@@ -395,9 +394,9 @@ label askAboutAbigail_tellMeAbout_1:
                         a "I'm going to make fun of you if this isn't true, you'd put mom her naivite to shame."
                         l "I'd like that."
                         a "To be made fun of?"
-                        l "No, I'd like that all of this turned out to be false. That I would be able to see you in person again."
+                        l "No, I'd like all of this to turn out to be false. That I would be able to see you in person again."
                         a "...Please, can we continue talking about me? This is a lot to take in."
-                        l "...I guess we can. I don't think I have much time left any way."
+                        l "...I guess we can. I don't think I have much time left either way."
                         a "..."
                         a "So, you asked me if something was wrong with me right?"
                         a "Well, to be honest there is."
@@ -410,19 +409,19 @@ label askAboutAbigail_tellMeAbout_1:
                         a "And other days it seems to never leave my head."
                         a "But it always comes back in the end."
                         a "It just gets so cold sometimes Lilly."
-                        l "Abby, I had no idea...
-                        I am so sorry I never asked you about this earlier.
-                        I had this feeling in my guts, I should've asked earlier."
-                        a "Hey, don't blame yourself!
-                        I probably wouldn't have told you.
-                        I didn't want you or mom to worry about me.
-                        That's why I tried to act like nothing was wrong. I thought I was doing a great job but apparently not."
-                        l "You are doing  a great job! You're telling me about this.
-                        That way I can help. Or atleast make sure you are heard.
-                        I will always be there for you Abby, even when I am... not here anymore.
-                        I wish I could tell you that loneliness you are experiencing ever fully goes away.
-                        It doesn't. You will have to live with it. You will have to keep trying to highten your resitance to it.
-                        Promise me that if you ever doubt if a friend truly wants to do something together with you you'll ask them to be sure. It might sound silly but it helps, I promise."
+                        l "Abby, I had no idea..."
+                        l "I am so sorry I never asked you about this earlier."
+                        l "I had this feeling in my guts, I should've asked earlier."
+                        a "Hey, don't blame yourself!"
+                        a "I probably wouldn't have told you."
+                        a" I didn't want you or mom to worry about me."
+                        a "That's why I tried to act like nothing was wrong. I thought I was doing a great job but apparently not."
+                        l "You are doing  a great job, you're telling me about this."
+                        l "That way I can help. Or atleast make sure you are heard."
+                        l "I will always be there for you Abby, even when I am... not here anymore."
+                        l "I wish I could tell you that loneliness you are experiencing ever fully goes away."
+                        l "It doesn't. You will have to live with it. You will have to keep trying to highten your resitance to it."
+                        l "Promise me that if you ever doubt if a friend truly wants to do something together with you you'll ask them to be sure. It might sound silly but it helps, I promise."
                         n "You motion to Lilith that she doesn't have much time left."
                         l "I have to go now sis."
                         l "You don't want to hear this next part..."
@@ -447,8 +446,21 @@ label askAboutAbigail_tellMeAbout_1:
                 jump kokiri_talkAboutSomethingElse
 
 label askAboutAbigail_tellMeAbout_2:
-    "Filler"
-    #TODO: Fill in (no quest precedent)
+    #TODO: Rewrite this later, just writing it now to get it done
+    l "You know... Abby and me are pretty different although at first glance we might look quite alike."
+    l "For starters, she always seems to be so confident."
+    l "She fully trusts in herself no matter what situation she is in."
+    l "I wish I could just borrow like a tenth of that confidence sometimes, I'd be a different person!"
+    l "I'm working on becoming a bit more confident but to tell you the truth, it just feels like it's enough."
+    l "I'm still trying to overcome some issues with my self-perception so maybe that is the cause of feeling like that..."
+    l "She also never has seemed to have trouble finding dates, she has tons of them and even got a few handfuls of girlfriends out of them."
+    l "Meanwhile I can count my romantic relationships on one hand."
+    l "Not that I would want it any other way though!"
+    l "I don't need to have tons of people falling all over me, I just need to find that one person."
+    l "That one person with who I can share a life."
+    n "Lilith seems to be lost in thought for a moment."
+    l "I might have slightly lost the point but what I am trying to say is that although Abby is quite different when compared to me I wouldn't have it any other way."
+    l "She is an inspiration to me and makes my life that more richer, I hope she feels the same way about me."
     $ kokiri_conversation_silent()
 
 label askAboutAbigail_tellMeAbout_3:
@@ -518,7 +530,7 @@ label askAboutDavid_tellMeAbout_2:
                             l "Knowing that we don't have unlimited time makes me really thankful that you chose to spend that time to make sure I was okay."
                             $ kokiri_conversation += 1
                             $ love_points += 2 #This gains you 2 love points but as a sacrifice you lose an additional topic to talk about.
-                            $ love_meter_updater()
+                            $ love_meter_updater(False)
                             $ kokiri_conversation_silent()
 
 
@@ -715,7 +727,8 @@ label askAboutLila_tellMeAbout_1:
                         li "You'll never be fully gone sweetie, never fully forgotten."
                         li "Me and Abby will always remember you."
                         li "Just like James."
-                        l "I'd like that, maybe I will get to see him soon."
+                        l "I'd like that..."
+                        l "maybe I will get to see him soon."
                         l "I will never forget both of you aswell."
                         li "If you see James... can you tell him I still think about him all the time?" 
                         $ persistent.LilaStillThinksAboutJames_knowledge = True
@@ -764,7 +777,9 @@ label askAboutLila_tellMeAbout_2:
     l "It's a beautiful quality of her to be entirely fair but sometimes she just takes it way too far."
     l "I remember this one time where she got a mail from someone claiming to be a rich relative from Canada."
     l "They said that they were going to soon die and that mom was the nearest heir of his fortune." #TODO: Slightly rewrite this story as it's a bit weird Lila would be estatic by someone dying.
-    l "Mom was ecstatic, after dad, I mean David, left us money has always been rather tight."
+    l "Mom was kind of ecstatic, after dad, I mean David, left us money has always been rather tight."
+    l "She even had to work two jobs just to be able to take care of us."
+    $ persistent.lilaWorkedTwoJobs_knowledge = True #TODO: Make this a real flag and make it something you can ask David about, he gave money to lila but she never accepted the money because he had left.
     l "So the prospect of being able to get more money to support us probably increased her trust in the situation."
     l "The \"rich relative from Canada\" said they just needed her to send a hundred euros so he could send her his fortune."
     l "Luckily my mom might be naive but she is not dimwitted."

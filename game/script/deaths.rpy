@@ -17,8 +17,8 @@ label restaurant_deaths:
                 n "She falls of her chair, you crawl towards her and try to call an ambulance."
                 n "With trembling hands you type the emergency-number and beg for help."
                 n "Everything seems to fade away, even the continuous  barage of gunshots, all you can hear is the sound of Lilith's breathing as it gets harder and harder for her to live."
-                n "You've been here for what feels like aeons but in all reality was probably 5 minutes when an ambulance finally arives."
-                n "A young man with eyes that have grown old from all the things they saw places Liliths still body on a stretcher and rushes off with it to the ambulance."
+                n "You've been here for what feels like aeons but in all reality was probably 5 minutes when an ambulance finally arrives."
+                n "A young man, with eyes that have grown old from all the things they saw, places Lilith's still body on a stretcher and rushes off with it to the ambulance."
                 n "The kind man throws some words at you, he tells you that everything will be just fine but you both know that he is lying. You have see her suffering for what seemed like an eternity and a second at the same time."
                 n "You've gotten no clue what caused all those gunshots that inadvertently killed her. Some robbery in a neighbouring store, or a gang war, or something else."
                 n "But sadly you do know what the aftermath of it all is."
@@ -43,9 +43,9 @@ label restaurant_deaths:
             elif chinese == True:
                 #Chinesescene here
                 if peking == True:
-                    n "When the waitress arives with your double plates of Peking duck you and Lilith immediately dig in."
+                    n "When the waitress arrives with your double plates of Peking duck you and Lilith immediately dig in."
                 else:
-                    n "When the waitress arives with your orange chicken and Lilith's peking duck the two of you immediately dig in."
+                    n "When the waitress arrives with your orange chicken and Lilith's peking duck the two of you immediately dig in."
 
                 n "She takes a break from her food and looks at you for a moment."
                 l "You know, I'm actually glad we could meet here, I wanted to tell you something."
@@ -126,7 +126,7 @@ label restaurant_deaths:
                 l "Quick [persistent.name], we need to do something!"
                 if persistent.cafe_death_2 == True:
                     n "You give Lilith a firm hug and tell her that there's nothing else you two can do except for waiting."
-                    if lilithlike == True:
+                    if love_meter >= 3:
                         l "If I have to go now I atleast get some comfort out of the fact that you are here for me."
                         l "Goodbye [persistent.name], thank you for everything."
                         
@@ -228,7 +228,23 @@ label restaurant_deaths:
                 if angryLilith == True:
                     n "You probably shouldn't have angered her so much."
                 else:
-                    n "You should probably get her to trust you somehow." #TODO: Make this line more properly showcase what went wrong, were you silent to her, did you anger her etc.
+                    if explanationAsked:
+                        if groundhog == False and psychic == False:
+                            n "Maybe you should give her a different explanation?"
+                        else: 
+                            if groundhog == True:
+                                if persistent.groundhog_answer_right_knowledge == True:
+                                    n "Now next time you can give her the number she was thinking of."
+                                else: 
+                                    n "Maybe you need to give some proper proof."
+
+                            elif psychic == True:
+                                if persistent.psychic_answer_right_knowledge == True:
+                                    n "Now next time you can tell her the word she was thinking of."
+                                else: 
+                                    n "Maybe you need to give some proper proof."
+                    else:
+                        n "You should probably try something else next time."
                 jump gameOver
 
 
@@ -288,7 +304,7 @@ label kokiri_deaths:
             n "Deep down you already know it is too late."
             n "But you can't help yourself, you call an ambulance hoping that this time is somehow slightly different."
             n "That this time she is still alive by the time they arive."
-            n "After what feels like waiting for years the ambulance finally arives."
+            n "After what feels like waiting for years the ambulance finally arrives."
             n "Sadly they tell you the same news they've already told you before."
             n "She didn't make it."
         jump gameOver
@@ -323,7 +339,7 @@ label kokiri_deaths:
                     if kokiri_call_death_1_check == True: #Check wheter or not she was calling someone at the time of her death.
                         if kokiri_chatchar_abigail_called == True:
                             n "You can vaguely sense Abigial's screaming but somehow it gets almost drown out by the silence of the forest."
-                        elif if kokiri_chatchar_lila_called == True:
+                        elif kokiri_chatchar_lila_called == True:
                             n "You can vaguely sense Lila's screaming but somehow it gets almost drown out by the silence of the forest."
                     n "It is hard to imagine that just a few moments ago the forest felt so lively since it now feels so lonely and cold."
                     n "You feel so lonely and cold."
@@ -336,7 +352,7 @@ label kokiri_deaths:
                         if kokiri_chatchar_abigail_called == True:
                             n "Even Abigail who is currently screaming her lungs out has become unbearingly silent."
                             n "You would also like to scream but all that manages to come out is the same silence that seems to have taken over the forest."
-                        elif if kokiri_chatchar_lila_called == True:
+                        elif kokiri_chatchar_lila_called == True:
                             n "Even Lila who is currently screaming her lungs out has become unbearingly silent."
                             n "You would also like to scream but all that manages to come out is the same silence that seems to have taken over the forest."
                     else:
@@ -407,7 +423,7 @@ label kokiri_deaths:
             if kokiri_call_death_2_check == True:
                 if kokiri_chatchar_abigail_called == True:
                     n "You call an ambulance with shaking hands as you hear Abigail's neverending screaming coming from Lilith's phone."
-                elif if kokiri_chatchar_lila_called == True:
+                elif kokiri_chatchar_lila_called == True:
                     n "You call an ambulance with shaking hands as you hear Lila's neverending screaming coming from Lilith's phone."
             else:
                 n "You call an ambulance with shaking hands."
@@ -771,8 +787,9 @@ label other_deaths:
         n "Sadly the same can't be said for both Lilith and most of the passengers of the plane..."
 
         n "There were luckily survivors of the plane crash, of the 139 people on board  86 people survived, most of them had minor injuries but where otherwise physically fine, if not mentally scarred."
-        n "The event was all plastered over the news as soon as it happened, they followed it live as it (unfolded?)
-        Lilith did not survive though, they had to remove the plane to even get to her body, the sight was horifying, they never mentioned what she looked like but you could hear it in their voice when they where on the phone."
+        n "The event was all plastered over the news as soon as it happened, they followed it live as it unfolded."
+        n "Lilith did not survive though, they had to remove the plane to even get to her body, the sight was horifying."
+        n "They never mentioned what she looked like but you could hear it in their reaction that the phone, which was still on, had picked up."
         $ persistent.plane_knowledge = True
         jump gameOver
 

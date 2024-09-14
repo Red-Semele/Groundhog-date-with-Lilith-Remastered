@@ -1,6 +1,8 @@
 
 #TODO: Play through burger-path to be sure it's semi-bug free and also add the nightmare scenario to it etc.
 label burger_start:
+    $ burger = True
+    $ love_meter = 3
     if persistent.lildeaths > 0:
         if no_nightmare == False:
             if perm_nightmare == True:
@@ -20,12 +22,10 @@ label burger_start:
     n "You arrive a tad late, Lilith already has grabbed herself a seat and waves at you when she sees you."
     l "Heya! Almost was scared you wouldn't show up."
 
-    $ burger = True
-    if persistent.burgerwent == 0:
-        if persistent.burgerstart == True:
-            $ persistent.burgerwent += 1
-        else:
-            $ persistent.burgerstart = True
+    if persistent.burgerstart == False:
+        $ persistent.burgerstart = True
+    else: 
+        $ persistent.burgerwent += 1
 
 
     menu:
@@ -68,17 +68,24 @@ label burger_start_choice1:
     menu:
 
 
-        "I've never been here before." if persistent.burgerwent == 0:
+        "I actually didn't know that, I've never been here before." if persistent.burgerwent == 0:
             jump burger_beenBeforeXTimes
 
 
-        "I've been here before, only once though." if persistent.burgerwent == 1:
+        "I did know that yes, I've been here before, only once though." if persistent.burgerwent == 1:
             jump burger_beenBeforeXTimes
 
 
-        "I've been here exactly [persistent.burgerwent] times." if persistent.burgerwent > 1:
+        "I'm well aware, I've been here exactly [persistent.burgerwent] times." if persistent.burgerwent > 1:
+            n "It sounds a bit weird if you phrase it like that, doesn't it?"
             jump burger_beenBeforeXTimes
 
+        "I did know that actually, I've been here a couple of times." if persistent.burgerwent > 1:
+            l "Oh you have? That makes sense, these burgers are the best of this state, scratch that, of the world!"
+            n "While she is enthusiastically exclaiming this her arms kind of seem to have a life of their own, making all kinds of gestures to get the point across even more. "
+            n "When she catches her arms in the act she blushes slightly, quiets for a moment and places them back down on the table."
+            l "So, what are you going to pick? I think I'll go for the juicy cheeseburger myself."
+            jump burger_start_menu
 
 label burger_beenBeforeXTimes:
 
@@ -176,18 +183,19 @@ label burger_ordering:
     r "Who did you bring along for the ride?"
     l "Oh right, you two haven't met. Rose, this is [persistent.name] and [persistent.name] this is Rose."
     $ persistent.rosename_knowledge = True
+    $ roseName = "Rose"
     n "Rose gives you a sincere smile."
     r "Nice to meet you [persistent.name]."
     r "So, what can I get the two of you?"
     n "You and Lilith tell her your choices."
-    r "A juicy cheeseburger and a [burger_choice] coming up! I'll bring them to you when they are done alright?"
+    r "A juicy cheeseburger and a [burger_choice] coming up! I'll bring them to you when they are done, alright?"
     r "That way you two can get to know each other some more."
     n "She gives Lilith a quick wink that you just barely manage to catch."
     n "Lilith's face turning beetred is a lot easier to notice."
     l "{size=*0.5}Uhm, thank you Rose... we uhm have to get back to our table now.{/size}"
-    n "You can't help but chuckle to yourself as Lilith pratically darts back to the table."
+    n "You can't help but chuckle to yourself as Lilith practically darts back to the table."
     n "By the time you've reached the table she is already sitting down, still as red as she possibly could be."
-    n "She quickly brushes one hand over her left cheek and somehow manages to turn even more red at the realisation that she is still blusing."
+    n "She quickly brushes one hand over her left cheek and somehow manages to turn even more red at the realisation that she is still blushing."
     n "Right then she lets out a few small coughs as she tries to somehow divert attention from what just happened."
     #TODO: Add a better segway?
     l "Thank you for choosing this place [persistent.name].
@@ -207,7 +215,7 @@ label burger_ordering:
 
         "Are you alright Lilith? You don't need to share this story if it hurts you too much.":
             $ love_points = 1
-            $ love_meter_updater()
+            $ love_meter_updater(False)
             l "Honestly I'm not sure if I'll ever be fully alright because of what happened."
             l "And I think telling that story will always hurt."
             l "But that doesn't mean I wouldn't like to tell you about it."
@@ -258,7 +266,8 @@ label burger_joke_3:
 
 label burger_joke_Abigail:
     $ love_points = 1
-    $ love_meter_updater()
+    $ love_meter_updater(False)
+    $ burger_jokeFromAbigailTold = True
     n "Lilith bursts out in laughter."
     l "I really love that joke, my sister Abigail told me it once and I kept laughing and laughing for hat seemed like an eternity.
     Just thinking about it again, it fills me with a warm feeling, like a blanket you wrap around yourself in the coldest of winters."
@@ -307,7 +316,7 @@ label burger_living_writer:
 label burger_living_unemployed:
     l "Oh, do you like to write? That's pretty cool!"
     l "Lilith seems to be quite enthusiastic, her eyes have a certain shimmer to them that wasn't there just a moment ago."
-    l "I also like to write something from time to time, it's one of my hobby's actually."
+    l "I also like to write something from time to time, it's one of my hobbies actually."
     menu:
         "Would you like to show something you've written?":
             jump burger_living_showWriting
@@ -338,9 +347,9 @@ label burger_living_showWriting_poem:
         You can read the entire thing in her voice somehow."
     else:
         $ love_points = -1
-        $ love_meter_updater()
+        $ love_meter_updater(False)
         n "Lilith frowns when she sees your dirty fingers.
-        Nontheless you take the notebook out of her hand and begin to read.
+        nonetheless you take the notebook out of her hand and begin to read.
         You can read the entire thing in her voice somehow."
 
     l "Oh Moon
@@ -379,7 +388,7 @@ label burger_poem_rating:
 
 label burger_poem_rating_terrible:
     $ love_points = -1
-    $ love_meter_updater()
+    $ love_meter_updater(False)
     n "Lilith begins to frown slightly.
     She looks hurt by your words."
     l "Oh...
@@ -452,7 +461,7 @@ label burger_Brotherasked:
             That day two people were taken away  from me by a car.
             Actually, scratch that, David had a choice in the matter, James was the only one really taken away from me."
             l "Mom really tried her best to fill the void left by them but the presence of their absence has always haunted us since that horrible day."
-            if persistent.joke_knowledge == True:
+            if burger_jokeFromAbigailTold == True:
                 l "My sister, Abigail, the one from the joke you just told, is 5 years younger than me so she doesn't really remember much of what happened."
 
             else:
@@ -461,6 +470,7 @@ label burger_Brotherasked:
             n "She lets out a sigh of relief."
             l "As much as it hurts me to talk about James it feels good to finally let it all out once again.
             Thank you for listening to me ramble on [persistent.name]."
+            $ persistent.brother_knowledge = True
             jump burger_deathBuildup
 
 label burger_deathBuildup:

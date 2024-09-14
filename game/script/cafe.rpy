@@ -1,6 +1,6 @@
 label cafe_start:
     $ cafe = True
-
+    $ love_meter = 4
     if persistent.cafe_taste_knowledge == True:
         l "Oh my, you surely know how to get me excited! I'll meet you there!"
     else:
@@ -142,11 +142,14 @@ label cafe_dice_result:
                 if dicenumber2 == 3:
                     label cafe_dice_right:
                         l "Wow, you managed to figure it out. Nicely done [persistent.name]!"
-                        $ persistent.dice_knowledge = True
                         l "For a moment I thought this puzzle might have been a little too hard but you handled it like a champ!"
                         l "I'm actually very impressed."
+                        if persistent.lildeaths >= 1: 
+                            if persistent.dice_knowledge == False:
+                                n "I'm quite impressed aswell player, you haven't done this before, have you? You are quite the natural."
                         l "I love puzzles like these that really make you put your brain to good use so it's always fun to someone else who has the same mindset."
                         l "But anyway, enough about me, let's move on to another question for you, what do you think about this place?"
+                        $ persistent.dice_knowledge = True
                         jump cafe_rateCafe
                 else:
                     label cafe_dice_wrong:
@@ -288,7 +291,7 @@ label cafe_rateCafe_okayish:
 
 label cafe_rateCafe_bad:
     $ love_points = -1
-    $ love_meter_updater()
+    $ love_meter_updater(False)
     n "Lilith frowns at your reaction."
     l "..."
     l "There's no need to drag this place down just because you don't like it."
@@ -337,7 +340,7 @@ label cafe_abigailJoke:
             jump cafe_joke_dontGet
 label cafe_joke_bad:
     $ love_points = -1
-    $ love_meter_updater()
+    $ love_meter_updater(False)
     n "Lilith looks saddened by your remark."
 
     l "Really? ..."

@@ -1,4 +1,5 @@
 label chinese_start:
+    $ love_meter = 3
     $ chinese = True
     l "That sounds like a plan!"
     l "I'll see you there."
@@ -22,14 +23,14 @@ label chinese_start:
                     jump chinese_start_gladToBeHere_youOfcourse
 
 label chinese_start_gladToBeHere_theRestaurant:
-$ love_points = -1
-$ love_meter_updater()
-l "Oh, I mean I like this place aswell I suppose..."
-n "She seems slightly dissapointed with your answer."
-l "Anyway, I think I'd starve if I don't eat soon so let's continue our little chat while we wait on our food.
-What would you like to order?"
-#Make her slightly more dissapointed.
-jump chinese_menu
+    $ love_points = -1
+    $ love_meter_updater(False)
+    l "Oh, I mean I like this place aswell I suppose..."
+    n "She seems slightly dissapointed with your answer."
+    l "Anyway, I think I'd starve if I don't eat soon so let's continue our little chat while we wait on our food.
+    What would you like to order?"
+    #Make her slightly more dissapointed.
+    jump chinese_menu
 label chinese_start_gladToBeHere_youOfcourse:
     l "Lilith lets out a sigh of relief and chuckles slightly."
     l "Sorry, that was just a thought that popped up in my head."
@@ -303,7 +304,7 @@ label adriel_unanswered_chat:
             l "So atleast that wasn't the case."
             l "{size=*0.5}But you didn't have to act so high and mighty about it [persistent.name]...{/size}"
             $ love_points = -2
-            $ love_meter_updater()
+            $ love_meter_updater(False)
         else:
             l "Oh phew, what a relief!"
             l "I was kind of scared that I made my riddles too hard."
@@ -318,7 +319,7 @@ label adriel_unanswered_chat:
     label chinese_riddle_hard:
         if hard_rude == True:
             $ love_points = -2
-            $ love_meter_updater()
+            $ love_meter_updater(False)
             l "Oh I suppose they are quite hard..."
             l "{size=*0.5}But did you have to say it so rudely?....{/size}"
             
@@ -452,7 +453,7 @@ label chinese_riddle_talk_abbyHobbies:
     She can't really code much so she uses Quest, it's a program that makes it easier to make textbased games."
     l "She makes tons of those games but barely manages to finish them.
     Even is she finishes them eventually, she almost never does anything with them."
-    l "She asks me to play a select few of those that get finished every now and then, they are not really complex at the slightest but I always find them strangely intriguing nontheless."
+    l "She asks me to play a select few of those that get finished every now and then, they are not really complex at the slightest but I always find them strangely intriguing nonetheless."
     menu:
         "What do you find interesting about her games?":
             l "Well for one, games made by a small team or even one person are almost an imprint of what those people were thinking right when they made their project."
@@ -466,9 +467,9 @@ label chinese_riddle_talk_abbyHobbies:
             l "The prisoner begins to speak absolute nonsense no matter what you decide on typing into the textbox.
             The text coming from them is dark blue."
             l "They seem oddly happy to see you and yet they pay no attention to you at all."
-            l "It's only one voice in there but they always refer to them as if there are multiples.
-            They keep going on and on about how you are speaking in a \"stolen voice\" and how no one wants to listen to you.
-            And yet they keep begging you to speak, not because they listen to you or understand your words but because they like the color of your text, light green."
+            l "It's only one voice in there but they always refer to them as if there are multiples."
+            l "They keep going on and on about how you are speaking in a \"stolen voice\" and how no one wants to listen to you."
+            l "And yet they keep begging you to speak, not because they listen to you or understand your words but because they like the color of your text, light green."
             l "The prisoner keeps talking, mostly insulting you and commanding you to bow before them.
             After what felt like probably ten minutes of pure nonsense reactions to my input another voice began to speak."
             l "That voice was dark green,
@@ -645,7 +646,7 @@ label chinese_phone_peek:
                     "Uhm yeah, I'm totally fine. (Lie)":
                         n "Lilith squints her eyes slightly and looks at you with an almost soul-piercing look in her eyes."
                         $ love_points = -1
-                        $ love_meter_updater()
+                        $ love_meter_updater(False)
                         l "Hmm, alright [persistent.name], if you say so."
                         n "You have to stop yourself from shaking in your seat, did she buy that lie? The alternative gives you so much fear that you try to convince yourself that she did."
                         n "Anyway, it's best to just move on now, you told the lie, you can always choose to not lie to her from now on, right?"
@@ -748,7 +749,7 @@ label chinese_phone_peek:
                             n "Is that really worth all of this to you?"
                     else:
                         if persistent.passWrongOnPurpose_narratorRant_wrongTimesInARowCounter > 1:
-                            if persistent.passWrongOnPurpose_narratorRant_counter !== persistent.passWrongOnPurpose_narratorRant_wrongTimesInARowCounter:
+                            if persistent.passWrongOnPurpose_narratorRant_counter != persistent.passWrongOnPurpose_narratorRant_wrongTimesInARowCounter:
                                 n "You've been doing this [persistent.passWrongOnPurpose_narratorRant_counter] times now, your current streak is [persistent.passWrongOnPurpose_narratorRant_wrongTimesInARowCounter]."
                             else:
                                 n "Really?"
@@ -932,4 +933,6 @@ label chinese_riddle_decline:
                         "Yes you did, great job Lilith!":
                             n "Lilith fist pumps the air."
                             l "Yes! That was a very fun riddle [persistent.name], not what I was expecting but it forced me to think outside the box a little bit."
+    "An attempt to get you back on track before this messes things up."
+    jump chinese_riddle_accept
 return
