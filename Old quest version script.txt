@@ -5534,7 +5534,7 @@
                                                           wait {
                                                             msg ("Recently I've been expanding my reach by learning about Finnish mythology, I picked up the Kalevala and haven't been to put it down until I finished it.<br/>I am less familiar with those myths since I picked it up for the first time about a week ago but I'd love t read it again for quite a few times until I'm as familiar with it as the Roman myths.")
                                                             wait {
-                                                              msg ("<br/>I also really enjoy to read Haruki Murakami's works, a friend of mine introduced me to them and since then I've read 'First person singular', 'After dark' and '1q94'.<br/>He has a hauntingly beautiful way of describing even the most mundane things. It's like I can see the world for the first time again but not through my eyes, through his instead.<br/><br/>I love it when someone can make me look at mundane things in a whole new perspective.")
+                                                              msg ("<br/>I also really enjoy to read Haruki Murakami's works, a friend of mine introduced me to them and since then I've read 'First person singular', 'After dark' and '1q84'.<br/>He has a hauntingly beautiful way of describing even the most mundane things. It's like I can see the world for the first time again but not through my eyes, through his instead.<br/><br/>I love it when someone can make me look at mundane things in a whole new perspective.")
                                                               wait {
                                                                 SetForegroundColour (player.Lilcolor)
                                                                 msg ("So, which books do you like to read {player.alias}?")
@@ -14401,7 +14401,7 @@
                                 <script type="script">
                                   SetForegroundColour (player.playcolor)
                                   AddPageLink (wanted to see where it leads_choices, wanted to see where it leads_do no trust you, "I do not trust you.")
-                                  AddPageLink (wanted to see where it leads_choices, wanted to see where it leads_had to make sure, "I just had to make sure, this seems like a place where the developper would be able to hide some stuff.")
+                                  AddPageLink (wanted to see where it leads_choices, wanted to see where it leads_had to make sure, "I just had to make sure, this seems like a place where the developer would be able to hide some stuff.")
                                 </script>
                                 <object name="wanted to see where it leads_do no trust you">
                                   <inherit name="scripttext" />
@@ -14476,7 +14476,7 @@
                                     <inherit name="scripttext" />
                                     <script type="script">
                                       SetForegroundColour (player.playcolor)
-                                      AddPageLink (who are they_choice, who are they_game dev nar, "Alright mister purple prose. So the \"they\" you were talking about are the game developper and the narrator?")
+                                      AddPageLink (who are they_choice, who are they_game dev nar, "Alright mister purple prose. So the \"they\" you were talking about are the game developer and the narrator?")
                                     </script>
                                     <object name="who are they_game dev nar">
                                       <inherit name="scripttext" />
@@ -14995,7 +14995,7 @@
         AddPageLink (player.parent, Save state saver, "{colour:darkviolet:Click this when you get an error.} ")
         SetFlagOn ("testmenu")
         SetForegroundColour (player.Devcolor)
-        msg ("CheDDAR activated (Cheattool for Developper Dabbling And Researching)")
+        msg ("CheDDAR activated (Cheattool for developer Dabbling And Researching)")
         AddPageLink (player.parent, Go back X pages_cheat, "{colour:darkviolet:Time machine.}")
         AddPageLink (Testing menu, Hide_Cheddar, "Hide CheDDAR link.")
         AddPageLink (Testing menu, Cheddar set stuff, "Set flags/counters/variables.")

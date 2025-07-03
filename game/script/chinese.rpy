@@ -1,11 +1,10 @@
 label chinese_start:
-    $ love_meter = 3
     $ chinese = True
     l "That sounds like a plan!"
     l "I'll see you there."
-    n "You head to the Chinese restaurant, when you arive there Lilith is already seated. She happily waves at you."
+    n "You head to the Chinese restaurant, when you arive there [persistent.date] is already seated. She happily waves at you."
     n "It's appears to be quite busy, there are people at every table."
-    n "You walk towards the table where Lilith is sitting and greet her with a cheerful smile."
+    n "You walk towards the table where [persistent.date] is sitting and greet her with a cheerful smile."
     l "Heya [persistent.name]!
     Glad to see you here.
     You're in luck, I managed to save this table just in the nick of time."
@@ -13,7 +12,7 @@ label chinese_start:
     menu:
         "Glad to be here.":
             l "Oh you flatterer!"
-            n "Lilith pauses for a moment, seemingly lost in a thought."
+            n "[persistent.date] pauses for a moment, seemingly lost in a thought."
             l "Or are you glad to be here for the restaurant itself?"
             menu:
                 "Mostly the restaurant actually, otherwise I wouldn't have come her with you in the first place.":
@@ -32,7 +31,7 @@ label chinese_start_gladToBeHere_theRestaurant:
     #Make her slightly more dissapointed.
     jump chinese_menu
 label chinese_start_gladToBeHere_youOfcourse:
-    l "Lilith lets out a sigh of relief and chuckles slightly."
+    l "[persistent.date] lets out a sigh of relief and chuckles slightly."
     l "Sorry, that was just a thought that popped up in my head."
     n "She looks like she could sink through the floor out of embarrassment so you decide it's best to forget what she has said."
     l "Anyway, I think I'd starve if I don't eat soon so let's continue our little chat while we wait on our food.
@@ -57,7 +56,7 @@ label chinese_menu_result:
     elif orange == True:
         l "That's a good choice!
         I've had my fair share of orange chicken already throughout my life, so I think I'm going for something else."
-        n "Lilith scratches her chin softly."
+        n "[persistent.date] scratches her chin softly."
         l "I think I'm going to pick the peking duck, beats another portion of orange chicken."
         n "She lets out a small chuckle."
 
@@ -66,8 +65,8 @@ label chinese_menu_result:
             jump restaurant_death_1_prevented
 
         "Sounds good to me!":
-            n "Suddenly a waitress stands right before your table, slightly startling you.
-            Lilith tries her best not to burst out with laughter but a few muffled laughs get through.
+            n "Suddenly a waitress stands right before your table, slightly startling you."
+            n "[persistent.date] tries her best not to burst out with laughter but a few muffled laughs get through.
 
             After writing down both of your choices she wanders of towards the kitchen."
 
@@ -87,18 +86,18 @@ label chinese_riddle_accept:
     $ rw3 = 0
     $ rw_total = 0
     $ persistent.chineseRiddlesSeenXTimesCounter += 1
-    l "Alright, here is the first riddle.
-    They are all based around Greek and Roman myths.
-    So here we go."
+    l "Alright, here is the first riddle."
+    l "They are all based around Greek and Roman myths."
+    l "So here we go."
     label chinese_riddle_first:
         l "To taunt the gods with webs of lies
         is to hang but not to die."
         #The second part should probably be based on the wrong answer counter so she doesn't constantly say the same thing.
 
-        n "Lilith pauses for a moment."
-        l "So, do you have an idea who I could be talking about?"
+        n "[persistent.date] takes a moment so you can think it through properly."
+        l "So, do you have an idea who it could be?"
         if persistent.r1_knowledge == True:
-            n "You remember Lilith telling you the answer was Arachne."
+            n "You remember [persistent.date] telling you the answer was Arachne."
         $ r1 = renpy.input("Place your guess here")
         $ r1 = r1.strip()
         $ r1 = r1.lower()
@@ -221,10 +220,10 @@ label adriel_unanswered_chat:
 
     label chinese_riddle_second:
         l "Carried by Lightning with a crown of moon."
-        n "Lilith pauses for a moment."
+        n "[persistent.date] gives you a moment to think about her riddle."
         l "So, do you have an idea who I could be talking about?"
         if persistent.r2_knowledge == True:
-            n "You remember Lilith telling you the answer was Europa."
+            n "You remember [persistent.date] telling you the answer was Europa."
         $ r2 = renpy.input("Place your guess here")
         $ r2 = r2.strip()
         $ r2 = r2.lower()
@@ -241,10 +240,10 @@ label adriel_unanswered_chat:
 
     label chinese_riddle_third:
         l "The musical barterer returned empty-handed from the underworld."
-        n "Lilith pauses for a moment."
-        l "So, do you have an idea who I could be talking about?"
+        n "[persistent.date] pauses for a moment."
+        l "So, do you have an idea who the riddle is about?"
         if persistent.r3_knowledge == True:
-            n "You remember Lilith telling you the answer was Orpheus."
+            n "You remember [persistent.date] telling you the answer was Orpheus."
         $ r3 = renpy.input("Place your guess here")
         $ r3 = r3.strip()
         $ r3 = r3.lower()
@@ -292,12 +291,12 @@ label adriel_unanswered_chat:
 
                 jump chinese_riddle_hard
 
-            "How was I ever supposed to get those riddles? You made them way too hard. Not everyone has a degree in Folklore & Mythology" if rw_total > 0:
+            "How was I ever supposed to get those riddles? You made them way too hard. Not everyone has a degree in folklore and mythology" if rw_total > 0:
                 $ hard_rude = True
                 jump chinese_riddle_hard
     label chinese_riddle_easy:
         if easy_rude == True:
-            n "Lilith seems to be very saddened by your remark."
+            n "[persistent.date] seems to be very saddened by your remark."
             n "She just looks at the table for a second and then speaks again."
             l "Oh I see..."
             l "I was fearing that I might had asked you some impossible questions."
@@ -338,35 +337,37 @@ label adriel_unanswered_chat:
             if persistent.chineseRiddlesSeenXTimesCounter >= 3:
                 n "I guess you did in your previous attempts here, didn't you?"
                 n "Does that mean this game needs an educational tag?"
-            elif rw_total >= 6:
-                l "But you really seem to enjoy a good challenge."
-                l "You just kept going at it again and again."
-                l "I don't think I have met anyone with anything close to your persistence."
-                l "It's impressive frankly!"
-                if persistent.lildeaths >= 20:
-                    n "She is right, you know."
-                    n "You have seen her die over and over. [persistent.lildeaths] to be precise."
-                    n "Most people would probably have given up by now, but not you."
-                    n "That is your strength. And yet I can't help but wonder if it might also be your weakness?"
-            else:
-                l "But you seem to like a challenge."
-                if persistent.lildeaths >= 9:
-                    n "Perhaps that is why you keep retrying?"
-                    n "Just to see if you can somehow win?"
-                    n "I'm curious if you will, I suppose I would do good to keep an eye on your progress."
+        elif rw_total >= 6:
+            l "But you really seem to enjoy a good challenge."
+            l "You just kept going at it again and again."
+            l "I don't think I have met anyone with anything close to your persistence."
+            l "It's impressive frankly!"
+            if persistent.lildeaths >= 20:
+                n "She is right, you know."
+                n "You have seen her die over and over. [persistent.lildeaths] to be precise."
+                n "Most people would probably have given up by now, but not you."
+                n "That is your strength. And yet I can't help but wonder if it might also be your weakness?"
+        else:
+            l "But you seem to like a challenge."
+            if persistent.lildeaths >= 9:
+                n "Perhaps that is why you keep retrying?"
+                n "Just to see if you can somehow win?"
+                n "I'm curious if you will, I suppose I would do good to keep an eye on your progress."
            
         jump chinese_riddle_railroad
 
 label chinese_riddle_railroad:
     #TODO: Make this dialogue vary based on the amount of love points she has in her meter. (That way if you insult her she will be a lot less sweet, and the situation will be very awkward.)
-    l "You know, I thought it was kind of funny that you brought me here."
-    l "Don't get me wrong, I really enjoy like it here but my sister, Abigail, adores this places."
+    l "You know, it's kind of funny to be here in this specific restaurant with you."
+    l "Usually I come here with my mom and my sister, so it's a bit weird to be here with someone else."
+    l "Weird in a good way though! It's a welcome change if I'm being honest."
+    l "The reason we come here so much is because my sister, [persistent.date_sis], really adores this place."
     l "Since mom and me took her here for her twelfth birthday she insisted on coming again for five years in a row."
-    l "She would always pick the orange chicken, it really was her favourite."
+    l "She always picks the orange chicken, it really is her favourite."
     #In the rude route she tells you this but a bit more rude, you get the option to shit on the restaurant (verbally, not literally)
     menu:
         "She sounds nice, can you tell me more about her?":
-            n "Lilith gives you a big smile."
+            n "[persistent.date] gives you a big smile."
             l "Sure, what would you like to know?"
             menu:
                 "What is the funniest memory the two of you share?":
@@ -381,17 +382,17 @@ label chinese_riddle_talk_abbyMemory:
         $ persistent.tracker2 = True
     #The code above this works for an easteregg
     l "I think I have a story you'll find quite funny, just stop me when I'm talking too much alright?"
-    l "Abigail was like five years old at the time of our story.
+    l "[persistent.date_sis] was like five years old at the time of our story.
     One night she shook me until I was awake, we used to share a bedroom with a bunk bed."
     l "She told me she heard whispering and laughing coming from underneath our bed and begged me to go investigate it."
     l "I told her it was probably nothing and tried to go back to sleep but she wouldn't stop begging so I eventually gave in since I didn't want to wake the others."
     l "As I stood before the dark opening underneath the bunk bed I felt as if something was watching me. But monsters didn't exist, right?"
     l "Right when I was thinking that I heard something whisper.
-    I was terrified but as Abby's big sister I couldn't let her know I was so I tried to compose myself as best as I could and looked underneath the bed."
+    I was terrified but as [persistent.date_sis_nickname]'s big sister I couldn't let her know I was so I tried to compose myself as best as I could and looked underneath the bed."
     l "It was pitch-black so I decided to put my head fully underneath the bed, alongside with my right arm.
     My hand brushed against something soft and just as I grabbed it laughter came from underneath the bed."
     l "I jumped back out, utterly terrified, nearly bursting out in tears.
-    In my hand I held a pink bear, Abby's favourite toy, Mr. bunfluff."
+    In my hand I held a pink bear, [persistent.date_sis_nickname]'s favourite toy, Mr. bunfluff."
     l "Apparently he was causing all that ruckus, his voicebox was slightly malfunctioning ."
     l "It's extremely amusing to picture how a pink bear scared the crap out of two little girls, it even was funny back then.
     I remember laughing with her about the whole ordeal for what must've been another hour or so before going to sleep."
@@ -400,31 +401,31 @@ label chinese_riddle_talk_abbyMemory:
         "It sounds like you really care for your little sister.":
             l "Of course! I love her with all of my heart!
             ... I just don't want to lose her, you know?"
-            n "Lilith gives you a saddened look."
+            n "[persistent.date] gives you a saddened look."
             menu:
                 "I understand, I also know someone I wouldn't want to lose but it seems like I am always on the verge of losing her." if persistent.lildeaths > 0:
-                    n "Lilith tries her best to give you a comforting smile and she half-succeeds."
-                    l "I also sometimes feel like I will lose Abigail. When that happens I always try to give it my all so that that won't happen."
+                    n "[persistent.date] tries her best to give you a comforting smile and she half-succeeds."
+                    l "I also sometimes feel like I will lose [persistent.date_sis]. When that happens I always try to give it my all so that that won't happen."
                     l "If your situation with the person you mentioned is even slightly similair I'm sure you'll figure something out."
                     if persistent.lildeaths < 4:
-                        "Lilith's words fill your heart with hope, maybe there is a way to save her. "
+                        "[persistent.date]'s words fill your heart with hope, maybe there is a way to save her. "
                     
                     elif persistent.lildeaths <= 7:
-                        "You are not sure if you can figure something out to save Lilith but you have to try it, for her."
+                        "You are not sure if you can figure something out to save [persistent.date] but you have to try it, for her."
                     
                     else:
                         "You try to hold back your tears as to not alert her to something being wrong. You have seen her die so many times.
                         Reliving her deaths over and over while only being able to slightly change the way to inevitably reach  them again is really messing with you."
                     jump chinese_phoneScene
                 "Have you already lost someone close to you?":
-                #Give the player the ability to say "Like James?" if he has learned about him. Then you can tell her that you heard about it when it happened since it is a small town but Lilith will say that her mom, abby and her moved away from her hometown so that you couldn't know.
+                #Give the player the ability to say "Like [persistent.date_ghost]?" if he has learned about him. Then you can tell her that you heard about it when it happened since it is a small town but [persistent.date] will say that her mom, [persistent.date_sis_nickname] and her moved away from her hometown so that you couldn't know.
                     l "...
                     Is it that obvious?"
                     menu:
                         "Well, everybody has lost someone before. I just kind of asumed...":
-                            n "Lilith lets out a small, slightly uncomfortable, laugh."
+                            n "[persistent.date] lets out a small, slightly uncomfortable, laugh."
                             l "I suppose you are right."
-                            n "Lilith begins to tear up."
+                            n "[persistent.date] begins to tear up."
                             menu:
                                 "Do you want to talk about it? ":
                                     l "I'd rather not honestly..."
@@ -439,13 +440,23 @@ label chinese_riddle_talk_abbyMemory:
                                                 "Then ask me a few questions to not make me a stranger anymore.":
                                                     jump chinese_lostSomeone_questions
 
-                                                "This might sound strange but I feel as if I've already known you for a lot longer than I actually do.":
-                                                    "Filler"
-                                                    #TODO: Fill this in and make this only appear if you have around 6 times reset.
-                                                    #Make her more likely to admit feeling that way aswell if you have high lovepoints.
+                                                "This might sound strange but I feel as if I've already known you for a lot longer than I actually do." if persistent.lildeaths > 6:
+                                                    l "I did pick that up about you..."
+                                                    l "It feels like you somehow know me better than the previous time we spoke, a lot better..."
+                                                    if love_meter >= 2:
+                                                        l "As weird as it might be, I have the same feeling somehow."
+                                                        l "But as good as it is that we feel comfortable with eachother, that still doesn't mean I feel ready to tell you anything."
+                                                        l "Maybe some other time? Just not now. I hope you understand."
+                                                    else:
+                                                        l "I'm not sure how I feel about that, it's pretty creepy if I'm being honest."
+                                                        l "{size=*0.5}Have you been stalking me [persistent.name]?{/size}"
+                                                        n "You weren't meant to pick that up, so you do your best to not react too much to it."
+                                                        n "Either way, there isn't really a good answer is there?"
+                                                        n "The alternative is telling her that you actually keep going on the same dates over and over, and that she ends up dead in most of them."
+                                                        n "Best to just stay quiet."
    
 label chinese_riddle_talk_abbyHobbies:
-    n "Lilith chuckles slightly."
+    n "[persistent.date] chuckles slightly."
     $ persistent.quest_knowledge = True
     #Does this still make sense if I'm using renpy to make the game?
     l "Alright, here I go, just stop me when I begin to ramble on too much."
@@ -457,30 +468,30 @@ label chinese_riddle_talk_abbyHobbies:
     menu:
         "What do you find interesting about her games?":
             l "Well for one, games made by a small team or even one person are almost an imprint of what those people were thinking right when they made their project."
-            l "Two of Abby's games especially seem like they have something to say about her as a person."
-            n "Lilith pauses for a moment before continuing"
+            l "Two of [persistent.date_sis_nickname]'s games especially seem like they have something to say about her as a person."
+            n "[persistent.date] pauses for a moment before continuing"
             l "In the first game you play as someone who has to feed a prisoner.
             You are discouraged from talking to the prisoner by someone who speaks in red text.
 
             A textbox appears and upon typing something the prisoner responds..."
             l "It's here where things begin getting a bit... special."
             l "The prisoner begins to speak absolute nonsense no matter what you decide on typing into the textbox.
-            The text coming from them is dark blue."
+            The text coming from them is purple."
             l "They seem oddly happy to see you and yet they pay no attention to you at all."
             l "It's only one voice in there but they always refer to them as if there are multiples."
             l "They keep going on and on about how you are speaking in a \"stolen voice\" and how no one wants to listen to you."
             l "And yet they keep begging you to speak, not because they listen to you or understand your words but because they like the color of your text, light green."
             l "The prisoner keeps talking, mostly insulting you and commanding you to bow before them.
             After what felt like probably ten minutes of pure nonsense reactions to my input another voice began to speak."
-            l "That voice was dark green,
-            It also didn't really pay attention to what I was saying but the prisoner also didn't seem to notice the other voice.
-            It kept calling out for help, repeatedly."
+            l "That voice was a dark blue."
+            l "It also didn't really pay attention to what I was saying but the prisoner also didn't seem to notice the other voice."
+            l "It kept calling out for help, repeatedly."
             l "I tried typing just the word \"help\" in the textbox, suddenly the door opened.
             A link appeared, if you clicked it you would enter the room so I did, I wanted to know who was talking to me this entire time."
             l "There was no one there...
             Suddenly the door shut and I was locked inside.
 
-            After a while you begin speaking the same nonsense as the prisoner, in dark blue aswell.
+            After a while you begin speaking the same nonsense as the prisoner, in purple aswell.
             That's when the game ends abruptly and turns to black."
             l "Oh, I've been talking longer than I thought I would, maybe it's better to not talk about the other game then.
             What do you think [persistent.name]?"
@@ -489,7 +500,7 @@ label chinese_riddle_talk_abbyHobbies:
                     l "The second game is a lot bigger in the scope of the location.
                     It's about a ravenprince who needs to climb a mountain with his wings bound together."
                     l "On his way the raven constantly meets new characters."
-                    l "A cow called Io that believes she is a cow because some farmers told her so and eventually turns into a raven when she talks to the ravenprince."
+                    l "A cow called Io, seemingly the one from the myth, that believes she is a cow because some farmers told her so and eventually turns into a raven when she talks to the ravenprince."
                     l "A snake that keeps accidentally eating her own tail because she is confused, after freeing her she just starts once again."
                     l "A humanoid shadow with a rectangle for a head that dissappears every time you try to talk to it."
                     l "A three headed statue of a woman, each head speaks a different language. They speak Dutch, English and French respectively but neither of them seems to be able to make coherent sentences"
@@ -512,24 +523,28 @@ label chinese_riddle_talk_abbyHobbies:
                                 "You might be onto something!
                                 The feeder becoming the prisoner and the raven climbing the mountain again and again, those things are cleary loops.
                                 But what does that mean?
-                                Why would Abby put that premise in two of her games?"
+                                Why would [persistent.date_sis_nickname] put that premise in two of her games?"
                                 menu:
                                     "Maybe she just likes the concept of loops?":
-                                        n "Lilith lets out a small chuckle."
+                                        n "[persistent.date] lets out a small chuckle."
                                         l "Who knows? Maybe that's all there is to it."
-                                        n "Lilith grows more somber and begins to slightly frown."
+                                        n "[persistent.date] grows more somber and begins to slightly frown."
                                         l "And yet I can't shake the feeling that there is something going on with her, something I'm not noticing."
                                         l "There's this voice in my head that keeps telling me I'm not good enough, that I failed her and that I destroy everything I touch."
                                         l "I would love to tell you that I didn't believe that voice in the slightest but that would be a lie."
                                         l "I don't want to lose her [persistent.name], I can't go through all of that again."
                                         l "Tears begin streaming down her face as she looks at you with a defeated look in her eyes."
                                         menu:
-                                            "I know that voice is hard to ignore but for whatever it is worth, I really like you Lilith.":
-                                                "Filler"
-                                                #TODO: This dialogue does not yet exist, make it.
+                                            "I know that voice is hard to ignore but for whatever it is worth, I really like you [persistent.date].":
+                                                n "She let's out a small, almost apologetic chuckle."
+                                                l "Thank you [persistent.name], that's kind of you to say."
+                                                n "Something about the way she said it makes you think she isn't ready to believe those words. Not right now anyway."
+                                                n "It came out almost like as if had been a practiced response."
+                                                n "Her doubt is close to being tangible, you can almost feel it hover over her like a dark cloud. And yet with the weight it pushes down on her, it doesn't even resemble anything close to a cloud."
+                                                n "Her face shifts into a worried look as she realizes you might have noticed what she has been carrying around."
                                                 jump chinese_phoneScene
 
-                                            "That voice is just self-doubt, you are more than good enough Lilith.":
+                                            "That voice is just self-doubt, you are more than good enough [persistent.date].":
                                                 l "Do you really believe that, [persistent.name]?"
                                                 menu:
                                                     "Absolutely! It might sound weird but I really feel like I've gotten to know you well even if this is our first date and you really are a good person." if persistent.burger_death_1 and persistent.cafe_death_1 == True and persistent.chinese_death_1:
@@ -543,7 +558,7 @@ label chinese_riddle_talk_abbyHobbies:
 
 label chinese_abby_game_theme_nonsense:
     l "Hmm, do you really think so?"
-    n "Lilith softly scratches her head."
+    n "[persistent.date] softly scratches her head."
     l "It's hard to believe that something could ever be just pure nonsense and nothing else.
     You have to pull the ideas you use to make a game or something else from somewhere, right?"
     l "I'd like to think that even if someone would try to make a game that is just pure nonsense that atleast some aspects of meaning would seep into it."
@@ -552,25 +567,25 @@ label chinese_abby_game_theme_nonsense:
     l "Sorry if I'm boring you, it's just something I've been thinking about for a while now."
     menu:
         "You are not at all, this is actually very interesting.":
-            n "Lilith's face lights up with pride for a moment as she lets out a giggle."
+            n "[persistent.date]'s face lights up with pride for a moment as she lets out a giggle."
             l "You know, if you want to we could talk about it a little more."
             jump chinese_phoneScene
 
         "This is very interesting although I can't really wrap my head around it.":
-            n "Lilith gives you a cute giggle."
+            n "[persistent.date] gives you a cute giggle."
             l "No worries, my ramblings are pretty hard to understand sometimes, thanks for listening either way [persistent.name]!"
             jump chinese_phoneScene
 
 label chinese_abby_selfdoubt_IDo:
-    n "Lilith chuckles with a pained expression painted on her face."
+    n "[persistent.date] chuckles with a pained expression painted on her face."
     l "I suppose you are right.
     I need to believe that I'm a good person, otherwise it would just be empty praise coming from someone I barely met."
-    n "Lilith tries her best to give you a smile, you can tell it's slightly forced."
+    n "[persistent.date] tries her best to give you a smile, you can tell it's slightly forced."
     l "No offence [persistent.name]! I like how our date is going so far, even though I am messing it up pretty badly right now, but this is our first date afterall."
     jump chinese_phoneScene
 
 label chinese_abby_selfdoubt_knowYouWell:
-    n "Lilith wipes away some tears as she gives you a big smile."
+    n "[persistent.date] wipes away some tears as she gives you a big smile."
     l "Thank you [persistent.name], I'd like to know you the same way you seem to know me.
     I know it is strange but somehow I can see in your eyes that you truly seem to know me quite well already."
     jump chinese_phoneScene
@@ -579,21 +594,21 @@ label chinese_abby_selfdoubt_knowYouWell:
 
 
 label chinese_lostSomeone_confideStranger:
-    n "Lilith scratches her head and gives you a nice smile."
+    n "[persistent.date] scratches her head and gives you a nice smile."
     l "I suppose you are right, I might take you up on that offer eventually."
     n "You are not really sure if she means it."
     jump chinese_phoneScene
 label chinese_lostSomeone_questions:
-    n "Lilith begins to laugh."
+    n "[persistent.date] begins to laugh."
     l "I'm not sure it really works like that [persistent.name].
     I can't really think of any combination of questions that would make me feel like this isn't our first date.
     You get to know someone over the span of all your time together, not by seeing them one time."
     n "But thanks for the sugestion either way!"
-    l "Lilith gives you a cute little smile."
+    l "[persistent.date] gives you a cute little smile."
     jump chinese_phoneScene
 label chinese_phoneScene:
     l "I'll be right back [persistent.name], I just need to go to the bathroom real quick."
-    n "Lilith stands up from her chair and pushes it back under the table."
+    n "[persistent.date] stands up from her chair and pushes it back under the table."
     n "As she enters the bathroom stall you see that she has forgotten her phone, it is still laying on the table."
     if persistent.lildeaths >= 7:
         if persistent.peeked_phone == True:
@@ -625,26 +640,26 @@ label chinese_phone_peek:
     if persistent.pass_knowledge == True:
         n "You remember that her password is 81155"
     else:
-        n "Suddenly it dawns on you that you do not know what Lilith her password is."
+        n "Suddenly it dawns on you that you do not know what [persistent.date] her password is."
         $ persistent.need_pass_knowledge = True
         menu:
             "*Put the phone back.*":
                 n "You put the phone back and try to act as natural as you can."
                 n "You quickly glance around the restaurant to see if anyone might have caught you trying to check her phone."
                 n "Everyone seems to be too busy enjoying their food to pay you any attention. You are saved by the excellent cuisine."
-                n "Just as you let out a sigh of relief Lilith comes back to your table."
+                n "Just as you let out a sigh of relief [persistent.date] comes back to your table."
                 l "Hey [persistent.name], I'm back."
                 l "Did they not yet bring our food?"
                 l "That's okay, I'm just really looking forward to it, the food here is to die for."
                 if persistent.chinese_death_1 == True:
                     n "It indeed seems to be that way doesn't it [persistent.name]?"
-                n "You play along with Lilith, hoping she doesn't suspect what you just did."
+                n "You play along with [persistent.date], hoping she doesn't suspect what you just did."
                 l "..."
-                n "Lilith squints her eyes and seems to be lost in thought for a moment."
+                n "[persistent.date] squints her eyes and seems to be lost in thought for a moment."
                 l "Is everything alright [persistent.name]? You look pretty nervous."
                 menu:
                     "Uhm yeah, I'm totally fine. (Lie)":
-                        n "Lilith squints her eyes slightly and looks at you with an almost soul-piercing look in her eyes."
+                        n "[persistent.date] squints her eyes slightly and looks at you with an almost soul-piercing look in her eyes."
                         $ love_points = -1
                         $ love_meter_updater(False)
                         l "Hmm, alright [persistent.name], if you say so."
@@ -660,7 +675,7 @@ label chinese_phone_peek:
                             l "This has been my first date in quite a while and I'm having a really good time."
                             l "So it would be a shame if I somehow lost this."
                             l "But right now we're both still here, right? So we should probably make the most out of it together."
-                            n "Lilith gives you a cute smile."
+                            n "[persistent.date] gives you a cute smile."
                             n "You feel guilty for lying to her, because even if it was a half-truth, that still means it's a half-lie."
                             n "You try to ignore that feeling and just try to get the most of your remaining time with her."
                             jump chinese_phone_noPeek
@@ -673,10 +688,10 @@ label chinese_phone_peek:
                             l "You seemed way nicer to me when we first talked about arranging this date. So I know there's someone nice underneath that mask you are wearing."
                             l "Just allow yourself to relax a bit and enjoy your time with me here, alright?"
                             l "You don't have to prove yourself to me. After all, I came here to go on a date with you, didn't I?"
-                            n "Lilith flashes you a cute smile, you can see some slight worry in her eyes."
+                            n "[persistent.date] flashes you a cute smile, you can see some slight worry in her eyes."
                             n "What affects you the most is that the worry does not seem to be for herself, it seems to be for you."
                             menu:
-                                "I... I guess you're right. Sorry for that Lilith. I'm sorry if I hurt you by trying to act more tough.":
+                                "I... I guess you're right. Sorry for that [persistent.date]. I'm sorry if I hurt you by trying to act more tough.":
                                     l "It's alright [persistent.name]! I won't pretend that you didn't hurt me at all, but apoligizing is a good first step."
                                     l "I know it can sometimes be difficult dealing with insecurities, and sometimes they can manifest in ways that harm ourselves and other people."
                                     l "Just know that if you feel a thought like that pop up again you can always try to talk to me about it, alright?"
@@ -685,7 +700,7 @@ label chinese_phone_peek:
                                     l "But it helps me to control my own insecurity a little better."
                                     menu:
                                         "Thank you for being so patient with me. That means a lot.":
-                                            n "Lilith gives you a cute smile."
+                                            n "[persistent.date] gives you a cute smile."
                                             l "Hey, don't mention it [persistent.name]. I know I wouldn't be the same person I am now if a lot of people didn't have patience with me."
                                             l "I'm just glad that I was able to get through to you."
                                             jump chinese_phone_noPeek
@@ -770,7 +785,7 @@ label chinese_phone_peek:
                 n "It is 81155."
                 $ persistent.pass_knowledge = True
             else:
-                n "None of the other codes seem to result in anything either. You are not sure how many you tried, you decide to close the phone in case Lilith will come back."
+                n "None of the other codes seem to result in anything either. You are not sure how many you tried, you decide to close the phone in case [persistent.date] will come back."
             jump chinese_phone_caught
 
 
@@ -788,20 +803,20 @@ label chinese_phone_caught:
             
         else:
             if persistent.restrainingorderfamily_knowledge == True:
-                n "You succesfully memorised the number of the next person you are going to involve into this whole mess, the exact thing Lilith asked you not to do."
+                n "You succesfully memorised the number of the next person you are going to involve into this whole mess, the exact thing [persistent.date] asked you not to do."
                 n "How do you think that would make her feel if she knew?"
             else:
                 n "You succesfully memorised the number of the next person you are going to involve into this already way too complicated situation."
                 n "Do you really think that that's a good idea?"
     n "No need to answer that, it was rhetorical. What you need to do is to close that phone."
-    n "Right at the moment when you close the phone and look back up you can see Lilith approaching."
+    n "Right at the moment when you close the phone and look back up you can see [persistent.date] approaching."
     n "Another thing you can also see is the very angry expression on her face."
     n "As she walks up to the table she grabs her phone and puts it in her handbag"
     l "What you just did was inexcusable [persistent.name]. I really didn't expect this from you."
     l "I'm leaving, you can pay for our meals or try and cancel them but I am sticking up for myself."
     l "Goodbye and do not ever contact me again."
     if persistent.chinese_phone_noretry == True:
-        n "And yet here you are once again, making the same mistake you've already made. And Lilith is none the wiser."
+        n "And yet here you are once again, making the same mistake you've already made. And [persistent.date] is none the wiser."
         n "Is that why you came back to do the same thing she told you she didn't want you to do? Would you have acted differently if she could remember every action you took?"
         n "Don't worry [persistent.name], this is just all a game, right? Your actions here don't mean anything at all, right?"
         n "..."
@@ -810,31 +825,35 @@ label chinese_phone_caught:
     jump car_death
 
 label chinese_phone_noPeek:
-    n "You didn't peek, this will just continue the events like they are meant to play out."
-    #TODO: Make those events play out properly, don't just cut to the death.
+    if persistent.peeked_phone == False and persistent.lildeaths >= 2 :
+        n "It's probably best not to look."
+        n "Even if it might have info on it that could help her survive. "
+        n "And yet..."
+        n "You are thinking about it aren't you?"
+        n "If you weren't before, now you most definetly are."
     jump restaurant_death_1
 
 label chinese_phone_peek_numbers:
 
     n "You see the family section of her phone numbers, four names are listed there."
     if persistent.restrainingorderfamily_knowledge == True:
-        n "You remember that Lilith told you to not involve her family."
+        n "You remember that [persistent.date] told you to not involve her family."
         n "She probably wouldn't appreciate this."
         n "But then again, it could really help you out in the long-term."
         $ restrainingorderfamily_violation_counter += 1
     else:
-        n "If anyone besides Lilith will have some handy information about her it's them."
+        n "If anyone besides [persistent.date] will have some handy information about her it's them."
         n "You might just have enough time to learn one phone-number."
 
     $ peeked_phone_temp = True
     menu:
-        "Learn Abigail's phone number." if not persistent.abigail_call_knowledge:
+        "Learn [persistent.date_sis]'s phone number." if not persistent.abigail_call_knowledge:
             $ persistent.abigail_call_knowledge = True
             jump chinese_phone_caught
         "Learn David's phone number." if not persistent.david_call_knowledge:
             $ persistent.david_call_knowledge = True
             jump chinese_phone_caught
-        "Learn James' phone number." if not persistent.james_call_knowledge:
+        "Learn [persistent.date_ghost]' phone number." if not persistent.james_call_knowledge:
             $ persistent.james_call_knowledge = True
             jump chinese_phone_caught
         "Learn Lisa's phone number." if not persistent.lila_call_knowledge: 
@@ -849,53 +868,66 @@ label chinese_phone_peek_numbers:
 
 label chinese_riddle_decline:
     l "No worries at all [persistent.name]!"
-    l "Maybe you'd like giving me some riddles instead?"
+    l "Maybe you'd like giving me a riddle instead?"
     menu: 
         "Sure, that sounds good!":
-            #TODO:  Make the riddles push you back on track to the normal stuff eventually.
             menu:
                 "What has four legs in the morning, two legs at noon and three legs in the evening?":
-                    l "Ah that's a real classic! The answer is humans. The question originated from the myth of Orpheus if I'm not mistaken."
+                    l "Ah that's a real classic! The answer is humans. The question originated from the myth of Oedipus if I'm not mistaken."
                     l "I didn't know you were into mythology [persistent.name], that's really cool!"
                     menu:
-                        "Thanks Lilith! From your response I gather you are also into mythology, right?":
-                            l "Oh absolutely!"
+                        "Thanks, [persistent.date]! From your response, I gather you’re also into mythology, right?":
+                            l "Oh, absolutely!"
+                            n "She said it pretty loudly, but didn't seem to notice."
                             l "I practically live and breathe mythology."
-                            l "Ever since I was a little girl I just had a massive interest in all kinds of stories, then later my interest started to grow more towards myths when I revieved my first book about Greek and Roman myths."
-                            l "And now recently I've been also interested in some other mythology. Right now I'm reading more about Finish mythology, the Kalevala to be specific."
-                            l "That's why I'm happy to meet someone likeminded like you [persistent.name]!"
-                            #TODO: Add a bit more text?
+                            l "When I was little, I got my first mythology book about the Greek and Roman gods, and it was like a whole new universe opened up. Each story was so vivid and alive, like I could picture every god, monster, and hero as if they were real people."
+                            l "The first story I fell in love with was the tale of Persephone. How she was taken to the underworld and how her mother, Demeter, searched endlessly for her. I was so fascinated by the idea of the seasons coming from a mother’s love and grief."
+                            l "Then there’s the story of Odysseus, who journeyed for years to return to his wife, Penelope, facing all kinds of trials. I think that was the first time I understood that myths weren’t just storie. They were about the choices we make, the courage to keep going, and the struggle to stay true to ourselves."
+                            l "Recently, I’ve been reading Finnish mythology, specifically the Kalevala. It’s totally different from Greek myths. It’s full of epic poems and songs, and the stories are steeped in nature and magic. One of my favorites is about Väinämöinen, this wise old bard who could sing magical songs to make anything happen. His power wasn’t in strength or weapons, but in his words and wisdom."
+                            l "It’s amazing how these stories, even though they’re ancient, still resonate today. They speak to something deep inside us, don’t you think?"
+                            l "Meeting someone like you who’s into mythology is rare, [persistent.name]. It’s like finding someone who also sees the beauty in these old, forgotten worlds."
+                            n "As she stops she suddenly looks around to all the people in the restaurant, some of them are watching the both of you, or more specifically, her."
+                            n "She turns beetred."
+                            l "Was I a bit too loud? I'm sorry [persistent.name], I just got really excited."
+                            menu:
+                                "No need to apoligize for being passionate [persistent.date]. It was very fun to see you like that.":
+                                    n "She turns even more beetred, something you did not consider even remotely possible."
+                                    l "Thank you [persistent.name], I guess you are right. It's very sweet of you to say that."
+
+                            
+
                         "Actually I just found that riddle on the internet a while back.":
-                            n "Lilith looks slightly disappointed."
+                            n "[persistent.date] looks slightly disappointed."
                             l "Oh... that's alright [persistent.name], I guess sometimes I forget that that riddle is practically used everywhere now."
                             l "Tons of movies, books and games now kind of use that riddle as a placeholder because it's so well known. It's the \"lorum ipsum\" of riddles."
-                            n "Hey, is she complaining about my ability to write riddles? Uhm, I mean your ability to make riddles."
+                            n "Hey, is she complaining about my ability to write riddles? Uhm, I mean your ability to come up with riddles."
                             l "But still, thank you for your riddle! Regardless of how many times it has been used, it's still remains a clasic."
                             l "And I think you must've thought so aswell since you can still remember it after you first read it online."
                 "What has five teeth, twelve eyes, four arms and a thousand legs?":
                     l "..."
-                    n "Lilith scrathes her head, deep in thought."
+                    n "[persistent.date] scrathes her head, deep in thought."
                     l "I don't know [persistent.name], that's a really tough one."
                     l "What is the answer?"
                     menu:
                         "Well, the answer is that I don't know either.":
-                            n "Lilith gives you a confused look before it all clicks and she burtst out in laughter."
+                            n "[persistent.date] gives you a confused look before it all clicks and she burtst out in laughter."
                             l "You sure got me there [persistent.name]!"
                             l "Although, if you don't know the answer, and that is the answer, doesn't that mean that you know the answer?"
                             n "You are not entirely sure what she means."
-                            n "Apparently Lilith must have been able to read just that from your face as she immediately turns beet-red and tenses up a bit."
+                            n "Apparently [persistent.date] must have been able to read just that from your face as she immediately turns beet-red and tenses up a bit."
                             l "I'm sorry, that was way too much for a first date wasn't it?"
                             l "I didn't mean to sound like a know-it-all."
                             l "Please just forget what I said, alright [persistent.name]?"
                             menu:
-                                "I don't mind at all Lilith, you just kind of threw me for a loop with what you just said. It does sound interesting though.":
-                                    n "Lilith lets out a sigh of relief as she relaxes a bit more once again."
+                                "I don't mind at all [persistent.date], you just kind of threw me for a loop with what you just said. It does sound interesting though.":
+                                    n "[persistent.date] lets out a sigh of relief as she relaxes a bit more once again."
                                     l "I already was fearing the worst."
                                     l "A lot of people have told me that I come off as info-dumping way too much, especially when I get to know someone at first."
                                     l "It's just that I love to think about things a lot, especially if they fascinate me."
-                                    l "And I enjoy sharing those thoughts, it's just, most people don't seem to enjoy listening to them."
+                                    l "And I enjoy sharing those thoughts, it's just, most people don't seem to enjoy listening to them. {size=*0.5}To me aswell.{/size}"
+                                    n "Something tells you you weren't supposed to hear that last part."
                                     l "So thank you [persistent.name], now I know that I can release my full arsenal on you!"
-                                    n "Lilith let's out a mischevious little chuckle."
+                                    n "[persistent.date] let's out a mischevious little chuckle."
                                     l "I'm only joking, I wouldn't want you to run away from me after all."
                                     if persistent.runAwayLilith_counter >= 3:
                                         n "I don't think she has to worry about that in the slightest, does she?"
@@ -912,12 +944,12 @@ label chinese_riddle_decline:
                                             if love_meter >= 3:
                                                 l "You know, for what it is worth, I also really like your company [persistent.name]."
                                                 l "I'm having a really good time here with you so far."
-                                "Sure thing, if that's what you want. *Talk about something else.":
+                                "Sure thing, if that's what you want. *Talk about something else.*":
                                     "Filler"
                                     #TODO: Give like a few very lightweight questions and answers here before she moves on to something else.
                 "A man is in a metal room without a door and with a barred window. How does he leave?":
                     l "Hmm, that seems to be a tough one, let me think about it for a second [persistent.name]!"
-                    n "Lilith seems to happily be going through potential solutions."
+                    n "[persistent.date] seems to happily be going through potential solutions."
                     l "{size=*0.5}Maybe he needs to do something with the window?{/size}"
                     l "{size=*0.5}But it's barred...{/size}"
                     l "{size=*0.5}Then again, it must have to do something with the window, right?{/size}"
@@ -930,9 +962,9 @@ label chinese_riddle_decline:
                     l "So that means he just has to walk out through there."
                     l "Did I get it right?"
                     menu:
-                        "Yes you did, great job Lilith!":
-                            n "Lilith fist pumps the air."
+                        "Yes you did, great job [persistent.date]!":
+                            n "[persistent.date] fist pumps the air."
                             l "Yes! That was a very fun riddle [persistent.name], not what I was expecting but it forced me to think outside the box a little bit."
-    "An attempt to get you back on track before this messes things up."
-    jump chinese_riddle_accept
+
+    jump chinese_riddle_railroad
 return

@@ -1,22 +1,24 @@
 label cafe_start:
     $ cafe = True
-    $ love_meter = 4
+    $ love_meter += 1
     if persistent.cafe_taste_knowledge == True:
         l "Oh my, you surely know how to get me excited! I'll meet you there!"
     else:
         l "That sounds good to me! I'll meet you there!"
 
-    n "You arrive a tad too early and find no space to park so you decide to park a few streets later and walk to the cafe."
+    n "You arrive pretty early and find no space to park. Since you still have some time left you decide to park a few streets later and walk to the cafe."
     n "The inner walls are made out of glass and function as aquariums that seem to stretch on even beyond the ceiling."
+    n "There are some holes in the specially shaped aquarium to allow for easy feeding of the fish and it also makes the aquarium feel more alive."
+    n "Colorful fish sometimes poke their head out of the aquarium as if they want to watch the customers, maybe you are the one in the glass cage and you just don't know it"
     n "It's probably them though, atleast they seem to be enjoying themselves."
-    n "When you get there Lilith is already sitting at a nice looking mahogany table."
+    n "Your eyes fall on [persistent.date], who is already sitting at a nice looking mahogany table."
     n "When she notices you she waves at you enthusiastically with a wide grin on her face."
     l "Heya, glad you could make it! "
     l "This place has a really nice atmosphere, those mahogany tables and the aquariums are real eye catchers don't you think?"
     l "Anyway, let's go order our food and then we can talk some more."
-    n "You and Lilith walk towards the barista, as he glances up from his phone he greets you with a shy smile."
+    n "[persistent.date] and you walk towards the barista, as he glances up from his phone he greets you with a shy smile."
     n "He looks quite young, if you'd have to guess you would say he is somewhere around 17 years old."
-    n "You get lost in the thoughts of how life was when you still were 17 until Lilith gives you a playful nudge."
+    n "You get lost in the thoughts of how life was when you still were 17 until [persistent.date] gives you a playful nudge."
     b "What could I get the both of you?"
     l " Hmm, I think I'm going for the ham and cheese sandwich and a cafe cubano.
     What are you choosing [persistent.name]? "
@@ -38,12 +40,12 @@ label cafe_food_choice2:
 
 label cafe_food_choiceSame:
     l "You know what they say [persistent.name], great minds think alike. I guess that also counts for hungry stomachs."
-    n "Lilith lets out a small chuckle."
+    n "[persistent.date] lets out a small chuckle."
 label cafe_food_result:
     n "The barista smiles and says: \"Coming right up!\""
-    n "Lilith and you walk back to your table and take a seat."
+    n "[persistent.date] and you walk back to your table and take a seat."
 
-    n "Lilith gives you a mischievous smile."
+    n "[persistent.date] gives you a mischievous smile."
     l "I just got a fun idea."
     n "She eagerly digs into her handbag and takes out two red six-sided dice."
     l "It's a little game I came up with a while ago, I want to test it with you."
@@ -64,7 +66,7 @@ label cafe_food_result:
 
 label cafe_dice_continue:
     $ persistent.dice_counter += 1
-    n "Lilith throws two six-sided dice and puts her hands in front of them so you can't see the result."
+    n "[persistent.date] throws two six-sided dice and puts her hands in front of them so you can't see the result."
     l "The sum of the dice is nine."
     if persistent.dice_knowledge == True:
         n "You remember that the first dice is 6 and the second dice is 3."
@@ -81,11 +83,11 @@ label cafe_dice_result:
     if cafedicecheat == True:
         n "You peek at the dice using the aquarium as a mirror, the first dice appears to be a 6 and the second is a 3."
         $ cafedicecheat = False
-    n "Lilith waits for you to look away and she then takes an action."
+    n "[persistent.date] waits for you to look away and she then takes an action."
     l "The sum of the dice is nine."
     n "She takes her next action."
     l "The sum of the dice is eight."
-    n "Lilith hums an unfamiliar song as she takes her next action, it's quite catchy."
+    n "[persistent.date] hums an unfamiliar song as she takes her next action, it's quite catchy."
     $ persistent.song_knowledge = True
     l "The sum of the dice is five."
     l "So, that was the puzzle. You'll need one hint to solve it."
@@ -165,7 +167,7 @@ label cafe_dice_result:
                                 l "The first dice was 6 and the second dice was 3."
                                 l "That was quite tricky wasn't it?"
                                 l "I hope it was fun for you though!"
-                                n "Lilith gives you a cute smile."
+                                n "[persistent.date] gives you a cute smile."
                                 l "Oh, I almost forgot to ask you!"
                                 l "What do you think about this place?"
                                 jump cafe_rateCafe
@@ -232,7 +234,7 @@ label cafe_dice_stop:
     I might have made this a bit too daunting so I completely understand."
     l "We can just continue talking if you'd like to."
     l "After all, we are hopefully not running out of topics already."
-    n "Lilith lets out a cute chuckle."
+    n "[persistent.date] lets out a cute chuckle."
     l "Don't stress it [persistent.name], it's alright if you can't think of anything for a moment."
     l "I completely get it, to be honest I'm quite stressed about this date too."
     l "Well... maybe stressed is not the right word. Moreso excited?"
@@ -257,13 +259,13 @@ label cafe_rateCafe:
 
 label cafe_notTheFirstTimeISaw:
     l "Oh... I thought you said that you had only heard about this place."
-    n "Lilith pauses, seemingly not knowing what to say."
+    n "[persistent.date] pauses, seemingly not knowing what to say."
     menu:
         "Oh, you probably just misheard me.":
             jump cafe_backOnTrack
 
 label cafe_backOnTrack:
-    n "Lilith lets out a polite and also confused chuckle."
+    n "[persistent.date] lets out a polite and also confused chuckle."
     l "Oh, my bad then."
     n "For a moment there's a slightly awkward silence."
     l "So uhm, anyway, would you like to hear a joke?"
@@ -273,15 +275,15 @@ label cafe_backOnTrack:
 
 
 label cafe_rateCafe_great:
-    n "Lilith let's out a small giggle."
-    l " I knew you would love it as much as me when I saw your smile.
-    I've never seen so many colors at the same time, thank you for taking me here [persistent.name]!
-    Just the fish on their own made this one of the best dates I ever had, it can only get better from here."
+    n "[persistent.date] let's out a small giggle."
+    l " I knew you would love it as much as me when I saw your smile."
+    l "I've never seen so many colors at the same time, thank you for taking me here [persistent.name]!"
+    l "Just the fish on their own made this one of the best dates I ever had, it can only get better from here."
     $ persistent.cafe_taste_knowledge = True
     jump cafe_rateCafe_result
 
 label cafe_rateCafe_okayish:
-    n "Lilith flashes you an understanding smile."
+    n "[persistent.date] flashes you an understanding smile."
     l "Ah, sorry to hear that, but I am really loving this place if that's worth something.
     Maybe we can go to a place you like next time?"
     l "I've never seen so many colors at the same time, thank you for taking me here [persistent.name].
@@ -292,10 +294,10 @@ label cafe_rateCafe_okayish:
 label cafe_rateCafe_bad:
     $ love_points = -1
     $ love_meter_updater(False)
-    n "Lilith frowns at your reaction."
+    n "[persistent.date] frowns at your reaction."
     l "..."
     l "There's no need to drag this place down just because you don't like it."
-    l "Lilith takes her phone and begins aimlessly scrolling on it, you can see her screen through the reflection on the aquarium.
+    l "[persistent.date] takes her phone and begins aimlessly scrolling on it, you can see her screen through the reflection on the aquarium.
     She's growing less and less responsive after every word you say until the two of you sit in pure silence for what feels like an hour."
     if persistent.need_pass_knowledge == True:
         n "Atleast you also managed to catch her password thanks to the reflection, it's 81155."
@@ -321,15 +323,15 @@ label cafe_rateCafe_result:
         "You are very welcome, thank you for making me come here in the first place.":
             l "Did you just counter my thank you with another thank you?"
             l "Well, in that case I'll retaliate with a \"You are very welcome.\" aswell!"
-            l "Lilith let's out a cute giggle. She has a gleeful look in her eyes."
-            l "You know, you made laugh quite good there [persistent.name], now it's my turn! Would you like to hear a joke?"
+            l "[persistent.date] let's out a cute giggle. She has a gleeful look in her eyes."
+            l "You know, you made me laugh quite good there [persistent.name], now it's my turn! Would you like to hear a joke?"
             menu:
                 "Sure, I'd love to!":
                     jump cafe_abigailJoke
 
 label cafe_abigailJoke:
     l "So a priest, a monk and a rabbit enter a bar.
-    Says the rabbit :\"Whoops, did you slip your tongue there Lilith?\""
+    Says the rabbit :\"Whoops, did you slip your tongue there [persistent.date]?\""
     $ persistent.joke_knowledge = True
     menu:
         "Wow, that was a really good one!":
@@ -341,10 +343,10 @@ label cafe_abigailJoke:
 label cafe_joke_bad:
     $ love_points = -1
     $ love_meter_updater(False)
-    n "Lilith looks saddened by your remark."
+    n "[persistent.date] looks saddened by your remark."
 
     l "Really? ..."
-    l "I thought it was funny when Abigail told me..."
+    l "I thought it was funny when [persistent.date_sis] told me..."
     menu:
         "Quick, come stand next to me!" if persistent.cafe_death_1:
             jump restaurant_death_1_prevented
@@ -353,8 +355,8 @@ label cafe_joke_bad:
 
 
 label cafe_joke_good:
-    n "Lilith explodes in laughter."
-    l "Exactly! The first time Abigail, my sister, told me that joke I spent an entire hour laughing.
+    n "[persistent.date] explodes in laughter."
+    l "Exactly! The first time [persistent.date_sis], my sister, told me that joke I spent an entire hour laughing.
     But then again, she always makes me laugh so much that I just might pass out one time."
     l "I'm kidding, I'm kidding! About the passing out part that is, she really is funny though."
     menu:
@@ -385,7 +387,7 @@ label cafe_badLove:
 
     elif cafe_badLove_justafeeling == True:
         l "Ah I see, are you sure you are not a psychic?"
-        n "Lilith lets out a cute chuckle before becoming a bit more serious again."
+        n "[persistent.date] lets out a cute chuckle before becoming a bit more serious again."
         l "You came pretty close to the truth with that intuition, not entirely though."
 
     l "I wouldn't say I had really bad experiences with love. It's just that I tend to grow connected with people before they even had the chance to grow fond of me."
@@ -403,7 +405,7 @@ label cafe_badLove:
     menu:
         "No need to apologise for talking, I like listening to you.":
             l "Oh you flatterer! "
-            n "Lilith looks at you and gives you a big grin, you can clearly see she's blushing."
+            n "[persistent.date] looks at you and gives you a big grin, you can clearly see she's blushing."
             n "Suddenly the grin begins to make place for a slight frown."
             l "Is it normal for me to be that happy because someone told me they don't mind me speaking?"
             l "..."
@@ -415,5 +417,5 @@ label cafe_badLove:
 
                 "Well, I really enjoy our time together!":
                     l "Thank you [persistent.name], it really helps to hear someone say that from time to time."
-                    n "Lilith gives give a thankfull smile."
+                    n "[persistent.date] gives give a thankfull smile."
                     jump restaurant_death_1

@@ -186,6 +186,7 @@ screen input(prompt):
             text prompt style "input_prompt"
             input id "input"
 
+
 style input_prompt is default
 
 style input_prompt:
@@ -257,6 +258,7 @@ screen quick_menu():
             textbutton _("Q.Save") action QuickSave()
             textbutton _("Q.Load") action QuickLoad()
             textbutton _("Prefs") action ShowMenu('preferences')
+            
 
 
 ## This code ensures that the quick_menu screen is displayed in-game, whenever
@@ -724,7 +726,6 @@ style slot_button_text:
 screen preferences():
 
     tag menu
-
     use game_menu(_("Preferences"), scroll="viewport"):
 
         vbox:
@@ -800,6 +801,10 @@ screen preferences():
                         textbutton _("Mute All"):
                             action Preference("all mute", "toggle")
                             style "mute_all_button"
+
+            ## Add the new button here
+            null height gui.pref_spacing
+            textbutton _("Change NPC Names") action Show("change_names_menu")
 
 
 style pref_label is gui_label
@@ -1605,3 +1610,108 @@ style slider_vbox:
 style slider_slider:
     variant "small"
     xsize 900
+
+
+init python:
+    def reset_to_default_names():
+        # Define the default values for the variables
+        default_values = [
+            ("date", "Lilith", "Lilly"),
+            ("date_sis", "Abigail", "Abby"),
+            ("date_dad", "David", "Dave"),
+            ("date_mom", "Lila", "Mom"),
+            ("date_ghost", "James", "Jay"),
+        ]
+        # Reset each variable to its default value
+        for npc_var, npc_default, nickname_default in default_values:
+            setattr(persistent, npc_var, npc_default)
+            setattr(persistent, f"{npc_var}_nickname", nickname_default)
+
+screen show_name_input_screen(npc_var, npc_default):
+    frame:
+        style_prefix "menu"
+        xalign 0.5
+        yalign 0.5
+
+        vbox:
+            spacing 10
+            text "Enter the new name:" size 30
+
+            # Input field for name
+            input:
+                default getattr(persistent, npc_var, npc_default)
+                changed (lambda value, npc_var=npc_var: setattr(persistent, npc_var, value))
+
+            hbox:
+                spacing 10
+                textbutton "Save" action Return(True)
+                textbutton "Cancel" action Return(False)
+
+screen show_nickname_input_screen(nickname_var, nickname_default):
+    frame:
+        style_prefix "menu"
+        xalign 0.5
+        yalign 0.5
+
+        vbox:
+            spacing 10
+            text "Enter the new nickname:" size 30
+
+            # Input field for nickname
+            input:
+                default getattr(persistent, nickname_var, nickname_default)
+                changed (lambda value, nickname_var=nickname_var: setattr(persistent, nickname_var, value))
+
+            hbox:
+                spacing 10
+                textbutton "Save" action Return(True)
+                textbutton "Cancel" action Return(False)
+
+screen change_names_menu():
+   
+    tag menu
+
+    frame:
+        style_prefix "menu"
+        xalign 0.5
+        yalign 0.5
+
+        vbox:
+            spacing 20
+            text "Change NPC Names" size 30
+
+            # Add grouped frames for each NPC
+            for npc_var, npc_default, nickname_default in [
+                ("date", "Lilith", "Lilly"),
+                ("date_sis", "Abigail", "Abby"),
+                ("date_dad", "David", "Dave"),
+                ("date_mom", "Lila", "Mom"),
+                ("date_ghost", "James", "Jay"),
+            ]:
+
+                frame:
+                    background "#CCCCCC"  # Light grey background
+                    padding (10, 10)
+                    margin (5, 5)
+
+                    vbox:
+                        spacing 10
+
+                        # Name display and button
+                        hbox:
+                            spacing 10
+                            text f"Name: {getattr(persistent, npc_var, npc_default)}"
+                            textbutton "Change Name" action Show("show_name_input_screen", npc_var=npc_var, npc_default=npc_default)
+
+                        # Nickname display and button
+                        hbox:
+                            spacing 10
+                            text f"Nickname: {getattr(persistent, f'{npc_var}_nickname', nickname_default)}"
+                            textbutton "Change Nickname" action Show("show_nickname_input_screen", nickname_var=f"{npc_var}_nickname", nickname_default=nickname_default)
+
+            # Add a button to reset all names and nicknames to their defaults
+            textbutton "Reset to Default Names" action Function(reset_to_default_names) style "menu_button"
+
+            # Add a return button to go back
+            textbutton "Return" action Return() style "menu_button"
+
