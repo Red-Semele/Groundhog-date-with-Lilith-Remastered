@@ -319,6 +319,7 @@ label gdwl_functions:
                 "beach", 
                 "brotherasked", 
                 "burger_nightmare",
+                "kokiri_jamesTalkBlock",
                 
                 "cafedicecheat", 
                 "cafe_badLove_lowbar", 

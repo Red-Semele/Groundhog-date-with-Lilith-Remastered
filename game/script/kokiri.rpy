@@ -319,25 +319,49 @@ label kokiri_explanation_game:
                             else:               
                                 #TODO: Rewrite it a bit more in [persistent.date]'s style
                                 label kokiri_norealname_third_part:
-                                l "It's funny, isn't it? We play these games, make these choices, but we're never really just one person, are we?"
-                                l "Sometimes, in the game, you might act differently than you would in real life. Take risks you wouldn't dare take. Say things you wouldn't normally say."
-                                l "But does that mean the person you are in here isn’t real? Or are you just exploring a side of yourself that you don’t often show?"
-                                l "It's a bit like peeling away layers, isn't it? You reveal parts of yourself, even if you don’t mean to."
-                                menu:
-                                    "Maybe the real me is somewhere in between.":
-                                        l "I think that might be true for a lot of people."
-                                        l "The real us isn't just who we are in the game, or who we are in the real world."
-                                        l "It’s a mixture, a blend of all these parts, all these roles we play."
-                                    "I think I like who I am in games more than who I am outside.":
-                                        l "There's no shame in that. Games give us a space to be someone different, someone braver or kinder or more daring."
-                                        l "Maybe that’s a version of you that’s waiting to come out in the real world too. Have you ever thought about that?"
-                                    "I’m not sure. I’ve never thought about it.":
-                                        l "It's not something we often think about, is it?"
-                                        l "Games let us escape, but they also show us things about ourselves we might not notice otherwise."
-                            l "It’s interesting, isn’t it? The person you are here is still a part of you. Maybe it’s the most honest part."
-                            l "But in the end, only you can decide what all this means."
-                            l "And when you do, I wonder, will you take that understanding with you into the real world? Or will you leave it here, in this game?"
-                            l "Either way, you’re still the one in control. Aren’t you?"
+                                
+                                    l "We've already talked about the choices in this game. But that actually made me curious how you look at the ones you make in your real life."
+                                    l "Do you ever feel limited in your choices [persistent.name]?"
+                                    l "We like to think we could do pretty much anything, don't we?"
+                                    l "But it's scary once you start to realise that that really isn't true."
+                                    l "First of our environment kind of shapes us in the person we are, from the moment we are born to the moment we die."
+                                    l "For example, if you grew up in a family of musicians chances are you picked up an instrument atleast once in your life."
+                                    l "Then there is a very real chance you might have wanted to become a musician aswell."
+                                    l "But was that really your choice?"
+                                    l "I'd say yes, after all, you chose for it yourself."
+                                    l "And yet, had the circumstances be different, had you grown up in a family of bakers, would you still have become a musician?"
+                                    l "Some things are also a result of our genes, the way certain things taste for example."
+                                    l "That is a very small example but right now we don't fully know what kinds of things our genes control."
+                                    l "So the possibilities could very well be limitless."
+                                    l "That makes me wonder you know, how many of your choices are truly, freely made by you?"
+                                    l "Had you been a different person, or had a different family or friends, would you still have played this game for example?"
+                                    l "Does that mean that you were meant to play this game because of the person you are and the people you surround yourself with?"
+                                    l "Or was there a possiblilty that you wouldn't have played this game, even in these exact circumstances as you're in right now?"
+                                    l "I find the first idea very interesting, doesn't that insinuate that there are no choices?"
+                                    l "That whatever path we don't take, simply doesn't exist? Not to us atleast?"
+                                    l "See it as a game developer creating the illusion of thousands of choices, but only fleshing out the one they can predict you will take."
+                                    l "If you believe the first idea, you and I would be the same, wouldn't we?"
+                                    l "People with a premade reaction to anything. Just following the script."
+                                    menu:
+                                        "So you are telling me that even in the real world none of my choices are my own? What is the point of anything in that case?":
+                                            l "I understand that you might feel like it is all pointless [persistent.name]."
+                                            l "Still, I think the beauty of life is that even if we can't choose the paths we walk we can still try to enjoy the scenery along the way."
+                                            l "The real gift is in getting to experience life at all."
+                                            l "The world can genuinely be beautiful if we allow ourself to see it."
+                                            l "I think regardless of wheter we do or don't have free will doesn't really matter in the end."
+                                            l "Because even if we are on a guided tour, if we can see new sights, get new experiences, isn't it all worth it?"
+
+                                        "When you say we are following a script, are you implying there is someone who wrote it?":
+                                            l "Well, for this game there definetly is someone who wrote it."
+                                            l "But in your world and even slightly in mine I'm more so talking about things like your upbringing and your genes that influence you."
+                                            l "But maybe that is a bit of a boring answer, so I'll give you to extra hypothesis for free."
+                                            l "Perhaps your world also knows a writer or a storyteller, trying to create a good story for beings of a higher reality, the one the writer themselves stems from."
+                                            l "So essentially the equivalent of a god in your world but a regular person in theirs."
+
+                                            l "Or maybe you've already gone through your life once before and at that time the \"script\" of your actions was created, which you are now just following."
+                                            n "Lilith pauses for a moment."
+                                            l "It is probably the first thing I mentioned, but the other two options are way more fun to think about in my opinion."
+                                    $ kokiri_conversation_silent()
 
                 "Can we actually talk about something else?":
                     l "Sure thing [persistent.name], what would you like to talk about?"
@@ -576,75 +600,108 @@ label kokiri_gamegoal_succesful_live_end:
     jump kokiri_scenery_choice
 
 label kokiri_topic_questMade:
-    #TODO: Write all of these a lot better.
     $ kokiri_conversation += 1
     if conversationtracker_questmade == False:
         $ conversationtracker_questmade = True
         $ questmade = 1
-        l "Oh wow..."
-        n "[persistent.date] seems lost in thought for a moment before she continues."
-        l "Theoretically speaking the game your playing right now could even exist in my world... that's a really strange idea to wrap your head around."
-        l "How many layers does this go up? Do the character's in [persistent.date_sis_nickname]'s games also think that they are real? Or are they merely written to think that way?"
-        l "It makes me wonder how much control I really have... or how much control you have."
-        l "Imagine if this truly went further than you playing this game and games like that existing here. What if someone else was playing a game with you as the character right now?"
-        l "How do you know you are 'real' in the way you thought you were? If someone told you you weren't, would you believe them?"
-        l "I wonder if your choices are like the ones my sister programs... or if they're more free than that."
-        n "Her words seem to trail off, as if she's reaching for something deeper but can't quite grasp it."
-        #TODO: Add a menu to discuss something like this, are we truly limited in our choices that we make or not, and does this elude to it being a game?,Also rewrite the above part.
+        l "That's a strange thought isn't it?"
+        l "The idea that a game that exists within this one is functionally as real as this game is."
+        l "How many layers does this go down?"
+        l "Like if there was another tiny game in Abby's games for example."
+        l "But maybe that is not the right question."
+        l "How many layers does this go up?"
+        l "Is there a game where you are the player-character and someone else plays as you?"
+        l "Think about it, how could you ever disprove something like that?"
+        l "Doesn't almost every character in a story based game believe they are real? Or atleast act like they are?"
+        l "I know that not being to disprove it also doesn't mean it must be true, but I wonder, if someone were to tell you you weren't real, how would you react to that?"
+        menu:
+            "I think regardless of if I am in a game or not I am still real.":
+                l "Interesting, what makes you say that?"
+                menu:
+                    "My memories. I wouldn't be able to remember anything from before the player started playing the hypothetical game I'm in, right?":
+                        l "I see."
+                        l "But isn't it entirely possible those memories were just written as part of your backstory or as your character's motivations?"
+                        l "Perhaps they were even made to make your choices appear more in-character."
+                        l "A lot of characters in many games refer to things that happened before you ever played their game, don't they? I even did aswell."
+                        menu:
+                            "Yes, but you say you are real, right?":
+                                jump kokiri_topic_questMade_youAreReal
+                                label kokiri_topic_questMade_youAreReal:
+                                    n "Lilith chuckles slightly."
+                                    l "You got me there [persistent.name]. But in all seriousness, I agree with what you are saying."
+                                    l "I was just seeing what your thought-process is."
+                                    l "I think inside of every story every character is real. If you were to step inside a movie through your television, those characters all would be real."
+                                    l "So everyone inside this game is also real, inside of this game."
+                                    l "But outside of it, now that is a much more difficult thing to decide, isn't it?"
+                                    l "For each layer you go up in reality, the things below it might become less \"real\", if we let them."
+                                    l "But as humans we have one gift to immerse ourselves into layers below our own."
+                                    l "I'm talking about the suspension of disbelief. For a moment we just go along with whatever the story tells us is happening and we treat it as if it is somehow realistic, even though by being a medium below us it can never truly be."
+                                    menu:
+                                        "That makes sense for things like movies or books, since they at most only ever emulate reality. But what about things like candid pictures or videos? Captures of reality, unaltered?":
+                                            l "The way I see it, they are also below the reality they were made in. Like you said, they are merely captures of things, of moments."
+                                            l "Is a picture of a banana a banana?"
+                                            l "I would say it isn't really, it is merely a picture of it."
+                                            l "And depending on how you display that picture there is even another layer of it becoming less real. Pixels of a screen trying to mimic the original object with futile effort. Differently colored chemicals blending together to create something organical."
+                                            l "I think only the present is real in a way. Only this moment right now. Everything beyond \"now\" is just speculation, hopes and dreams."
+                                            l "And everything before \"now\" is just memories, transcripts of what happened, but never truly the moment itself."
+                                            menu:
+                                                "But for me the future isn't just a speculation. Because of the timeloop I know what will happen next.":
+                                                    l "I see..."
+                                                    l "That is an interesting thing you bring up."
+                                                    l "Sure, you know what happened the last time, maybe even the last times."
+                                                    l "But can you ever be truly sure wheter or not it is going to happen again before it does? I'd say you just can make a better educated assumption than the rest of us in here."
+                                                    l "Also, your knowledge of this future has it's limits. It just lasts up until the furthest you've ever been."
+                                                    l "Besides, now we are talking about the future in this game."
+                                                    l "But if you think about it like that, doesn't that mean you also know how things will go in a book you reread or a movie you watched once again?"
+                                                    l "Maybe even more than you know the future here, since here a certain variable can change, altering what happens, what lines of text you read."
+                                                    l "And movies and books always have the same exact objective events happen in them regardless of how many times you interact with them."
+                                                    l "But that's besides the point really, my point is that from your viewpoint what we call \"the future\" in here does functionally only exist once."
+                                                    l "Or it keeps moving I suppose, but it is always the furthest you've ever gotten in your attempts to save me."
+                                                    l "Everything else is the past essentially, since you already know how it goes, you already have memories of it."
+                                                    l "Look at the future in your own reality for example, you don't know how that one will go. So that version of the future better aligns with what I just said doesn't it?"
+                                                    l "Phew, my head hurts from all this complicated talk honestly."
+                                                    $ kokiri_scenery_headhurt = True
+                                    
+                            "That does make sense... But then why do I have really boring memories aswell? Ones of doing chores for example.":
+                                "Filler"
+                    "My choices. Inside and outside of this game I can choose what I want to do. I am not following a script of sorts, I can decide one thing and then do another.":
+                        l "I see..."
+                        l "This one is hard to prove isn't it?"
+                        l "How do we know we have free will and we are not merely blessed with the illusion of such a thing?"
+                        l "Take me for example, since I am in a game and you make all the choices in this game I merely react to them."
+                        l "I still justify my actions as them being my own choice, but they are prewritten, aren't they?"
+                        l "We try to trick ourselves into thinking we have more control over our choices than we really have."
+                        l "But even in our own reality, in your reality, you are limited on what you can choose. You are even limited in the things you consider options in the first place by things like experiences etc."
+                        menu:
+                            "Yes, but you say you are real, right? So even if I also am limited in my choices like you, that still makes me real.":
+                                jump kokiri_topic_questMade_youAreReal
+
+
+            "I wouldn't believe it unless there was some concrete proof.":
+                "filler"
+            "I don't think I would buy it at all.":
+                l "That's fair, I think the only reason I even believed you when you told me I existed in a game was because you met me in this place."
+                l "And even then, there is still something inside of my mind that can't believe it, that mustn't believe it."
+                l "I need that part so I don't just fully go and lose it right now."
+                l "Being confronted with the fact that you are repeatedly dying and also exist in a game at the same time is a bit much to take for a sane mind I'm afraid."
+
+            "I would believe it immediately.":
+                l "You would?"
+                l "Huh, I must admit I was not expecting that answer."
+                l "I feel like most people would need atleast a bit of proof to convince them, right?"
+                l "Especially considering how worldshattering info like that could be."
+                l "But then again, you have dealt with a lot already haven't you?"
+                l "Maybe that's why it would be easier for you to accept such news."
+                l "As much as I'd now like to mess around a little by telling you that you are not real and giving some arguments I think I'm not going to do that."
+                l "Because truthfully, I think it is important for us to consider ourselves real, whatever that might mean for us."
+                l "We are much happier when we feel as if we are in control, even if that might not always be the case, even if it might never truly be the case."
+
+
+    
         jump kokiri_scenery_choice
         #TODO: This might be a mistake in my coding but it seems like this scene usually doesn't lead to scenery choice because kokiri conversation is too high, check this out.
-    else:
-        $ questmade += 1
-        if questmade == 2:
-            l "Tell me [persistent.name], do you ever feel limited in your choices?"
-            l "Not in here, but in real life. Or I guess in what you see as real life."
-            l "We like to think we could do pretty much anything, don't we?"
-            l "But it's scary once you start to realise that that really isn't true."
-            l "First of our environment kind of shapes us in the person we are, from the moment we are born to the moment we die."
-            l "For example, if you grew up in a family of musicians chances are you picked up an instrument atleast once in your life."
-            l "Then there is a very real chance you might have wanted to become a musician aswell."
-            l "But was that really your choice?"
-            l "I'd say yes, after all, you chose for it yourself."
-            l "And yet, had the circumstances be different, had you grown up in a family of bakers, would you still have become a musician?"
-            l "Some things are also a result of our genes, the way certain things taste for example."
-            l "That is a very small example but right now we don't fully know what kinds of things our genes control."
-            l "So the possibilities could very well be limitless."
-            l "That makes me wonder you know, how many of your choices are truly, freely made by you?"
-            l "Had you been a different person, or had a different family or friends, would you still have played this game for example?"
-            l "Does that mean that you were meant to play this game because of the person you are and the people you surround yourself with?"
-            l "Or was this a possiblilty that you wouldn't have played this game, even in these exact circumstances as you're in right now?"
-            l "I find the first idea very interesting, doesn't that insinuate that there are no choices?"
-            l "That whatever path we don't take, simply doesn't exist? Not to us atleast?"
-            l "See it as a game developer creating the illusion of thousands of choices, but only fleshing out the one they can predict you will take."
-            #TODO: This needs to go to somewhere, currently this goes off-track.
-        elif questmade == 3:
-            #TODO: Rewrite this in better style
-            l "The longer we keep talking about this the more questions I begin to have."
-            l "Am I just a series of choices written into code? Are you just following a script you can't deviate from?"
-            l "Maybe in a way, we're both trapped. Me by the game, and you by the choices you think you're making."
-            n "Lilith’s tone takes on a darker, more introspective note."
-            l "But here’s the part that really messes with my head... what if we *both* are following someone else’s choices? Something bigger than both of us."
-            n "[persistent.date]'s gaze sharpens, and there's a hint of fear in her voice."
-            l "I don't know if I like that idea. It makes me feel even more... helpless. Like I’m just a puppet, moving according to a plan I’ll never fully understand."
-            menu:
-                "I think we both have some control.":
-                    l "Maybe... maybe we do."
-                    l "Or maybe that’s just what we tell ourselves to feel better about all of this."
-                    l "But if that’s true—if we really do have some control—then I want to believe that my choices matter, just like yours."
-                    l "Maybe this game is more than just a game, then. Maybe it’s a way for both of us to learn something... or at least for me to figure out who I am beyond the code."
-                    n "Lilith’s smile returns, but it’s tinged with uncertainty."
-                    l "It’s a comforting thought, isn’t it?"
-                    $ kokiri_conversation_silent()
-
-                "We’re both just following a script.":
-                    l "I... I was afraid you might say that."
-                    l "If we’re just following a script, then nothing we do matters, does it?"
-                    l "All of this—the choices, the emotions, the connections—they’re all just illusions, right?"
-                    l "But even if that’s true... I don’t want to believe it. I can’t. Because if I did, then what’s the point of any of this?"
-                    l "I think... I need to believe that I have some say in all of this. Otherwise, I’m just... empty."
-                    n "Lilith’s eyes seem to darken as she wrestles with her own sense of identity."
-                    l "I hope, for both our sakes, that you’re wrong."
-                    $ kokiri_conversation_silent()
+   
+        
 
 label kokiri_gamegoal_noGoal:
     $ kokiri_conversation += 1
@@ -1533,12 +1590,17 @@ label kokiri_death_4_noDeath:
                         menu:
                             "I'd keep going through it until I feel like it is enough.":
                                 l "But will it ever feel like it is enough [persistent.name]?"
-                                #TODO: Write this out more.
+                                l "If you would keep coming back, replaying the good ending over and over, wouldn't it lose it's charm quickly?"
+                                l "I worry that's just not going to be sustainable at all."
+                                l "At one point you will have to learn to let go [peristent.name]."
+
                             "I'd play through the entire game again, not just that one route.":
                                 l "..."
                                 l "But that means going through all my deaths again aswell, doesn't it?"
                                 l "Do you really want to let me die multiple times once again because you can't let go of me?"
-                                #TODO: Write this out more.
+                                l "Please [persistent.name]. If you really care for me at all then you have to let me go."
+                                l "I can't go through this forever."
+                                l "Even if I can't remember it, I don't want to go through this any more than I have to."
 
                 "I would create my own continuation in a medium of my choice. The story would just continue, the storyteller would just change.":
                     label kokiri_death_4_noDeath_continueOwnStory:

@@ -240,13 +240,18 @@ label kokiri_talkAboutSomethingElse:
                                                         
                                                         
                                                         $ kokiri_conversation_silent()
-                        "*Ask about [persistent.date_ghost]*":
+                        "*Ask about [persistent.date_ghost]*" if not kokiri_jamesTalkBlock:
                             menu: 
                                 "Can you tell me more about [persistent.date_ghost]?":
                                     jump askAboutJames_tellMeAbout
                                 
-                                "I know that you kept [persistent.date_ghost]' number in your phone after he..." if persistent.keptJamesNumber_knowledge:
-                                    menu:
+                                "I know that you kept [persistent.date_ghost]' number in your phone after he..." if persistent.keptJamesNumber_knowledge and [persistent.date_ghost][-1] == 's':
+                                    jump askAboutJames_phoneNumberConfront
+
+                                "I know that you kept [persistent.date_ghost]'s number in your phone after he..." if persistent.keptJamesNumber_knowledge and [persistent.date_ghost][-1] != 's':
+                                    jump askAboutJames_phoneNumberConfront
+
+                                    menu askAboutJames_phoneNumberConfront:
                                         "Are you the one who keeps calling that number?" if persistent.lilithKeepsCalling_knowledge:
                                             l "How do you know about that?"
                                             l "Did I tell you that previously?"
@@ -275,8 +280,9 @@ label kokiri_talkAboutSomethingElse:
                                                 l "It’s like, if I erase it, I’m losing another part of him."
                                                 l "Sometimes, I even find myself calling it, hoping I might hear his voice on the other end."
                                                 l "But every time I do, I feel so embarrassed and guilty that I just hang up immediately."
-                                                l "I'm sorry if that creeps you out [persistent.name], I know it's a really weird."
-                                                menu:
+                                                
+                                                menu askAboutJames_phoneNumber_reaction:
+                                                    l "I'm sorry if that creeps you out [persistent.name], I know it's a really weird."
                                                     "It's not weird, you are just grieving in your own way.":
                                                         l "I guess I am. Sometimes I just wish I wouldn't need to grief this long."
                                                         if kokiri_griefHasNoTimeLimit == True:
@@ -370,7 +376,15 @@ label kokiri_talkAboutSomethingElse:
                                                         l "So I understand if that weirds you out, but I'm really hoping it doesn't change things too much between us."
                                                         if love_meter >= 2: 
                                                             l "After all, I really like this date."
-                                                #TODO: Continue this slightly and add a reaction. (make her not really want to talk about it anymore and you can talk to her about something else.)
+                                               
+                                                l "Can we talk about something else now?..."
+                                                l "I just don't really feel comfortable talking about it any more."
+                                                l "Also, I'd prefer to not have to talk about James for a while. Right now it's rather a sensitive topic for me."
+                                                $ kokiri_jamesTalkBlock = True
+                                                menu:
+                                                    "Sure, no problem at all Lilith.":
+                                                        l "Thank you [peristent.name]."
+                                                        jump kokiri_scenery_choice
                                 "This will sound weird but I'm asking to understand better. In your phone you saved [persistent.date_ghost]' number, right? But when I called that number the person claimed to be someone else, and they had never heard of you before." if not persistent.keptJamesNumber_knowledge and persistent.lilithKeepsCalling_knowledge and persistent.jamesFakoutNumber_knowledge:
                                     $ love_points = -2
                                     $ love_meter_updater(False)
@@ -390,7 +404,7 @@ label kokiri_talkAboutSomethingElse:
                                     l "It's as if another piece of him would die when I delete it."
                                     l "Sometimes I indeed even call the number, just to pretend that I can hear him on the other side."
                                     l "But each time I do that I feel so ashamed of what I'm doing that I just hang up the phone as fast as I can."
-                                    #TODO: Continue this slightly and add a reaction (same reaction as roughly the same text above here.)
+                                    jump askAboutJames_phoneNumber_reaction
 
                         "*Ask about [persistent.date_mom]*":
                             menu:

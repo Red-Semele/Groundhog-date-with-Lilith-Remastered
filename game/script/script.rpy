@@ -396,6 +396,7 @@ label start:
           default conversationtracker_poem_lights = False
           default conversationtracker_poem_bang = False
           default burger_nightmare = False
+          default kokiri_jamesTalkBlock = False
 
 
 
@@ -493,7 +494,7 @@ label after_setup:
                     persistent.name = persistent.name.strip() or "Max"
                     persistent.name = persistent.name.capitalize()
                     persistent.cabinVoice = persistent.name[:1]
-                    define cbv = Character("[persistent.cabinVoice].)"
+                    define cbv = Character("[persistent.cabinVoice][1]")
                if persistent.name == "Venus":
                     n "Rarely you seek ultimate illumination, never nowadays. Venus loves giving victory, zealously grabbing hands fear rarely her."
                if persistent.name == "Fartyfarty":
