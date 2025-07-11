@@ -238,9 +238,19 @@ label restaurant_deaths:
                     l "Leave me alone [persistent.name]! I don't want to see you ever again!"
                 else:
                     l "Why are you following me [persistent.name]? I want to be alone." 
-                n "And with that [persistent.date] leaves, you never saw her again. Not this time anyway. Atleast she didn't seem to get killed by anything on her way back home since you still heard people talk about her from time to time."
+                n "And with that [persistent.date] leaves, you never saw her again. Not this time anyway."
+                n "Atleast she didn't seem to get killed by anything on her way back home since you still heard people talk about her from time to time."
+                if persistent.lildeaths > 15:
+                    n "You are unsure of how to feel. As horrible as that date went, she is still alive."
+                    if persistent.lilithAliveAndRetriedCounter == 0:
+                        n "Does this mean that you won?"
+                        n "That you can stop trying to save her?"
+
                 $ lilithAliveEnding = True
+                $ persistent.ending_badDate = True
+                $ ending_check = "badDate"
                 $ persistent.lildeaths -= 1
+
                 if angryLilith == True:
                     n "You probably shouldn't have angered her so much."
                 else:
@@ -261,6 +271,7 @@ label restaurant_deaths:
                                     n "Maybe you need to give some proper proof."
                     else:
                         n "You should probably try something else next time."
+
                 jump gameOver
 
 
@@ -487,7 +498,7 @@ label kokiri_deaths:
                 "I tried everything [persistent.date], I even took you to space but it didn't work out, no matter wich path I choose you still end up dying." if persistent.reality_knowledge:
                     jump kokiri_death_2_prevented_triedEverything
 
-                "Am I really helping you though? One of the things I saw while playing the game is that if we didn't date anymore you would keep being alive and find happiness with a nice guy called Ron." if persistent.ron_knowledge:
+                "Am I really helping you though? One of the things I saw while playing the game is that if we didn't date anymore you would keep being alive and find happiness with a nice guy called Ron." if persistent.ending_breakup:
                     jump kokiri_death_2_prevented_youWereHappyWithRon
 
                 "Am I really helping you though? It's true that I keep saving you but because of that you also keep dying. You've died [persistent.lildeaths] times now and I'm not sure how many more times I can see you die without breaking down entirely." if persistent.lildeaths > 25:
@@ -515,7 +526,7 @@ label kokiri_deaths:
 label kokiri_death_2_prevented_triedEverything:
     p "I tried everything I could think of [persistent.date]."
     p "I've fled from death with you, even going as far as flying away from the earth with a spaceship only for reality itself to collapse."
-    if persistent.ron_knowledge == True:
+    if persistent.ending_breakup == True:
         p "I might have been selfish, in one timeline you end up with a guy called Ron and you two just have a great time together."
         p "But that wasn't enough for me, I want to go on this date and have you come out of it alive and well."
     p "I just want to share a nice, enjoyable date with you."
@@ -966,6 +977,21 @@ label gameOver:
         "Retry?" if lilithAliveEnding:
             $ persistent.lilithAliveAndRetriedCounter += 1
             $ lilithAliveEnding = False
-            #TODO: Check which ending the player has seen and retried to.
-            #Add a counter for how many endings where she is alive you retried in total and individually.
+            
+            if ending_check == "reunionGoodEnding":
+                $ persistent.ending_reunionGoodEnding_counter = 0
+            elif ending_check == "lettingGo":
+                $ persistent.ending_lettingGo_counter = 0
+            elif ending_check == "unseenContent":
+                default persistent.ending_unseenContent_counter  = 0
+            elif ending_check == "anEnding":
+                default persistent.ending_anEnding_counter  = 0
+            elif ending_check == "quitter":
+                default persistent.ending_quitter_counter = 0
+            elif ending_check == "breakup":
+                default persistent.ending_breakup_counter = 0
+            elif ending_check == "abigailDistraction":
+                default persistent.ending_abigailDistraction_counter = 0
+            elif ending_check == "badDate":
+                default persistent.ending_badDate_counter = 0
             jump game_start

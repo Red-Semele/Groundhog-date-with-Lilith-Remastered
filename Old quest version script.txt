@@ -12687,10 +12687,10 @@
             AddPageLink (show up_I reunited you_David choice, I reunited you_David_I promise, "I promise.")
             AddPageLink (show up_I reunited you_David choice, I reunited you_David_no undone, "Actually it doesn't work like that, she will still stay death in this world but in another one she will live.")
             AddPageLink (show up_I reunited you_David choice, I reunited you_David_already tested the other options, "Oh, she survives in the other alternatives of that moment, I've already seen them. (Make this an option if you saw them)")
-            if (GetBoolean(game, "Davidpromise")) {
+            if (GetBoolean(game, "persistent.davidPromise")) {
               AddPageLink (show up_I reunited you_David choice, I reunited you_David_this is no the first time, "I have had this conversation with you multiple times already. I'm not promising you anything.")
             }
-            SetFlagOn ("Davidpromise")
+            SetFlagOn ("persistent.davidPromise")
             // This flag bascially makes it so that I can check whether or not the player has seen this screen.
           </script>
           <object name="I reunited you_David_I promise">

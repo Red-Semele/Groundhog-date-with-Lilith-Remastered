@@ -756,7 +756,7 @@ label kokiri_gamegoal_succesful_survive:
     menu:
         "I would, I just want to keep you safe.":
             $ kokiri_goalSurvive = True
-            if persistent.ron_knowledge:
+            if persistent.ending_breakup:
                 n "Then why did you come back after you turned her down?"
                 n "When you knew very well she was safe?"
                 n "That she was happy?"
@@ -774,7 +774,7 @@ label kokiri_gamegoal_succesful_survive:
             else:
                 l "Well then, why don't you just tell the past me that you don't want to go on this date anymore?"
                 l "Wouldn't that fix everything?"
-                if persistent.ron_knowledge:
+                if persistent.ending_breakup:
                     n "Given that you came back after you did exactly that I doubt you agree with her on that end, do you player?"
                     $ persistent.CancelledBeforeBeingAsked = True
                 else:
@@ -799,7 +799,7 @@ label kokiri_gamegoal_succesful_survive:
                             n "Either way, I'm not sure why you chose this exact same dialogue again if you still haven't done what she asked you to do."
                         $ kokiri_promiseCancelDate = True
                         jump kokiri_scenery
-                    "I actually already tried cancelling it before." if persistent.ron_knowledge == True and persistent.kokiri_HonoredPromiseCancelDate == False or persistent.CancelledBeforeBeingAsked == True:
+                    "I actually already tried cancelling it before." if persistent.ending_breakup == True and persistent.kokiri_HonoredPromiseCancelDate == False or persistent.CancelledBeforeBeingAsked == True:
                         label kokiri_triedCancellingBefore:
                         
                         n "Lilith leans in slightly closer, her eyes growing slightly wider."
@@ -846,7 +846,7 @@ label kokiri_gamegoal_succesful_survive:
                                         l "Better try to enjoy it then."
                                         jump kokiri_scenery
 
-                    "I actually already tried to cancel it before because this isn't the first time you asked me to." if persistent.ron_knowledge == True and persistent.kokiri_HonoredPromiseCancelDate == True:
+                    "I actually already tried to cancel it before because this isn't the first time you asked me to." if persistent.ending_breakup == True and persistent.kokiri_HonoredPromiseCancelDate == True:
                         jump kokiri_triedCancellingBefore
 
 

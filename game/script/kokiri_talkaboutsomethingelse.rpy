@@ -529,7 +529,11 @@ label tellLilithAboutNar_endingsWhereYouLive:
     if kokiri_goalSurvive == True:
         l "So there are endings where I survive but we just don't end up together [persistent.name]?"
         l "It indeed seems to be like what I told you earlier."
-        if love_meter <= 2:
+       
+    else:
+        l "So there are ways for me to survive this horrible loop?"
+        l "Literal endings to it so to speak."
+    if love_meter <= 2:
             n "Lilith gives you a distrustful look."
             l "Did you ever reach one of those endings [persistent.name]?"
             menu:
@@ -537,26 +541,28 @@ label tellLilithAboutNar_endingsWhereYouLive:
                     label endingsWhereYouLive_notReachedYet:
                         l "I see..."
                         l "Well in that case it might be worth looking into."
-                        l "If it really is your goal to keep me alive as you say that is."
+                        if kokiri_goalSurvive:
+                            l "If it really is your goal to keep me alive as you say that is."
                         l "Maybe cancelling the date would work?"
-                        if persistent.ron_knowledge:
+                        if persistent.ending_breakup:
                             n "Little does she know you already tried that, didn't you?"
-                            n "You should tell her, I'm sure she would love to hear you found a way to reach the goal."
-                        if persistent.lilithAliveAndRetriedCounter > 0:
-                            n "Oh but is it truly your goal to keep her alive player?"
-                            n "Afterall, then that would mean you've already succeeded, right?"
-                        if persistent.lilithAliveAndRetriedCounter < 5 and persistent.lilithAliveAndRetriedCounter > 1:
-                            n "Even multiple times."
-                            n "And yet you keep coming back..."
-                        elif persistent.lilithAliveAndRetriedCounter > 1:
-                            n "On how many successes are we right now? It's getting hard to keep track of it, isn't it?"
-                            n "Don't worry player, I am keeping track. You kept her alive [persistent.lilithAliveAndRetriedCounter] times."
-                            n "And yet you keep coming back..."
-                        else:
-                            n "And yet you came back..."
-                        n "It's not really your goal to keep her safe is it?"
-                        n "Keep her yours, now that could be your goal."
-                        n "Or perhaps you just want to keep her in this world for longer, so you can continue to explore every path that inevitably leads to yet another of her deaths."
+                            if kokiri_goalSurvive:
+                                n "You should tell her, I'm sure she would love to hear you found a way to reach the goal."
+                                if persistent.lilithAliveAndRetriedCounter > 0:
+                                    n "Oh but is it truly your goal to keep her alive player?"
+                                    n "Afterall, then that would mean you've already succeeded, right?"
+                                if persistent.lilithAliveAndRetriedCounter < 5 and persistent.lilithAliveAndRetriedCounter > 1:
+                                    n "Even multiple times."
+                                    n "And yet you keep coming back..."
+                                elif persistent.lilithAliveAndRetriedCounter > 1:
+                                    n "On how many successes are we right now? It's getting hard to keep track of it, isn't it?"
+                                    n "Don't worry player, I am keeping track. You kept her alive [persistent.lilithAliveAndRetriedCounter] times."
+                                    n "And yet you keep coming back..."
+                                else:
+                                    n "And yet you came back..."
+                                n "It's not really your goal to keep her safe is it?"
+                                n "Keep her yours, now that could be your goal."
+                                n "Or perhaps you just want to keep her in this world for longer, so you can continue to explore every path that inevitably leads to yet another of her deaths."
 
                             
 
@@ -566,8 +572,8 @@ label tellLilithAboutNar_endingsWhereYouLive:
                 "I did." if persistent.lilithAliveAndRetriedCounter > 0:
                     "Filler"
     else:
-        #TODO: before this make her question the fact that at some moments she lives, if she has low love maker her leave because you are still endagering her. Make her have custom dialog for this if you told her the goal is to make her live. Hav her say that it seems like that isn't truly the goal.
-        l "Well, could you maybe steer the story to a direction where [persistent.name] and I end up together and I get to live?"
+        l "But we don't end up together with eachother..."   
+        l "Well Nar, could you maybe steer the story to a direction where [persistent.name] and I end up together and I get to live?"
         n "But that would destroy the entire point of this game!"
         n "And even worse, it would all be for nothing because then [persistent.name] would just stop playing the game without having learnt anything."
         menu:
