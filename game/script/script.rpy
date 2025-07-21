@@ -308,6 +308,7 @@ label start:
           default persistent.cabinVoice = "S."
           default persistent.davidPromise = False
           default persistent.firstLocation = ""
+          default persistent.ringRiddle_knowledge = False
 
           #Non-persistent
 

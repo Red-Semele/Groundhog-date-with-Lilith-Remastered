@@ -729,84 +729,84 @@ label kokiri_gamegoal_noGoal:
 label kokiri_gamegoal_noIdea:
     $ kokiri_conversation += 1
     if kokiri_conversation == 1:
-    l "That's fine, we can figure your goal out together."
-    n "[persistent.date] scratches her chin and continues."
-    l "Let's see, first of, how does this game look to you?"
-    menu:
-        "I just see text on the screen and some graphics, everyone's text is slightly different. I also get a few clickable links to select what I want to say.":
-            jump kokiri_gamegoal_noIdea_howGameLooks
+        l "That's fine, we can figure your goal out together."
+        n "[persistent.date] scratches her chin and continues."
+        l "Let's see, first of, how does this game look to you?"
+        menu:
+            "I just see text on the screen and some graphics, everyone's text is slightly different. I also get a few clickable links to select what I want to say.":
+                jump kokiri_gamegoal_noIdea_howGameLooks
     elif kokiri_conversation == 2:
-            l "So, we already now how the game looks to you. What about the \"retrying\" part of the game? Do you always automatically come back when I end up getting killed?"
+        l "So, we already now how the game looks to you. What about the \"retrying\" part of the game? Do you always automatically come back when I end up getting killed?"
+        menu:
+            "It's not automatic, a link with the text \"Retry\" shows up and when I click it I restart the day but I get to keep the knowledge of the things that happened.":
+                jump kokiri_gamegoal_noIdea_2
+            "You don't always die, sometimes we are just not together. For example because I break up with you or because you don't want to be around me anymore. But the game still considers it a game over." if lilithAliveAndRetriedCounter > 0:
+                $ kokiri_toldLillySheLives = True
+                l "...Interesting."
+                l "So there are moments where I survive?"
+                l "What happens then?"
+                l "Does the day restart anyway?"
                 menu:
-                    "It's not automatic, a link with the text \"Retry\" shows up and when I click it I restart the day but I get to keep the knowledge of the things that happened.":
-                        jump kokiri_gamegoal_noIdea_2
-                    "You don't always die, sometimes we are just not together. For example because I break up with you or because you don't want to be around me anymore. But the game still considers it a game over." if lilithAliveAndRetriedCounter > 0:
-                        $ kokiri_toldLillySheLives = True
-                        l "...Interesting."
-                        l "So there are moments where I survive?"
-                        l "What happens then?"
-                        l "Does the day restart anyway?"
-                        menu:
-                            "Yup, it just restart, no matter what. (Lie)":
-                                l "Really?"
-                                l "So it is worse than we thought."
-                                l "There is no escape..."
-                                l "I'll just be stuck in this loop forever and ever."
-                                l "Although... maybe there is one way."
-                                l "What do you think would happen if you stop playing this game?"
-                                jump stopPlayingGameConsequences
-            
-                            "It does, but only if I choose to click the \"retry\" option."":
-                                l "..."
-                                l "So you are saying that I survived one of these loops and you restarted it anyway?"
-                                l "Why, just because we didn't end up together?"
-                                if love_meter <= 2:
-                                    l "I thought you wanted to make sure I was safe..."
-                                    l "But you just want to make sure I stay with you, don't you?"
-                                    l "That you don't have to let me go for yet a little longer."
-                                menu:
-                                    "I am really sorry, I just couldn't let go yet.":
-                                        l "No I am really sorry [persistent.name]. Sorry for ever trusting you."
-                                        l "Well I won't make that mistake again this time."
-                                        jump angryLilith
-                                else:
-                                    l "Look, I like you [persistent.name]. I really do."
-                                    l "And as much as I want there to be a way for us to end up together, isn't it your priority to save me?"
-                                    l "If so, then why did you retry after I was perfectly safe?"
+                    "Yup, it just restart, no matter what. (Lie)":
+                        l "Really?"
+                        l "So it is worse than we thought."
+                        l "There is no escape..."
+                        l "I'll just be stuck in this loop forever and ever."
+                        l "Although... maybe there is one way."
+                        l "What do you think would happen if you stop playing this game?"
+                        jump stopPlayingGameConsequences
+    
+                    "It does, but only if I choose to click the \"retry\" option.":
+                        l "..."
+                        l "So you are saying that I survived one of these loops and you restarted it anyway?"
+                        l "Why, just because we didn't end up together?"
+                        if love_meter <= 2:
+                            l "I thought you wanted to make sure I was safe..."
+                            l "But you just want to make sure I stay with you, don't you?"
+                            l "That you don't have to let me go for yet a little longer."
+                            menu:
+                                "I am really sorry, I just couldn't let go yet.":
+                                    l "No I am really sorry [persistent.name]. Sorry for ever trusting you."
+                                    l "Well I won't make that mistake again this time."
+                                    jump angryLilith
+                        else:
+                            l "Look, I like you [persistent.name]. I really do."
+                            l "And as much as I want there to be a way for us to end up together, isn't it your priority to save me?"
+                            l "If so, then why did you retry after I was perfectly safe?"
+                            menu:
+                                "I couldn't let go, not yet.":
+                                    n "She gives you a sympathetic look."
+                                    l "... Letting go is hard sometimes isn't it?"
+                                    l "I mean, \"sometimes\" might be an understatement."
+                                    l "It almost always is hard."
+                                    l "And I know that you might have an especially hard time letting me go since we've spent so much time together from your perspective."
+                                    l "And yet, letting me go will effectively \"undo\" all of that, won't it?"
+                                    l "I wouldn't remember any of it and just go my seperate way, away from you."
+                                    l "But you also have to understand what I'm going through, don't you?"
+                                    l "This cycle of death. Of pain."
+                                    l "Sure, we had some great moments together I'm sure! Even just here in this moment I had a really good time when you consider the circumstances."
+                                    l "But I have died more than anyone should ever do [persistent.name]."
+                                    l "Clinging onto me is only going to hurt the both of us I'm afraid."
+                                    l "We might have found eachother in this game, but I don't think this game was made for us to end up together."
+                                    l "Whatever we will try, I have the feeling it is just going to lead to more death."
+                                    l "So, as much as I wish there would be another way, I think this is our best shot."
+                                    l "I know what I'm asking is pretty big, but I'm hoping I mean as much to me as I mean to you."
                                     menu:
-                                        "I couldn't let go, not yet.":
-                                            n "She gives you a sympathetic look."
-                                            l "... Letting go is hard sometimes isn't it?"
-                                            l "I mean, \"sometimes\" might be an understatement."
-                                            l "It almost always is hard."
-                                            l "And I know that you might have an especially hard time letting me go since we've spent so much time together from your perspective."
-                                            l "And yet, letting me go will effectively \"undo\" all of that, won't it?"
-                                            l "I wouldn't remember any of it and just go my seperate way, away from you."
-                                            l "But you also have to understand what I'm going through, don't you?"
-                                            l "This cycle of death. Of pain."
-                                            l "Sure, we had some great moments together I'm sure! Even just here in this moment I had a really good time when you consider the circumstances."
-                                            l "But I have died more than anyone should ever do [persistent.name]."
-                                            l "Clinging onto me is only going to hurt the both of us I'm afraid."
-                                            l "We might have found eachother in this game, but I don't think this game was made for us to end up together."
-                                            l "Whatever we will try, I have the feeling it is just going to lead to more death."
-                                            l "So, as much as I wish there would be another way, I think this is our best shot."
-                                            l "I know what I'm asking is pretty big, but I'm hoping I mean as much to me as I mean to you."
-                                            menu:
-                                                "You do, I'll try my best to let you go next time.":
-                                                    n "She gives you a gentle smile."
-                                                    l "Thank you [persistent.name], that's all I ask."
-                                                    l "So..."
-                                                    n "She grows quiet for a moment, before she continues."
-                                                    jump kokiri_semiEnding
-                                                "I'm sorry, I just can't do it.":
-                                                    l "I understand."
-                                                    l "But you also have to understand that you will have to let me go at one point [perisistent.name]."
-                                                    l "You cannot possibly keep this up forever."
-                                                    l "And although I do understand I also think if you can't let me go I'll have to take things in my own hands."
-                                                    l "As much as I had hoped the two of us could work out, in here we can't."
-                                                    l "The sooner you accept that the better."
-                                                    l "Goodbye [persistent.name]. I genuinely wish you the best and hope there is no bad blood between the two of us for what I'm about to do."
-                                                    jump angryLilith #TODO: Check if this one is slightly friendly enough, if not just add a few lines to make this a possibility with a flag.
+                                        "You do, I'll try my best to let you go next time.":
+                                            n "She gives you a gentle smile."
+                                            l "Thank you [persistent.name], that's all I ask."
+                                            l "So..."
+                                            n "She grows quiet for a moment, before she continues."
+                                            jump kokiri_semiEnding
+                                        "I'm sorry, I just can't do it.":
+                                            l "I understand."
+                                            l "But you also have to understand that you will have to let me go at one point [perisistent.name]."
+                                            l "You cannot possibly keep this up forever."
+                                            l "And although I do understand I also think if you can't let me go I'll have to take things in my own hands."
+                                            l "As much as I had hoped the two of us could work out, in here we can't."
+                                            l "The sooner you accept that the better."
+                                            l "Goodbye [persistent.name]. I genuinely wish you the best and hope there is no bad blood between the two of us for what I'm about to do."
+                                            jump angryLilith #TODO: Check if this one is slightly friendly enough, if not just add a few lines to make this a possibility with a flag.
     
 label kokiri_gamegoal_noIdea_howGameLooks:
     l "Ah I see, so you can't see the absolutely stunning view from our picknickspot?"
@@ -3035,165 +3035,165 @@ label noContactFamilyPromise:
 
 
 
-            label noContactFamilyPromise_cannotPromise_confrontation_aliveFamily:
-                if only_one_asked and fam_obsession == "[persistent.date_ghost]:
-                    l "Look, I am not asking for much here, right?"
+label noContactFamilyPromise_cannotPromise_confrontation_aliveFamily:
+    if only_one_asked and fam_obsession == "[persistent.date_ghost]":
+        l "Look, I am not asking for much here, right?"
+        
+        
+        l "All I ask of you is that you do not use the things I tell you about [persistent.date_ghost] to further your goal."
+        l "I don't want you to use him like that behind my back."
+        
+            
+    else:
+        if only_one_asked:
+            if fam_obsession == "[persistent.date_dad]":
+                
+                l "I just don't want you to involve my da- I mean [persistent.date_dad] in all of this."
+                l "None of my family should be involved at all."
+                
+            elif fam_obsession == "[persistent.date_sis]" or fam_obsession == "[persistent.date_mom]":
+        
+                l "She should be kept far away from all of this. Everyone in my family should."
+            if kokiri_familyContacted == True:
+                    l "So don't contact [fam_obsession] or anyone else from now on, alright?"
+            else:
+                l "So, don't contact [fam_obsession] or anyone else, alright?"
+        else:
+                if kokiri_familyContacted == True:
+                    l "Look, it would mean a lot to me if you didn't have to involve my family any further than you already have."
                     
-                    
-                    l "All I ask of you is that you do not use the things I tell you about [persistent.date_ghost] to further your goal."
-                    l "I don't want you to use him like that behind my back."
-                    
-                        
                 else:
-                    if only_one_asked:
-                        if fam_obsession == "[persistent.date_dad]":
-                            
-                            l "I just don't want you to involve my da- I mean [persistent.date_dad] in all of this."
-                            l "None of my family should be involved at all."
-                            
-                        elif fam_obsession == "[persistent.date_sis]" or fam_obsession == "[persistent.date_mom]":
+                    l "Look, it would mean a lot to me if you didn't have to involve my family."
                     
-                            l "She should be kept far away from all of this. Everyone in my family should."
-                        if kokiri_familyContacted == True:
-                                l "So don't contact [fam_obsession] or anyone else from now on, alright?"
-                        else:
-                            l "So, don't contact [fam_obsession] or anyone else, alright?"
-                    else:
-                            if kokiri_familyContacted == True:
-                                l "Look, it would mean a lot to me if you didn't have to involve my family any further than you already have."
-                                
-                            else:
-                                l "Look, it would mean a lot to me if you didn't have to involve my family."
-                                
-                    if kokiri_familyContacted == True:
-                         l "This is going to have some unforseen consequences even if it would maybe help in the short-term."
-                    else:
-                        l "Doing so would have unforseen consequences even if it might help in the short-term."
-                    l "What are you going to tell them?"
-                    l "That we are all stuck in a game?"
-                    l "I don't think they will take it as well as I would to be honest with you."
-                    l "You could just tell them about the timeloop but even then they might not take it as well."
-                    l "I suppose you could also just keep them in the dark about those things but that would be even worse wouldn't it? If you would use their help then they deserve what they are helping you with."
-                    l "They are not just info-dispensers that will make you achieve whatever goal it is you are trying to reach now."
-                    l "They are my family, and if you ever even had a slither of respect for me you better leave them alone."
-                    l "And if you refuse to accept that then maybe I should just leave."
-                l "This might be a game for you but for me this is my life."
-                l "So please don't play with my life as if it's just a game."
-                menu:
-                    "I'm sorry, I hadn't thought of it like that before. I promise to not involve your family anymore." if fam_obsession != '[persistent.date_ghost]':
-                        #[persistent.date_ghost]' flag checks if you use [persistent.date_ghost] related things to win and the other checks if you have involved any family, including [persistent.date_ghost]
-                        jump noContactFamilyPromise_cannotPromise_confrontation_aliveFamily_changedMind
-                    "I'm sorry, I hadn't thought of it like that before. I promise to not use info about [persistent.date_ghost] to my advantage anymore." if fam_obsession == '[persistent.date_ghost]':
-                        jump noContactFamilyPromise_cannotPromise_confrontation_aliveFamily_changedMind
+        if kokiri_familyContacted == True:
+                l "This is going to have some unforseen consequences even if it would maybe help in the short-term."
+        else:
+            l "Doing so would have unforseen consequences even if it might help in the short-term."
+        l "What are you going to tell them?"
+        l "That we are all stuck in a game?"
+        l "I don't think they will take it as well as I would to be honest with you."
+        l "You could just tell them about the timeloop but even then they might not take it as well."
+        l "I suppose you could also just keep them in the dark about those things but that would be even worse wouldn't it? If you would use their help then they deserve what they are helping you with."
+        l "They are not just info-dispensers that will make you achieve whatever goal it is you are trying to reach now."
+        l "They are my family, and if you ever even had a slither of respect for me you better leave them alone."
+        l "And if you refuse to accept that then maybe I should just leave."
+    l "This might be a game for you but for me this is my life."
+    l "So please don't play with my life as if it's just a game."
+    menu:
+        "I'm sorry, I hadn't thought of it like that before. I promise to not involve your family anymore." if fam_obsession != '[persistent.date_ghost]':
+            #[persistent.date_ghost]' flag checks if you use [persistent.date_ghost] related things to win and the other checks if you have involved any family, including [persistent.date_ghost]
+            jump noContactFamilyPromise_cannotPromise_confrontation_aliveFamily_changedMind
+        "I'm sorry, I hadn't thought of it like that before. I promise to not use info about [persistent.date_ghost] to my advantage anymore." if fam_obsession == '[persistent.date_ghost]':
+            jump noContactFamilyPromise_cannotPromise_confrontation_aliveFamily_changedMind
 
-                        label noContactFamilyPromise_cannotPromise_confrontation_aliveFamily_changedMind:
-                            if only_one_asked == True:
-                                if fam_obsession == "[persistent.date_ghost]":
-                                    $ persistent.doNotUseJames_knowledge = True
+            label noContactFamilyPromise_cannotPromise_confrontation_aliveFamily_changedMind:
+                if only_one_asked == True:
+                    if fam_obsession == "[persistent.date_ghost]":
+                        $ persistent.doNotUseJames_knowledge = True
 
-                                
-
-                                else:
-
-                                    if persistent.restrainingorderfamily_knowledge == True:
-                                        if persistent.restrainingorderfamily_violation_counter >= 1:
-                                            n "My my my, the way you say that, it's quite easy for you to lie isn't it?"
-                                            n "Or are you speaking the truth this time?"
-                                            n "I guess only time will tell."
-                                    else:
-                                        $ persistent.restrainingorderfamily_knowledge = True
-
-                            else:
-                                $ persistent.restrainingorderfamily_knowledge = True
-                            n "She lets out a deep sigh of relief."  
-                            l "I suppose it is alright now [persistent.name]"
-                            l "I appreciate that you atleast heared me out, that means a lot to me."
-                            l "Thank you [persistent.name]. I know it might be tempting to try anything you can to save me but there are limits I don't want you to cross."
-                           
-                            l "Sorry if I came of as too agressive right there. It's just- my family means a lot to me."
-                            l "But I'm glad we can move on from that now. We got to keep looking forwards, right?"
-                            if persistent.restrainingorderfamily_violation_counter > 0:
-                                #Karma
-                                n "I'm not sure what you are doing here once again, didn't you promise [persistent.date] you wouldn't contact her family already?"
-                                n "Although I doubt that means anything to you does it?"
-                                if persistent.restrainingorderfamily_violation_counter == 1:
-                                    n "Afterall you've broken your promise once already."
-                                    n "What's stopping you from doing it again?"
-                                else:
-                                    n "Afterall you've broken your promise [persistent.restrainingorderfamily_violation_counter] times already."
-                                    n "It gets easier each time doesn't it?"
-
-                            $ family_curiosity_checker_movetox()
-
-
-
-                    "I already said that I couldn't listen to you, trying to convince me isn't going to work.":
-                        $ angryLilith = True
-                        l "That is exactly what I was fearing."
-                        l "It seems my life is in the hands of someone who couldn't care less about me."
-                        l "I was hoping we could maybe be a team, cooperate about this whole ordeal."
-                        l "But it seems I'm just a little plaything for your amusement."
-                        l "You might have fooled me on your previous attempts [persistent.name], and I'm sure you will on the next aswell."
-                        l "But right now I know the truth about you."
-                        l "I don't care what happens if I leave, if I die or not."
-                        l "If I stay here with you, even if I somehow survive, any form of self-respect I still had will have died."
-                        l "So better to die with dignity than to live without it."
-                        $ noTalkAngryLilith = True
-                        $ love_points -= 2
-                        $ love_meter_updater(False)
-                        jump angryLilith
                     
-                    "But you told me to use my powers to their full extent when we were here previously." if persistent.useGiftToFullExtent_knowledge:
-                        l "I did?"
-                        if love_meter >= 2:
-                            l "That's interesting, when did I tell you that?"
+
+                    else:
+
+                        if persistent.restrainingorderfamily_knowledge == True:
+                            if persistent.restrainingorderfamily_violation_counter >= 1:
+                                n "My my my, the way you say that, it's quite easy for you to lie isn't it?"
+                                n "Or are you speaking the truth this time?"
+                                n "I guess only time will tell."
                         else:
-                            l "I'm having a hard time believing that honestly. When did I tell you that?"
-                        menu: 
-                            "When you showed me the beach-picture you hid in a tree.":
-                                if love_meter >= 2:
-                                    n "[persistent.date] thinks for a moment and nods, it seems she agrees that that might have happened in a previous time."
-                                else: 
-                                    l "I showed you that?"
-                                    n "The disbelief in her voice is clea, she couldn't see her showing it to you this time."
-                                    l "I suppose I did... because that's something way to specific to just guess correctly."
-                                l "And what did I tell you then about using your powers?"
-                                menu:
-                                    "You told me that I had something special, a boat-load of determination and a way to prevent me from dying.":
-                                        if love_meter >= 2:
-                                            l "I see, that makes sense, I feel the same way to be honest."
-                                        else: 
-                                            l "I suppose that version of me was right... you do seem kind of determined."
-                                        l "But did I know that you were contacting my family at that time? Did that version of me know, I mean."
-                                        menu:
-                                            "I- No, she didn't.":
-                                                l "If I'm being honest with you [persistent.name], I don't think she would have told you to use your powers to the fullest extent if she knew what that truly meant."
-                                                l "That's why it's good that we have this conversation right now."
-                                                l "If you want to try to save me, perfect, go ahead!"
-                                                l "Thanks to your efforts I might be able to get out of here alive, and I truly appreciate that [persistent.name]!"
-                                                l "But please, I'm drawing a line here, don't use my own family to further your leads or anything like that."
-                                                l "If another version about me opens up about them, I guess that's totally fine to talk about, it's not like you should just ignore it, but I would appreciate it if you didn't manipulate me with my own words."
-                                                l "Is that clear? If you can respect my wishes that would mean a whole lot to me."
-                                                l "I suppose you could always ask another version of me if she is fine with you contacting her family when she mentions the whole \"fullest extent\" thing."
-                                                l "That way you could see it's not just me, not just this version of me who thinks that."
-                                                $ persistent_useGiftToFullExtentLimit_knowledge = True
-                                                n "Everything quiets down for a while, including Lilith."
-                                                n "She gives you a soft look, seemingly trying to gage how well you are taking what she just told you."
-                                                l "So... now that we had this talk, do you promise to not involve my family in your attempts to save me anymore?"
-                                                menu:
-                                                    "I do.":
-                                                        jump noContactFamilyPromise_yes
+                            $ persistent.restrainingorderfamily_knowledge = True
 
-                                                    "I'd actually like to ask the version of you that mentions using my gifts to the fullest extent before I make my judgement on that.":
-                                                        n "Lilith gives you a peculiar look, she almost looks... kind of hurt?"
-                                                        l "Oh... okay."
-                                                        n "But then you see a confident smile grow on her face."
-                                                        l "Well, I'm sure she'll say the same thing, so go ahead."
-                                                        $ family_curiosity_checker_movetox()
+                else:
+                    $ persistent.restrainingorderfamily_knowledge = True
+                n "She lets out a deep sigh of relief."  
+                l "I suppose it is alright now [persistent.name]"
+                l "I appreciate that you atleast heared me out, that means a lot to me."
+                l "Thank you [persistent.name]. I know it might be tempting to try anything you can to save me but there are limits I don't want you to cross."
+                
+                l "Sorry if I came of as too agressive right there. It's just- my family means a lot to me."
+                l "But I'm glad we can move on from that now. We got to keep looking forwards, right?"
+                if persistent.restrainingorderfamily_violation_counter > 0:
+                    #Karma
+                    n "I'm not sure what you are doing here once again, didn't you promise [persistent.date] you wouldn't contact her family already?"
+                    n "Although I doubt that means anything to you does it?"
+                    if persistent.restrainingorderfamily_violation_counter == 1:
+                        n "Afterall you've broken your promise once already."
+                        n "What's stopping you from doing it again?"
+                    else:
+                        n "Afterall you've broken your promise [persistent.restrainingorderfamily_violation_counter] times already."
+                        n "It gets easier each time doesn't it?"
 
-                                                    "You know I can't promise that.":
-                                                        jump noContactFamilyPromise_no
-                                                
+                $ family_curiosity_checker_movetox()
+
+
+
+        "I already said that I couldn't listen to you, trying to convince me isn't going to work.":
+            $ angryLilith = True
+            l "That is exactly what I was fearing."
+            l "It seems my life is in the hands of someone who couldn't care less about me."
+            l "I was hoping we could maybe be a team, cooperate about this whole ordeal."
+            l "But it seems I'm just a little plaything for your amusement."
+            l "You might have fooled me on your previous attempts [persistent.name], and I'm sure you will on the next aswell."
+            l "But right now I know the truth about you."
+            l "I don't care what happens if I leave, if I die or not."
+            l "If I stay here with you, even if I somehow survive, any form of self-respect I still had will have died."
+            l "So better to die with dignity than to live without it."
+            $ noTalkAngryLilith = True
+            $ love_points -= 2
+            $ love_meter_updater(False)
+            jump angryLilith
+        
+        "But you told me to use my powers to their full extent when we were here previously." if persistent.useGiftToFullExtent_knowledge:
+            l "I did?"
+            if love_meter >= 2:
+                l "That's interesting, when did I tell you that?"
+            else:
+                l "I'm having a hard time believing that honestly. When did I tell you that?"
+            menu: 
+                "When you showed me the beach-picture you hid in a tree.":
+                    if love_meter >= 2:
+                        n "[persistent.date] thinks for a moment and nods, it seems she agrees that that might have happened in a previous time."
+                    else: 
+                        l "I showed you that?"
+                        n "The disbelief in her voice is clea, she couldn't see her showing it to you this time."
+                        l "I suppose I did... because that's something way to specific to just guess correctly."
+                    l "And what did I tell you then about using your powers?"
+                    menu:
+                        "You told me that I had something special, a boat-load of determination and a way to prevent me from dying.":
+                            if love_meter >= 2:
+                                l "I see, that makes sense, I feel the same way to be honest."
+                            else: 
+                                l "I suppose that version of me was right... you do seem kind of determined."
+                            l "But did I know that you were contacting my family at that time? Did that version of me know, I mean."
+                            menu:
+                                "I- No, she didn't.":
+                                    l "If I'm being honest with you [persistent.name], I don't think she would have told you to use your powers to the fullest extent if she knew what that truly meant."
+                                    l "That's why it's good that we have this conversation right now."
+                                    l "If you want to try to save me, perfect, go ahead!"
+                                    l "Thanks to your efforts I might be able to get out of here alive, and I truly appreciate that [persistent.name]!"
+                                    l "But please, I'm drawing a line here, don't use my own family to further your leads or anything like that."
+                                    l "If another version about me opens up about them, I guess that's totally fine to talk about, it's not like you should just ignore it, but I would appreciate it if you didn't manipulate me with my own words."
+                                    l "Is that clear? If you can respect my wishes that would mean a whole lot to me."
+                                    l "I suppose you could always ask another version of me if she is fine with you contacting her family when she mentions the whole \"fullest extent\" thing."
+                                    l "That way you could see it's not just me, not just this version of me who thinks that."
+                                    $ persistent_useGiftToFullExtentLimit_knowledge = True
+                                    n "Everything quiets down for a while, including Lilith."
+                                    n "She gives you a soft look, seemingly trying to gage how well you are taking what she just told you."
+                                    l "So... now that we had this talk, do you promise to not involve my family in your attempts to save me anymore?"
+                                    menu:
+                                        "I do.":
+                                            jump noContactFamilyPromise_yes
+
+                                        "I'd actually like to ask the version of you that mentions using my gifts to the fullest extent before I make my judgement on that.":
+                                            n "Lilith gives you a peculiar look, she almost looks... kind of hurt?"
+                                            l "Oh... okay."
+                                            n "But then you see a confident smile grow on her face."
+                                            l "Well, I'm sure she'll say the same thing, so go ahead."
+                                            $ family_curiosity_checker_movetox()
+
+                                        "You know I can't promise that.":
+                                            jump noContactFamilyPromise_no
+                                    
 
 
 label silentconversationsbackontrack:
