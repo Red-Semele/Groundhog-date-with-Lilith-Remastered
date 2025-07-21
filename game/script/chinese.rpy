@@ -856,7 +856,7 @@ label chinese_phone_peek_numbers:
         "Learn [persistent.date_ghost]' phone number." if not persistent.james_call_knowledge:
             $ persistent.james_call_knowledge = True
             jump chinese_phone_caught
-        "Learn Lisa's phone number." if not persistent.lila_call_knowledge: 
+        "Learn Lila's phone number." if not persistent.lila_call_knowledge: 
             $ persistent.lila_call_knowledge = True
             jump chinese_phone_caught
         "Put the phone back." if persistent.abigail_call_knowledge and persistent.david_call_knowledge and persistent.james_call_knowledge and persistent.lila_call_knowledge:
@@ -965,6 +965,15 @@ label chinese_riddle_decline:
                         "Yes you did, great job [persistent.date]!":
                             n "[persistent.date] fist pumps the air."
                             l "Yes! That was a very fun riddle [persistent.name], not what I was expecting but it forced me to think outside the box a little bit."
-
+                "How many ends does a ring have?" if persistent.ringRiddle_knowledge:
+                    l "It's endless, isn't it? So it literally has no endings."
+                    l "But I suppose you could choose a point where the rings starts and ends."
+                    l "So in a way it does have an end if you decide it has one."
+                    l "You could even argue that theoretically it has infinite ends since you can say it begins on an infinite ammount of points."
+                    n "For a moment she is lost deep in thought."
+                    l "Honestly, now that I'm thinking about it, the latter seems to actually make a lot of sense."
+                    l "We constantly start and end things, don't we?"
+                    l "The start of every second is the end of the previous one."
+                    l "Our lives are filled with endings in a way, so maybe it's the same with the ring?"
     jump chinese_riddle_railroad
 return

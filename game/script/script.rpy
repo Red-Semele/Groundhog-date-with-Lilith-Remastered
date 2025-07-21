@@ -62,6 +62,7 @@ label start:
           #Deaths:
           default persistent.lildeaths = 0
           default persistent.retry_counter = 0
+          default persistent.name_real = ""
           #Main restaurant deaths:
           default persistent.chinese_death_1 = False
           default persistent.cafe_death_1 = False
@@ -236,6 +237,17 @@ label start:
           default persistent.kokiri_reachEndingRecent = False
           default persistent.anomaly_knowledge = False
           default persistent.favouriteFirstDate = False
+          default persistent.fish = False
+          default persistent.fisher = False
+
+          #Characters:
+          default persistent.date_dad = ""
+          default persistent.date_mom = ""
+          default persistent.date_ghost = ""
+          default persistent.mysteriousCallerName = ""
+
+          #Narrator flags:
+          default persistent.threatenNarratorForEnding_noUse = False
           
 
           
@@ -369,6 +381,7 @@ label start:
           default kokiri_griefHasNoTimeLimit = False
           default kokiri_silentMoment = False
           default kokiri_positiveDavidStory = False
+          default kokiri_familyContacted = False
           #Kokiri recent poems
           default kokiri_poem_snowwoman_recent = False
           default kokiri_poem_shadowman_recent = False
@@ -1324,7 +1337,6 @@ label phone_call_abigail:
                                         a "Actually, forget about that, we don't have any time to waste."
                                    a "What can I do to help?"
                                    label phone_call_abigail_convinced:
-                                        #TODO: Maybe let the player ask about her games if they have heard about [persistent.date]'s worries about the games.
                                         menu:
                                              "Could you come up with something so she doesn't go on this date with me and also doesn't stay at her house?" if persistent.plane_knowledge: 
                                                   jump phone_call_abigail_topics_distractionforlilith
@@ -1336,7 +1348,7 @@ label phone_call_abigail:
      
      
      
-                                             "I spoke to David in a previous cycle. He told me he blames himself for [persistent.date_ghost]' death and thinks [persistent.date] and Lisa do aswell." if persistent.david_blame_knowledge:
+                                             "I spoke to David in a previous cycle. He told me he blames himself for [persistent.date_ghost]' death and thinks [persistent.date] and Lila do aswell." if persistent.david_blame_knowledge:
                                                   jump phone_call_abigail_topics_spoketodavid_davidblameshimself
      
      
@@ -1535,7 +1547,7 @@ label phone_call_david:
                               d "On that day I gave him an old polaroid camera I had laying around."
                               d "He loved that thing, ran all over the place taking pictures with it."
                               d "He loved it so much he didn't  notice the car coming from the bend of the road he was standing on to take a better picture of some potato fields or something like that."
-                              d "I was absolutely destroyed by it but [persistent.date] even more so since she was really close to her brother. Her mother, Lisa was of course also devasted at the loss of one of her children."
+                              d "I was absolutely destroyed by it but [persistent.date] even more so since she was really close to her brother. Her mother, Lila was of course also devasted at the loss of one of her children."
                               d "I felt their anger towards me build up until it became so big I couldn't even look them in the eyes anymore."
                               d "I thought things would be better if they didn't have to live with [persistent.date_ghost]' killer. If I wouldn't have given him that camera he would still be alive..."
                               d "And now I live in a hotel close to where our old home is, every single day I have thought about coming back but they hate me for killing him."
@@ -2302,19 +2314,21 @@ label loopGone_happyForYou_real:
 
 
 label groundhog_breakingLoop_loopStillExists:
-     l "Ah, so the loop still exists?
-     I mean, me dying constantly doesn't seem like it's much fun but look at it from the bright side!"
-     l "We could form a team to be true heroes!  With your ability to relive the same moments and with my ability to... well die, I suppose, we could be practically unstoppable!
-     We would be able to prevent disasters even before they happen."
+     l "Ah, so the loop still exists?"
+     l "I mean, me dying constantly doesn't seem like it's much fun but look at it from the bright side!"
+     l "We could form a team to be true heroes!  With your ability to relive the same moments and with my ability to... well die, I suppose, we could be practically unstoppable!"
+     l "We would be able to prevent disasters even before they happen."
      l "Well, that is if we ever get out of here alive in the first place."
      n "[persistent.date] lets out a small chuckle but the concern in her eyes is clearly visible."
-     l "Sorry, this is still a bit much for me.
-     I mean imagine that someone you were dating just told you that the two of you are stuck in a seemingly endless loop that always ends up with you dying.
-     That would be pretty mind-boggling, wouldn't it?"
+     l "Sorry, I know I'm overdoing it. This is all just a bit too much for me."
+     l "I mean imagine that someone you were dating told you that you kept dying over and over in a timeloop."
+     l "That would be pretty mind-boggling, wouldn't it?"
      l "Yes, I suppose that's one way to put it."
+     l "And if I'm being entirely honest a part of me still expects the crew of one of those bad prank shows to jump out from somewhere."
+     l "Even though another part of me does believe you, which might be even more terifying."
      n "[persistent.date] lets out a small sigh and tries to give you a sincere smile."
-     l "But it's not that useful to keep groaning about our situation, is it?
-     Maybe it's a better idea to get some information that we can use."
+     l "But it's not that useful to keep groaning about our situation, is it?"
+     l "Maybe it's a better idea to get some information that we can use."
      n "[persistent.date] pauses for a few seconds."
      l "For example, what do you think will happen once we make it past this date? Past this day even, do you think you would be stuck in a loop of reloading day after day for the years that we spend together or that all of this will go away when we make it through today?"
      menu:
@@ -2326,19 +2340,60 @@ label groundhog_breakingLoop_loopStillExists:
 
           "It should only be this day that keeps repeating, I hope so atleast.":
                l "Hmm, then I wonder what made you experience a groundhog day scenario on this day and not any other one."
-               l "Would it really have been caused by our date? And if that's the case then what would you need to do to get out of it?"
-               #TODO: The part below this kind of flows very strangely, examine how to make it feel better. Just rewrite it.
+               l "Would it have been caused by our date? And if that's the case then what would you need to do to get out of it?"
+               menu:
+                    "I don't believe it has to do with this date itself. It might be unrelated.":
+                         l "You really think so?"
+                         l "I suppose it is possible... but I have to admit that it feels very unlikely"
+                         l "Although if that truly is the case I suppose me dying is unrelated to the loop."
+                         l "Which means we are very lucky that you are stuck in a loop, otherwise you wouldn't be able to save me."
+                    "Maybe we should not go on this date next time it loops?" if persistent.burger_death_2 and persistent.cafe_death_2 and persistent.chinese_death_2:
+                         if love_meter >= 2:
+                              l "...You really think so?"
+                              l "As much as I hate to say it you could definetly be right."
+                              l "Maybe this loop is just the Universe itself being against us dating, as ridiculous as that sounds."
+                              l "Although I would prefer if there would be another way. Because I really am enjoying my time with you."
+                              l "But I think we definetly should keep that option in mind."
+                              l "If you have to sacrifice too many of my lives to make progress it might be our only option."
+                         else: 
+                              n "She seemingly let out a small sigh of relief."
+                              n "She is not aversed to the idea of never seeing you again."
+                              l "I think you are right."
+                              l "This loop might be trying to show us that we do not work well together."
+                              l "And who are we to fight against that, right?"
+                    "Maybe we just need to make sure you survive this date? Perhaps the loop is protecting you?":
+                         l "That is an interesting idea." 
+                         l "I'd say it definetely is worth a shot." 
+                         l "Although before this loop I never really had any close encouters with death, so I have to say I'm still slightly sceptical." 
+                         l "But right now I think any logical lead we have might be worth following."       
                if burger == True:
-                    l "So when I was killed by that loose bullet you had to relive this day again, right?"
+                    $ changeableWord = "was killed by that lost bullet"
                elif cafe == True:
-                    l "So when I was killed by that merlin you had to relive this day again, right?"
+                    $ changeableWord = "was killed by that merlin"
                elif chinese == True:
-                    l "So when I died because of my allergy you had to relive this day again, right?"
-               n "You nod."
-               l "Hmm, in that case I would advise you to try to not get me killed."
-               n "[persistent.date] burst out to laughter. It's not really the joyous kind, you can feel the discomfort seeping from behind the facade."
-               l "Sorry, I'm not really accustomed to this whole thing yet. I have no clue how I could help you but if you have anything in mind just let me know."
-               jump restaurant_death_2
+                    $ changeableWord = "died because of my allergy"  
+               l "So last time I [changeableWord], right?"
+               n "You give her a quick nod."
+               l "And you said the loop was still not broken, so what will end up happening next?"
+               menu:
+                    "Actually you're still going to die, this time because of a swarm of geese." if chinese and persistent.chinese_death_2:
+                         jump loopStillExists_stillDying
+
+                    "Actually you're still going to die, this time due to a gas explosion." if burger and persistent.burger_death_2:
+                         jump loopStillExists_stillDying
+
+                    "Actually you're still going to die, this time you will drown." if cafe and persistent.cafe_death_2:
+                         jump loopStillExists_stillDying
+                    "I don't know, we never got this far here before. I just have a hunch the loop is still not broken.":
+                         l "Oh I see, so there is still a chance I will li-"
+                         jump restaurant_death_2
+               
+               label loopStillExists_stillDying:
+                    if chinese:
+                         l "What? Geese? That is ridiculou-"
+                    else:
+                         l "{size=*2}What? We need to do somethin-"
+                    jump restaurant_death_2
 
 
 label loopStillExists_forTheRestOfOurLives:
@@ -2401,8 +2456,8 @@ label groundhog_escapeFate_myFault:
           l "That would save me, wouldn't it?"
 
      menu:
-          "Actually I tried to warn you about your death, tried to break up with you, tried just not showing up but it all ended with you dying either way.":
-               #TODO:Make this one only appear if you have actually tried all of those things. This is also a lie. Not picking up the phone makes her live.
+          "Actually I tried to warn you about your death, tried to break up with you, tried just not showing up but it all ended with you dying either way. (Lie)" if persistent.plane_knowledge and persistent.ending_breakup and persistent.times_phone_declined > 0:
+               #This is a lie. Not picking up the phone makes her live.
                jump escapeFate_myFault_ITriedTo
   
           "But I love spending time with you, I'd hate to have to throw all of that away.":
@@ -3511,7 +3566,8 @@ label jamesChat_whyDidYouReturn:
                                    "I guess we are indeed on the same page. I'll take your word on there being no other endings here.":
                                         j "Thank you [persistent.name], that means a lot to me."
                                         j "Besides, I think you have already found the best endings you possibly could find, even if you may not know it yet."
-                                        #TODO: Make you able to ask this question to Lilith once you hear it from James. Do it in the riddles of the chinese restaurant.
+                                       
+                                        $ persistent.ringRiddle_knowledge = True
                                         j "After all, how many ends does a ring have?"
                                         menu:
                                              "None, there is no begining and there is no end.":
@@ -3684,7 +3740,7 @@ label jamesConversationMenu:
                                         j "A believer giving them the strength they require to call this world their own? Or a God in your own right?"
                                         j "I think they would like you to believe you are the first."
                                         j "I'm not so sure myself..."
-                                        j "But my thoughts about that don't matter do they? Yours do."
+                                        j "But neither of our thoughts about that matter do they? Yours do."
                                         j "So please [persistent.name], don't forget your own role in this story, the perks it can bring."
                                         
                                         #TODO: Fill this out a bit more
@@ -3728,6 +3784,7 @@ label ufoVisitAlone:
                ship "We would tell you where you would find both of them but due to how the anomaly works it isn't always set to be in the same place, rather a few possible places.<br/>If they go to any of the three restaurants they will visit you do not need to intervene, the universe will take care of it in a acceptable way with a small amount of death.<br/>However, if they go to either the forest or the beach you need to keep a close eye on them, if she hasn't died by (hour here) then you will need to intervene, otherwise our fates will look quite gruesome, let me asure you."
                      
 label reunionEnding:
+     #TODO: This has nothing jumping to it. Fix that, so that this is actually attainable.
   
      li "This seems a really weird place for your Teacher to meet us Abigail."
      a "I agree, this doesn't seem like him."
@@ -3795,12 +3852,11 @@ label reunion_showUp_iReunitedYou:
      l "You've medled with my entire family to reach this point?"
      l "I'm not sure how I feel about this, it feels like you misused my trust..."
      l "I'm thankful for you saving me and I'm happy this moment has happened but this feels pretty weird."
-     l "Almost as if you've stolen the magic from this moment."
-     l "It felt as if James brought us together but now you've ripped that blissful lie away from us."
 
-     #TODO: "Rewrite this a bit and create a death for this because you spent too much time with her.<br/><br/>What could a good death be?:<br/><br/>-Red Sedan car? :Unless they go away quicker in the other choices of this ending it'll always hit them so this might not be the best idea.<br/><br/><br/><br/>")
+     #TODO: "Rewrite this a bit"
 
      n "Suddenly you spot a very familiar red Sedan driving towards all of you."
+     n "Things are hectic, the whole family is screaming and everything seems to happen in a blur."
      n "You can't react in time before you meet the immense force of the car."
 
      n "Everything turns to black."
@@ -3818,7 +3874,7 @@ label reunion_showUp_iReunitedYou:
      menu:
           "What happened to Lilith? Is everyone fine?":
                d "Lilith didn't make it..."
-               d "Lisa and Abigail are fine, as fine as they could be after losing Lilith."
+               d "Lila and Abigail are fine, as fine as they could be after losing Lilith."
                d "I am also moving along, it's what she would have wanted I tell myself.<br/>She was angry with me for leaving our family behind with James' death so I'm not going to make that mistake once again."
                d "Most days, I get up and after eating breakfast and brushing my teeth I see them in the mirror, James and Lilith."
                d "The thing is, the first time I saw them I expected them to be angry, but they weren't, they were smilling at me."
@@ -3837,7 +3893,7 @@ label reunion_showUp_iReunitedYou:
                          #TODO: "Keep writing text, add a retry link.")
                     "Actually it doesn't work like that, she will still stay death in this world but in another one she will live.":
                          d "Then please go through with it, make sure my daughter from another world is safe."
-                         d "I'm fine living my life like this, I can be there for Abigail and Lisa, like I should've been before."
+                         d "I'm fine living my life like this, I can be there for Abigail and Lila, like I should've been before."
                          d "So go, and be there for Lilith."
                          d "I'll live my life here with a smile, both for what I still have and what my other self will gain without knowing."
                          # TODO: "Write this better and rewrite it. Add a retry link.")
@@ -3938,7 +3994,6 @@ label reunion_showUp_iReunitedYou:
          
             
 label reunion_JustPassingBy:
-     #TODO: "Make it so that the dad and mom figure it out because they remember your voice, but they do not talk about it and let you go.")
      l "Oh right, I almost forgot all about that for a second!"
      l "I'm really sorry about that [persistent.name], it's just that right now something else is going on."
      l "I think it honestly would be better to reschedule the date to some other time, does that sound good to you?"
@@ -4270,7 +4325,7 @@ label ghostReunion_transferUniverse:
           n "Maybe we will meet again one day? A lot of games need narration afterall, maybe the void will reuse me for such a purpose."
           n "With my last breath I can only wish you the best of luck wherever you will go to next, farewell player."
           n "No, if this is the last time we speak I want to talk to you, the real you."
-          n "Farewell [persistent.realName]."
+          n "Farewell [persistent.name_real]."
           $ fritfood = 2
           menu:
                "Farewell Nar, thank you for telling this story. It was a great one." if fritfood == 2 or changeableWord == 'kind':

@@ -8467,10 +8467,7 @@
                             <inherit name="scripttext" />
                             <script type="script">
                               SetForegroundColour (player.Lilcolor)
-                              msg ("Well, I think you might want to give it a shot if you really want to know what the goal of this game is.")
-                              SetForegroundColour (player.Narcolor)
-                              msg ("Lilith gives you a smile.")
-                              Kokiri_final death check
+                            
                             </script>
                             <object name="read about_choices">
                               <inherit name="scripttext" />

@@ -198,7 +198,7 @@ label kokiri_talkAboutSomethingElse:
                                         l "Why are you asking such a question [persistent.name], you haven't been seeing my dad, have you?"
                                         n "It seems you just struck a sensitive chord."
                                         menu:
-                                            "I have actually, he said he wants to come back every day but can't because you and Lisa hate him for what happened with [persistent.date_ghost].":
+                                            "I have actually, he said he wants to come back every day but can't because you and Lila hate him for what happened with [persistent.date_ghost].":
                                                 l "First off I'd like you to not contact my dad again even though I can't stop you from doing so."
                                                 l "But as you now know I don't blame him for [persistent.date_ghost]' death and I don't think mom does either."
                                                 l "We were mad for him leaving us, I still haven't forgiven him."

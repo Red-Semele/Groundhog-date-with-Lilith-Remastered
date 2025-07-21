@@ -412,9 +412,9 @@ label burger_ordering:
 
                                         
                     "It's really bad.":
-                        n "Lilith freezes for a moment, taken aback by your bluntness."
+                        n "Lilith freezes for a moment, taken aback by your bluntness. Test"
                         $ love_points = -1
-                        $ love_meter_updater(False) #TODO: Check if she leaves if she has reached her minimum because of this.
+                        $ love_meter_updater(False)
                         if not burgerBeenBefore or not burgerBeforeLie:
                             l "Really bad? Oh no, I'm so sorry, [persistent.name]."
                             l "I hyped this place up so much, didn't I? Maybe that set your expectations too high."

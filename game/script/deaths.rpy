@@ -538,17 +538,17 @@ label kokiri_death_2_prevented_triedEverything:
     l "If I'm going to die soon then what's stopping you from quitting this game? Or would I just lose consciousnes, like I'm dying?"
     l "I'm not sure if there's a way to tell. What do you think?"
     $ persistent.game_credits = True
-    menu:
+    menu stopPlayingGameConsequences:
         "I believe that you would still live on.":
             l "That's rather reassuring."
             l "Since we're in a video game there's only so much dialogue I can tell you and only as many places we can go to as are programmed into it."
             l "But if you could break the boundaries through whatever creative outlet you have then there would essentially be thousands upon thousands of stories about us that you could give life. "
             l "The best part would be that you decide how they play out."
             l "She pauses for a moment and then continues."
-            l "We tend to create these new worlds all the time, sometimes even without realising it.
-            When you are thinking about what the next season of your favourite show will be about then you're technically creating an entire new world where the show's characters go through your story.
-            And who's to say wich version is the superior one? Afterall, they're both telling a story, personally I think that's absolutely beautiful.
-            So let's try to do just that!"
+            l "We tend to create these new worlds all the time, sometimes even without realising it."
+            l "When you are thinking about what the next season of your favourite show will be about then you're technically creating an entire new world where the show's characters go through your story."
+            l "And who's to say wich version is the superior one? Afterall, they're both telling a story, personally I think that's absolutely beautiful."
+            l "So let's try to do just that!"
             n "[persistent.date] hugs you for a long period of time, you feel her warmth as it reaches your cold body."
             n "And yet, it's not really your body, right?"
             n "More so the body you channel yourself through."

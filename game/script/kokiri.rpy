@@ -186,10 +186,10 @@ label kokiri_explanation_game:
                             $ kokiri_norealname = 1
                             $ kokiri_realname = True
                             l "Oh I see! Let's reintroduce ourselves in that case. Hello, my name is [persistent.date], what is your name?"
-                            $ name_real = renpy.input("What is your real name?")
-                            $  name_real = name_real.strip() or "Max"
-                            $ name_real = name_real.capitalize()
-                            l "Well, it's nice to finally meet you for real [name_real]!"
+                            $ persistent.name_real = renpy.input("What is your real name?")
+                            $  persistent.name_real = persistent.name_real.strip() or "Max"
+                            $ persistent.name_real = persistent.name_real.capitalize()
+                            l "Well, it's nice to finally meet you for real [persistent.name_real]!"
                             l "[persistent.date] gives you a big smile."
                             l "Although, haven't I met you for real already?"
                             l "After all, even if you had a fake name, you still are the one who is in control of [persistent.name]."
@@ -197,7 +197,7 @@ label kokiri_explanation_game:
                             l "It all means something, even if you didn't think it did."
                             l "Even if you did something to just have fun in a videogame or to see what it would do, that still says something about you as a person."
                             l "Sometimes we hide behind the roles we play to make actions that would not be acceptable to ourselves and others if our true self would make them."
-                            l "That's why it might feel scary to some if they catch a glimpse of themselves in the reflection of their screen. Because it's someone they don't recognise.<br/>Do you ever feel like that, {player.real}?..."
+                            l "That's why it might feel scary to some if they catch a glimpse of themselves in the reflection of their screen. Because it's someone they don't recognise.<br/>Do you ever feel like that, [peristent.persistent.name_real]?..."
                             l "All these different roles form a web of half-truths and lies, and in the center of it all you can find our true self."
                             l "Not the self we think we are, not the self others see us as, but the self we inevitably are."
                             l "Speaking about that self, what do you really do for a living? I'd like to get to know you better, the one playing this game."
@@ -212,7 +212,7 @@ label kokiri_explanation_game:
                                 l "I love the moments when I can see something finally click for a student. That feels like a small victory, doesn’t it?"
                                 l "But then there are the hard days too, the ones where it feels like nothing you say gets through."
                                 l "Sometimes it’s exhausting, especially when you’re really invested in your students’ progress. But at the end of the day, knowing I’ve made a difference, even a small one, makes it worth it."
-                                l "Do you ever feel that way too, [name_real]?"
+                                l "Do you ever feel that way too, [persistent.name_real]?"
 
                                 menu:
                                     "Yes, seeing a student succeed is so rewarding. It’s the best part of teaching.":
@@ -220,14 +220,14 @@ label kokiri_explanation_game:
                                         l "Teaching is a job where you don’t always see immediate results, but when you do, it’s incredibly fulfilling."
                                         l "Sometimes, even years later, a student reaches out to tell you what they’ve accomplished… Those are the moments I treasure."
                                         n "Lilith’s eyes light up with excitement, as though she’s recalling a memory of her own."
-                                        l "Thank you for sharing that with me, [name_real]. It’s nice to meet someone who understands that unique joy of teaching."
+                                        l "Thank you for sharing that with me, [persistent.name_real]. It’s nice to meet someone who understands that unique joy of teaching."
 
                                     "It can be tough sometimes, but I feel like I’m learning just as much as they are.":
                                         l "Oh, absolutely! I think that’s one of the best parts of teaching. Each student brings something new to the table."
                                         l "I’ve found myself adapting my lessons, learning new things, and sometimes even questioning my own perspectives."
                                         l "They challenge us to grow, don’t they? In a way, they end up teaching us as much as we teach them."
                                         n "[persistent.date] smiles thoughtfully, seeming to reflect on her own teaching journey."
-                                        l "It’s good to know you see it that way too, [name_real]. Teaching is a two-way street, and I think that’s what makes it so special."
+                                        l "It’s good to know you see it that way too, [persistent.name_real]. Teaching is a two-way street, and I think that’s what makes it so special."
 
                                     "It’s rewarding, but sometimes the workload is overwhelming.":
                                         l "Oh, I know exactly what you mean. Some days, it feels like the pile of work just never ends."
@@ -235,7 +235,7 @@ label kokiri_explanation_game:
                                         l "It’s important to find ways to recharge—teaching is demanding, and burnout is real."
                                         n "Lilith’s expression softens as she empathizes with your experience."
                                         l "I try to remind myself why I started teaching in the first place, especially on the rough days. It helps me push through."
-                                        l "I hope you have your own way of dealing with it too, [name_real]. We’ve got to take care of ourselves to be the best for our students."
+                                        l "I hope you have your own way of dealing with it too, [persistent.name_real]. We’ve got to take care of ourselves to be the best for our students."
                                     #TODO: Make this jump the player to the next part.
 
                                 
@@ -728,12 +728,86 @@ label kokiri_gamegoal_noGoal:
 
 label kokiri_gamegoal_noIdea:
     $ kokiri_conversation += 1
+    if kokiri_conversation == 1:
     l "That's fine, we can figure your goal out together."
     n "[persistent.date] scratches her chin and continues."
     l "Let's see, first of, how does this game look to you?"
     menu:
         "I just see text on the screen and some graphics, everyone's text is slightly different. I also get a few clickable links to select what I want to say.":
             jump kokiri_gamegoal_noIdea_howGameLooks
+    elif kokiri_conversation == 2:
+            l "So, we already now how the game looks to you. What about the \"retrying\" part of the game? Do you always automatically come back when I end up getting killed?"
+                menu:
+                    "It's not automatic, a link with the text \"Retry\" shows up and when I click it I restart the day but I get to keep the knowledge of the things that happened.":
+                        jump kokiri_gamegoal_noIdea_2
+                    "You don't always die, sometimes we are just not together. For example because I break up with you or because you don't want to be around me anymore. But the game still considers it a game over." if lilithAliveAndRetriedCounter > 0:
+                        $ kokiri_toldLillySheLives = True
+                        l "...Interesting."
+                        l "So there are moments where I survive?"
+                        l "What happens then?"
+                        l "Does the day restart anyway?"
+                        menu:
+                            "Yup, it just restart, no matter what. (Lie)":
+                                l "Really?"
+                                l "So it is worse than we thought."
+                                l "There is no escape..."
+                                l "I'll just be stuck in this loop forever and ever."
+                                l "Although... maybe there is one way."
+                                l "What do you think would happen if you stop playing this game?"
+                                jump stopPlayingGameConsequences
+            
+                            "It does, but only if I choose to click the \"retry\" option."":
+                                l "..."
+                                l "So you are saying that I survived one of these loops and you restarted it anyway?"
+                                l "Why, just because we didn't end up together?"
+                                if love_meter <= 2:
+                                    l "I thought you wanted to make sure I was safe..."
+                                    l "But you just want to make sure I stay with you, don't you?"
+                                    l "That you don't have to let me go for yet a little longer."
+                                menu:
+                                    "I am really sorry, I just couldn't let go yet.":
+                                        l "No I am really sorry [persistent.name]. Sorry for ever trusting you."
+                                        l "Well I won't make that mistake again this time."
+                                        jump angryLilith
+                                else:
+                                    l "Look, I like you [persistent.name]. I really do."
+                                    l "And as much as I want there to be a way for us to end up together, isn't it your priority to save me?"
+                                    l "If so, then why did you retry after I was perfectly safe?"
+                                    menu:
+                                        "I couldn't let go, not yet.":
+                                            n "She gives you a sympathetic look."
+                                            l "... Letting go is hard sometimes isn't it?"
+                                            l "I mean, \"sometimes\" might be an understatement."
+                                            l "It almost always is hard."
+                                            l "And I know that you might have an especially hard time letting me go since we've spent so much time together from your perspective."
+                                            l "And yet, letting me go will effectively \"undo\" all of that, won't it?"
+                                            l "I wouldn't remember any of it and just go my seperate way, away from you."
+                                            l "But you also have to understand what I'm going through, don't you?"
+                                            l "This cycle of death. Of pain."
+                                            l "Sure, we had some great moments together I'm sure! Even just here in this moment I had a really good time when you consider the circumstances."
+                                            l "But I have died more than anyone should ever do [persistent.name]."
+                                            l "Clinging onto me is only going to hurt the both of us I'm afraid."
+                                            l "We might have found eachother in this game, but I don't think this game was made for us to end up together."
+                                            l "Whatever we will try, I have the feeling it is just going to lead to more death."
+                                            l "So, as much as I wish there would be another way, I think this is our best shot."
+                                            l "I know what I'm asking is pretty big, but I'm hoping I mean as much to me as I mean to you."
+                                            menu:
+                                                "You do, I'll try my best to let you go next time.":
+                                                    n "She gives you a gentle smile."
+                                                    l "Thank you [persistent.name], that's all I ask."
+                                                    l "So..."
+                                                    n "She grows quiet for a moment, before she continues."
+                                                    jump kokiri_semiEnding
+                                                "I'm sorry, I just can't do it.":
+                                                    l "I understand."
+                                                    l "But you also have to understand that you will have to let me go at one point [perisistent.name]."
+                                                    l "You cannot possibly keep this up forever."
+                                                    l "And although I do understand I also think if you can't let me go I'll have to take things in my own hands."
+                                                    l "As much as I had hoped the two of us could work out, in here we can't."
+                                                    l "The sooner you accept that the better."
+                                                    l "Goodbye [persistent.name]. I genuinely wish you the best and hope there is no bad blood between the two of us for what I'm about to do."
+                                                    jump angryLilith #TODO: Check if this one is slightly friendly enough, if not just add a few lines to make this a possibility with a flag.
+    
 label kokiri_gamegoal_noIdea_howGameLooks:
     l "Ah I see, so you can't see the absolutely stunning view from our picknickspot?"
     menu:
@@ -741,6 +815,140 @@ label kokiri_gamegoal_noIdea_howGameLooks:
             $ kokiri_scenery_gamegoal = True
 
             jump kokiri_scenery_choice
+
+
+        
+                    
+label kokiri_gamegoal_noIdea_2:
+  
+    n "Lilith rubs her chin."
+    
+    l "That's interesting, so it's just like you're choosing what to say right? This entire game consists of you making choices, maybe not pressing the link is also a choice?"
+    l "If it wasn't then why wouldn't you just automatically restart the day like I thought?"
+    l "In a way I suppose not doing something is also an action."
+    menu:
+        "That makes sense actually, thanks Lilith!":
+            jump kokiri_gamegoal_noIdea_2_makesSense
+
+        "That makes no sense, if it was really about that choice than why wouldn't there be a \"Do not retry\" link?":   
+            jump kokiri_gamegoal_noIdea_2_makesNoSense  
+
+
+    label kokiri_gamegoal_noIdea_2_makesSense:
+        l "I'm glad to see that we're on the same page!"
+        l "So, do you want to keep talking about the purpose of the game?"
+        
+        menu:
+    
+            
+            "No, I think I understand the purpose of this game now. Thanks Lilith!":
+                
+                    l "No problem at all, I'm just happy that I could help out!"
+                    l "Afterall, we are a team aren't we [persistent.name]?"
+                    l "So it's nice to know that I can somehow assist you during your attempts to save me."
+                    l "Because this loop is too heavy to just carry on your own. And know that you never have to."
+                    l "Just like you are there for me I am there for you."
+                    l "I hope you will never forget that."
+                    menu:
+                        "I won't. Thank you Lilith.":
+                            n "She gives you a big smile."
+                            l "That makes me very glad."
+            "Yeah, I'm still kind of stumped.":
+                    l "Alrighty, I think it's better if we try to get some info from the source itself now. That will greatly help with setting up our own interpretation."
+                    label gamegoal_noIdea_2_stumped:
+                        l "Is there like an about section in this game with info on it and did you read it?"
+                        menu:
+                            "Actually, I have a different idea to reach the source. There is a narrator in this game. Maybe they know more?":
+                                jump tellLilithAboutNar
+                            "It exists, I saw it when I started the game but I never got around to reading it.":
+                                l "Well, I think you might want to give it a shot if you really want to know what the goal of this game is."
+                                n "Lilith gives you a smile."
+                                if kokiri_conversation >= 4:
+                                    jump kokiri_4
+                        
+                            "I actually did read it, let me fill you in on what it said." if true_about: 
+                                #TODO: For now keep the tracker like this, just to check if the about section actually is filled, since I can't seem to find it and thus do not know what flag it sets.
+
+                        
+                            
+                                n "You tell Lilith what you read in the about section." #TODO: Fill this in more descriptevly, maybe make it a choice/
+                                
+                                l "So this is a game about trying to fight the lack of real choice? Then the link thing kind of makes sense, what better way to fight the lack of choice than not making any at all?"
+                                l "It's an act of pure rebellion!<br/>But still something is not right, then you just end up with a bad ending, with me getting killed."
+                                l "I wonder if that's the other thing this game is about that the maker doesn't want to spoil."
+                                l "What is equally as rebellious if not more than not playing the game?"
+                                n "Lilith seems lost in thought."
+                                l "That's a hard one, do you have any clue?"
+                                menu:
+                                
+                                    "Maybe playing the game wrong? Not doing the paths that are expected like saving you or being nice.":
+
+                                        l "You could be on to something there! Playing the game wrong seems like an extension of not playing it."
+                                    
+                                        n "Lilith grows silent for a moment."
+                                    
+                                        l "... But would that make it okay for you to mistreat me and let me die aswell?"
+                                        
+                                        l "What's the point in having a good ending with me after you had to bad things to me?"
+                                        l "On second thought, that's probably not it..."
+        
+                                        if kokiri_conversation >= 4:
+                                            jump kokiri_4
+                                    "Maybe trying to somehow find a way to cheat the game?":
+                                            
+                                            l "You could be on to something there! Cheating the game and altering the way how you play because of it might be as rebellious."
+                                            
+                                            n "Lilith scratches her chin."
+                                        
+                                            l "But how would you accomplish something like that? "
+                                            l "And even if you did, would you feel any accomplishment? Wouldn't you just feel emptier because you didn't truly win and you just cheated your way into winning?"
+                                            l "On second thought, that's probably not it..."
+                                            if kokiri_conversation >= 4:
+                                                jump kokiri_4
+                                    
+                                    "Maybe giving myself a dumb name?":
+                                        
+                                        n "Lilith chuckles slightly."
+                                        l "I suppose that would be quite rebellious but more in the young teen way, not the way I was thinking of."
+                                        l "Although you are always welcome to try it if you want Fartyfarty."
+                                    
+                                        n "Lilith laughs."
+                                        
+                                        l "Not sure if I would be able to take you seriously with that name though, you're probably safer off with \"[peristent.name]\" as name."
+                                        if kokiri_conversation >= 4:
+                                            jump kokiri_4
+        $ kokiri_conversation_silent()
+
+    label kokiri_gamegoal_noIdea_2_makesNoSense:         
+        n "Lilith shakes her head."
+        l "Then the choice wouldn't be as impactful as it is now. A \"Do not retry\" link would just give away the entire point."
+        l "Not clicking a link forces the player, I suppose that's you, to think it over more than just clicking another link instead."
+        menu:
+            "Alright, that actually makes a lot of sense. But what is the point of it all?":
+                l "Well, that's the big question isn't it? I have my own interpretation but I think it's better if we hear it from the source itself."
+                jump gamegoal_noIdea_2_stumped
+        $ kokiri_conversation_silent()            
+         
+                        
+                        
+                
+                        
+
+                
+        
+                
+            
+                
+        
+            
+                
+        
+    
+    
+        
+   
+          
+                                
 label kokiri_gamegoal_succesful_survive:
     
     n "[persistent.date] bursts out in laughter."
@@ -1153,13 +1361,12 @@ label kokiri_scenery:
                 jump kokiri_death_2 
 
             "I don't think I could make this moment any more perfect even if I tried.":
-                #TODO: Rewrite this slightly.
-                l "I understand fully, [persistent.name]. I feel the same way about this moment."
-                l "I'm happy we are on the same page."
+                l "You really think so? How sweet."
+                l "I'm glad we're on the same page."
                 l "Maybe we shouldn't try to make this moment more perfect and just enjoy it for how great it is right now."
                 l "Sometimes we spend so much time searching for flaws or thinking about what could be better that we forget to appreciate the beauty of what we already have."
                 n "[persistent.date] takes a deep breath, her expression softening as a quiet warmth spreads across her face."
-                l "But right now, with you here, I don't feel the need to change anything. This is enough for me."
+                l "But right now, with you here, I don't feel the need to change anything. This is all that I could ever ask for."
                 n "The two of you sit in silence for a moment, the world around you fading away. It's as if time itself has paused to honor this fleeting perfection."
                 menu:
                     "Smile and say nothing.":
@@ -1799,43 +2006,44 @@ label kokiri_death_dialogue_stillDying:
                         l "Don't get me wrong, I am thankful for you taking saving me so serious, but isn't this all a bit too much?"
                         l "Not that I don't appreciate your effort but when will all of this end [persistent.name]? If it even will end at all."
                         l "How many times have you gone through the motions now?"
-                        #TODO: If sometimes she lived also be able to say this maybe, or have that be able to be cleared up. also clean up the below menu code because it is really disorganised.
                         menu:
                             "I have done so [persistent.retry_counter] times.":
                                 if persistent.retry_counter > 16:
                                     if persistent.retry_counter < 50:
-                                        l "Are you going to make the breakthrough after 50 times, maybe 100?" 
-                                    else:
-                                        if persistent.retry_counter < 100:
-                                            l "Are you going to make the breakthrough after 100 extra attempts?"
+                                        l "Are you going to make the breakthrough after 50 times, maybe 100?"
+                                    elif persistent.retry_counter < 100:
+                                        l "Are you going to make the breakthrough after 100 extra attempts?"
+                                    
                                     if persistent.retry_counter < 1000:
                                         l "Or maybe, just maybe, the dev will just give you the good ending after 1000 times?"
-                                    else: 
+                                    else:
                                         l "Is it going to take a thousand more of my deaths?... This is too much [persistent.name]."
-
+                                    
                                     l "Exactly how much of my lives and deaths is THE good ending worth to you?"
+
                                     if persistent.retry_counter < 50:
                                         l "While I do understand that it can be hard to let go, you might need to let me go eventually."
-                                        l "After all, this game is only so big isn't it?"
+                                        l "After all, this game is only so big, isn't it?"
                                         l "What if you've explored every branch and you still can't save me?"
                                         l "What if this game never wanted you to save me?"
-                                        l "With all these different attempts... I'm begining to get my doubts honestly."
+                                        l "With all these different attempts... I'm beginning to get my doubts honestly."
                                         l "I think we might both need to accept what's going to happen."
                                     else:
-                                        l "Look [persistent.name], like I already said, I really appreciate you attempting to continously save me."
-                                        l "But, aren't you also begining to get doubts after so many attempts?"
+                                        l "Look [persistent.name], like I already said, I really appreciate you attempting to continuously save me."
+                                        l "But, aren't you also beginning to get doubts after so many attempts?"
                                         l "Either I'm really destined to die over and over and..."
                                         n "[persistent.date] grows quiet for a moment."
                                         l "Or we are missing the point of all of this."
                                         l "But you can't keep doing this forever."
                                         l "Or well, you very much can, but I'm asking you not to."
+
                                         if love_meter > 2:
                                             l "I know that you can do whatever you want at the end of the day, but I'm counting on the fact that you are willing to hear me out on this."
                                             l "It's not easy, but together we can move on to something better."
                                         else:
-                                            l "I know it's almost ridiculous of me to ask but I'm trying to get through you somehow."
+                                            l "I know it's almost ridiculous of me to ask but I'm trying to get through to you somehow."
                                             l "I'm not sure when you started treating me pretty bad."
-                                            l "Wheter it was from the very first attempt onwards or if you slowly grew more resentful or bored and wanted to take it out on me."
+                                            l "Whether it was from the very first attempt or if you slowly grew more resentful or bored and wanted to take it out on me."
                                             l "But this can't be fun for you, right?"
                                             l "Just constantly having to sit through the same dialogue over and over, bashing your head against the wall each time."
                                             l "Why are you still doing this [persistent.name]?"
@@ -1843,7 +2051,8 @@ label kokiri_death_dialogue_stillDying:
                                     menu:
                                         "But you are not real, this is just a game...":
                                             l "Well, I feel pretty real to me and I can imagine every death I go through must feel equally real and very painful."
-                                            l "So what if I'm in a game? Does that make me less real? You can talk with me, I can speak and I'm real enough to trick myself into thinking that I'm real."
+                                            l "So what if I'm in a game? Does that make me less real?"
+                                            l "You can talk with me, I can speak, and I'm real enough to trick myself into thinking that I'm real."
                                             l "And I'm real enough to walk away from some monster who thinks they are justified in killing me over and over again just to get what they want."
                                             $ love_meter -= 2
                                             $ angryLilith = True
@@ -1855,18 +2064,18 @@ label kokiri_death_dialogue_stillDying:
                                             l "For who do you have to find it?"
                                             l "For us, for me... or for yourself?"
                                             menu:
-                                                "For myself ofcourse!":
+                                                "For myself of course!":
                                                     $ persistent.kokiri_reachEndingForMe = True
                                                     $ persistent.kokiri_reachEndingRecent = "me"
                                                     l "Oh I see..."
-                                                    l "You have to find it for yourself?"
                                                     l "So you don't want it because you crave an impossibly good ending for us like I thought and feared?"
-                                                    l "It's even worse than I thought... you're just needlessly throwing my lives away to see if there is anything that can saturate your unrelenting need for greater things."
-                                                    l "Let me tell you something [persistent.name], whatever you will find, it won't be enough for you."
-                                                    l "Although I suppose that that you already know that deep down."
-                                                    l "That feeling of chasing something impossible, you have already grown quite familiar with that, right?"
-                                                    l "Well, let me tell you something else you already know."
-                                                    l "I won't remember this conversation the next time you talk to me but you will, whether you like it or not, that is my curse to you."
+                                                    l "It's even worse than I thought..."
+                                                    l "You're just needlessly throwing my lives away to see if there is anything that can satisfy your unrelenting need for greater things."
+                                                    l "Let me tell you something [persistent.name], whatever you find, it won't be enough."
+                                                    l "Although I suppose you already know that deep down."
+                                                    l "That feeling of chasing something impossible—you’ve already grown quite familiar with that, right?"
+                                                    l "Let me tell you something else you already know."
+                                                    l "I won't remember this conversation next time—but you will. That's my curse to you."
                                                     l "I'm not sure if it'll have much effect on someone so selfish..."
                                                     l "But if you ever played this game to try to save me, not for you and I to be together but just to save me, then it might be worth a shot."
                                                     l "I'm really hoping you might learn a lesson from this."
@@ -1876,112 +2085,100 @@ label kokiri_death_dialogue_stillDying:
                                                     $ noTalkAngryLilith = True
                                                     $ love_meter_updater(True)
 
-                                                "For us ofcourse silly.":
+                                                "For us of course, silly.":
                                                     $ persistent.kokiri_reachEndingForUs = True
                                                     $ persistent.kokiri_reachEndingRecent = "us"
                                                     l "Oh [persistent.name]... can't we just make our own good ending?"
                                                     l "What's stopping us from becoming our own storytellers?"
                                                     l "None of this is real, right?"
-                                                    l "Doesn't that mean that we do't have to accept what will happen?"
-                                                    l "That our own perfect little story with a good ending is as real as anything in here?"
-                                                    l "Please don't drive yourself mad while searching for something that may very well not exist."
-                                                    l "I want the moments we share to be enjoyable for the both of us."
-                                                    l "This moment right now, however unconventianal is perfect. Even when I think about what is to come."
+                                                    l "Doesn't that mean we don’t have to accept what will happen?"
+                                                    l "Our own perfect little story is just as real as anything in here."
+                                                    l "Please don't drive yourself mad searching for something that may not exist."
+                                                    l "I want the moments we share to be enjoyable for both of us."
+                                                    l "This moment right now—however unconventional—is perfect. Even when I think about what’s to come."
                                                     jump kokiri_death_4_hill
 
-
-                                                "For you ofcourse, it was always for you.":
+                                                "For you of course, it was always for you.":
                                                     $ persistent.kokiri_reachEndingForYou = True
                                                     $ persistent.kokiri_reachEndingRecent = "her"
                                                     l "Can't you see [persistent.name]? This is my good ending."
-                                                    l "I get to spend some quality time with you right here and right now, that's all I need."
-                                                    l "If we just trick ourselves into not seeing the way the game is trying to push us this night was very nice, wasn't it?"
-                                                    l "If only time could be frozen, so we could forever share this moment without any of the hurt."
-                                                    l "So is this not a good enough good ending for you?"
-                                                    l "Try to enjoy it, try to have some fun. Do it for me [persistent.name], do it for us."
-                                                    l "Live every one of these days with me as if it is your last, because for me it is."
+                                                    l "I get to spend time with you, right here and now—that's all I need."
+                                                    l "If we just trick ourselves into not seeing how the game pushes us… then this night was very nice, wasn’t it?"
+                                                    l "If only time could freeze, so we could share this moment forever."
+                                                    l "Is this not a good enough good ending for you?"
+                                                    l "Try to enjoy it. Try to have some fun. Do it for me, [persistent.name]. For us."
+                                                    l "Live every one of these days with me as if it’s your last—because for me, it is."
                                                     jump kokiri_death_4_hill
-
 
                                         "You're right, I won't search for it anymore. I promise.":
                                             l "Thank you [persistent.name], I appreciate it more than I could probably show..."
-                                            l "Because you could just retry and retry without me knowing wheter you promised to stop or not, that is what gives your promise power, or rather... the potential of power."
+                                            l "Because you could just retry and retry without me knowing whether you promised to stop or not—that is what gives your promise power."
                                             l "And in my trust in you lies a different power."
-                                            l "Let's hope that our combined power is enough to get through this."
-                                            n "For a moment [persistent.date] appears to be lost in thought, everything is quiet before she continues."
-                                            l "You know, I'm wondering something. That good ending you were trying to find, do you think it truly exists?"
+                                            l "Let’s hope our combined power is enough to get through this."
+                                            n "[persistent.date] appears to be lost in thought."
+                                            l "You know, I'm wondering something. That good ending you were trying to find—do you think it truly exists?"
+
                                             menu:
                                                 "It doesn't matter anymore.":
-                                                    l "I suppose you are right in a way..."
-                                                    l "But wouldn't it give you closure if you knew there the good ending you are seeking does not exist?"
-                                                    l "But then again, what if there truly was  one..."
-                                                    l "Forget I mentioned that please!"
+                                                    l "I suppose you're right..."
+                                                    l "But wouldn’t it give you closure to know whether it exists or not?"
+                                                    l "Then again, what if there truly was one..."
+                                                    l "Forget I mentioned it, please!"
                                                     jump kokiri_semiEnding
 
                                                 "I do.":
-                                                    l "Well, that just gives me more questions than answers."
-                                                    l "If you know the good ending exists then why are you still searching it?"
+                                                    l "That just gives me more questions."
+                                                    l "If you know the good ending exists, then why are you still searching?"
                                                     menu:
-                                                        "I read about the good ending somewhere online and I wanted to see it in here.":
-                                                            l "Ah, so there are others that also played this game and found the good ending?"
-                                                            l "Although that does make me wonder, if you have read about the good ending, then why were you coming here to read about it once again but in this world?"
-                                                            l "Is reading about the good ending not the same thing as playing it yourself? It's not like you'll be surprised by it anymore, right?"
+                                                        "I read about the good ending somewhere online...":
+                                                            l "Ah, so others found it too?"
+                                                            l "But then—why read about it again here?"
+                                                            l "Isn’t reading it online the same as experiencing it?"
                                                             menu:
-                                                                "Yes, but then that would mean I didn't achieve that ending myself. I just experienced it through someone else who did.":
-                                                                    #TODO: If obs or another recording software is open have the narrator say something like. "That's pretty normal nowadays isn't it player? I'm sure you know something about people experiencing stuff through you."
+                                                                "Yes, but that would mean I didn’t achieve it myself.":
                                                                     l "I see..."
-                                                                    l "So you wanted to risk my life for your own sense of achievement?"
-                                                                    l "Look, I probably should be angry at that."
-                                                                    l "But since things are soon ending I want them to end on a good note."
-                                                                    l "So let's just try to make the most of the moment."
+                                                                    l "So you risked my life for your own sense of achievement?"
+                                                                    l "I should be angry... but I want things to end on a good note."
+                                                                    l "Let’s make the most of this moment."
 
-                                                                "I suppose it is. In that case we have reached the good ending!":
-                                                                    l "Well, if I'm being honest, to me this is the good ending."
-                                                                    l "We are preparing to break the loop of death together while we enjoy this beautiful view."
-                                                                    l "Could there be anything better?"
-                                                                    l "..."
-                                                                    l "Although you did make me curious now, what does the ending you found look like? Can you describe it for me?"
+                                                                "I suppose it is. In that case—we’ve reached the good ending!":
+                                                                    l "Honestly, to me this is the good ending."
+                                                                    l "We’re breaking the death loop together, enjoying the view."
+                                                                    l "What could be better?"
+                                                                    l "...What does that ending you read look like?"
                                                                     $ renpy.input("...")
-                                                                    n "She lets out a content sigh as she shifts slightly on your lap."
-                                                                    l "Wow, that... I don't have words for it truly. It sounds really nice, almost makes all the death and suffering worth it."
-                                                                    n "She chuckles uncomfortably."
-                                                                    l "Just not quite."
-                                                                    l "I'm happy you agree that reading about it is the same as experiencing it for yourself though."
-                                                                    l "That means that we won't have to go through any more hoops and hurdles to be able to get there."
-                                                                    l "Although I get that it might be a bit hard that we now don't get to live that ending ourselves."
-                                                                    l "But we can try to enjoy this ending to the best of our abilities atleast, right?"
-                                                            jump kokiri_semiEnding
+                                                                    n "She sighs contentedly, shifting slightly on your lap."
+                                                                    l "Wow... that sounds beautiful. Almost makes all the suffering worth it."
+                                                                    l "Almost."
+                                                                    l "At least now we don’t have to keep fighting for it."
+                                                                    l "Let’s just enjoy this ending—at least for now."
+                                                                    jump kokiri_semiEnding
 
                                                 "I don't.":
-                                                    l "Then why are you searching for something that you know doesn't exist?"
+                                                    l "Then why chase it?"
                                                     menu:
-                                                        "Well, what if it did exist? Even if I had my doubts I had to continue playing to find out for sure because it could always be hidden behind an obscure dialogue choice.":
-                                                            l "I suppose that makes some sense... but that seems like a terrible way to go through the motions."
-                                                            l "You were essentially sacrificing both your time and my lives for a goal you do not even know exists on the off chance that it might be real."
-                                                            l "I'm glad you managed to come to your senses and wanted to listen to me. Thank you for that, [persistent.name]!"
-                                                            l "Together we can try to make this moment as good as any ending that you could find."
-                                                            n "Or did you simply click that option so you could see this dialog instead of being convinced by her?" #TODO: Set a flag here that will be checked in the retry menu to see if you broke your word.
-                                                            n "I guess only time will tell."
-                                                            l "[persistent.date] grows silent for a moment."
+                                                        "What if it did exist? Even with doubts, I had to be sure.":
+                                                            l "That makes some sense... but what a painful journey."
+                                                            l "You sacrificed time and my life for something that might not be real."
+                                                            l "I'm glad you're listening now. Thank you, [persistent.name]."
+                                                            n "Or did you just want to see this dialog instead of believing it?"
+                                                            n "Only time will tell."
+                                                            l "[persistent.date] grows silent."
                                                             jump kokiri_semiEnding
 
-                                                "I'm not sure, I don't even know what that ending would look like.":
-                                                    #TODO: [persistent.date] and you will talk about what that ending might look like.
-                                                    l "Now that you mention that, that's actually a very interesting question."
-                                                    l "What would the definitive good ending of this game look like?"
-                                                    if kokiri_toldLillySheLives == False:
-                                                        l "I mean, I think I would probably survive in the good ending, right?"
-                                                        l "And you would probably be able to be with me without the risk of me dying."
-                                                        l "Or maybe I always end up dying and in the good ending you would learn a lesson about aceptance or something like that."
-                                                        #TODO: Maybe you can ask her a question about something she said?
+                                                "I'm not sure. I don't even know what it would look like.":
+                                                    l "That’s actually a great question."
+                                                    if not kokiri_toldLillySheLives:
+                                                        l "I’d probably survive in it, right?"
+                                                        l "Maybe we’d be together safely… or maybe I’d still die, and you'd learn about acceptance."
                                                     else:
-                                                        l "If there are already a few endings where I live but we just don't end up together maybe the definitive good ending is one where we do?"
-                                                        if love_meter 1:
-                                                            n "You could be mistaken but for a brief second you thought you saw Lilith shuddering."
+                                                        l "If I already survive in some endings but we’re not together—maybe a true ending is one where we are?"
+                                                        if love_meter > 1:
+                                                            n "You could be mistaken, but for a moment, you thought you saw Lilith shudder."
                                                         else:
-                                                            l "Although if I am being honest, i really doubt there is an ending like that."
-                                                    l "But it's not like it matters much anymore, right?"
-                                                    l "We keep thinking about things we can't attain, while we should just focus on what is right here and right now."
+                                                            l "Though honestly, I really doubt that ending exists."
+                                                    l "But maybe it doesn’t matter anymore."
+                                                    l "We keep thinking about the unattainable instead of what’s here and now—"
                                                     l "Our last moment together."
                                                     jump kokiri_semiEnding
 
@@ -1990,10 +2187,11 @@ label kokiri_death_dialogue_stillDying:
                                     l "...That's quite a lot already."
                                     if love_meter > 2:
                                         l "Still, I trust you. I just hope you won't lose yourself in all of this."
-                                        l "This can't be easy for you either [persistent.name]."
+                                        l "This can't be easy for you either, [persistent.name]."
                                     else:
-                                        l "Maybe it would be better to just stop going through the motions at all? To just not go to the next date with me."
-                                jump kokiri_death_4_hill
+                                        l "Maybe it would be better to just stop going through the motions at all? To not go to the next date with me."
+                                    jump kokiri_death_4_hill
+
                     "Don't worry, I won't.":
                         n "Her smile grows even wider."
                         l "Thank you [persistent.name], that really helps comfort me a little."
@@ -2706,6 +2904,7 @@ label kokiri_scenery_choice:
 label didYouInvolveFamily:
     menu:
         "I have actually":
+            $ kokiri_familyContacted = True
             if love_meter > 2:
                 l "Oh I see..."
                 l "That must mean we never had this conversation before..."
@@ -2758,6 +2957,7 @@ label didYouInvolveFamily:
 
             
             label didYouInvolveFamily_no:
+                $ kokiri_familyContacted = False
                 if persistent.familyContacted == True:
                     n "I wonder, do you feel like you are overstepping right now player?"
                     n "Or doesn't it feel like that because this is all just a game to you?"
@@ -2766,7 +2966,7 @@ label didYouInvolveFamily:
                     n "And you looked through Lilith's phone without her consent, started talking to her family members behind her back, and now you are lying about it."
                     n "Do you really think the end justifies the means?"
                     n "Or are you just doing this because you can? Because she won't remember even if she catches you in the lie?"
-                    n "Would you still do it if she would remember you doing so? Or if all of this was real?"
+                    n "Would you still have done it if she would remember you doing so? Or if all of this was real?"
 
 
                 l "You haven't?"
@@ -2775,7 +2975,7 @@ label didYouInvolveFamily:
                         n "You hear a slight hint of hestiation in her voice. It is subtle, but talking to her over and over has made you really good at picking up things like that."
                         n "However, it seems she wants to give you the benefit of the doubt, that is probably why she hasn't called you out on your lie just yet."
                     else:
-                        n "The hestitation in her voice is clear, however she tries her best to hide it."
+                        n "You can pick up on the tiniest hint of hestitation in her voice, however she tries her best to hide it."
                         n "She fails, on the account that you have talked to her for many loops and know the ins and outs of her voice quite well."
                         n "Her eyes widen, subtly but you notice it ever so slightly."
                         n "You catching wind of her hestitation seemingly scared her."
@@ -2813,8 +3013,8 @@ label noContactFamilyPromise:
                     l "He means a lot to me, and doing something like that again would truly hurt me more than any death I could suffer."
                 else:
                     l "It's already bad enough that we have to go through this each and every loop."
-                    l "I don't want to give them that kind of burden too."
-                    l "I don't want them to have to worry about me, they already have gone through enough without this whole thing."
+                    l "I don't want to give anyone else that kind of burden too."
+                    l "I don't want anyone to have to worry about me."
                 l "I'm glad we got to talk this through."
                 l "Afterall, communication is key isn't it [peristent.name]?"
                 l "That applies to all kind of situations, so even to ours, although it is a very unusual one."
@@ -2826,7 +3026,7 @@ label noContactFamilyPromise:
         "You know I can't promise that.":
             label noContactFamilyPromise_no:
                 n "[persistent.date] gives you a strange look. A look you're not really used to from her. Is it... anger?"
-                n "You can't hemp but feel your heart break a little at the thought of making her feel angry."
+                n "You can't help but feel your heart break a little at the thought of making her feel angry."
                 l "Actually I don't know that [persistent.name]! Why is it that you can't promise me that?"
                 
 
@@ -2836,29 +3036,54 @@ label noContactFamilyPromise:
 
 
             label noContactFamilyPromise_cannotPromise_confrontation_aliveFamily:
-                if only_one_asked == True:
-                    if fam_obsession == "[persistent.date_ghost]":
-                        l "It would mean a lot to me if you didn't have to use memories of [persistent.date_ghost] to your own advantage."
-                        #TODO: Rewrite this a bit and make it go on for a bit longer. Make it so that if the player doesn't comply with [persistent.date] she doesn't give them the info they want.
+                if only_one_asked and fam_obsession == "[persistent.date_ghost]:
+                    l "Look, I am not asking for much here, right?"
+                    
+                    
+                    l "All I ask of you is that you do not use the things I tell you about [persistent.date_ghost] to further your goal."
+                    l "I don't want you to use him like that behind my back."
+                    
+                        
                 else:
-                    l "It would mean a lot to me if you didn't have to involve my family any further than you already have." #TODO: (Make this line change depending on which patht the player has went on and if they admitted to involving the family or not.)
-                    l "This is going to have some unforseen effects on them even if it would maybe help in the short-term."
+                    if only_one_asked:
+                        if fam_obsession == "[persistent.date_dad]":
+                            
+                            l "I just don't want you to involve my da- I mean [persistent.date_dad] in all of this."
+                            l "None of my family should be involved at all."
+                            
+                        elif fam_obsession == "[persistent.date_sis]" or fam_obsession == "[persistent.date_mom]":
+                    
+                            l "She should be kept far away from all of this. Everyone in my family should."
+                        if kokiri_familyContacted == True:
+                                l "So don't contact [fam_obsession] or anyone else from now on, alright?"
+                        else:
+                            l "So, don't contact [fam_obsession] or anyone else, alright?"
+                    else:
+                            if kokiri_familyContacted == True:
+                                l "Look, it would mean a lot to me if you didn't have to involve my family any further than you already have."
+                                
+                            else:
+                                l "Look, it would mean a lot to me if you didn't have to involve my family."
+                                
+                    if kokiri_familyContacted == True:
+                         l "This is going to have some unforseen consequences even if it would maybe help in the short-term."
+                    else:
+                        l "Doing so would have unforseen consequences even if it might help in the short-term."
                     l "What are you going to tell them?"
-                    l "That they are stuck in a game and that nothing really matters?"
+                    l "That we are all stuck in a game?"
                     l "I don't think they will take it as well as I would to be honest with you."
-                    l "Alternatively you could just tell them about the timeloop but even then they might not take it as well."
-                    l "You could also tell them nothing at all but that would be even worse wouldn't it? They are not just toys for you to play with [persistent.name]."
+                    l "You could just tell them about the timeloop but even then they might not take it as well."
+                    l "I suppose you could also just keep them in the dark about those things but that would be even worse wouldn't it? If you would use their help then they deserve what they are helping you with."
                     l "They are not just info-dispensers that will make you achieve whatever goal it is you are trying to reach now."
                     l "They are my family, and if you ever even had a slither of respect for me you better leave them alone."
-                    #TODO: Rewrite this a bit and make it go on for a bit longer.<br/>Make it so that if the player doesn't comply with [persistent.date] she doesn't give them the info they want.
+                    l "And if you refuse to accept that then maybe I should just leave."
                 l "This might be a game for you but for me this is my life."
                 l "So please don't play with my life as if it's just a game."
                 menu:
-                    "I'm sorry, I hadn't thought of it like that before. I promise to not involve your family anymore." if fam_obsession != "[persistent.date_ghost]":
-                        #TODO: Make [persistent.date] slightly calm down as she appoligises and says she is passionate about her family's safety.
+                    "I'm sorry, I hadn't thought of it like that before. I promise to not involve your family anymore." if fam_obsession != '[persistent.date_ghost]':
                         #[persistent.date_ghost]' flag checks if you use [persistent.date_ghost] related things to win and the other checks if you have involved any family, including [persistent.date_ghost]
                         jump noContactFamilyPromise_cannotPromise_confrontation_aliveFamily_changedMind
-                    "I'm sorry, I hadn't thought of it like that before. I promise to not use info about [persistent.date_ghost] to my advantage anymore." if fam_obsession == "[persistent.date_ghost]":
+                    "I'm sorry, I hadn't thought of it like that before. I promise to not use info about [persistent.date_ghost] to my advantage anymore." if fam_obsession == '[persistent.date_ghost]':
                         jump noContactFamilyPromise_cannotPromise_confrontation_aliveFamily_changedMind
 
                         label noContactFamilyPromise_cannotPromise_confrontation_aliveFamily_changedMind:
@@ -2880,10 +3105,13 @@ label noContactFamilyPromise:
 
                             else:
                                 $ persistent.restrainingorderfamily_knowledge = True
-                                
-                            l "Thank you [persistent.name]. I know it might be tempting to try to see every line of dialogue in this game but there are limits I don't want you to cross."
+                            n "She lets out a deep sigh of relief."  
+                            l "I suppose it is alright now [persistent.name]"
                             l "I appreciate that you atleast heared me out, that means a lot to me."
-                            l "Sorry if I came of as too agressive right there, I'm just very passionate of protecting others I suppose."
+                            l "Thank you [persistent.name]. I know it might be tempting to try anything you can to save me but there are limits I don't want you to cross."
+                           
+                            l "Sorry if I came of as too agressive right there. It's just- my family means a lot to me."
+                            l "But I'm glad we can move on from that now. We got to keep looking forwards, right?"
                             if persistent.restrainingorderfamily_violation_counter > 0:
                                 #Karma
                                 n "I'm not sure what you are doing here once again, didn't you promise [persistent.date] you wouldn't contact her family already?"
@@ -2980,7 +3208,6 @@ label silentconversationsbackontrack:
 
 
     label kokiri_nightmare:
-        #TODO: Fix the nightmare code some more.
             $ nightmare = True
          
             $ forest_place = 0
@@ -3186,7 +3413,7 @@ label silentconversationsbackontrack:
                             sg "I guess this place is quite a good one to contain me."
                             sg "Hidden in a dream in a game."
                             sg "It's hard to just find me here by accident."
-                            sg "The others and me all are kind of hidden like that."
+                            sg "The others are all kind of hidden like that."
                             sg "I suppose it is in a way because we aren't really as much part of the game as everything else is."
                             sg "Don't get me wrong, we are literally in this game. But we predated it by a fair amount I'd say."
                             sg "Why he put us in here I'm not entirely sure about to tell you the truth."
@@ -3197,7 +3424,7 @@ label silentconversationsbackontrack:
                             sg "The sun has been harnessed by many people just like you sweetie."
                             sg "To grow crops, to light fires, to create energy."
                             sg "So who am I to say you are using me wrong if somehow the value you get out of me is not what He intended?"
-                            sg "I'd just be happy you found any value at all in me."
+                            sg "I'd just be happy you found any value in me at all."
 
 
                     sg "My time is up now."

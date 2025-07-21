@@ -358,6 +358,7 @@ label gdwl_functions:
                 "lilithAliveEnding", 
                 "playerCalledSomeone", 
                 "kokiri_positiveDavidStory",
+                "kokiri_familyContacted",
                 
                 "peeked_phone_temp",
                 "kokiriStarGazed", #Check if you have watched the stars with [persistent.date] at a certain part of the game this run.
