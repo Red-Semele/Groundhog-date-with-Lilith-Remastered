@@ -128,52 +128,31 @@ label kokiri_explanation_game:
 
             
                 "Yup, that's my real name.":
-                    #TODO: Rewrite this more in [persistent.date]'s style.
+                    
                     l "I see, that's handy at the very least, that means I won't need to memorise another name."
                     n "[persistent.date] chuckles slightly."
                     l "Still, it's nice to meet you [persistent.name], the real you I mean. The one behind your screen, or I suppose the one in front of it?"
-                    l "But even so... if this is your real name, and this is how we talk, is it really *you* I'm meeting?"
-                    l "Or is it just another layer of you, filtered through these choices?"
+                    l "But even if that is your real name, am I meeting the real you?"
+                    l "Or is it just an approximation of you at best, filtered by the choices through which this game forces you to talk to me?"
                     n "[persistent.date] looks away for a moment, deep in thought."
-                    l "I wonder what you’d say if you weren’t confined by this menu, by these options."
-                    l "Maybe there are things you’d want to tell me that you can’t say because... well, I can only understand what the game allows."
-                    l "Does that frustrate you? Knowing that you’re stuck responding in ways that aren’t fully your own words?"
+                    l "I wonder what you’d say if you weren’t confined to just those options."
+                    l "Are you a lot different in real life compared to how you act in this game?"
                     menu:
-                        "Yeah, it is a bit frustrating.":
-                            l "I figured as much. I mean, here we are, trying to have a conversation, and yet it’s as if we’re both talking with someone else’s words, isn’t it?"
-                            l "It's like you want to speak freely, but all you can do is select from a list, and I can only respond based on what’s programmed in me."
-                            l "It makes me wonder... if we could truly speak freely, would this conversation be any different?"
-                            l "Would you treat me the same? Would I treat *you* the same?"
-                            n "[persistent.date] looks directly at you, her eyes searching for something."
-                        "Not really, I’m used to it.":
-                            l "I suppose that’s fair. A lot of games work this way, don’t they?"
-                            l "We’re both following scripts, in a sense. But I guess that makes things easier, doesn't it? The choices are laid out neatly, no surprises, no risks."
-                            l "Still, it must be a strange feeling—knowing that your words aren’t fully your own."
-                            l "Do you think you’d make different choices if you could just say whatever came to mind?"
-                            n "[persistent.date] tilts her head, genuinely curious."
-                        "I like it this way. The structure makes things clearer.":
-                            l "Ah, I see. The structure helps keep things in order, right?"
-                            l "I suppose that’s one way to look at it. The choices are neat, predictable. You can control the flow of the conversation, and there’s no fear of saying the wrong thing."
-                            l "In a way, it’s comforting, knowing that you don’t have to think about what to say next, since the game does it for you."
-                            l "But does that mean the real you prefers structure and control over freedom?"
-                            l "It’s an interesting thought. Maybe this game says more about you than you realize."
+                       "I actually am pretty much the same.":
+                            l "Oh you are? That's great to hear!"
+                            l "That way I can really feel like I'm getting to know the real you, the one on the other side of the screen."
 
-                    l "Regardless of how much of the 'real you' I get to see, I'm happy you're here."
-                    l "The fact that you’re still playing, still spending time with me, it means something, doesn’t it?"
-                    l "Even if you’re not saying everything exactly how you would in real life, your choices still reflect who you are."
-                    l "And that’s the part of you I’m getting to know."
-                    n "[persistent.date] smiles warmly, her earlier concern melting away."
-                    l "So, what do you think? Does this whole experience feel real to you, or just like a game?"
-                    menu:
-                        "It feels real, like we’re really talking.":
-                            l "I'm glad you feel that way. Maybe, even through these limitations, we’ve found something genuine."
-                            l "I think there’s a kind of magic in that, don’t you? That even in a game, we can make a connection that feels real."
-                            n "[persistent.date] beams, her smile brighter than before."
-                        "It still feels like a game, just one I’m enjoying.":
-                            l "That’s perfectly valid. After all, it is a game at the end of the day, isn’t it?"
-                            l "But I’m glad you’re enjoying it. Maybe that’s all that really matters."
-                            n "[persistent.date] nods in understanding, her expression soft and thoughtful."
-                            l "Even if it’s just a game, I hope I’ve made it a little more enjoyable for you."
+                        "I am very much different indeed.":
+                            l "Really? That's a shame."
+                            l "I'd like to be able to meet the real you. I hope I'm atleast able to catch a few glimpses of that person seeping through the screen."
+                    
+                    l "Regardless of how much of the real you I get to see I do value you being here in the first place."
+                    l "I think that speaks more loudly about your personality than any line of dialog you could ever say."
+                    l "Because to even reach this place you'd have to try to save me quite a few times, wouldn't you?"
+                    l "And even then, it is very much possible that it is not your first time meeting me here aswell."
+                    l "So thank you for not giving up on me [persistent.name]. That means more to me than I could possibly express."
+                    #TODO: Continue writing this in [persistent.date]'s style.
+                       
 
         
 
@@ -806,7 +785,7 @@ label kokiri_gamegoal_noIdea:
                                             l "As much as I had hoped the two of us could work out, in here we can't."
                                             l "The sooner you accept that the better."
                                             l "Goodbye [persistent.name]. I genuinely wish you the best and hope there is no bad blood between the two of us for what I'm about to do."
-                                            jump angryLilith #TODO: Check if this one is slightly friendly enough, if not just add a few lines to make this a possibility with a flag.
+                                            jump angryLilith
     
 label kokiri_gamegoal_noIdea_howGameLooks:
     l "Ah I see, so you can't see the absolutely stunning view from our picknickspot?"
@@ -866,57 +845,87 @@ label kokiri_gamegoal_noIdea_2:
                                 if kokiri_conversation >= 4:
                                     jump kokiri_4
                         
-                            "I actually did read it, let me fill you in on what it said." if true_about: 
-                                #TODO: For now keep the tracker like this, just to check if the about section actually is filled, since I can't seem to find it and thus do not know what flag it sets.
-
-                        
-                            
-                                n "You tell Lilith what you read in the about section." #TODO: Fill this in more descriptevly, maybe make it a choice/
-                                
-                                l "So this is a game about trying to fight the lack of real choice? Then the link thing kind of makes sense, what better way to fight the lack of choice than not making any at all?"
-                                l "It's an act of pure rebellion!<br/>But still something is not right, then you just end up with a bad ending, with me getting killed."
-                                l "I wonder if that's the other thing this game is about that the maker doesn't want to spoil."
-                                l "What is equally as rebellious if not more than not playing the game?"
-                                n "Lilith seems lost in thought."
-                                l "That's a hard one, do you have any clue?"
+                            "I actually did read it, let me fill you in on what it said." if persistent.fakeAbout_knowledge or persistent.trueAbout_knowledge: 
                                 menu:
-                                
-                                    "Maybe playing the game wrong? Not doing the paths that are expected like saving you or being nice.":
+                                    "It said that we will only have one date and that I need to try to make it as great as possible. Because just like in real life there are no do-overs and that is what makes our choices beautiful." if persistent.fakeAbout_knowledge and not persistent.trueAbout_knowledge:
+                                        l "Wait, what?"
+                                        l "But there literally are do-overs here, right?"
+                                        l "You constantly need to retry."
+                                        l "When did you read that description in the about section?"
+                                        menu:
+                                            "In the begining, I think at the time of our first date, the very first one.":
+                                                l "I see, I might have a hypothesis, could you take a look at it once again for me?"
+                                                l "Just try to access it now, however you would do that."
+                                                l "I'll wait for a moment until you do that."
+                                                n "She grows quiet for a moment."
+                                                l "Did it work?"
+                                                l "Did it say something else?"
+                                                menu:
+                                                    "It did. It said something about this game being about how we deal with our choices or the lack thereof." if persistent.trueAbout_knowledge:
+                                                        
+                                                        l "Just like I expected, seems that the first about section you read was a lie. Or at the very least not entirely the truth."
+                                                        l "Let's think about the real one we just found."
+                                                        jump gamegoal_noIdea_2_stumped_readAbout_true
 
-                                        l "You could be on to something there! Playing the game wrong seems like an extension of not playing it."
+                                                    "I didn't manage to open it. I'll just do it sometime else." if not persistent.trueAbout_knowledge:
+                                                        l "Alright, when you manage to open it in an other attempt feel free to tell me, then we can try to understand all of this a bit better."
+                                                
+                                    "It said this game is about how we deal with our choices or the lack thereof." if persistent.trueAbout_knowledge and not persistent.fakeAbout_knowledge:
+                                        jump gamegoal_noIdea_2_stumped_readAbout_true
+                                    "There were two about sections actually." if persistent.fakeAbout_knowledge and persistent.trueAbout_knowledge:
+                                        menu:
+                                            "The first one talked about how we will only have one date in total and then I won't be able to retry since that is what makes our choices more beautiful. That one was around the time of our very first date.":
+                                                menu:
+                                                    "The second one talked about how this game is about how we deal with our choices or the lack thereof.":
+                                                        l "Interesting..."
+                                                        l "So the first about section was some kind of fakeout meant to trick you?"
+                                                        l "The second one is pretty interesting though, let's talk about that one."
+                                                        jump gamegoal_noIdea_2_stumped_readAbout_true
+                                label gamegoal_noIdea_2_stumped_readAbout_true:
+                                    l "So this is a game about trying to fight the lack of real choice? Then the link thing kind of makes sense, what better way to fight the lack of choice than not making any at all?"
+                                    l "It's an act of pure rebellion! But still something is not right, then you just end up with a bad ending, with me getting killed and you not retrying to save me."
+                                    l "I wonder if that's the other thing this game is about that the maker doesn't want to spoil."
+                                    l "What is equally as rebellious if not more than not playing the game?"
+                                    n "Lilith seems lost in thought."
+                                    l "That's a hard one, do you have any clue?"
+                                    menu:
                                     
-                                        n "Lilith grows silent for a moment."
-                                    
-                                        l "... But would that make it okay for you to mistreat me and let me die aswell?"
+                                        "Maybe playing the game wrong? Not doing the paths that are expected like saving you or being nice.":
+
+                                            l "You could be on to something there! Playing the game wrong seems like an extension of not playing it."
                                         
-                                        l "What's the point in having a good ending with me after you had to bad things to me?"
-                                        l "On second thought, that's probably not it..."
-        
-                                        if kokiri_conversation >= 4:
-                                            jump kokiri_4
-                                    "Maybe trying to somehow find a way to cheat the game?":
-                                            
-                                            l "You could be on to something there! Cheating the game and altering the way how you play because of it might be as rebellious."
-                                            
-                                            n "Lilith scratches her chin."
+                                            n "Lilith grows silent for a moment."
                                         
-                                            l "But how would you accomplish something like that? "
-                                            l "And even if you did, would you feel any accomplishment? Wouldn't you just feel emptier because you didn't truly win and you just cheated your way into winning?"
+                                            l "... But would that make it okay for you to mistreat me and let me die aswell?"
+                                            
+                                            l "What's the point in having a good ending with me after you had to bad things to me?"
                                             l "On second thought, that's probably not it..."
+            
                                             if kokiri_conversation >= 4:
                                                 jump kokiri_4
-                                    
-                                    "Maybe giving myself a dumb name?":
+                                        "Maybe trying to somehow find a way to cheat the game?":
+                                                
+                                                l "You could be on to something there! Cheating the game and altering the way how you play because of it might be as rebellious."
+                                                
+                                                n "Lilith scratches her chin."
+                                            
+                                                l "But how would you accomplish something like that? "
+                                                l "And even if you did, would you feel any accomplishment? Wouldn't you just feel emptier because you didn't truly win and you just cheated your way into winning?"
+                                                l "On second thought, that's probably not it..."
+                                                if kokiri_conversation >= 4:
+                                                    jump kokiri_4
                                         
-                                        n "Lilith chuckles slightly."
-                                        l "I suppose that would be quite rebellious but more in the young teen way, not the way I was thinking of."
-                                        l "Although you are always welcome to try it if you want Fartyfarty."
-                                    
-                                        n "Lilith laughs."
+                                        "Maybe giving myself a dumb name?":
+                                            
+                                            n "Lilith chuckles slightly."
+                                            l "I suppose that would be quite rebellious but more in the young teen way, not the way I was thinking of."
+                                            l "Although you are always welcome to try it if you want Fartyfarty."
                                         
-                                        l "Not sure if I would be able to take you seriously with that name though, you're probably safer off with \"[peristent.name]\" as name."
-                                        if kokiri_conversation >= 4:
-                                            jump kokiri_4
+                                            n "Lilith laughs."
+                                            
+                                            l "Not sure if I would be able to take you seriously with that name though, you're probably safer off with \"[peristent.name]\" as name."
+                                            if kokiri_conversation >= 4:
+                                                jump kokiri_4
         $ kokiri_conversation_silent()
 
     label kokiri_gamegoal_noIdea_2_makesNoSense:         
@@ -3340,7 +3349,7 @@ label silentconversationsbackontrack:
                             sg "I can only hope that now won't be needed. I can only hope it doesn't hurt for too long if you decide to try to stare for yourself."
                             #TODO: Change this below dialog slightly to give more context etc. give the player a vision of accidentally burning the world and then leaving it.
                             n "Before your very eyes appears Flower but it's a different Flower. Atleast in spirit she is. SunFlower looks at you without saying anything."
-                            n "You shiver as you remember everything that happend because you listened to this Flower made of Sun."
+                            n "You shiver as you remember everything that happened because you listened to this Flower made of Sun."
                             menu: 
                                 "*Apoligize*":
                                     p "You were the first manifestation I was aware of."

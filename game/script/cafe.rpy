@@ -1,3 +1,4 @@
+#The cafe is one of the shortest paths you can take, perhaps it would be a nice idea to, once all my todo's are taken care of, extend it a bit? Give it some extra options etc.
 label cafe_start:
     $ cafe = True
     $ love_meter += 1
@@ -230,6 +231,7 @@ label cafe_dice_result:
 
 
 label cafe_dice_stop:
+    #This could be a good place to add something else, instead of just segwaying she offers another game of sorts.
     l "Oh no worries [persistent.name]!
     I might have made this a bit too daunting so I completely understand."
     l "We can just continue talking if you'd like to."

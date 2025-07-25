@@ -357,25 +357,26 @@ label adriel_unanswered_chat:
         jump chinese_riddle_railroad
 
 label chinese_riddle_railroad:
-    #TODO: Make this dialogue vary based on the amount of love points she has in her meter. (That way if you insult her she will be a lot less sweet, and the situation will be very awkward.)
-    l "You know, it's kind of funny to be here in this specific restaurant with you."
-    l "Usually I come here with my mom and my sister, so it's a bit weird to be here with someone else."
-    l "Weird in a good way though! It's a welcome change if I'm being honest."
-    l "The reason we come here so much is because my sister, [persistent.date_sis], really adores this place."
-    l "Since mom and me took her here for her twelfth birthday she insisted on coming again for five years in a row."
-    l "She always picks the orange chicken, it really is her favourite."
-    #In the rude route she tells you this but a bit more rude, you get the option to shit on the restaurant (verbally, not literally)
-    menu:
-        "She sounds nice, can you tell me more about her?":
-            n "[persistent.date] gives you a big smile."
-            l "Sure, what would you like to know?"
-            menu:
-                "What is the funniest memory the two of you share?":
-                    jump chinese_riddle_talk_abbyMemory
+    if love_meter >= 2:
+        l "You know, it's kind of funny to be here in this specific restaurant with you."
+        l "Usually I come here with my mom and my sister, so it's a bit weird to be here with someone else."
+        l "Weird in a good way though! It's a welcome change if I'm being honest."
+        l "The reason we come here so much is because my sister, [persistent.date_sis], really adores this place."
+        l "Since mom and me took her here for her twelfth birthday she insisted on coming again for five years in a row."
+        l "She always picks the orange chicken, it really is her favourite."
+        #In the rude route she tells you this but a bit more rude, you get the option to shit on the restaurant (verbally, not literally)
+        menu:
+            "She sounds nice, can you tell me more about her?":
+                n "[persistent.date] gives you a big smile."
+                l "Sure, what would you like to know?"
+                menu:
+                    "What is the funniest memory the two of you share?":
+                        jump chinese_riddle_talk_abbyMemory
 
-                "What does she like to do?":
-                    jump chinese_riddle_talk_abbyHobbies
-
+                    "What does she like to do?":
+                        jump chinese_riddle_talk_abbyHobbies
+    else:
+        jump chinese_phoneScene
 
 label chinese_riddle_talk_abbyMemory:
     if persistent.tracker == 2:
@@ -607,6 +608,9 @@ label chinese_lostSomeone_questions:
     l "[persistent.date] gives you a cute little smile."
     jump chinese_phoneScene
 label chinese_phoneScene:
+    if love_meter == 1:
+        n "You notice a strange look on Lilith's face that is gone before you can realise just what it means."
+        $ chinese_lilithBreakupTrigger = 2
     l "I'll be right back [persistent.name], I just need to go to the bathroom real quick."
     n "[persistent.date] stands up from her chair and pushes it back under the table."
     n "As she enters the bathroom stall you see that she has forgotten her phone, it is still laying on the table."
@@ -644,74 +648,84 @@ label chinese_phone_peek:
         $ persistent.need_pass_knowledge = True
         menu:
             "*Put the phone back.*":
-                n "You put the phone back and try to act as natural as you can."
-                n "You quickly glance around the restaurant to see if anyone might have caught you trying to check her phone."
-                n "Everyone seems to be too busy enjoying their food to pay you any attention. You are saved by the excellent cuisine."
-                n "Just as you let out a sigh of relief [persistent.date] comes back to your table."
-                l "Hey [persistent.name], I'm back."
-                l "Did they not yet bring our food?"
-                l "That's okay, I'm just really looking forward to it, the food here is to die for."
-                if persistent.chinese_death_1 == True:
-                    n "It indeed seems to be that way doesn't it [persistent.name]?"
-                n "You play along with [persistent.date], hoping she doesn't suspect what you just did."
-                l "..."
-                n "[persistent.date] squints her eyes and seems to be lost in thought for a moment."
-                l "Is everything alright [persistent.name]? You look pretty nervous."
-                menu:
-                    "Uhm yeah, I'm totally fine. (Lie)":
-                        n "[persistent.date] squints her eyes slightly and looks at you with an almost soul-piercing look in her eyes."
-                        $ love_points = -1
-                        $ love_meter_updater(False)
-                        l "Hmm, alright [persistent.name], if you say so."
-                        n "You have to stop yourself from shaking in your seat, did she buy that lie? The alternative gives you so much fear that you try to convince yourself that she did."
-                        n "Anyway, it's best to just move on now, you told the lie, you can always choose to not lie to her from now on, right?"
-                        jump chinese_phone_noPeek
+                label chinese_phone_peek_putPhoneBack:
+                    n "You put the phone back and try to act as natural as you can."
+                    n "You quickly glance around the restaurant to see if anyone might have caught you trying to check her phone."
+                    n "Everyone seems to be too busy enjoying their food to pay you any attention. You are saved by the excellent cuisine."
+                    n "Just as you let out a sigh of relief [persistent.date] comes back to your table."
+                    l "Hey [persistent.name], I'm back."
+                    l "Did they not yet bring our food?"
+                    if chinese_lilithBreakupTrigger == 0:
+                        l "That's okay, I'm just really looking forward to it, the food here is to die for."
+                        if persistent.chinese_death_1 == True:
+                            n "It indeed seems to be that way doesn't it [persistent.name]?"
+                        n "You play along with [persistent.date], hoping she doesn't suspect what you just did."
+                        l "..."
+                        n "[persistent.date] squints her eyes and seems to be lost in thought for a moment."
+                        l "Is everything alright [persistent.name]? You look pretty nervous."
+                        menu:
+                            "Uhm yeah, I'm totally fine. (Lie)":
+                                n "[persistent.date] squints her eyes slightly and looks at you with an almost soul-piercing look in her eyes."
+                                $ love_points = -1
+                                $ love_meter_updater(False)
+                                l "Hmm, alright [persistent.name], if you say so."
+                                n "You have to stop yourself from shaking in your seat, did she buy that lie? The alternative gives you so much fear that you try to convince yourself that she did."
+                                n "Anyway, it's best to just move on now, you told the lie, you can always choose to not lie to her from now on, right?"
+                                jump chinese_phone_noPeek
 
 
-                    "I'm just a bit nervous about this date to tell you the truth. I just don't want to mess this up and lose you. (Half-truth)":
-                        if love_meter >= 2:
-                            l "Oh [persistent.name], I had no idea you felt that way! That's completly okay, I'm glad you told me."
-                            l "To be entirely honest with you aswell I feel the same way."
-                            l "This has been my first date in quite a while and I'm having a really good time."
-                            l "So it would be a shame if I somehow lost this."
-                            l "But right now we're both still here, right? So we should probably make the most out of it together."
-                            n "[persistent.date] gives you a cute smile."
-                            n "You feel guilty for lying to her, because even if it was a half-truth, that still means it's a half-lie."
-                            n "You try to ignore that feeling and just try to get the most of your remaining time with her."
-                            jump chinese_phone_noPeek
-                        else: 
-                            l "Oh, I see."
-                            l "{size=*0.5}That actually might explain some of your behaviour...{/size}"
-                            l "{size=*0.5}Although it's definetly no excuse.{/size}"
-                            l "Is that why you are acting quite \"tough\" [persistent.name]?"
-                            l "If I can give you a small piece of advice, I don't really like being treated like that."
-                            l "You seemed way nicer to me when we first talked about arranging this date. So I know there's someone nice underneath that mask you are wearing."
-                            l "Just allow yourself to relax a bit and enjoy your time with me here, alright?"
-                            l "You don't have to prove yourself to me. After all, I came here to go on a date with you, didn't I?"
-                            n "[persistent.date] flashes you a cute smile, you can see some slight worry in her eyes."
-                            n "What affects you the most is that the worry does not seem to be for herself, it seems to be for you."
-                            menu:
-                                "I... I guess you're right. Sorry for that [persistent.date]. I'm sorry if I hurt you by trying to act more tough.":
-                                    l "It's alright [persistent.name]! I won't pretend that you didn't hurt me at all, but apoligizing is a good first step."
-                                    l "I know it can sometimes be difficult dealing with insecurities, and sometimes they can manifest in ways that harm ourselves and other people."
-                                    l "Just know that if you feel a thought like that pop up again you can always try to talk to me about it, alright?"
-                                    l "I've been going through something similair a while ago and I find that talking it through really tends to help."
-                                    l "I won't pretend that that fixes it completely, I'm even still sometimes dealing with it."
-                                    l "But it helps me to control my own insecurity a little better."
+                            "I'm just a bit nervous about this date to tell you the truth. I just don't want to mess this up and lose you. (Half-truth)":
+                                if love_meter >= 2:
+                                    l "Oh [persistent.name], I had no idea you felt that way! That's completly okay, I'm glad you told me."
+                                    l "To be entirely honest with you aswell I feel the same way."
+                                    l "This has been my first date in quite a while and I'm having a really good time."
+                                    l "So it would be a shame if I somehow lost this."
+                                    l "But right now we're both still here, right? So we should probably make the most out of it together."
+                                    n "[persistent.date] gives you a cute smile."
+                                    n "You feel guilty for lying to her, because even if it was a half-truth, that still means it's a half-lie."
+                                    n "You try to ignore that feeling and just try to get the most of your remaining time with her."
+                                    jump chinese_phone_noPeek
+                                else: 
+                                    l "Oh, I see."
+                                    l "{size=*0.5}That actually might explain some of your behaviour...{/size}"
+                                    l "{size=*0.5}Although it's definetly no excuse.{/size}"
+                                    l "Is that why you are acting quite \"tough\" [persistent.name]?"
+                                    l "If I can give you a small piece of advice, I don't really like being treated like that."
+                                    l "You seemed way nicer to me when we first talked about arranging this date. So I know there's someone nice underneath that mask you are wearing."
+                                    l "Just allow yourself to relax a bit and enjoy your time with me here, alright?"
+                                    l "You don't have to prove yourself to me. After all, I came here to go on a date with you, didn't I?"
+                                    n "[persistent.date] flashes you a cute smile, you can see some slight worry in her eyes."
+                                    n "What affects you the most is that the worry does not seem to be for herself, it seems to be for you."
                                     menu:
-                                        "Thank you for being so patient with me. That means a lot.":
-                                            n "[persistent.date] gives you a cute smile."
-                                            l "Hey, don't mention it [persistent.name]. I know I wouldn't be the same person I am now if a lot of people didn't have patience with me."
-                                            l "I'm just glad that I was able to get through to you."
-                                            jump chinese_phone_noPeek
-                    "Okay, I'll be honest. I was going through your phone to attempt to learn more about you. But I have a good reason!":
-                        menu: 
-                            "I need to save you. You are repeatedly dying over and over in some sort of loop.":
-                                l "Nope, I'm not having any of this [persistent.name]. First you go through my phone, without my consent, and then you make up some crazy argument to justify your action?"
-                                l "Even if you think that thing about saving me is true, you have to see how going behind my back to do so is really not the way to do it, right?"
-                                $ angryLilith = True
-                                $ love_meter_updater(True)
-
+                                        "I... I guess you're right. Sorry for that [persistent.date]. I'm sorry if I hurt you by trying to act more tough.":
+                                            l "It's alright [persistent.name]! I won't pretend that you didn't hurt me at all, but apoligizing is a good first step."
+                                            l "I know it can sometimes be difficult dealing with insecurities, and sometimes they can manifest in ways that harm ourselves and other people."
+                                            l "Just know that if you feel a thought like that pop up again you can always try to talk to me about it, alright?"
+                                            l "I've been going through something similair a while ago and I find that talking it through really tends to help."
+                                            l "I won't pretend that that fixes it completely, I'm even still sometimes dealing with it."
+                                            l "But it helps me to control my own insecurity a little better."
+                                            menu:
+                                                "Thank you for being so patient with me. That means a lot.":
+                                                    n "[persistent.date] gives you a cute smile."
+                                                    l "Hey, don't mention it [persistent.name]. I know I wouldn't be the same person I am now if a lot of people didn't have patience with me."
+                                                    l "I'm just glad that I was able to get through to you."
+                                                    jump chinese_phone_noPeek
+                            "Okay, I'll be honest. I was going through your phone to attempt to learn more about you. But I have a good reason!":
+                                menu: 
+                                    "I need to save you. You are repeatedly dying over and over in some sort of loop.":
+                                        l "Nope, I'm not having any of this [persistent.name]. First you go through my phone, without my consent, and then you make up some crazy argument to justify your action?"
+                                        l "Even if you think that thing about saving me is true, you have to see how going behind my back to do so is really not the way to do it, right?"
+                                        $ angryLilith = True
+                                        $ love_meter_updater(True)
+                    else:
+                        l "That's probably for the best..."
+                        l "While I was in the bathroom I have been thinking..."
+                        l "Look, I don't think this is going to work out between us [persistent.name]."
+                        l "You just seemed so different when we were talking over texts and calls."
+                        l "I was really looking forward to this date, but now I think it's just better that I end this."
+                        l "Goodbye [persistent.name]."
+                        jump car_death
+                        
             "*Try a code anyway.*":
                 jump chinese_phone_peek_code
     label chinese_phone_peek_code:
@@ -778,15 +792,25 @@ label chinese_phone_peek:
                 $ persistent.passWrongOnPurpose_narratorRant_wrongTimesInARowCounter += 1 
                 jump chinese_phone_caught
             n "You try to input a few other codes to see if those work instead."
-            $ phone_wrongPassword_graceSystem = renpy.random.randint(1,80)
-            $ phone_wrongPassword_graceSystem += (persistent.retry_counter* 10)
-            if phone_wrongPassword_graceSystem == 100:
-                n "Avoiding the previous wrong passwords you remember from your previous attempst you manage to somehow luck yourself into typing the correct password after a couple of tries."
-                n "It is 81155."
-                $ persistent.pass_knowledge = True
-            else:
-                n "None of the other codes seem to result in anything either. You are not sure how many you tried, you decide to close the phone in case [persistent.date] will come back."
-            jump chinese_phone_caught
+            label chinese_phone_randomNumbers:
+                $ phone_wrongPassword_graceSystem = renpy.random.randint(1,80)
+                $ phone_wrongPassword_graceSystem += (persistent.retry_counter* 10)
+                if phone_wrongPassword_graceSystem == 100:
+                    n "Avoiding the previous wrong passwords you remember from your previous attempst you manage to somehow luck yourself into typing the correct password after a couple of tries."
+                    n "It is 81155."
+                    $ persistent.pass_knowledge = True
+                    if chinese_lilithBreakupTrigger > 0:
+                        $ chinese_lilithBreakupTrigger -= 1
+                    if chinese_lilithBreakupTrigger == 0:
+                        jump chinese_phone_caught 
+                    else:
+                        jump chinese_phone_peek_numbers
+                elif chinese_lilithBreakupTrigger == 0:
+                    n "None of the other codes seem to result in anything either. You are not sure how many you tried, you decide to close the phone in case [persistent.date] will come back."
+                    jump chinese_phone_caught
+                else:
+                    n "You feel as if you could still try a few more codes before she comes back."
+                    jump chinese_phone_randomNumbers
 
 
 
@@ -831,7 +855,7 @@ label chinese_phone_noPeek:
         n "And yet..."
         n "You are thinking about it aren't you?"
         n "If you weren't before, now you most definetly are."
-    jump restaurant_death_1
+    jump restaurant_death_1 #Lilith walks back from the bathroom and will die.
 
 label chinese_phone_peek_numbers:
 
@@ -846,23 +870,33 @@ label chinese_phone_peek_numbers:
         n "You might just have enough time to learn one phone-number."
 
     $ peeked_phone_temp = True
-    menu:
+    menu chinese_learnNumberChoice:
         "Learn [persistent.date_sis]'s phone number." if not persistent.abigail_call_knowledge:
             $ persistent.abigail_call_knowledge = True
-            jump chinese_phone_caught
+            jump chinese_phone_loop
         "Learn David's phone number." if not persistent.david_call_knowledge:
             $ persistent.david_call_knowledge = True
-            jump chinese_phone_caught
+            jump chinese_phone_loop
         "Learn [persistent.date_ghost]' phone number." if not persistent.james_call_knowledge:
             $ persistent.james_call_knowledge = True
-            jump chinese_phone_caught
+            jump chinese_phone_loop
         "Learn Lila's phone number." if not persistent.lila_call_knowledge: 
             $ persistent.lila_call_knowledge = True
-            jump chinese_phone_caught
+            jump chinese_phone_loop
         "Put the phone back." if persistent.abigail_call_knowledge and persistent.david_call_knowledge and persistent.james_call_knowledge and persistent.lila_call_knowledge:
             $ restrainingorderfamily_violation_counter -= 1
-            jump chinese_phone_caught
+            if chinese_lilithBreakupTrigger > 0:
+                jump chinese_phone_peek_putPhoneBack
+            else:
+                jump chinese_phone_caught
 
+label chinese_phone_loop:
+    if chinese_lilithBreakupTrigger > 0:
+        if not persistent.abigail_call_knowledge or not persistent.david_call_knowledge or not persistent.james_call_knowledge or persistent.lila_call_knowledge:
+            n "You feel as if you have enough time to learn an extra phone number before she will come back."
+        jump chinese_learnNumberChoice
+    else:
+        jump chinese_phone_caught
 
 
 

@@ -559,7 +559,46 @@ screen about():
 
             ## gui.about is usually set in options.rpy.
             if gui.about:
-                text "[gui.about!t]\n"
+                if persistent.lildeaths == 0:
+                    $ persistent.fakeAbout_knowledge = True
+                    text "[gui.about!t]\n"
+                else:
+                    $ persistent.trueAbout_knowledge = True
+                    if persistent.fakeAbout_knowledge == True:
+                        $ gui.about = _p("""
+                        As you've already noticed I may have lied a little...
+
+                        This game is called: "Groundhog Date with Lilith"
+
+                        This is not really a game about a good date you see.
+
+                        It's more about choice, or the lack thereof.
+
+                        No matter how much we try to branch off to different choices in games like this, they always tend to come together towards the same few endings with maybe a variation or two in it.
+
+                        The game is also about something else but I don't want to spoil that for you, you'll need to learn it yourself.
+
+                        To conclude this info I'd like to thank Chris Cornell/Paper Dino for making *Save the Date*, a work that heavily touched me and inspired this game (or these games — I went through a few iterations of this project before I ended up with this one.)
+
+                        Thank you for reading this and for playing my game, I hope you are enjoying it.
+
+                        - Red Semele
+                        """)
+                    else:
+                        $ gui.about = _p("""
+                        This is a game about choice, or the lack thereof, and how the players deal with that.
+
+                        No matter how much we try to branch off to different choices in games like this, they always tend to come together towards the same few endings with maybe a variation or two in it.
+
+                        The game is also about something else but I don't want to spoil that for you, you'll need to learn it yourself.
+
+                        To conclude this info I'd like to thank Chris Cornell/Paper Dino for making *Save the Date*, a work that heavily touched me and inspired this game (or these games — I went through a few iterations of this project before I ended up with this one.)
+
+                        Thank you for reading this and for playing my game, I hope you are enjoying it.
+
+                        - Red Semele
+                        """)
+                    text "[gui.about!t]\n"
 
             text _("Made with {a=https://www.renpy.org/}Ren'Py{/a} [renpy.version_only].\n\n[renpy.license!t]")
 

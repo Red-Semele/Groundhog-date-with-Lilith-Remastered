@@ -45,7 +45,7 @@ label restaurant_deaths:
                 n "For a moment you get lost in your thoughts."
                 n "When you refocus you notice Lilith walking back to her chair."
                 l "Heya [persistent.name], I hope you didn't have to wait too long."
-                l "I hope they our food will be ready soon, I'm kind of starving."
+                l "I hope our food will be ready soon, I'm kind of starving."
                 n "Just as she said those words, almost by magic you can see a waitress heading your way."
                 if peking == True:
                     n "When the waitress arrives with your double plates of Peking duck [persistent.date] and you immediately dig in."
@@ -290,34 +290,36 @@ label restaurant_deaths:
                     $ carDescription = "a red Sedan"
                 n "[persistent.date] leaves the [resname], you rush after her in an effort to calm her down.
                 When you set one foot outside of the doorframe [carDescription] drives head first into the both of you."
-                n "Luckily you managed to get flung to the side somehow. [persistent.date] however was not so lucky."
-                n "She died on impact when the speeding car hit her."
-                if persistent.redSedan_knowledge == False:
-                    $ persistent.redSedan_knowledge = True
+                label car_death_result:
+                    n "Luckily you managed to get flung to the side somehow. [persistent.date] however was not so lucky."
+                    n "She died on impact when the speeding car hit her."
+                    if persistent.redSedan_knowledge == False:
+                        $ persistent.redSedan_knowledge = True
         jump gameOver
 
 label kokiri_deaths:
     label angryLilith:
-        $ persistent.runAwayLilith_counter += 1
-        if major_love_offence >= 1:
-            n "[persistent.date] jumps up from where she was lying mere moments ago, on her face is a visible layer of anger or is it... disappointment?"
-            n "You're not sure which one would sting more, probably a combination of the two."
-            n "She wipes the crumbs on her clothes away with a frightening speed and angrily storms down the hill."
-            if noTalkAngryLilith == False:
-                l "Goodbye [persistent.name], we are done here."
-                l "Do not come back for extra attempts if you have even the slightest slither of respect for me."
-            $ persistent.kokiri_angry_noretry = True
-        elif minor_love_offence > 1:
-            n "[persistent.date] stands up from where she was lying mere moments ago. You can clearly see a disappointed look on her face."
-            if noTalkAngryLilith == False:
-                l "This might all be a game for you [persistent.name], but for me this is very real."
-                l "So I'd like to be treated with the respect you would give to a real person."
-                l "You need to learn that your actions have consequences, even in something as simple as a game."
-                l "I'm leaving now. Don't try to follow me, there's nothing you can say to me right now to change my mind."
-                l "Besides, you can just retry right?"
-                l "I'd prefer if you didn't, but I know I can't stop you."
-                l "Let's just hope that when I meet you here once again during the next attempt you will have learnt your lesson."
-                l "Goodbye [persistent.name]."
+        if angryLilith:
+            $ persistent.runAwayLilith_counter += 1
+            if major_love_offence >= 1:
+                n "[persistent.date] jumps up from where she was lying mere moments ago, on her face is a visible layer of anger or is it... disappointment?"
+                n "You're not sure which one would sting more, probably a combination of the two."
+                n "She wipes the crumbs on her clothes away with a frightening speed and angrily storms down the hill."
+                if noTalkAngryLilith == False:
+                    l "Goodbye [persistent.name], we are done here."
+                    l "Do not come back for extra attempts if you have even the slightest slither of respect for me."
+                $ persistent.kokiri_angry_noretry = True
+            elif minor_love_offence > 1:
+                n "[persistent.date] stands up from where she was lying mere moments ago. You can clearly see a disappointed look on her face."
+                if noTalkAngryLilith == False:
+                    l "This might all be a game for you [persistent.name], but for me this is very real."
+                    l "So I'd like to be treated with the respect you would give to a real person."
+                    l "You need to learn that your actions have consequences, even in something as simple as a game."
+                    l "I'm leaving now. Don't try to follow me, there's nothing you can say to me right now to change my mind."
+                    l "Besides, you can just retry right?"
+                    l "I'd prefer if you didn't, but I know I can't stop you."
+                    l "Let's just hope that when I meet you here once again during the next attempt you will have learnt your lesson."
+                    l "Goodbye [persistent.name]."
         n "[persistent.date] turns away from you and walks down the hill cool and collected, it seems she has made up her mind about this."
         n "She doesn't get far from the hill, maybe a metre or fifteen before she seemingly trips over a tree root."
         n "She does not get up."
@@ -356,8 +358,14 @@ label kokiri_deaths:
                             
 
                     else:
-                            "The meteorite can't kill her because she is sitting somewhere else, FILLER"
-                            #TODO: This part already exist somewhere in this game, I think it's based on calling someone or something? Probably try to search for this? Although there she is not aware of where it falls, so maybe write some slightly different text.
+                            n "The both of you watch as it comes closer and closer, becoming larger in an alarming rate."
+                            n "The meteorite breaks into many different parts that spread all around the forest."
+                            n "None of the pieces manage to hit Lilith this time."
+                            n "For a brief flash you are reminded of how things ended before."    
+                            n "But then you realise something, now that she is safe this is actually a lovely sight."
+                            n "Something you would only experience once in a lifetime."
+                            n "But you will experience it a lot more than that, won't you?"      
+                            jump kokiri_death_1_prevented
                 
                 play music game_over
                 n "The meteorite breaks into many different parts that spread all around the forest."
@@ -402,32 +410,41 @@ label kokiri_deaths:
 
         label kokiri_death_1_prevented:
             #if kokiri_prevented == 1: This is code that would have made it so that it triggers based on 1-4 and the deaths.
-                n "As she moves to the other side of the blanket, to your left, you once again see the same meteorite that killed her last time. It breaks of in many peaces, one of them falling right where she was sitting just a moment ago."
+            if not kokiri_alternateplace:
+                n "As she moves to the other side of the blanket, to your left, you once again see the same meteorite that killed her last time. It breaks of in many pieces, one of them falling right where she was sitting just a moment ago."
                 n "[persistent.date] gives you a startled look."
                 l "Oh wow, a meteorite? That was what was going to kill me now?"
-                l "So you spoke the truth... I keep on dying over and over on this date?"
-                l "Seems like I woke up with some major bad luck today."
-                l "Although I suppose I am lucky enough to go through this with you, thank you for saving me once again [persistent.name]!"
-                n "[persistent.date] pauses for a moment."
-                l "Alright, I have to put the levity aside for a moment and be honest with you."
-                l "I might look and sound calm right now but that's just because I kind of freeze in situations like this."
-                l "This..."
-                l "It's a lot to deal with right now."
-                l "I knew {b}something{/b} strange was going on when you told me about the kokiri forest."
-                l "That's why I came here I suppose, to figure out how you knew about this place."
-                l "But I guess even when you explained it to me, a part of me didn't believe you."
-                l "A part of me didn't want to believe you."
-                l "Even if deep down I knew you were telling the truth."
-                l "..."
-                l "I just need a moment to gather my thoughts [persistent.name], after that we can continue our conversation if you'd like."
-                n "You give a slight nod, the corners of [persistent.date]'s mouth subtly move up, you almost didn't quite catch it."
-                n "You're not quite sure how long the moment lasts, but after a while she shifts her postion and gives you a nod."
-                l "I think I am ready now, this is still a lot but I might be able to see it through now."
-                l "Thank you for staying here with me, it helped me calm down a little while I was thinking."
-                if car_caught == False:
-                    jump kokiri_death_2
-                else:
-                    jump kokiri_death_2_prevented
+            else:
+                l "That was beautiful..."
+                l "I've never seen anything like that."
+                n "She has many many times, and will many many times more. But each time will be her first. I suppose ignorance is bliss isn't it?"
+                l "But is that the reason we sat here instead of on the hill?"
+                l "Was that meteorite going to kill me?"
+                n "She looks you straight into your eyes, seemingly having found the answer to her question in them."
+
+            l "So you spoke the truth... I keep on dying over and over on this date?"
+            l "Seems like I woke up with some major bad luck today."
+            l "Although I suppose I am lucky enough to go through this with you, thank you for saving me once again [persistent.name]!"
+            n "[persistent.date] pauses for a moment."
+            l "Alright, I have to put the levity aside for a moment and be honest with you."
+            l "I might look and sound calm right now but that's just because I kind of freeze in situations like this."
+            l "This..."
+            l "It's a lot to deal with right now."
+            l "I knew {b}something{/b} strange was going on when you told me about the kokiri forest."
+            l "That's why I came here I suppose, to figure out how you knew about this place."
+            l "But I guess even when you explained it to me, a part of me didn't believe you."
+            l "A part of me didn't want to believe you."
+            l "Even if deep down I knew you were telling the truth."
+            l "..."
+            l "I just need a moment to gather my thoughts [persistent.name], after that we can continue our conversation if you'd like."
+            n "You give a slight nod, the corners of [persistent.date]'s mouth subtly move up, you almost didn't quite catch it."
+            n "You're not quite sure how long the moment lasts, but after a while she shifts her postion and gives you a nod."
+            l "I think I am ready now, this is still a lot but I might be able to see it through now."
+            l "Thank you for staying here with me, it helped me calm down a little while I was thinking."
+            if car_caught == False:
+                jump kokiri_death_2
+            else:
+                jump kokiri_death_2_prevented
     label kokiri_2:
         label kokiri_death_2:
             play music game_over
@@ -612,9 +629,9 @@ label kokiri_death_2_prevented_triedEverything:
                                     n "But nothing can last player, each line from the script ends at some point, making way for the next."
                                     if persistent.kokiri_death_4_hill_holdHand or persistent.kokiri_death_4_hill or persistent.kokiri_death_4_noHill == True:
                                         n "And we both know what the approaching lines will be, no matter how hard you might try to stall them."
-                                    
+                                $ kokiri_fullControlAndStillDying = True   
                                 jump kokiri_death_4_hill
-                                $ kokiri_fullControlAndStillDying = True
+                               
                                 
 label kokiri_death_2_prevented_youWereHappyWithRon:
 

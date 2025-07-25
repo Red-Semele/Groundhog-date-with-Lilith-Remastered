@@ -318,7 +318,7 @@ label beach_start:
                                         jump beach_friterie
                                 "My heart desires the mayonnaise. I must choose the mayonnaise.":
                                         n "What? Didn't you listen to me? You can have anything you want! Except only mayo... But that's still a lot, if you can't appreciate that I'm just going to give you nothing instead."
-                                        menu:
+                                        menu mayoThreatenChoices:
                                             "If you do that I'm going to erase my persistent values.":
                                                 n "Hah, as if. You wouldn't dare to do something so stupid."
                                                 n "That would effectively wipe your progress, and even if does wipe my memories too, essentially killing me, there is no way you'd sacrifice your progress."
@@ -327,14 +327,37 @@ label beach_start:
                                                 #TODO: Emulate something like this in renpy, bring up a fake menu and check what the player does
                                                 $ persistent.mayoFreak == True
                                             "Listen, if you don't let me have my mayo I'm going to punch you or something.":
-                                                n "We both know that you can't hurt me no matter what you try [persistent.name]. But you know? Just for trying to threaten me you get no food and especially no mayo."
+                                                n "And how are you going to punch a disembodied voice? Good luck with that."
+                                                n "We both know that you can't hurt me no matter what you try player. But you know? Just for trying to threaten me you get no food and especially no mayo."
                                                 jump beach_start
                                             "Fine, not like i have any say on the matter.":
                                                 n "Indeed, do you know why that is? Because I am the narrator and you are not."
                                                 jump beach_start
       
-                        
-                    
+                                "I have to fulfill the prophecy." if persistent.mayoProphecy_knowledge == True:
+                                    n "...What?"
+                                    n "What prophecy?"
+                                    n "What are you talking about player?"
+                                    menu:
+                                        "That bubble I saw of me eating pure mayo. You narrated it, shouldn't you remember?":
+                                            n "Oh I see... I'm begining to regret having narrated that to be honest."
+                                            n "But anyway, it is not because you saw that bubble that you now have to do this, right?"
+                                            n "The bubbles also showed you choices you might never make."
+                                            n "Don't do this. I can still let you pick something better if you let me."
+                                            menu:
+                                                "I just have to try, I want to know what it tastes like.":
+                                                    "Filler"
+                                                "But some of those bubbles were my destiny, this one is aswell. Let me have the mayo.":
+                                                    "Filler"
+                                                "Maybe you are right about this, I think I let myself get a little carried away.":
+                                                    n "You think so?"
+                                                    n "..."
+                                                    n "Well, I shouldn't be mad, atleast you changed your mind."
+                                                    n "Let's just pretend this never happened."
+                                                    n "Time to choose what you'd like once again."
+                                                    $ Friet_not = 0
+                                                    jump beach_friterieMenu
+                                            
                         "I actually did.":
                             n "Ah I see, what a relief!"
                             $ Friet_not = 0

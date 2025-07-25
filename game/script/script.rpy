@@ -239,6 +239,8 @@ label start:
           default persistent.favouriteFirstDate = False
           default persistent.fish = False
           default persistent.fisher = False
+          default persistent.trueAbout_knowledge = False
+          default persistent.fakeAbout_knowledge = False
 
           #Characters:
           default persistent.date_dad = ""
@@ -428,6 +430,8 @@ label start:
           default conversationtracker_poem_bang = False
           default burger_nightmare = False
           default kokiri_jamesTalkBlock = False
+          #Chinese
+          default chinese_lilithBreakupTrigger = 0
 
 
 
@@ -2720,7 +2724,14 @@ label restaurant_death_2_preventionAttempt:
                               n "The people in the cafe desperately make their way to the exit, when they realise the door doesn't seem to be able to open they panic even more."
                               n "They push against it with all of their strength, but the door doesn't even budge."
                               n "Soon the fish are able to swim around freely, the water now comes to around your middle."
-                              #TODO: Make this segway better into the drowned death, or maybe even add this to the drowned death.
+                              n "Lilith and you give eachother a knowing look."
+                              if love_meter > 2: 
+                                   n "The two of you wait for death in eachothers arms."
+                              else: 
+                                   n "All you can do is wait for death."
+
+                              n "And you do not have to wait long at all for it."
+                              jump gameOver
 
 
                          "We are all going to die! This whole place is going to get flooded!":
@@ -2741,12 +2752,16 @@ label restaurant_death_2_preventionAttempt:
                               l "I guess getting hit by a car is better in that case? Probably a lot quicker."
                               n "You can cleary hear the fear in her voice, even though she is trying to hide it."
                               l "I mean, it does make me feel slightly better that our failed attempt atleast got some customers to escape."
-                              n "The two of you stand in front of the exit, frozen in place."
-                              n "Terribly aware of what the next step will bring."
-                              n "But feeling the eyes of the barista in your back you feel like you have no other options, and you step through the door."
-                              #TODO: Narrate you and lilith getting hit by the same red sedan like usual.
-
-     elif chinese:
+                              n "The two of you leave the cafe in shame."
+                              if persistent.cafe_car_death == True:
+                                   n "And just like clockwork the red Sedan shows up once more."
+                              elif persistent.chinese_car_death or persistent.burger_car_death or persistent.kokiri_death_2: 
+                                   n "Suddenly you notice the red Sedan. It seems you aren't safe from it in here either." 
+                              else: 
+                                   n "Suddenly you notice a red Sedan."
+                              n "It drives straight into the two of you."
+                              jump car_death_result
+     elif chinese:                 
           n "Lilith and you walk into the women's restroom together."
           n "There is no one else there."
           n "You smell the destinct scent of roses, upon further inspection it seems to come from an aroma difuser."
@@ -3668,7 +3683,13 @@ label jamesConversationMenu:
                j "You could probably label each bubble as a sort of alternate world. You have the power to cross those different worlds and to maintain your memories of them."
                j "Since this is a game where everyone has an expected way to act on every action that means that every world is almost exactly the same except for the choices you make and the reactions that come from those."
                j "So all these choices, both made in the past, never made, and yet to be made are yours."
-               #TODO: Sum up a few things that have already happened and some that maybe still have to happen.
+               n "Looking at the bubbles a few catch your eye."
+               n "The first one depicts Lilith and you sitting in the burger restaurant, but at a different table than the one where she got shot."
+               n "The second bubble shows you Lilith getting up from the table at the chinese restaurant and you running after her pleading for her to stop. The red Sedan never shows up and she leaves you standing at the exit."
+               n "The third one shows you in the cafe, peeking at the dice Lilith rolled using the reflection of the aquarium."
+               n "The next bubble shows you in the ufo in kokiri forest, alone, with Lilith nowhere in sight."
+               n "The last bubble shows you popping a full blob of mayo straigth into your mouth at a fritstore near the beach."
+               $ persistent.mayoProphecy_knowledge = True
           "No matter what I try [persistent.date] keeps dying when I go on a date with her.":
                if persistent.lilithAliveAndRetriedCounter > 0:
                     j "That is the thing, isn't it [persistent.name]?"
@@ -3743,9 +3764,11 @@ label jamesConversationMenu:
                                         j "I'm not so sure myself..."
                                         j "But neither of our thoughts about that matter do they? Yours do."
                                         j "So please [persistent.name], don't forget your own role in this story, the perks it can bring."
+                                        j "Because I think it is more important than you might think."
                                         
-                                        #TODO: Fill this out a bit more
-
+     j "I have exhausted most of my energy having this conversation with you. If you want to talk about other things next time you know how to find me don't you?"
+     j "I'll send you back now, good luck [persistent.name]."
+     jump Game_start2
 
 return
 
@@ -3850,12 +3873,15 @@ label reunion_showUp_iReunitedYou:
      l "So you have been reliving this same day constantly?"
      l "And you've been using the info you gathered to keep me safe?"
      l "To do all of this?"
-     l "You've medled with my entire family to reach this point?"
-     l "I'm not sure how I feel about this, it feels like you misused my trust..."
+     l "I don't know how I feel about this..."
+     l "You've involved my entire family to reach this point?"
      l "I'm thankful for you saving me and I'm happy this moment has happened but this feels pretty weird."
-
-     #TODO: "Rewrite this a bit"
-
+     l "Because I'm fairly certain I would never ask you to do this."
+     li "Honey, I'm sure [persistent.date] meant well."
+     l "That's not the point mom. Wheter [persistent.date] meant well or not I didn't ask for this."
+     if persistent.restrainingorderfamily_knowledge:
+          n "In fact she specifically asked you not to do this, didn't she?"
+     l "I may forget what happens each time, but does that automatically remove my right to make decissions?"
      n "Suddenly you spot a very familiar red Sedan driving towards all of you."
      n "Things are hectic, the whole family is screaming and everything seems to happen in a blur."
      n "You can't react in time before you meet the immense force of the car."
@@ -3891,14 +3917,16 @@ label reunion_showUp_iReunitedYou:
                menu:
                     "I promise.":
                          d "Thank you [persistent.name], thank you for everything!"
-                         #TODO: "Keep writing text, add a retry link.")
+                         jump reunion_ending_davidLeavesSegway
+
                     "Actually it doesn't work like that, she will still stay death in this world but in another one she will live.":
                          d "Then please go through with it, make sure my daughter from another world is safe."
                          d "I'm fine living my life like this, I can be there for Abigail and Lila, like I should've been before."
                          d "So go, and be there for Lilith."
                          d "I'll live my life here with a smile, both for what I still have and what my other self will gain without knowing."
-                         # TODO: "Write this better and rewrite it. Add a retry link.")
-                    "Oh, she survives in the other alternatives of that moment, I've already seen them.": #TODO: (Make this an option if you saw them)
+                         jump reunion_ending_davidLeavesSegway
+
+                    "Oh, she survives in the other alternatives of that moment, I've already seen them." if persistent.ending_reunionGoodEnding:
                          d "What?..."
                          d "So you did that moment over after you had already sucesfully reunited us without any complications?"
                          d "Can I ask you why you did?"
@@ -3987,11 +4015,22 @@ label reunion_showUp_iReunitedYou:
                                    d "Thank you for reuniting me with my family, but for nothing else."
                                    d "At the very least we will be able to comfort eachother during our loss."
                               d "Goodbye [persistent.name]. And stay away from my daughter next attempt if she only means this little to you."
-                                   
+               label reunion_ending_davidLeavesSegway:
+                    d "I'll give you some time to recover because you have been through a lot."  
+                    d "Take it easy and once you are fully recovered you can try again."   
+                    n "David gets up from his chair and walks towards the door, his hand rests on the doorhandle."
+                    d "Once again I'd like to thank you [persistent.name]."      
+                    d "Goodbye, and perhaps we'll meet again?"  
+                    n "And with that he left."   
+                    n "Now you're once again alone." 
+                    n "Especially without [persistent.date]."
+                    n "Laying here, waiting, it is too much for you." 
+                    n "You want to see her again, and preferably now."
+                    jump gameOVer
                     
                $ persistent.davidPromise = True
                
-          
+
          
             
 label reunion_JustPassingBy:
@@ -4181,10 +4220,14 @@ label ghostReunion_transferUniverse:
                          l "Some things just aren't meant to be held onto constantly."
                          l "Because this still is a game isn't it?"
                          l "What are you going to do when she, when I... when your world's Lilith is constantly repeating old lines?"
-                         l "When you went throuhg each last unique line she can say?"
+                         l "When you went through each last unique line she can say?"
                          l "When you did so multiple times?"
                          l "Think about that. Would you let her go when she still has some charm to her? When there are still things you haven't discovered?"
                          l "Or would you prefer to drop her when you've grown either bored or sick of her?"
+                         l "To be clear, I understand you [persistent.name], I really do. Letting go is hard."
+                         l "I am not judging you for this, as me and my brother also had a hard time doing so."
+                         l "But I do however hope that what I said will eventually help you in your process."
+                         l "For now though there is no shame in staying here just a little longer, as long as that doesn't turn into an eternity spent in this place."
                          #TODO: Continue a bit more. Let them go into the Darkness without you, you can watch the scene.
 
 

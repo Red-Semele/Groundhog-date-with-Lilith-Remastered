@@ -275,6 +275,7 @@ label gdwl_functions:
             globals()["rw_total"] = 0
             globals()["family_ask"] = 0
             globals()["riddleAnswersTold"] = 0
+            globals()["chinese_lilithBreakupTrigger"] = 0
             
             
             globals()["met_check"] = ""
@@ -359,6 +360,7 @@ label gdwl_functions:
                 "playerCalledSomeone", 
                 "kokiri_positiveDavidStory",
                 "kokiri_familyContacted",
+                
                 
                 "peeked_phone_temp",
                 "kokiriStarGazed", #Check if you have watched the stars with [persistent.date] at a certain part of the game this run.

@@ -421,9 +421,6 @@ label kokiri_talkAboutSomethingElse:
 
 label tellLilithAboutNar:
     $ conversationtracker_tellheraboutnarrator = True
-    #(This one actually is already integrated into the main path, I think the first one, so it's probably better to remove it.
-    #TODO: Check if it is really integrated or not.
-    #Is it really? I think just saving it here can be beneficial so the player has more choice on what they can talk about.
     l "I'd like to meet this Narrator you're talking about."
     n "... No one ever asked to do that before."
     n "Tell her I said hi."

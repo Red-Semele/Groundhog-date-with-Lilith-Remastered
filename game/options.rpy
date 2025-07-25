@@ -29,7 +29,19 @@ define config.version = "1.0"
 ## Text that is placed on the game's about screen. Place the text between the
 ## triple-quotes, and leave a blank line between paragraphs.
 
-define gui.about = _p("""
+default gui.about = _p(""""Welcome to: \"Great date with Lilith\"! In this game you'll have a date with Lilith just like the name implies."
+
+"But there is a catch! You will only have one date with her."
+
+"After the first date is succesfully completed the game will not let you retry again."
+
+"This was designed to make sure you would try to make this date as great as possible."
+
+"Because just like in real life you only have one shot, and that is what makes our choices and actions beautiful isn't it?"
+
+"I hope you enjoy the game as there crept quite a lot of work in it."
+
+"-Red Semele"
 """)
 
 
