@@ -138,7 +138,8 @@ label kokiri_explanation_game:
                     l "I wonder what you’d say if you weren’t confined to just those options."
                     l "Are you a lot different in real life compared to how you act in this game?"
                     menu:
-                       "I actually am pretty much the same.":
+                        
+                        "I actually am pretty much the same.":
                             l "Oh you are? That's great to hear!"
                             l "That way I can really feel like I'm getting to know the real you, the one on the other side of the screen."
 

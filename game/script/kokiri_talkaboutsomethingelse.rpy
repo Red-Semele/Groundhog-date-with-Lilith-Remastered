@@ -617,6 +617,7 @@ label tellLilithAboutNar_stumbleUponLesson:
     n "Fragments of them but never the whole because, just like the player, He doesn't live in this game."
     n "This game can never fully accommodate either of their essences fully."
     n "Also I'm sorry to do this but your time is up, I have to move things along."
+    
     if kokiri_conversation < 4:
         jump expression f"kokiri_death_{kokiri_conversation}" #TODO: Check if this actually works.
     elif kokiri_alternateplace:
