@@ -160,6 +160,7 @@ label start:
           default persistent.playerCalledAbigail = False
           #Beach flags.
           default persistent.beach_knowledge = False
+          default persistent.mayoProphecy_knowledge = False
 
           #Burger related flags and counters
           default persistent.burger_poem_knowledge = False

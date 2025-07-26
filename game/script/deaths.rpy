@@ -280,16 +280,18 @@ label restaurant_deaths:
             if currentcar == True:
                 n "[persistent.date] leaves the [resname], you can not bare seeing what happens next so you decide to stay inside.
                 Even from inside you can still hear the car crash into her."
-                #TODO:Account for the notangry flag in the original here:
-
             else:
                 $ currentcar = True
                 if persistent.redSedan_knowledge == True:
                     $ carDescription = "the same red Sedan that you encountered before"
                 else:
                     $ carDescription = "a red Sedan"
-                n "[persistent.date] leaves the [resname], you rush after her in an effort to calm her down.
-                When you set one foot outside of the doorframe [carDescription] drives head first into the both of you."
+                if angryLilith == True:
+                    n "[persistent.date] leaves the [resname], you rush after her in an effort to calm her down."
+                    
+                else:
+                    n "Lilith follows you to the exit of the [resname]."
+                n "When you set one foot outside of the doorframe [carDescription] drives head first into the both of you."
                 label car_death_result:
                     n "Luckily you managed to get flung to the side somehow. [persistent.date] however was not so lucky."
                     n "She died on impact when the speeding car hit her."
