@@ -67,7 +67,6 @@ label kokiri_explanation:
     menu:
 
         "I'm in some sort of groundhog day scenario, a groundhog date if you will." if not kokiri_groundhog_lie:
-            #TODO: For a weird reason this one in the alternate location dissapeared before I could even lie about it.
             jump kokiri_explanation_groundhog
 
         "I'm psychic, I can predict things like Kokiri woods." if not kokiri_psychic_lie:
@@ -138,7 +137,7 @@ label kokiri_explanation_game:
                     l "I wonder what you’d say if you weren’t confined to just those options."
                     l "Are you a lot different in real life compared to how you act in this game?"
                     menu:
-                        
+
                         "I actually am pretty much the same.":
                             l "Oh you are? That's great to hear!"
                             l "That way I can really feel like I'm getting to know the real you, the one on the other side of the screen."
@@ -278,7 +277,7 @@ label kokiri_explanation_game:
 
                                     "I don't know how to feel. If I can't really be me then what is the point of playing this game? Am I even playing it at that point or am I just going through the motions?":
                                         l "I understand that you might feel like that. But it is very important to understand that even if we don't have as much control over our actions as we thought that still doesn't mean none of this matters."
-                                        l "Afterall, at any time you could have chosen to not play this game anymore. But you keep coming back for me."
+                                        l "After all, at any time you could have chosen to not play this game anymore. But you keep coming back for me."
                                         l "That choice is truly your own, isn't it?"
                                         l "It might say more about you than any other choice you can make in this game."
                                         menu:
@@ -824,7 +823,7 @@ label kokiri_gamegoal_noIdea_2:
             "No, I think I understand the purpose of this game now. Thanks Lilith!":
                 
                     l "No problem at all, I'm just happy that I could help out!"
-                    l "Afterall, we are a team aren't we [persistent.name]?"
+                    l "After all, we are a team aren't we [persistent.name]?"
                     l "So it's nice to know that I can somehow assist you during your attempts to save me."
                     l "Because this loop is too heavy to just carry on your own. And know that you never have to."
                     l "Just like you are there for me I am there for you."
@@ -982,7 +981,7 @@ label kokiri_gamegoal_succesful_survive:
                 n "I suppose the only question is wheter it's to her, or to yourself."
             if love_meter > 2:
                 l "That's very reassuring to hear."
-                l "Because my life is literally in your hands afterall."
+                l "Because my life is literally in your hands after all."
                 l "I am lucky that I feel I can trust you."
                 l "I know that if it had to come to it, you would do the right thing."
                 l "But for now, I'm hoping there is some other way."
@@ -1230,7 +1229,7 @@ label kokiri_scenery:
         n "She gasps for a moment."
         l "Wow, it seems like we have gone through a lot together [persistent.name]. I'm not sure if it's a good or a bad thing that I can't remember."
         n "You shudder for a moment, it's definetly a good thing that she can't remember the gruesome ways she died."
-        n "Ignorance is bliss afterall."
+        n "Ignorance is bliss after all."
         n "In it's final act of destruction the car races at full speed and smashs against the entrance of the mall."
         n "The burger restaurant explodes due to the gas-explosion, taking a sizeable chunk of the mall with it."
         n "However the Sudan escapes without a scratch."
@@ -1826,7 +1825,11 @@ label kokiri_death_4_noDeath:
 
     else:
         l "There would be no need for replaying the same part over and over, trying to save me."
-        l "As we could just enjoy our time together fully from then on. We would be able to have a second date, not like these tens of first dates you must've had with me already." #TODO: If you tell her how many dates you've been on have her refereence that number instead.
+        if kokiri_ToldLillyHowManyRetries == True:
+            $ changeableWord = persistent.retry_counter
+        else:
+            $ changeableWord = "tens of"
+        l "As we could just enjoy our time together fully from then on. We would be able to have a second date, not like these [changeableWord] first dates you must've had with me already."
         l "Although I do wonder, what would you do if the game would end right after I survived all of this?"
         menu:
             "I think I would have to have peace with that. There is nothing I can change about that, right?":
@@ -2018,6 +2021,7 @@ label kokiri_death_dialogue_stillDying:
                         l "How many times have you gone through the motions now?"
                         menu:
                             "I have done so [persistent.retry_counter] times.":
+                                $ kokiri_ToldLillyHowManyRetries = True
                                 if persistent.retry_counter > 16:
                                     if persistent.retry_counter < 50:
                                         l "Are you going to make the breakthrough after 50 times, maybe 100?"
@@ -2276,7 +2280,7 @@ label kokiri_death_dialogue_stillDying:
                         n "It's probably not the best idea to constantly bring up something philosopical on your first date."
                         n "Well... for her it's the first date. For you it's becoming hard to keep track of how many first dates you had with her isn't it?"
                         n "I'll help you out, it's somewhere around the [persistent.lildeaths]th date for you."
-                        n "But anyway, I just wanted to say that I'm proud of you for not saying too much, that is my job afterall."
+                        n "But anyway, I just wanted to say that I'm proud of you for not saying too much, that is my job after all."
                         n "Let me jump right back into the narration."
                         n "You're not sure how long you two have been staring at the stars, it might have been a minute or fifteen of them. All you're sure about is that you felt at peace for every second of it."
                         l "Thank you for making these memories with me [persistent.name] even if I won't remember them the next time, I'll remember them for as long as I possibly can."
@@ -2745,7 +2749,7 @@ label kokiri_thereIsMore:
                                 if kokiri_goalSurvive == True:
                                     l "I assume you were also lying about keeping me safe being your primary goal, weren't you?"
                                 if kokiri_psychic_lie or kokiri_groundhog_lie == True:
-                                    l "Afterall, one of the first things you told me, when I asked you to explain what all of this was about was a lie."
+                                    l "After all, one of the first things you told me, when I asked you to explain what all of this was about was a lie."
                                     l "So all that talk about your goals was also probably a lie."
                                 l "I have to say, it doesn't surprise me a lot."
                                 l "Throughout our entire talk I kept hoping deep down that you would be different than my gut was telling me you were."
@@ -2860,7 +2864,7 @@ label kokiri_scenery_choice:
                             jump kokiri_continue_talking
                 else:
                     l "We can just talk about something else then."
-                    l "Afterall, I could use a change of topic because my head still hurts slightly."
+                    l "After all, I could use a change of topic because my head still hurts slightly."
                     l "So, what would you like to talk about?"
                     jump kokiri_talkAboutSomethingElse
 
@@ -3026,7 +3030,7 @@ label noContactFamilyPromise:
                     l "I don't want to give anyone else that kind of burden too."
                     l "I don't want anyone to have to worry about me."
                 l "I'm glad we got to talk this through."
-                l "Afterall, communication is key isn't it [peristent.name]?"
+                l "After all, communication is key isn't it [peristent.name]?"
                 l "That applies to all kind of situations, so even to ours, although it is a very unusual one."
                 if love_meter < 3:
                     l "Although I suppose we will have to see if you truly keep your word..."
@@ -3127,10 +3131,10 @@ label noContactFamilyPromise_cannotPromise_confrontation_aliveFamily:
                     n "I'm not sure what you are doing here once again, didn't you promise [persistent.date] you wouldn't contact her family already?"
                     n "Although I doubt that means anything to you does it?"
                     if persistent.restrainingorderfamily_violation_counter == 1:
-                        n "Afterall you've broken your promise once already."
+                        n "After all you've broken your promise once already."
                         n "What's stopping you from doing it again?"
                     else:
-                        n "Afterall you've broken your promise [persistent.restrainingorderfamily_violation_counter] times already."
+                        n "After all you've broken your promise [persistent.restrainingorderfamily_violation_counter] times already."
                         n "It gets easier each time doesn't it?"
 
                 $ family_curiosity_checker_movetox()

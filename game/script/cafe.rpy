@@ -176,7 +176,7 @@ label cafe_dice_result:
                                 l "That's respectable but I'm not sure when you'll get your next chance, this is not something I do all of the time."
                                 if persistent.dice_counter >= 2:
                                     n "Oh I think she doesn't have to worry about that at all..."
-                                    n "Afterall, isn't this the [persistent.dice_counter] time you try this puzzle?"
+                                    n "After all, isn't this the [persistent.dice_counter] time you try this puzzle?"
                                     if persistent.dice_knowledge == True:
                                         n "But what is peculiar to me is that you already know the correct answer, right?"
                                         n "I even gave you a reminder about it."

@@ -248,7 +248,7 @@ label burger_ordering:
                 jump burger_brother_question
 
             "Are you alright [persistent.date]? You don't need to share this story if it hurts you too much.":
-                $ love_points = + 1
+                $ love_points += 1
                 $ love_meter_updater(False)
                 l "Honestly I'm not sure if I'll ever be fully alright because of what happened."
                 l "And I think telling that story will always hurt."
@@ -281,7 +281,7 @@ label burger_ordering:
                                         if not persistent.burger_death_2:
                                             n "Do you think things will be better from here on out?"
                                             n "I guess only time will tell."
-                                        elif lildeaths > 9:
+                                        elif persistent.lildeaths > 9:
                                             n "It seems her wish will be granted, over and over and over, she is lucky that she doesn't know what consequences that always brings."
                                             n "You can't help but feel slightly jealous of her for her ignorance."
                                             n "I suppose ignorance truly is bliss, isn't it?"
@@ -308,10 +308,10 @@ label burger_ordering:
                                     n "She laughs quite loudly."
                                     l "If only you had a time machine, then you could."
                                     l "Wouldn't that be wonderful? To be able to go back in time as you please, maybe even change a few things?"
-                                    if lildeaths > 9:
+                                    if persistent.lildeaths > 9:
                                         n "That's the tricky part isn't it? To create any meaningful change at al. You've noticed it firsthand many times now."
-                                    l "I'm sure we wouldn't have to stop on going back in time to eat burgers sooner, we could do so many great things."
-                                "I never went here ith you before, it's the lovely company that makes it taste better.":
+                                    l "I'm sure we wouldn't have to limit ourselves to just going back in time to eat burgers sooner, we could do so many great things."
+                                "I never went here with you before, it's the lovely company that makes it taste better.":
                                     l "You really are a charmer aren't you [persistent.name]?"
                                     if love_meter > 2:
                                         l "Although I have to admit that I feel the same way."
@@ -355,7 +355,7 @@ label burger_ordering:
                                         l "You don't need to sacrifice yourself for my wants, alright [persistent.name]?"
                                         l "If you really don't like the burgers here we could have went to the cafe or to that chinese restaurant."
                                         if love_meter > 2:
-                                            l "Afterall, I want this date to be nice for the both of us."
+                                            l "After all, I want this date to be nice for the both of us."
                                         l "But now that we are here, would you like to order something else?"
                                         l "Maybe some chicken tenders?"
                                         n "You shake your head. Even if you don't like the burger, you have to admit it fills you quite well."
@@ -401,7 +401,7 @@ label burger_ordering:
                                                     n "Normally I would not care in the slightest."
                                                     n "But I don't want another mayo situation..."
                                                     n "So how about this? From now on you can order chicken tenders here if you'd like."
-                                                    n "Yes, that should be fine for me to add, right? It doesn't change anything too major in the story afterall."
+                                                    n "Yes, that should be fine for me to add, right? It doesn't change anything too major in the story after all."
                                                     n "Isn't that cool? You unlocked a super secret menu option!"
                                                     n "{size=*0.5}It definetly wasn't always an option that I just didn't let you pick...{/size}"
                                                     n "Alright, back we go."

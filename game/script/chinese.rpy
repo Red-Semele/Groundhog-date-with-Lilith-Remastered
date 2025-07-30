@@ -188,7 +188,7 @@ label demetrius_unanswered_chat:
     $ adriel_talk = adriel_talk.strip()
     $ adriel_talk = adriel_talk.lower()
     if adriel_talk == "a shame really, it has such potential. It reminds me of amber, gregory, lisa and steven.":
-        de "Do not mention those names here! If anyone might hear our little chat it's them, they found the true path to godhood afterall."
+        de "Do not mention those names here! If anyone might hear our little chat it's them, they found the true path to godhood after all."
         $ adriel_talk = renpy.input("Unite the two halves.")
         $ adriel_talk = adriel_talk.strip()
         $ adriel_talk = adriel_talk.lower()
@@ -206,7 +206,7 @@ label adriel_unanswered_chat:
         $ dem_talk = renpy.input("Unite the two halves.")
         $ dem_talk = dem_talk.strip()
         $ dem_talk = dem_talk.lower()
-        if dem_talk == "do not mention those names here! If anyone might hear our little chat it's them, they found the true path to godhood afterall":
+        if dem_talk == "do not mention those names here! If anyone might hear our little chat it's them, they found the true path to godhood after all":
                 ad "Oh did they really do that? Now that you mention it, I remember hearing they rejected the False Gods and became Gods worth a follow themselves. How did they manage to do that?"
                 $ dem_talk = renpy.input("Unite the two halves.")
                 $ dem_talk = dem_talk.strip()
@@ -409,13 +409,13 @@ label chinese_riddle_talk_abbyMemory:
                     l "I also sometimes feel like I will lose [persistent.date_sis]. When that happens I always try to give it my all so that that won't happen."
                     l "If your situation with the person you mentioned is even slightly similair I'm sure you'll figure something out."
                     if persistent.lildeaths < 4:
-                        "[persistent.date]'s words fill your heart with hope, maybe there is a way to save her. "
+                        n "[persistent.date]'s words fill your heart with hope, maybe there is a way to save her. "
                     
                     elif persistent.lildeaths <= 7:
-                        "You are not sure if you can figure something out to save [persistent.date] but you have to try it, for her."
+                        n "You are not sure if you can figure something out to save [persistent.date] but you have to try it, for her."
                     
                     else:
-                        "You try to hold back your tears as to not alert her to something being wrong. You have seen her die so many times.
+                        n "You try to hold back your tears as to not alert her to something being wrong. You have seen her die so many times.
                         Reliving her deaths over and over while only being able to slightly change the way to inevitably reach  them again is really messing with you."
                     jump chinese_phoneScene
                 "Have you already lost someone close to you?":
@@ -563,7 +563,7 @@ label chinese_abby_game_theme_nonsense:
     l "It's hard to believe that something could ever be just pure nonsense and nothing else.
     You have to pull the ideas you use to make a game or something else from somewhere, right?"
     l "I'd like to think that even if someone would try to make a game that is just pure nonsense that atleast some aspects of meaning would seep into it."
-    l "Afterall, the medium is the message."
+    l "After all, the medium is the message."
     l "So is it possible to create and form something without meaning even slightly implied?"
     l "Sorry if I'm boring you, it's just something I've been thinking about for a while now."
     menu:
@@ -582,7 +582,7 @@ label chinese_abby_selfdoubt_IDo:
     l "I suppose you are right.
     I need to believe that I'm a good person, otherwise it would just be empty praise coming from someone I barely met."
     n "[persistent.date] tries her best to give you a smile, you can tell it's slightly forced."
-    l "No offence [persistent.name]! I like how our date is going so far, even though I am messing it up pretty badly right now, but this is our first date afterall."
+    l "No offence [persistent.name]! I like how our date is going so far, even though I am messing it up pretty badly right now, but this is our first date after all."
     jump chinese_phoneScene
 
 label chinese_abby_selfdoubt_knowYouWell:

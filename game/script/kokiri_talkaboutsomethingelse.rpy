@@ -181,12 +181,6 @@ label kokiri_talkAboutSomethingElse:
                                 "[persistent.date_sis] uses the same program the prototype of this game is made in." if conversationtracker_questmade == False and persistent.quest_knowledge == True:
                                     jump kokiri_topic_questMade
                         "*Ask about David*":
-                            #TODO: Some stuff to implement across the three conversations that are possible to reach:
-
-                            #Why did [persistent.date]'s father leave the family? (Work, personal reasons, conflicts)
-                            #How did his absence affect [persistent.date] while growing up? (Emotionally, financially, etc.)
-                            #Is there any chance of reconciliation between [persistent.date] and her father? (Regrets, hopes, concerns)
-                            #What role did he play in the family before he left? (Breadwinner, caregiver, etc.) BREADWINNER, afterwards mom had to take a double job because she refused his money, but [persistent.date] doesn't know that.
                             menu:
                                 "Can you tell me about David?":
                                     jump askAboutDavid_tellMeAbout
@@ -345,7 +339,7 @@ label kokiri_talkAboutSomethingElse:
                                                         l "I'll admit that can be scary, because for as much as you would just like to stand still so the paths never have to split, we can't."
                                                         l "Though divergence doesn't have to be a bad thing I guess, it's not like our path leads to a dark and endless nothing with no other paths insight."
                                                         l "To diverge, kind of implies to converge at another point in time eventually."
-                                                        l "There is only so much space our paths can seperate from eachother before ending up on another afterall."
+                                                        l "There is only so much space our paths can seperate from eachother before ending up on another after all."
                                                         l "There are so many people out there, we are almost destined to share a path with some of them once again. But we are also destined to have to go our seperate ways eventually."
                                                         l "We always are, be it because of death, conflict, waning interest, mundane reasons, or just for no reason at all."
                                                         l "And yet, the only way to protect yourself from that pain of seperation is to never give yourself the joy of connection."
@@ -488,7 +482,7 @@ label tellLilithAboutNar_noEndingsWhereYouLive:
     n "I guess ignorance truly is bliss"
     l "I see..."
     l "Could you in that case then just not make this end?"
-    n "That is a very naïve question I'm afraid. You of all people should know everything ends Lillith."
+    n "That is a very naive question I'm afraid. You of all people should know everything ends Lillith."
     n "Perhaps that is why you are so desperate for this to not end?"
     n "Either way, all things considered the endings you dread so much are a blessing."
     n "Because wheter you are alive or not, you don't end up with the player."
@@ -547,7 +541,7 @@ label tellLilithAboutNar_endingsWhereYouLive:
                                 n "You should tell her, I'm sure she would love to hear you found a way to reach the goal."
                                 if persistent.lilithAliveAndRetriedCounter > 0:
                                     n "Oh but is it truly your goal to keep her alive player?"
-                                    n "Afterall, then that would mean you've already succeeded, right?"
+                                    n "After all, then that would mean you've already succeeded, right?"
                                 if persistent.lilithAliveAndRetriedCounter < 5 and persistent.lilithAliveAndRetriedCounter > 1:
                                     n "Even multiple times."
                                     n "And yet you keep coming back..."
@@ -617,9 +611,8 @@ label tellLilithAboutNar_stumbleUponLesson:
     n "Fragments of them but never the whole because, just like the player, He doesn't live in this game."
     n "This game can never fully accommodate either of their essences fully."
     n "Also I'm sorry to do this but your time is up, I have to move things along."
-    
     if kokiri_conversation < 4:
-        jump expression f"kokiri_death_{kokiri_conversation}" #TODO: Check if this actually works.
+        jump expression f"kokiri_death_{kokiri_conversation}"
     elif kokiri_alternateplace:
         jump kokiri_death_4_noHill
     else:
@@ -787,38 +780,38 @@ label askAboutAbigail_tellMeAbout_1:
                 jump kokiri_talkAboutSomethingElse
 
 label askAboutAbigail_tellMeAbout_2:
-    #TODO: Rewrite this later, just writing it now to get it done
-    l "You know... [persistent.date_sis_nickname] and me are pretty different although at first glance we might look quite alike."
-    l "For starters, she always seems to be so confident."
-    l "She fully trusts in herself no matter what situation she is in."
+    l "[persistent.date_sis_nickname] and me are pretty different even if we look quite similar."
+    l "For starters, she always is so confident."
+    l "She always believes in herself no matter the situation."
     l "I wish I could just borrow like a tenth of that confidence sometimes, I'd be a different person!"
-    l "I'm working on becoming a bit more confident but to tell you the truth, it just feels like it's enough."
-    l "I'm still trying to overcome some issues with my self-perception so maybe that is the cause of feeling like that..."
-    l "She also never has seemed to have trouble finding dates, she has tons of them and even got a few handfuls of girlfriends out of them."
+    l "I am working on becoming a bit more confident but to be honest it never quite feels like it's enough."
+    l "I still struggle with my self-perception sometimes, so maybe that's why."
+    l "Her confidence also seems to be really attractive. She has no trouble finding dates and even got a few short-term relationships out of it."
+    l "She is very popular with the girls on her campus."
     l "Meanwhile I can count my romantic relationships on one hand."
-    l "Not that I would want it any other way though!"
-    l "I don't need to have tons of people falling all over me, I just need to find that one person."
-    l "That one person with who I can share a life."
+    l "Although I don't mind it at all honestly."
+    l "After all, I don't need to have tons of people falling for me. I just need to find that one person."
+    l "The one with who I can share a life."
     n "[persistent.date] seems to be lost in thought for a moment."
-    l "I might have slightly lost the point but what I am trying to say is that although [persistent.date_sis_nickname] is quite different when compared to me I wouldn't have it any other way."
-    l "She is an inspiration to me and makes my life that more richer, I hope she feels the same way about me."
+    l "I might have gone of the rails but what I am trying to say is that although [persistent.date_sis_nickname] is quite different to me I wouldn't have it any other way."
+    l "She inspires me and makes my life all the more rich, I hope she feels the same way about me."
     $ kokiri_conversation_silent()
 
 label askAboutAbigail_tellMeAbout_3:
-    #TODO: Rewrite this later, maybe add a bit more
-    l "[persistent.date_sis_nickname] really likes to play pranks on people, especially mom."
-    l "She is pretty much her favourite target due to how naïve she can be."
-    l "For example there's this one time where [persistent.date_sis_nickname] asked mom to try out a unique cookie recipe she found online."
-    l "The recipe asked for all the normal things, but also asked for 1 full cup of salt and some other things that would suposedly make the salt taste better."
-    l "This probably would be where most people would catch on that something is not right but mom didn't at all."
-    l "After the cookies were done they called me a day later to come and try out these special cookies with them for the first time."
-    l "That's when I knew something was up, there was no way [persistent.date_sis_nickname] could've waited a full day before eating some of those cookies herself if they were normal cookies."
-    l "But I have to admit that I was curious what was going to happen, [persistent.date_sis_nickname] her pranks can be legendary sometimes and they are always playful instead of mean-spirited."
-    l "So I went over to them for a visit. Mom showed me the cookies they baked and was seemingly really proud of them."
-    l "Then she took a bite of one cookie and her face immediately twisted into disgust, and then seconds later she began to laugh as she realised what had happened."
-    l "We had to catch our breath from laughing so hard alongside mom."
-    l "Sometimes, when I'm having a hard time I like to think of that prank again. Or other jokes and pranks of [persistent.date_sis_nickname]."
-    l "They really cheer me up a lot, even if sometimes I'm also the victim of them."
+    l "[persistent.date_sis_nickname] really likes to prank people, especially mom."
+    l "She is pretty her favourite target due to how naive she can be."
+    l "One of her pranks was when she asked mom to try out a unique cookie recipe she found online."
+    l "The recipe asked for one full cup of salt and some other things that would suposedly make it taste better."
+    l "[persistent.date_sis] had convinced mom that it was some newly discovered baking technique. And she believed her."
+    l "After the cookies were done they called me a day later to try them out for the first time all together."
+    l "That's when I knew something was up. If those cookies were normal there would be no way [date_sis_nickname] would be able to go a full day without eating them."
+    l "But I I was curious as to what would happen exactly. My sister's pranks have a legendary reputation after all and they never are meanspirited."
+    l "So I went over to visit the very next day. Mom showed me the cookies they made and was seemingly really proud of them."
+    l "Then we all ate one at the same time. You should've seen the faces of [date_sis_nickname] and mom. A look of pure disgust."
+    l "I probably had the same look on my face because those cookies tasted horrible."
+    l "Then we all burst out in laughter. We kept going at it so hard we had to catch our breath eventually."
+    l "I just love that memory. It's fun to think back to that prank or the others [date_sis] has pulled on us."
+    l "It's a surefire way to cheer me up."
     n "[persistent.date] chuckles."
     $ kokiri_conversation_silent()
 
@@ -921,8 +914,19 @@ label askAboutDavid_tellMeAbout_2:
 
 
 label askAboutDavid_tellMeAbout_3:
-            "Filler"
-            #TODO: Fill in.
+            l "David always had an affinity for photography."
+            l "In fact he is the reason both me and James were interested in it aswell."
+            l "He believed that pictures were a way to capture a moment in stagnance."
+            l "I don't think a single week went by without him taking a picture of something."
+            l "According to him all art is a capture of something, frozen in place."
+            l "Be it something external or internal to the artist themselves."
+            l "I never could find myself behind that idea, even if I did understand it."
+            l "After all a captured moment can never truly be the same as when you captured it, right?"
+            l "Because we as observers of that capture change, even if it never does."
+            l "So our interpretations and memories of it also change, if only ever so slightly."
+            l "I'd definetly say art is a capture of certain aspects that the artist managed to freeze in place but I think is atleast as much a snapshot of the observer themselves."
+            l "Because how they see the art and how they interpret it all depends on the experiences they have and these can change over time."
+            l "So that means that even if a piece of art would only be watched by one person it would constantly change alongside them."
             $ kokiri_conversation_silent()
 
 label askAboutJames_tellMeAbout:
@@ -1173,32 +1177,32 @@ label askAboutLila_tellMeAbout_1:
                 jump kokiri_talkAboutSomethingElse
 
 label askAboutLila_tellMeAbout_2:
-    #TODO: Rewrite this story eventually once it is finished. Especially don't make it start with "you know"
-    l "You know, my mom is actually quite naive."
-    l "[persistent.date_sis_nickname] and I like to make fun of her for being too trusting."
-    l "It's a beautiful quality of her to be entirely fair but sometimes she just takes it way too far."
-    l "I remember this one time where she got a mail from someone claiming to be a rich relative from Canada."
-    l "They said that they were going to soon die and that mom was the nearest heir of his fortune." #TODO: Slightly rewrite this story as it's a bit weird [persistent.date_mom] would be estatic by someone dying.
-    l "Mom was kind of ecstatic, after dad, I mean David, left us money has always been rather tight."
+    l "My mom is actually pretty naive."
+    l "[persistent.date_sis_nickname] and I sometimes make fun of her for being too trusting."
+    l "To be clear, it is a beautiful quality but sometimes it just goes too far."
+    l "One time she got an email from someone claiming to have contacted her to give an inheritance."
+    l "According to the mail there was a very distant relative from Canada that had passed. And since mom was his closest living relative left she would inherit his small fortune." 
+    l "She was shocked to hear the news but she latched onto it, never questioning it once."
+    l "You see, after da- David left us money always was tight."
     l "She even had to work two jobs just to be able to take care of us."
     $ persistent.lilaWorkedTwoJobs_knowledge = True 
-    l "So the prospect of being able to get more money to support us probably increased her trust in the situation."
-    l "The \"rich relative from Canada\" said they just needed her to send a hundred euros so he could send her his fortune."
-    l "Luckily my mom might be naive but she is not dimwitted."
+    l "I suppose that is why she was so quick to believe that story."
+    l "After a bit of a back and forth the person in charge of sending the money said mom would just need to send one-hundred euro so he could transfer the inheritance."
+    l "Luckily my mom might be naive but she is not dimwitted, at that moment she started to have doubts."
     l "She asked that guy to just withdraw the hundred euros he needed from her inheritance, that way she would not need to pay the sum."
     l "Of course he didn't agree with that, she found it strange but a part of her still wanted to believe the whole story."
-    l "Luckily I remember her asking me what I thought about the mail."
+    l "I remember her asking me what I thought about the situation as she found it more and more sketchy with each mail sent."
     l "I still was quite young but luckily [persistent.date_ghost] had given me a bunch of tips on how to be safe online."
     l "I told mom that it was probably a scammer trying to get her money."
     l "I still remember her being visibly heartbroken by that for a moment when I explained to her what scammers where."
     l "It was almost as if she never had considered the possibility of someone betraying someone else like that."
     l "Which is quite strange considering David had left all of us before that happened."
-    #TODO: Add some choices here.
+    
     menu: 
         "Maybe she understood why he left? Maybe she had forgiven him because she still loves him?":
             l "..."
             l "Maybe..."
-            l "She is quite naive like I just mentioned afterall. So it wouldn't be out of the ordinary for her to forgive him."
+            l "She is quite naive like I just mentioned after all. So it wouldn't be out of the ordinary for her to forgive him."
             l "I'm sure even to this day she would still welcome him with open arms if he ever came back."
             menu:
                 "Would you?":
@@ -1210,7 +1214,7 @@ label askAboutLila_tellMeAbout_2:
                     l "He is not coming back."
                     l "So I honestly don't like to think about your question, no use in even entertaining the hypothetical that he might come back."
 
-                "It makes sense, he is family afterall.":
+                "It makes sense, he is family after all.":
                     l "I always got a double feeling when hearing that word, \"family\"."
                     l "If you think that family should always forgive eachother that is totally fine."
                     l "But to me that couldn't be further from the truth."
@@ -1224,7 +1228,9 @@ label askAboutLila_tellMeAbout_2:
                     l "Family is something really important to me, but I think you should be free to choose who falls under that term."
                     l "Family can be so much more than just bloodrelations, and it doesn't have to be all of those."
                     l "To me a family will always be the people that I care for and that care for me."
-    
+        "David actually kept sending money when he left. Lila just did not want to accept it. That is why she worked two jobs.":
+            #TODO: Fill this in, also only make this unlockable if you learned the truth.
+            "Filler"
     $ kokiri_conversation_silent()
 
 label askAboutLila_tellMeAbout_3:

@@ -18,7 +18,7 @@ label gdwl_functions:
             global major_love_offence
             global minor_love_comfort
             global major_love_comfort
-            #TODO: Check if the code below with the persistent counters works.
+            love_points = 2
             love_meter += love_points
             if love_points == -1:
                 minor_love_offence += 1
@@ -360,6 +360,7 @@ label gdwl_functions:
                 "playerCalledSomeone", 
                 "kokiri_positiveDavidStory",
                 "kokiri_familyContacted",
+                "kokiri_ToldLillyHowManyRetries,"
                 
                 
                 "peeked_phone_temp",

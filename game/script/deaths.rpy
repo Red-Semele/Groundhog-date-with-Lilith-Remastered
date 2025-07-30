@@ -119,7 +119,7 @@ label restaurant_deaths:
                 n "The gas explosion that followed was quite severe, you were in a coma and had to have your wounds cleaned with some surgical procedures."
                 n "After a week you got out of your coma, [persistent.date] however didn't have such luck."
                 n "The doctors tell you that she atleast went out pretty quickly, almost like dying in your sleep but with more explosions."
-                if death_narration !== "":
+                if death_narration != "":
                     n "[death_narration]"
 
                 $ burger_explosion_outside = False
@@ -154,9 +154,9 @@ label restaurant_deaths:
                     n "And so the both of you wait, in eachothers arms, for certain death.
                     And it surely came."
                 if hugRequestedBeforeDeath == True:
-                    n "it seems [persistent.date] got the hug she asked for afterall, just not in the way she thought she would."
+                    n "it seems [persistent.date] got the hug she asked for after all, just not in the way she thought she would."
                 else:
-                    if death_narration !== "":
+                    if death_narration != "":
                         n "[death_narration]"
                 jump gameOver
 
@@ -174,7 +174,7 @@ label restaurant_deaths:
                 n "It reads as following: \"We took everyone and you won't be seeing them back, let this be a lesson on why you should not eat or serve geese or ducks, as those are also part of our family.
                 - Sincerely, the geese\""
                 $ persistent.chinese_death_2 = True
-                if death_narration !== "":
+                if death_narration != "":
                     n "[death_narration]"
                 jump gameOver
     label car_death:
@@ -566,7 +566,7 @@ label kokiri_death_2_prevented_triedEverything:
             l "She pauses for a moment and then continues."
             l "We tend to create these new worlds all the time, sometimes even without realising it."
             l "When you are thinking about what the next season of your favourite show will be about then you're technically creating an entire new world where the show's characters go through your story."
-            l "And who's to say wich version is the superior one? Afterall, they're both telling a story, personally I think that's absolutely beautiful."
+            l "And who's to say wich version is the superior one? After all, they're both telling a story, personally I think that's absolutely beautiful."
             l "So let's try to do just that!"
             n "[persistent.date] hugs you for a long period of time, you feel her warmth as it reaches your cold body."
             n "And yet, it's not really your body, right?"
@@ -650,7 +650,7 @@ label kokiri_death_2_prevented_youDiedATon:
     l "I can completely understand that you are dealing with a lot throughout this whole thing. I really don't blame you for trying to keep coming back."
     l "You are just trying to find a way out and I'm sure you'll find it. Your intentions are pure."
     l "I don't blame you for anything [persistent.name], please don't blame yourself either."
-    l "Afterall, is it worth it to live with me if you can't live with yourself?"
+    l "After all, is it worth it to live with me if you can't live with yourself?"
     n "[persistent.date] seems to be lost in thought for a moment."
     l "However, if you truly feel like I keep dying every time, maybe there is no way for us to be together and for me to be alive?"
     l "Did you ever consider that option [persistent.name]?"
@@ -847,7 +847,7 @@ label kokiri_showpicture:
                 if damoclesAsked == True:
                     n "It seems unlike Damocles, her thread always snaps."
                     n "Aren't you happy that you asked her Damocles now? Now you get this reference."
-                elif death_narration !== "":
+                elif death_narration != "":
                     n "[death_narration]"
                 jump gameOver
 

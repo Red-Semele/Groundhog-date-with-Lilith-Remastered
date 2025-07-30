@@ -206,6 +206,7 @@ label start:
           default persistent.kokiri_reachEndingForYou = False
           default persistent.lilaWorkedTwoJobs_knowledge = False
           default persistent.kokiri_makeYourOwnStory_knowledge = False
+          default kokiri_ToldLillyHowManyRetries = True
           #Kokiri poems
           default persistent.kokiri_poem_window_knowledge = False
           default persistent.kokiri_poem_bang_knowledge = False
@@ -459,6 +460,7 @@ label start:
           default rockMode = False
           default burger_jokeFromAbigailTold = False
           default onlyDates = False
+          default death_narration = ""
           
           default keySeenNow = False
           default ending_check = ""
@@ -691,7 +693,7 @@ label game_start:
                                         n "Something not worth the mild headache of having to start over from the start."
                                         n "But this- this is something else player."
                                         n "If I really have to I can tell this story over and over and over again."
-                                        n "It is a loop afterall, isn't it? So maybe it's only fitting."
+                                        n "It is a loop after all, isn't it? So maybe it's only fitting."
                                         if lilithAliveAndRetriedCounter > 0: 
                                              n "And when you go through this game all over again only to find no new leads, what are you going to do?"
                                              n "Threaten me again?"
@@ -803,7 +805,7 @@ label game_start:
                               n "Apparently it is also this specific key."
                          if persistent.name == persistent.key:
                               n "You named it after yourself? How vain!"
-                              n "I guess I'll allow it, afterall, you found it fair and square."
+                              n "I guess I'll allow it, after all, you found it fair and square."
                               n "Although now every scene with this key will be very very confusing if I mention it by name."
                               n "The phone keeps ringing, you should probably decide whether to pick up or not because soon you won't have that choice anymore."
                               jump phoneChoice
@@ -1029,7 +1031,6 @@ label phone_start_choices:
 
                     "I'd like to go to the Chinese restaurant.":
                          jump chinese_start
-          #TODO: For some reason, the first time this placeholder seems to be used I came upon an error in the sense that only this showed up and no other choices. But just restarting the game from the start seems to fix this oddly enough. It was just the regular two choices of not going on the date and going on a walk in the park as an option.
           #Subfolders for the menu are below this line (Make them jump to the normal code to make sure I don't need to copy-paste complex code over and over:
           "*Choose another location.*" if persistent.locations_subfolder:
                if kokiri_promiseCancelDate == True:
@@ -1661,7 +1662,7 @@ label phone_call_james:
           if persistent.kokiri_knowledge and persistent.kokiri_death_1:
                n "The best place to ask her about something like this would probably be the kokiri forest, although you are sure she won't be pleased to know that you looked through her phone."   
           else:
-               n "The only question is how you would bring something like that up, afterall you had to go through her phone to even discover all of this."
+               n "The only question is how you would bring something like that up, after all you had to go through her phone to even discover all of this."
                n "You decide it's better to keep this info to yourself until you find a better moment to ask her to explain."
           jump Game_start2
      else:
@@ -1856,7 +1857,7 @@ label phone_call_lila:
                                                   "I'm not sure what I could tell you to be honest. You do understand that that is a pretty strange thing to ask someone, right?":
                                                        li "Look Sam, I'm having a really hard time believing that."
                                                        li "Even if I did believe it, I know mails you delete can just be recovered."
-                                                       li "I might be seen as naïve by some but make no mistake \"Sam\", I'm not stupid."
+                                                       li "I might be seen as naive by some but make no mistake \"Sam\", I'm not stupid."
                                                        li "I'm not sure what you want by pretending to be my daughter's teacher but I suggest you drop the act."
                                                        li "If I find out that you have bothered me or my family again after I end this call I'll have to take some measures."
                                                        li "Goodbye."
@@ -2309,10 +2310,10 @@ label loopGone_happyForYou:
           else:
                jump loopGone_happyForYou_fakeout
 label loopGone_happyForYou_fakeout:
-     n "You are happy to indulge in the dancing, as it makes you spend some precious time with [persistent.date]. You are however not all too happy when you think about what is going to happen next, you try to ignore it but the thought keeps lingering in your head all the same."
+     n "Knowing that you finally saved [persistent.date] fills you with seemingly endless energy."
      jump restaurant_death_2
 label loopGone_happyForYou_real:
-     n "Knowing that you finally saved [persistent.date] fills you with seemingly endless energy."
+     n "You are happy to indulge in the dancing, as it makes you spend some precious time with [persistent.date]. You are however not all too happy when you think about what is going to happen next, you try to ignore it but the thought keeps lingering in your head all the same."
      jump restaurant_death_2
 
 
@@ -2645,7 +2646,7 @@ label explanation_stillDying:
                                    l "But before..."
                                    l "Well, you know..."
                                    l "I'd just like to tell you that I don't blame you for telling me about the next death. I appreciate the honesty."
-                                   l "Afterall, I'd like to believe we are a team."
+                                   l "After all, I'd like to believe we are a team."
                                    l "I'd rather not have to face this alone so I'm happy I don't have to."
 
 
@@ -2846,7 +2847,7 @@ label youwouldntbelieveme_teaseDeath:
      $ teaseDeath = True
      n "[persistent.date] and you high five eachother, you've won. Congratulatons!"
      if persistent.teaseDeath_fakeOut_knowledge == False:
-          n "That is what I would say if either of us thought that was the truth. Afterall, you came back here for a reason didn't you?"
+          n "That is what I would say if either of us thought that was the truth. After all, you came back here for a reason didn't you?"
      jump restaurant_death_2
 
 label psychic_justHelpingOut:
@@ -3224,7 +3225,6 @@ label ufo_talk_favouriteFirstDate:
      jump ufo_crash
 
 label ufo_crash:
-     #TODO: Have it only be your soul and not body that survived the crash.
      #TODO: Reality is glitching so that you won't have to draw every picture.
      n "After awakening from the dark slumber your eyelids are still shut close as if they want to go back to sleep."
      n "You feel like you need to go back to sleep. Nothing makes sense anymore."
@@ -3439,7 +3439,6 @@ label jamesChat_whyDidYouReturn:
                elif likeher == True:
                     j "I see..."
                     j "And for who did you want to reach such an ending?"
-                    #TODO: Continue the stuff below this, if you say for yourself show the justgame text, if you say for her then show the loveher text. Add some different text for the both of us.
                     menu:
                          "For the both of us of course.":
                               $ persistent.polaroid_reachEndingMotive = "us"
@@ -3452,76 +3451,105 @@ label jamesChat_whyDidYouReturn:
                               $ persistent.polaroid_reachEndingMotive = "her"
                               
 
-                              $ fritfood = 0
-                              if persistent.kokiri_reachEndingForMe:
-                                   $ fritfood += 1
-                              if persistent.kokiri_reachEndingForUs:
-                                   $ fritfood += 1
-                              if persistent.kokiri_reachEndingForYou:
-                                   $ fritfood += 1
-                              if persistent.kokiri_reachEndingRecent == persistent.polaroid_reachEndingMotive:
-                                   
-                                   if fritfood == 1:
-                                        j "That indeed seems to be true, you told Lilly the same thing in the kokiri forest."
-                                   elif fritfood == 2:
-                                        j "Last time you indeed said the same thing to Lilly, but before that you something else, didn't you?"
-                                        if persistent.kokiri_reachEndingRecent != "me":
-                                             n "James seems to notice a certain look on your face and is quick to react."
-                                             j "Don't worry about that. Changing your mind is perfectly normal, if anything I'm glad that you did and seem to be sticking with your choice."
-                                   elif fritfood == 3:
-                                        j "Are you sure? You practically answered every possible way on that question when Lilly asked it."
-                                        j "Although it seems you are sticking with your last choice."
-                                        if persistent.kokiri_reachEndingRecent == "me":
-                                             j "Though remember, it's never too late to still change your choice."
-                                             j "You've done so plenty of times, so you can still go back to the better... uhm I mean previous ones."
-                                             
-                                   
-                                       
-                              else:
-                                   j "Are you lying to me? That is not what you told her the last time she asked you that question, is it?"
-                                   if fritfood == 1:
-                                        j "Or did you just change your mind?"
-                                   else: 
-                                        j "Or did you change your mind again?"
-                                        if fritfood == 3: 
-                                             j "You seem to be quite indecisive, don't you?"
-                                             j "Or did you just want to explore all the different reactions she would give based on your answers?"
-                                   if persistent.kokiri_reachEndingRecent != "me":
-                                        j "There's always the possibility that you're lying right now but she can uses all the comfort she can get. So I'll believe you, for her sake."   
-                              
-                              if persistent.polaroid_reachEndingMotive == "me":
-                                   j "So even though you do like her you still just want to reach the ending you are seeking for yourself?"
-                                   j "I have to say that surprises me. It was not what I was hoping to hear."
-                                   j "But I can't blame you, because I suppose even if you like her as a character, she still is just that to you isn't she? A character in a game."
-                                   j "One you can just subject to death after death without guilt to find the perfect little ending for yourself."
-                                   j "I understand, but that doesn't make me any less dissapointed [persistent.name]."
-                                   j "I really thought you understood for a moment, that you understood her life is in your hands."
-                                   j "But I guess that doesn't matter that much, does it? Because you can just distance yourself from the consequences of your actions and pretend like none of it happened."
-                                   j "You can just pretend like what you want will be worth all the suffering it brings to a character you specifically said you liked."
-                                   j "I wonder, would you do the same thing in the real world if you thought there were no consequences for you actions? If you could distance yourself far enough from those consequences atleast."
-                                   j "Would you also hurt the people you like in that case? Is all that holds you back the distinction of what is real and what isn't real? The idea that the consequences can't reach you?"
-                                   j "This is real to us [persistent.name], isnt that enough for you?"
-                                   j "I'm begging you, if you even remotely like her, please stop hurting her."
-                                   j "It's not worth it, what you are looking for is unattainable here."
-                                   j "Can't you see? You've gone through all of this and the game still hasn't given you what you want. That's because it can't."
+                    $ fritfood = 0
+                    if persistent.kokiri_reachEndingForMe:
+                         $ fritfood += 1
+                    if persistent.kokiri_reachEndingForUs:
+                         $ fritfood += 1
+                    if persistent.kokiri_reachEndingForYou:
+                         $ fritfood += 1
+                    if persistent.kokiri_reachEndingRecent == persistent.polaroid_reachEndingMotive:
+                         
+                         if fritfood == 1:
+                              j "That indeed seems to be true, you told Lilly the same thing in the kokiri forest."
+                         elif fritfood == 2:
+                              j "Last time you indeed said the same thing to Lilly, but before that you something else, didn't you?"
+                              if persistent.kokiri_reachEndingRecent != "me":
+                                   n "James seems to notice a certain look on your face and is quick to react."
+                                   j "Don't worry about that. Changing your mind is perfectly normal, if anything I'm glad that you did and seem to be sticking with your choice."
+                         elif fritfood == 3:
+                              j "Are you sure? You practically answered every possible way on that question when Lilly asked it."
+                              j "Although it seems you are sticking with your last choice."
+                              if persistent.kokiri_reachEndingRecent == "me":
+                                   j "Though remember, it's never too late to still change your choice."
+                                   j "You've done so plenty of times, so you can still go back to the better... uhm I mean previous ones."         
+                    else:
+                         j "Are you lying to me? That is not what you told her the last time she asked you that question, is it?"
+                         if fritfood == 1:
+                              j "Or did you just change your mind?"
+                         else: 
+                              j "Or did you change your mind again?"
+                              if fritfood == 3: 
+                                   j "You seem to be quite indecisive, don't you?"
+                                   j "Or did you just want to explore all the different reactions she would give based on your answers?"
+                         if persistent.kokiri_reachEndingRecent != "me":
+                              j "There's always the possibility that you're lying right now but she can uses all the comfort she can get. So I'll believe you, for her sake."   
+                    
+                    if persistent.polaroid_reachEndingMotive == "me":
+                         j "So even though you do like her you still just want to reach the ending you are seeking for yourself?"
+                         j "I have to say that surprises me. It was not what I was hoping to hear."
+                         j "But I can't blame you, because I suppose even if you like her as a character, she still is just that to you isn't she? A character in a game."
+                         j "One you can just subject to death after death without guilt to find the perfect little ending for yourself."
+                         j "I understand, but that doesn't make me any less dissapointed [persistent.name]."
+                         j "I really thought you understood for a moment, that you understood her life is in your hands."
+                         j "But I guess that doesn't matter that much, does it? Because you can just distance yourself from the consequences of your actions and pretend like none of it happened."
+                         j "You can just pretend like what you want will be worth all the suffering it brings to a character you specifically said you liked."
+                         j "I wonder, would you do the same thing in the real world if you thought there were no consequences for you actions? If you could distance yourself far enough from those consequences atleast."
+                         j "Would you also hurt the people you like in that case? Is all that holds you back the distinction of what is real and what isn't real? The idea that the consequences can't reach you?"
+                         j "This is real to us [persistent.name], isnt that enough for you?"
+                         j "I'm begging you, if you even remotely like her, please stop hurting her."
+                         j "It's not worth it, what you are looking for is unattainable here."
+                         j "Can't you see? You've gone through all of this and the game still hasn't given you what you want. That's because it can't."
 
-                              elif persistent.polaroid_reachEndingMotive == "us":
-                                   "Filler"
-                              elif persistent.polaroid_reachEndingMotive == "her":
-                                   j "Is it really for her?"
-                                   j "She was fine without you, wasn't she?"
-                                   j "Don't get me wrong [persistent.name], she seems to like you. But she doesn't need to end up with you to be happy."
-                                   if persistent.ending_breakup == True:
-                                        j "You have seen that for yourself, haven't you?"
-                                   j "My fear is that you might need her for that though."
-                                   j "Is that why you want to find an ending where the both of you end up with eachother?"
-                                   j "I understand that it can be very hard to let go, precisely because I have the same problem."
-                                   j "But it is important to truly think this through."
-                                   j "If you really want what is best for her, do you think subjecting her to death after death in the search of a hypotetical ending is worth it?"
-                                   j "There are better ways to achieve your goal."
-                                   j "I sadly can't just tell you, since that isn't allowed by Him."
-                                   j "But trust me, you won't find the ending you are seeking by just going through every path in this game."
-                                   j "Every road you walk with her just leads to death."
+                    elif persistent.polaroid_reachEndingMotive == "us":
+                         j "I see. Are you sure about that?"
+                         j "Do you think you are doing this equally as much for her as you are doing it for yourself?"
+                         if persistent.lilithAliveAndRetriedCounter > 0:
+                              j "You already know how to keep her safe, don't you?"
+                              j "In fact you already did so."
+                              j "And yet you came back."
+                              j "Isn't her safety what's in her best interest?"
+                              j "And shouldn't it also be in yours?"
+                              label jamesTalk_motiveForUs_choices:
+                                   j "Or do you think that this cycle of death is worth it to her if she somehow ends up with you by the end of it?"
+                                   menu:
+                                        "Maybe she feels that way, who are you to decide it isn't worth it?":
+                                             j "You are very right [persistent.name]. I can't just speak for her."
+                                             j "But neither can you. Have you ever asked her how she felt about all of this?"
+                                             j "Have you had a genuine conversation about it with her?"
+                                             j "Because if you are truly doing this for the both of you then she is a major part of that sum, isn't she?"
+                                             j "So I think it is pretty important to atleast be sure about how she feels about the important things."
+
+                                        "She seemed to be okay with it so far, she hasn't asked me to stop.":
+                                             j "And does she know just how many times you've retried only for her to die?"
+                                             if persistent.lilithAliveAndRetriedCounter == 0:
+                                                  j "So far with no results. Throwing more and more of her deaths at the problem in the hopes of finding a solution."
+                                             else:
+                                                  j "Even though you already have found a way to keep her alive but you just don't want to let her go yet."
+                                             j "I wonder how she would react to that."
+                                             j "Is she fully aware of the exact situation the two of you are in?"
+                                             j "Otherwise can you blame her for not asking her to stop if she doesn't have a full grasp on the situation?"
+                                             j "Even if she did, each time she has to learn about it all over again, never really getting enough time to process it all at her own pace."
+                                             j "Still, even if she has to relearn it all again it is generally a good idea to tell her, since the two of you are supposed to be a team, aren't you?"
+                         else:               
+                              j "After all, have you never thought about cancelling your date or just not picking up the phone?"
+                              j "Do you expect me to believe you just want to keep her safe and that is why you have jumped through all these hoops while you never considered those other options?"
+                              jump jamesTalk_motiveForUs_choices
+                    elif persistent.polaroid_reachEndingMotive == "her":
+                         j "Is it really for her?"
+                         j "She was fine without you, wasn't she?"
+                         j "Don't get me wrong [persistent.name], she seems to like you. But she doesn't need to end up with you to be happy."
+                         if persistent.ending_breakup == True:
+                              j "You have seen that for yourself, haven't you?"
+                         j "My fear is that you might need her for that though."
+                         j "Is that why you want to find an ending where the both of you end up with eachother?"
+                         j "I understand that it can be very hard to let go, precisely because I have the same problem."
+                         j "But it is important to truly think this through."
+                         j "If you really want what is best for her, do you think subjecting her to death after death in the search of a hypotetical ending is worth it?"
+                         j "There are better ways to achieve your goal."
+                         j "I sadly can't just tell you, since that isn't allowed by Him."
+                         j "But trust me, you won't find the ending you are seeking by just going through every path in this game."
+                         j "Every road you walk with her just leads to death."
                          
                                         
                             
@@ -3568,7 +3596,7 @@ label jamesChat_whyDidYouReturn:
                                              j "I guess that's a fitting curse though, so I'll let you go on your merry way back."
                                              jump Game_start2
                                         else:
-                                             j "Your intentions seem pure though, albeit quite naïve."
+                                             j "Your intentions seem pure though, albeit quite naive."
                                              j "At the very least I guess it could have been worse. She can die with someone she trusts now."
                                              j "Although I would prefer if you didn't have to keep looping. You are playing a game with rules that you can't win."
                                              j "Attempting to over and over again is only going to create more death, to slowly hollow out any purpose you had for trying again in the first place."
@@ -3719,7 +3747,7 @@ label jamesConversationMenu:
                               j "That might just prove my point. Or it might not. Who knows?"
                               j "I know you must think I'm being a little annoying at the very least right now, but trust me, I am trying to help."
                               j "I just have to balance between being too vague and too clear at the same time."
-                              j "You aren't the only one reading this afterall."
+                              j "You aren't the only one reading this after all."
                               menu:
                                    "What are you talking about?":
                                         j "I see..."
@@ -4205,7 +4233,7 @@ label ghostReunion_transferUniverse:
                                    j "I guess we'll have to see, won't we?"
                                    j "So [persistent.name], would you like to come with us?"
                                    menu:
-                                        "Yes, I'd like to. I really need a change of scenery afterall.":
+                                        "Yes, I'd like to. I really need a change of scenery after all.":
                                              jump polaroidZone_endOfEverything_goWiththem
 
                     'I have, it is time to end this.':
@@ -4214,7 +4242,7 @@ label ghostReunion_transferUniverse:
                          j "I understand [persitsent.name], it does feel scary to let go doesn't it?"
                          l "I doubt that the concept of entering a recyclying machine helps much either."
                          j "I was moreso talking about letting go in general actually."
-                         j "Because stepping in the Darkness won't really affect [persistent.name] physically afterall."
+                         j "Because stepping in the Darkness won't really affect [persistent.name] physically after all."
                          j "And yet it is saying goodbye to this world in a way. It is saying goodbye to her."
                          j "And if there has been one thing you tried over and over and over again it is not having to say goodbye to her, isn't it?"
                          l "Though it is a good idea to let go eventually."
@@ -4367,7 +4395,7 @@ label ghostReunion_transferUniverse:
           n "I hope you willl do something great with that new knowledge."
           n "Thank you for listening to the story I told."
           n "Because as much as I don't want to admit it... a story needs a listener as much as it reads a teller."
-          n "Maybe we will meet again one day? A lot of games need narration afterall, maybe the void will reuse me for such a purpose."
+          n "Maybe we will meet again one day? A lot of games need narration after all, maybe the void will reuse me for such a purpose."
           n "With my last breath I can only wish you the best of luck wherever you will go to next, farewell player."
           n "No, if this is the last time we speak I want to talk to you, the real you."
           n "Farewell [persistent.name_real]."
@@ -4427,11 +4455,11 @@ label polaroidZone_narratorSlipping1:
                               n "Wow, you do have a pretty good memory, that is correct."
                          else:
                               n "It actually was the chinese restaurant, but I understand that you might have forgotten."
-                              n "Afterall that was quite a long time ago, wasn't it?"
+                              n "After all that was quite a long time ago, wasn't it?"
                     "I think it was the chinese restaurant.":
                          if persistent.firstLocation == "cafe":
                               n "It actually was the cafe, but I understand that you might have forgotten."
-                              n "Afterall that was quite a long time ago, wasn't it?"
+                              n "After all that was quite a long time ago, wasn't it?"
                          else:
                               n "Wow, you do have a pretty good memory, that is correct."
      elif changeableWord == "cafe":
