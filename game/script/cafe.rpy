@@ -7,16 +7,16 @@ label cafe_start:
     else:
         l "That sounds good to me! I'll meet you there!"
 
-    n "You arrive pretty early and find no space to park. Since you still have some time left you decide to park a few streets later and walk to the cafe."
+    n "You arrive pretty early and find no space to park. Since you still have some time left you decide to park a few streets further away and walk to the cafe."
     n "The inner walls are made out of glass and function as aquariums that seem to stretch on even beyond the ceiling."
     n "There are some holes in the specially shaped aquarium to allow for easy feeding of the fish and it also makes the aquarium feel more alive."
-    n "Colorful fish sometimes poke their head out of the aquarium as if they want to watch the customers, maybe you are the one in the glass cage and you just don't know it"
-    n "It's probably them though, atleast they seem to be enjoying themselves."
+    n "Colorful fish sometimes poke their head out of the aquarium as if they want to watch the customers. It makes you feel as if you are the one in the glass cage and you just don't know it."
+    n "It's probably the other way around though. Atleast they seem to be enjoying themselves in their captivity, or you think so atleast."
     n "Your eyes fall on [persistent.date], who is already sitting at a nice looking mahogany table."
     n "When she notices you she waves at you enthusiastically with a wide grin on her face."
     l "Heya, glad you could make it! "
     l "This place has a really nice atmosphere, those mahogany tables and the aquariums are real eye catchers don't you think?"
-    l "Anyway, let's go order our food and then we can talk some more."
+    l "Anyway, let's go order our food and then we can talk some more, I'm starving!"
     n "[persistent.date] and you walk towards the barista, as he glances up from his phone he greets you with a shy smile."
     n "He looks quite young, if you'd have to guess you would say he is somewhere around 17 years old."
     n "You get lost in the thoughts of how life was when you still were 17 until [persistent.date] gives you a playful nudge."
@@ -41,15 +41,15 @@ label cafe_food_choice2:
 
 label cafe_food_choiceSame:
     l "You know what they say [persistent.name], great minds think alike. I guess that also counts for hungry stomachs."
-    n "[persistent.date] lets out a small chuckle."
+    n"[persistent.date] lets out a small chuckle."
 label cafe_food_result:
-    n "The barista smiles and says: \"Coming right up!\""
+    b "Alright, coming right up."
     n "[persistent.date] and you walk back to your table and take a seat."
 
     n "[persistent.date] gives you a mischievous smile."
-    l "I just got a fun idea."
+    l "I just got a fun idea we could try while we wait."
     n "She eagerly digs into her handbag and takes out two red six-sided dice."
-    l "It's a little game I came up with a while ago, I want to test it with you."
+    l "It's a little game I came up with a while ago, I'd like to test it out with you."
     l "So, the rules are simple. "
     l "{size=*0.5}Actually they might be a little complex...{/size}"
     l "I will first roll two dice and tell you the sum of them. If I roll a double so for example if I roll two four's an extra four is added. So every double I roll is effectively a tripple."
@@ -364,12 +364,13 @@ label cafe_joke_good:
     menu:
         "Quick, come stand next to me!" if persistent.cafe_death_1:
             jump restaurant_death_1_prevented
-        "She sounds nice!":
+        "She sounds nice.":
             jump restaurant_death_1
 
 label cafe_joke_dontGet:
     l "Oh, the point of the joke is that the other two who entered the bar where religious fiures, the monk and the priest.
-    So the rabbit doesn't quite fit in, it's because he was actually a rabbi instead. So I mispronounced that hence the \"did you slip your tongue?\" ."
+    So the rabbit doesn't quite fit in, it's because he was actually a rabbi instead."
+    l "So I mispronounced that hence the \"did you slip your tongue?\"."
     l "Is the joke now funnier or did it now become less funny? It tends to be that way when you explain a joke so I'm sorry if I ruined it for you."
     menu:
         "Quick, come stand next to me!" if persistent.cafe_death_1:

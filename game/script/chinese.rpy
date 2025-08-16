@@ -312,7 +312,6 @@ label adriel_unanswered_chat:
             if persistent.chineseRiddlesSeenXTimesCounter >= 1:
                 n "I suppose you did, didn't you player?"
                 n "Who knew that timeloops could be so educational?"
-            #TODO: Also make this a jump to a choice because this choice is asked twice in this part I think.
             
         jump chinese_riddle_railroad
     label chinese_riddle_hard:
@@ -362,7 +361,7 @@ label chinese_riddle_railroad:
         l "Usually I come here with my mom and my sister, so it's a bit weird to be here with someone else."
         l "Weird in a good way though! It's a welcome change if I'm being honest."
         l "The reason we come here so much is because my sister, [persistent.date_sis], really adores this place."
-        l "Since mom and me took her here for her twelfth birthday she insisted on coming again for five years in a row."
+        l "Since mom and me took her here for her fourteenth birthday she insisted on coming again for five years in a row."
         l "She always picks the orange chicken, it really is her favourite."
         #In the rude route she tells you this but a bit more rude, you get the option to shit on the restaurant (verbally, not literally)
         menu:
@@ -609,7 +608,7 @@ label chinese_lostSomeone_questions:
     jump chinese_phoneScene
 label chinese_phoneScene:
     if love_meter == 1:
-        n "You notice a strange look on Lilith's face that is gone before you can realise just what it means."
+        n "You notice a strange look on [persistent.date]'s face that is gone before you can realise just what it means."
         $ chinese_lilithBreakupTrigger = 2
     l "I'll be right back [persistent.name], I just need to go to the bathroom real quick."
     n "[persistent.date] stands up from her chair and pushes it back under the table."
@@ -978,9 +977,9 @@ label chinese_riddle_decline:
                                             if love_meter >= 3:
                                                 l "You know, for what it is worth, I also really like your company [persistent.name]."
                                                 l "I'm having a really good time here with you so far."
-                                "Sure thing, if that's what you want. *Talk about something else.*":
-                                    "Filler"
-                                    #TODO: Give like a few very lightweight questions and answers here before she moves on to something else.
+                                "Sure thing, if that's what you want. Let's talk about something else":
+                                    jump chinese_riddle_railroad
+                            
                 "A man is in a metal room without a door and with a barred window. How does he leave?":
                     l "Hmm, that seems to be a tough one, let me think about it for a second [persistent.name]!"
                     n "[persistent.date] seems to happily be going through potential solutions."

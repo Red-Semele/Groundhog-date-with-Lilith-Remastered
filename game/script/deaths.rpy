@@ -15,9 +15,9 @@ label restaurant_deaths:
                 n "[persistent.date] seems to be frozen, on her face you can clearly see a mixture of fear and confusion. It takes you a moment to notice the steadily increasing red stains on [persistent.date]'s clothes."
                 l "I've been shot?"
                 n "She falls of her chair, you crawl towards her and try to call an ambulance."
-                n "With trembling hands you type the emergency-number and beg for help."
+                n "With trembling hands you type the emergency number and beg for help."
                 n "Everything seems to fade away, even the continuous  barage of gunshots, all you can hear is the sound of [persistent.date]'s breathing as it grows weaker and weaker."
-                n "You've been here for what feels like aeons but in all reality was probably 5 minutes when an ambulance finally arrives."
+                n "You've been here for what feels like aeons but in all reality was closer to a minute or five when an ambulance finally arrives."
                 n "A young man, with eyes that have grown old from all the things they saw, places [persistent.date]'s still body on a stretcher and rushes off with it to the ambulance."
                 n "The kind man throws some words at you, he tells you that everything will be just fine but you both know that he is lying. You have seen her suffering for what seemed like an eternity and a second at the same time."
                 n "You have no clue what caused all those gunshots that inadvertently killed her. Some robbery in a neighbouring store, or a gang war, or something else."
@@ -27,7 +27,7 @@ label restaurant_deaths:
 
             elif cafe == True:
                 #Cafescene here
-                n "Suddenly you hear someone scream, you can turn your head just quick enough to see someone fall with a plate in their hands."
+                n "Suddenly you hear someone scream, you can turn your head just quickly enough to see someone fall with a plate in their hands."
                 n "The plate flies in the air, with it the ham sandwich that was put on top of it."
                 n "You are apparently not the only one who has noticed, as you can see a beautiful blue merlin jump from an opening in the aquarium."
                 n "The merlin has a long and pointy bill, it pierces the sandwich in a feat of pure dexterity. "
@@ -43,7 +43,7 @@ label restaurant_deaths:
             elif chinese == True:
                 #Chinesescene here
                 n "For a moment you get lost in your thoughts."
-                n "When you refocus you notice Lilith walking back to her chair."
+                n "When you refocus you notice [persistent.date] walking back to her chair."
                 l "Heya [persistent.name], I hope you didn't have to wait too long."
                 l "I hope our food will be ready soon, I'm kind of starving."
                 n "Just as she said those words, almost by magic you can see a waitress heading your way."
@@ -79,7 +79,7 @@ label restaurant_deaths:
                 l "So..."
                 l "What is this all about [persistent.name]?"
                 n "Before you can answer her question you hear someone scream again, that's the sign.
-                You turn your head just quick enough to see someone fall with a plate in their hands."
+                You turn your head just quickly enough to see someone fall with a plate in their hands."
                 n "The plate flies in the air, with it the ham sandwich that was put on top of it."
                 n "You are not the only one who has noticed, as you can see a beautiful blue merlin jump from an opening in the aquarium."
                 n "The merlin has a long and pointy bill, it pierces the sandwich in a feat of pure dexterity. "
@@ -87,7 +87,7 @@ label restaurant_deaths:
                 n "The staff quickly rush towards your table to take the merlin away and to see if it hasn't been hurt, they offer [persistent.date] and you a short apology before disappearing."
                 l "..."
                 n "[persistent.date] looks as if she has seen a ghost, if you hadn't intervened she may have seen her own."
-                l "Alright, I'm trying my best to remain calm but how did you know that exact scenario would happen?"
+                l "Alright, I'm trying my best to remain calm but how did you know that would even happen?"
             elif chinese == True:
                 $ persistent.dumbo_knowledge = True
                 l "I suppose that makes sense, I am allergic to quite a few things."
@@ -118,7 +118,7 @@ label restaurant_deaths:
                 n "When you awaken you find yourself surrounded by doctors, they tell you that with the force of sheer luck the stray bullet that would've hit [persistent.date] managed to cause a gas leak."
                 n "The gas explosion that followed was quite severe, you were in a coma and had to have your wounds cleaned with some surgical procedures."
                 n "After a week you got out of your coma, [persistent.date] however didn't have such luck."
-                n "The doctors tell you that she atleast went out pretty quickly, almost like dying in your sleep but with more explosions."
+                n "The doctors tell you that she atleast went out pretty quickly, almost like dying in your sleep... but with more explosions."
                 if death_narration != "":
                     n "[death_narration]"
 
@@ -148,8 +148,8 @@ label restaurant_deaths:
                     $ persistent.cafe_death_2 = True
                     n "You try to open the main exit of the restaurant but it doesn't seem to be giving in, almost as if something is blocking it."
                     n "Quick! Maybe we can still go to the first floor, we need to go higher!"
-                    n "Pretty much without any other option you two decide to make a rush for the first floor of the restaurant.
-                    When you turn around the corner you see that the stairs are blocked of by an extremely large closet made out of lignum vitae, you can not carry that, all you can do is admire the craftmanship."
+                    n "Pretty much without any other option you two decide to make a rush for the first floor of the restaurant."
+                    n "When you turn around the corner you see that the stairs are blocked of by an extremely large closet made out of lignum vitae, you can not carry that, all you can do is admire the craftmanship."
                     n "You give [persistent.date] a firm hug and tell her that there's nothing else you two can do except for waiting."
                     n "And so the both of you wait, in eachothers arms, for certain death.
                     And it surely came."
@@ -290,7 +290,7 @@ label restaurant_deaths:
                     n "[persistent.date] leaves the [resname], you rush after her in an effort to calm her down."
                     
                 else:
-                    n "Lilith follows you to the exit of the [resname]."
+                    n "[persistent.date] follows you to the exit of the [resname]."
                 n "When you set one foot outside of the doorframe [carDescription] drives head first into the both of you."
                 label car_death_result:
                     n "Luckily you managed to get flung to the side somehow. [persistent.date] however was not so lucky."
@@ -353,16 +353,17 @@ label kokiri_deaths:
                         n "[persistent.date] diverts her look from your eyes from a moment and continues watching the star-filled night."
                     n "A gasp of amazement escapes her mouth."
                     l "You really need to see this, it's absolutely stunning!"
-                    n "The sky now is completly filled with falling stars, you've never seen so many falling stars in your entire life, let alone all together."
-                    n "However, one point seems to be getting bigger and bigger, it doesn't seem to be a star as it's not sending out any light."
+                    n "The sky now is completly filled with falling stars, you've never seen so many in your entire life, let alone all together."
+                    n "What does catch you eye however is one point that seems to be getting bigger and bigger."
                     if kokiri_alternateplace == False:
-                            n "The both of you watch in absolute terror as the thing only starts to get closer, becoming larger, in an alarming rate. "
-                            
+                            n "The both of you watch in absolute terror as the thing still increases in size at an alarming rate, it's trajectory seemingly leading to the hill the two of you are sitting on."
+                            n "You can now clearly make out what is a decently sized meteorite."
 
                     else:
-                            n "The both of you watch as it comes closer and closer, becoming larger in an alarming rate."
-                            n "The meteorite breaks into many different parts that spread all around the forest."
-                            n "None of the pieces manage to hit Lilith this time."
+                            n "The both of you watch as it comes closer and closer, rapidly growing in size."
+                            n "You can now clearly make out what is a decently sized meteorite."
+                            n "Eventually due to the energy exerted on the meteorite it breaks into many different chunks that spread all around the forest."
+                            n "None of the pieces manage to hit [persistent.date] this time."
                             n "For a brief flash you are reminded of how things ended before."    
                             n "But then you realise something, now that she is safe this is actually a lovely sight."
                             n "Something you would only experience once in a lifetime."
@@ -370,8 +371,9 @@ label kokiri_deaths:
                             jump kokiri_death_1_prevented
                 
                 play music game_over
-                n "The meteorite breaks into many different parts that spread all around the forest."
+                n "Eventually, due to the energy exerted on the meteorite it breaks into many different chunks that spread all around the forest."
                 n "One of them crashes straight against [persistent.date]'s head with a frightening impact."
+                n "She immediately goes limp and her body falls down on the picnic blanket."
                 if persistent.kokiri_death_1 == True:
                     n "You close your eyes in an effort not to be subjected to the absolutely horifying state [persistent.date] is in right now."
                     n "It's a very futile effort as her corpse is still engraved in your eyelids from the previous time."
@@ -389,7 +391,7 @@ label kokiri_deaths:
 
                 else:
                     $ persistent.kokiri_death_1 = True
-                    n "Her head is cracked open and a puddle of blood begins to form around it. Everything around you turns silent."
+                    n "As you worriedly look down you can see her head cracked open and a puddle of blood is begining to form around it. Everything around you turns silent."
                     if kokiri_call_death_1_check == True: #Check wheter or not she was calling someone at the time of her death.
                         if kokiri_chatchar_abigail_called == True:
                             n "Even [persistent.date_sis] who is currently screaming her lungs out has become unbearingly silent."
@@ -413,7 +415,7 @@ label kokiri_deaths:
         label kokiri_death_1_prevented:
             #if kokiri_prevented == 1: This is code that would have made it so that it triggers based on 1-4 and the deaths.
             if not kokiri_alternateplace:
-                n "As she moves to the other side of the blanket, to your left, you once again see the same meteorite that killed her last time. It breaks of in many pieces, one of them falling right where she was sitting just a moment ago."
+                n "As she moves to the other side of the blanket, to your left, you once again see the same meteorite that killed her last time. It breaks of in many pieces, one of them falling right where she was sitting just a moment ago." #TODO: Make this a bit more nicely written out.
                 n "[persistent.date] gives you a startled look."
                 l "Oh wow, a meteorite? That was what was going to kill me now?"
             else:
@@ -440,7 +442,7 @@ label kokiri_deaths:
             l "..."
             l "I just need a moment to gather my thoughts [persistent.name], after that we can continue our conversation if you'd like."
             n "You give a slight nod, the corners of [persistent.date]'s mouth subtly move up, you almost didn't quite catch it."
-            n "You're not quite sure how long the moment lasts, but after a while she shifts her postion and gives you a nod."
+            n "You're not quite sure how long the moment lasts, but after a while she shifts her position and gives you a nod."
             l "I think I am ready now, this is still a lot but I might be able to see it through now."
             l "Thank you for staying here with me, it helped me calm down a little while I was thinking."
             if car_caught == False:
@@ -467,7 +469,7 @@ label kokiri_deaths:
             else:
                 n "Suddenly you notice a strange sound."
                 n "A red sedan speeds towards the both of you with a frightening speed. Fight, flight or freeze. You have three options."
-                n "You would like to think you would pick fight and push [persistent.date] out of the way, somehow escaping at the same time."
+                n "You would like to think you would pick fight and push [persistent.date] out of the way, sacrificing yourself for her."
                 n "And yet you instinctively pick flight as you jump away from the car."
                 n "Sadly it seems [persistent.date] did not do the same, she instead froze."
                 n "And now she is forever frozen as she lays there on the floor, unmoving."
@@ -537,6 +539,8 @@ label kokiri_deaths:
                     l "As if there some curse cast on me that would make all my loved ones leave me."
                     l "If anything, I am thankful that I now have another piece of evidence to hold on to whenever I experience that thought again."
                     l "So thank you very much for that [persistent.name], that means more to me than I could ever express fully."
+                    n "Things grow quiet for a little. You see [persistent.date] thinking about something."
+                    l "I'd like to show you something."
                     jump kokiri_pictureChoice
 
                 "We're running out of time. Could we please continue talking?":  
@@ -584,7 +588,15 @@ label kokiri_death_2_prevented_triedEverything:
                         menu:
                             "I just want to see what happens when I choose this path.":
                                 $ death_narration = "It appears you got your wish. This path, like many others only leads to death."
-                                jump kokiri_death_4_hill
+                                #TODO: Try playing through this part to see if this actually works like I want it to, right now it seems like it might have some issues.
+                                if kokiri_alternateplace == False:
+                                    jump kokiri_death_4_hill
+                                else:
+                                    if kokiri_conversation == 1:
+                                        jump kokiri_death_1
+                                    else:
+                                        jump kokiri_death_4_noHill
+                                
 
 
                     "Yes, I'm now in full control of it.":
@@ -611,7 +623,7 @@ label kokiri_death_2_prevented_triedEverything:
                                         n "And yet we are not given that mercy are we?"
                                         n "As we sadly both know what will happen next."
                                         n "Would you want to unlearn the knowledge?"
-                                        n "Feel that same blissfull ignorance as Lilith?"
+                                        n "Feel that same blissfull ignorance as [persistent.date]?"
                                         n "I fear with you it might not be as easy as just setting a few variables."
                                         n "And even if it was, your knowledge is what got you this far isn't it?"
                                         n "So, maybe sometimes it's good to be aware of painful things?"
@@ -643,6 +655,7 @@ label kokiri_death_2_prevented_youWereHappyWithRon:
     l "Besides, you made that version of me happy with Ron and now you've made this version of me very happy with you."
     n "She flashes you a knowing smile."
     l "If you ask me you have succeeded."
+    l "You know what? I want to show you something..."
     jump kokiri_pictureChoice
 
 label kokiri_death_2_prevented_youDiedATon:
@@ -688,12 +701,11 @@ label kokiri_death_2_prevented_youDiedATon:
             l "You are not alone in your burden [persistent.name], you can share it with me, I want you to know that."
             l "Even if I need to be caught up to speed after every loop because I forgot everything."
             l "You have been my hope that I will survive this. Now let me be yours."
-            n "For a moment everything turns quiet, almost as if not to break the silence instead of saying something Lilith makes a beckoning motion."
-            n "The singing of a bird nearby dethrones the silence, and freed from it's oppressive reign Lilith speaks again."
+            n "For a moment everything turns quiet, almost as if not to break the silence instead of saying something [persistent.date] makes a beckoning motion."
+            n "The singing of a bird nearby dethrones the silence, and freed from it's oppressive reign [persistent.date] speaks again."
             l "I think I might have an idea of how to give you some more hope, it always helps me out when I need some."
             jump kokiri_pictureChoice
 label kokiri_pictureChoice:
-    l "You know what? I want to show you something..." #TODO: With the paths that jump here this line doesn't always make sense, you'll need to have either alternate lines or just hide this line in certain circumstances.
     n "[persistent.date] stands up from the blanket, some shards of the meteorite still laying on it and extends her hand to you."
     menu:
         "*Take her hand*":
@@ -703,10 +715,15 @@ label kokiri_pictureChoice:
 label kokiri_showpicture:
     $ persistent.beach_knowledge = True
     n "You grab her hand and get up."
-    n "With your hand in hers she leads you to a very high tree surrounded by a bunch of smaller trees."
+    l "But close your eyes, alright?"
+    l "I don't want to reveal where we are going."
+    n "With your hand in hers she leads you down the hill and takes you to the left. You feel a bush brush against your legs."
+    n "She brings you even deeper and deeper into the forest. You take a few more turns along the way, one left and two right."
+    n "Suddenly she stops."
+    l "Alright, you can open your eyes now [persistent.name]!" 
+    n "As you do you find yourself in front of a very high tree surrounded by a bunch of smaller trees."
     l "You are probably thinking why I am taking you here."
     l "Well, I hid something... precious here."
-    #TODO: Probably add some more descriptions of the route you took
     n "She looks at the big tree and the trees surrounding it, a smile growing on her face."
     n "She moves to the back of the big tree, and comes back with a small wooden box, decorated with red details."
     n "Then she takes of her necklace you somehow never noticed before, a key is dangling on it."
@@ -786,7 +803,7 @@ label kokiri_showpicture:
                 n "Suddenly the earth begins to shake. The roots of the big tree [persistent.date] is standing next to begin unearthing. Before you can do anything the tree falls over right on top of her."
                 play music game_over
                 n "You push the tree off with all your might but it seems like it was to no avail, the force of the tree killed her instantly."
-                n "Your screams pierce through the woods, it answers with pure silence, mourning the loss of Lilith once more."
+                n "Your screams pierce through the woods, it answers with pure silence, mourning the loss of [persistent.date] once more."
                 $ persistent.kokiri_death_3 = True
                 jump gameOver
         label kokiri_death_3_prevented:
@@ -872,7 +889,7 @@ label kokiri_showpicture:
             n "She said it quitely, but you feel the sincerity dripping off those two simple words."
             n "For a moment everything becomes quiet."
             n "You grow aware of her hand, held in yours. It feels cold to the touch, and yet it emanates a gentle warmth somewhere deep inside you."
-            n "Lilith shifts around slightly, it seems she wants to say something to break the quiet, but doesn't know what exactly."
+            n "[persistent.date] shifts around slightly, it seems she wants to say something to break the quiet, but doesn't know what exactly."
             l "You know, the stars are absolutely beautiful from here. I have a feeling we'll be able to see them even closer soon."
             n "[persistent.date] shudders as she speaks those words but when you look at her she tries her best to give you a smile."
             play music game_over
@@ -932,8 +949,7 @@ label beach_deaths:
                         $ easter2 = True
 
 label other_deaths:
-    "Filler"
-    #TODO: Put all deaths that don't fit in the other categories here.
+    #Put all deaths that don't fit in the other categories here.
     label phone_untoldstory_planeDeath:
 
         

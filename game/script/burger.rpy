@@ -49,7 +49,7 @@ label burger_start:
             n "It's probably best to try and focus on the present, not the past."
             l "Are you alright [persistent.name]?"
             l "You look like you have just seen a ghost."
-            n "She's not far off."
+            n "She's not far off, isn't she?"
             menu:
                 "Oh yeah, I am fine, I was just thinking about the traffic jam I was stuck in.":
                     jump burger_start_choice3
@@ -86,7 +86,7 @@ label burger_start_choice1:
             $ burgerBeenBefore = True
             l "Oh you have? That makes sense, these burgers are the best of this state, scratch that, of the world!"
             n "While she is enthusiastically exclaiming this her arms kind of seem to have a life of their own, making all kinds of gestures to get the point across even more. "
-            n "When she catches her arms in the act she blushes slightly, quiets for a moment and places them back down on the table."
+            n "When she catches her arms in the act she blushes slightly, quiets for a moment and places her hands back down on the table."
             l "So, what are you going to pick? I think I'll go for the juicy cheeseburger myself."
             jump burger_start_menu
 
@@ -189,9 +189,10 @@ label burger_ordering:
         n "An old lady, who you remember is called Rose, smiles at the both of you."
     else:
         n "An old lady smiles at the both of you."
-    r "Hey [persistent.date], glad to see you here once more!"
-    r "I'm almost surprised to see you here, it's been quite a while hasn't it?"
+    
     if burger_nightmare == False:
+        r "Hey [persistent.date], glad to see you here once more!"
+        r "I'm almost surprised to see you here, it's been quite a while hasn't it?"
         if persistent.rosename_knowledge == True:
             n "Rose looks at you for a brief moment and continues."
         else:
@@ -221,7 +222,10 @@ label burger_ordering:
         
         r "So, what can I get the two of you?"
         n "[persistent.date] and you tell her both of your choices."
-        r "A juicy cheeseburger and a [burger_choice] coming up! I'll bring them to you when they are done, alright?"
+        if burger_choice == "juicy cheeseburger":
+            r "Two juicy cheeseburgers coming right up! I'll bring them to you when they are done, alright?"
+        else:
+            r "A juicy cheeseburger and a [burger_choice] coming right up! I'll bring them to you when they are done, alright?"
         r "That way you two can get to know each other some more."
         n "She gives [persistent.date] a quick wink that you just barely manage to catch."
         n "[persistent.date]'s face turning beetred is a lot easier to notice."
@@ -257,14 +261,15 @@ label burger_ordering:
                 l "Just..."
                 l "I just would like to wait a little before I do that, maybe some other time [persistent.name]?"
                 l "I do really appreciate your concern for me though!"
-                l "Oh, by the way, almost forgot to ask!"
+                n "Things grow quiet for a moment."
+                l "Oh, I almost forgot to ask."
                 l "How are you liking your burger [persistent.name]?"
                 menu:
                     "It's the best one I ever had!":
                     
                         if not burgerBeenBefore:
                             l "That good huh?"
-                            n "Lilith let's out a small chuckle."
+                            n "[persistent.date] let's out a small chuckle."
                             l "Rose's burgers are indeed extrememly tasty."
                             l "I'm glad you like them so much [persistent.name]!"
                             l "Although I hope this didn't ruin other burgers for you, it's hard to go back to regular burgers after you tasted these isn't it?"
@@ -291,9 +296,9 @@ label burger_ordering:
                                             n "You can't help but hope that this time will be different. You need to hope it, otherwise..."
                                             n "You don't want to finish that thought."
 
-                                    l "But let's not get ahead of ourselves,let's focus on this beautiful moment first and then we can see how things go from there."
+                                    l "But let's not get ahead of ourselves,let's focus on this beautiful moment first and see how things go from there."
                                 "I don't think I can ever part ways with this burger.":
-                                    n "Lilith giggles, but as she does you think you can spot some concern in her eyes."
+                                    n "[persistent.date] giggles, but as she does you think you can spot some concern in her eyes."
                                     l "I totally understand [persistent.name], sometimes it can be really hard to let go of something great."
                                     l "But if you never finish this burger and keep clutching on to it, it will begin to grow moldy."
                                     l "And if you do not clutch on to it but keep eating Rose's [burger_choice]s for the rest of your life they will grow very stale quicker than you think."
@@ -321,7 +326,7 @@ label burger_ordering:
                     
                     "It's pretty good.":
                         l "Pretty good, huh? That's high praise!"
-                        n "Lilith gives you a warm smile, clearly pleased by your response."
+                        n "[persistent.date] gives you a warm smile, clearly pleased by your response."
                         l "I think \"pretty good\" is better than \"perfect\"."
                         l "How many things do you know that are perfect? Many of those tend to not remain perfect the harder and longer you begin to look."
                         l "Because in reality, almost nothing is truly perfect, and it also doesn't need to be."
@@ -335,7 +340,7 @@ label burger_ordering:
 
                     "It's a nothing burger, literally.":
                         label burger_nothingBurger:
-                            n "Lilith tilts her head, a small frown tugging at the corner of her lips."
+                            n "[persistent.date] tilts her head, a small frown tugging at the corner of her lips."
                             l "A \"nothing burger\" huh? I guess that means it's... okay?"
                             n "She tries to mask her disappointment with a soft chuckle."
                             l "Maybe it just didn’t live up to the hype. I hope it wasn’t too underwhelming, though."
@@ -362,14 +367,14 @@ label burger_ordering:
 
 
                                     "Oh, I usually don't pick a burger, I tend to always pick chicken tenders.":
-                                        n "Lilith can't help but chuckle slightly at your accidental joke."
+                                        n "[persistent.date] can't help but chuckle slightly at your accidental joke."
                                         l "I see [persistent.name], that's totally fine."
                                         l "I just wonder what made you change your mind this time? Why did you pick a [burger_choice]?"
                                         menu:
                                             "I was in for a change.":
                                                 l "I see, sometimes it's good to have a little change here and there isn't it?"
                                                 l "That can truly be a breath of fresh air."
-                                                l "Ofcourse, sometimes it can be a bit of a dissapointment."
+                                                l "Of course, sometimes it can be a bit of a dissapointment."
                                                 l "But good of you for trying something new, you never know what great things might come from that."
 
                                             "You were really enthusiastic about the burgers here and I didn't want you to think less of me because I picked chicken tenders.":
@@ -412,7 +417,7 @@ label burger_ordering:
 
                                         
                     "It's really bad.":
-                        n "Lilith freezes for a moment, taken aback by your bluntness. Test"
+                        n "[persistent.date] freezes for a moment, taken aback by your bluntness. Test"
                         $ love_points = -1
                         $ love_meter_updater(False)
                         if not burgerBeenBefore or not burgerBeforeLie:
@@ -426,7 +431,7 @@ label burger_ordering:
                             l "Really?..."
                             l "But you've been here before, right?"
                             l "Is something different now?"
-                            n "Lilith gives you a confused look, she is clearly stumped."
+                            n "[persistent.date] gives you a confused look, she is clearly stumped."
                             menu:
                                 "I never picked this burger before.":
                                     l "Oh I see, so this [burger_choice] isn't really your thing?"
@@ -461,27 +466,29 @@ label burger_ordering:
                                     $ love_meter_updater(True) 
                 jump burger_deathBuildup
     else:
-        #TODO: Polish this nightmare slightly more
-        r "I'm ofcourse also glad to see you here [persistent.name]!"       
-        n "This startles you, she is not supposed to know your name."
-        n  "It is true that you went to this restaurant before but that was only in loops so it's almost like it never happened now."
-        n "You tell Rose that she's not supposed to know your name."
-        r "Oh but how could I forget you?"      
+        r "Hey [persistent.date] and [persistent.name], welcome back!"  
+        n "This startles you. Before the loops you never have been here. She is not supposed to know you."
+        n "You ask Rose how she knows your name."
+        r "Oh but how could I forget you?" 
+        r "The two of you have been here quite a few times, haven't you?"     
         r "You are her killer right?"           
         r "You shot her."
         r "You blew her to smithereens."
-        r "And I had to watch it. Over and over again."          
-        n "You try to argue that you didn't pull the trigger, that it was someone else. That the explosion was out of your control."               
-        r "It may not have been you causing all of those things directly."
-        r "But that doesn't matter."
-        r "You knew what would happen. And you still returned."
-        r "You are responsible for what happened."
-        r  "You tell yourself you do it to save her."
-        r "But tell me the truth, isn't there a part of you that likes to watch her die again and again?"
-        r "Well you're in luck you coldblooded killer, this time you can warm your hearth by eating her."
-        n "She hands you a bloody clump that almost resembles a burger."
-        r "I made it from Lilith herself, so there's plenty more for you."
-        r "We have so many of her corpses lying around in the back, do you want to see your work?"
+        r "And I had to watch it. Over and over again." 
+        menu:
+            "I didn't pull the trigger on the gun. The explosion was out of my control.":          
+                r "You may not have caused those things directly. But that doesn't matter, does it?"
+                r "You knew what would happen. And you still returned."
+                r "You are responsible for what happened."
+                r "You tell yourself you do it to save her, but I wonder if there is a part of you that likes to watch her die again and again."
+                r "Well you're in luck you coldblooded killer, this time you can warm your hearth by eating her."
+                n "She hands you a fleshy clump that almost resembles a burger."
+                r "I made it from [persistent.date] herself."
+                n "She gives you an impatient look."
+                r "Well, aren't you going to eat it?"
+                r "You've held on to it for so long it has turned rotten."
+                r "You just stood here with it in your hand for [persistent.retry_counter] days straight."
+                
         $ nightmare = True
         $ burger_nightmare = False
         jump game_start
@@ -641,20 +648,23 @@ label burger_poem_rating:
         "Wow, you really impressed me. That was fantastic!":
             jump burger_poem_rating_fantastic
         "I liked it a lot! Though could you explain who Orpheus is?":
-            l "His music was so beautiful that it could charm anyone or anything. People, animals, even rocks and trees would stop to listen when he played his lyre."
-            l "He fell in love with a woman named Eurydice, and they were incredibly happy together."
-            l "But one day, Eurydice was bitten by a snake and died. She was taken to the Underworld, which is like, you know, the place of the dead in Greek mythology."
-            l "Orpheus was heartbroken, so he decided to he travel to the Underworld to get her back."
-            l "He played his lyre for Hades and Persephone, the rulers of the Underworld. His music was so moving that even they were brought to tears."
-            l "They agreed to let Eurydice return with him to the world of the living, but there was one condition."
-            l "He wasn't allowed to look back at her until they had both reached the surface. If he did, she would be lost to him forever."
-            l "So they started their journey back, with Orpheus leading the way. He could hear her footsteps behind him, but he couldn’t see her."
-            l "Just as they were about to reach the surface, doubt and fear got the better of him. He turned around to make sure she was really there..."
-            l "...and in that moment, she vanished. Forever."
-            l "Something about that story really intrigues me, I can't entirely put it into words though."
-            #TODO: Attempt to put it into words slightly, try to make it thematic. Something about two figures that are so close to getting together, to being free and yet it all goes wrong. Also, wRewrite the above stuff some more.
+            l "He is a character from Greek mythology. His music was so beautiful it could charm anyone."
+            l "He married a woman named Eurydice, but she died soon after from a snakebite."
+            l "She was taken to the Underworld. Orpheus was heartbroken and deciced to travel there to get her back."
+            l "He played his music for Hades and Persephone, the rulers of the Underworld, who were moved to tears by it."
+            l "They agreed to let Eurydice return with him to the world of the living."
+            l "But there was a condition, he wasn't allowed to look back at her until they both had reached the surface of the world of the living."
+            l "They started their trek back to the surface, Orpheus was made to lead the way. He could hear her footsteps behind him but since he could not see her he began fearing he was being tricked."
+            l "Eventually doubt and fear got the best of him and he turned to see if she really was there."
+            l "She was, but in that moment she vanished. Stuck once more in the Underworld, this time forever."
+            l "And all he could do was return empty-handed to the surface."
+            l "Something about that story is very intriguing to me."
+            l "Two people, seperated by fate, trying to reunite and getting so close only to be torn appart once again."
+            l "It's a very tragic story, isn't it?"
+            n "She ponders for a moment, only to seemingly realise something and continue."
             l "Anyway, that’s the short version. I hope I didn't make you regret asking that too much [persistent.name]..."
             $ persistent.burger_Orpheus_knowledge = True
+            jump burger_deathBuildup
 
 
 
@@ -722,7 +732,7 @@ label burger_Brotherasked:
             n "[persistent.date] pauses for a moment."
             l "You asked what my brother's name was, right?
             I don't know why but I feel like I can trust you enough to tell you about him.
-            I might tear up, it's been a long time since I've told his story to anyone."
+            I might tear up though, it's been a long time since I've told his story to anyone."
             l "His... his name was [persistent.date_ghost]."
             l "He was the best brother I could have asked for.
             He was five years older than me but we always played together.
@@ -740,11 +750,11 @@ label burger_Brotherasked:
             Actually, scratch that, David had a choice in the matter, [persistent.date_ghost] was the only one really taken away from me."
             l "Mom really tried her best to fill the void left by them but the presence of their absence has always haunted us since that horrible day."
             if burger_jokeFromAbigailTold == True:
-                l "My sister, [persistent.date_sis], the one from the joke you just told, is 5 years younger than me so she doesn't really remember much of what happened."
+                l "Although [persistent.date_sis], was 7 years when at that moment and doesn't remember very well."
 
             else:
-                l "My sister, [persistent.date_sis], is 5 years younger than me so she doesn't really remember much of what happened."
-            #TODO Make this a flag. Also rewrite that line slightly.
+                l "Although my sister, [persistent.date_sis], was 7 years when at that moment and doesn't remember very well."
+            l "Sometimes I envy her for that, but at the very least one person escaped a part of the hurt that day brought us."
             n "She lets out a sigh of relief."
             l "As much as it hurts me to talk about [persistent.date_ghost] it feels good to finally let it all out once again.
             Thank you for listening to me ramble on [persistent.name]."

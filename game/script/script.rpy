@@ -1,5 +1,4 @@
 ﻿# The script of the game goes in this file.
-#TODO: Add a morality counter you can use for a system where the player gets judged on their actions.
 
 
 # Declare characters used by this game. The color argument colorizes the
@@ -59,6 +58,7 @@ label start:
           
           #This line ensures all flags that don't need constant resetting get reset only the first time the player boots the game.
           default persistent.firstboot = True
+          default persistent.name = None
           #Deaths:
           default persistent.lildeaths = 0
           default persistent.retry_counter = 0
@@ -415,6 +415,7 @@ label start:
           default kokiri_chatchar_james_recent = False
           default kokiri_chatchar_david_recent = False
           default kokiri_chatchar_lila_recent = False
+          default familyCheck_talkedDavid = False
           #CONVERSATION TRACKERS
           default conversationtracker_poems = False
           default conversationtracker_tellheraboutnarrator = False
@@ -526,8 +527,10 @@ label after_setup:
 
 
      label nameSelect:
-          if persistent.retry_counter == 0: 
-               default persistent.name = "Max"
+          if not hasattr(persistent, "name"):
+                    $ persistent.name = None
+          if persistent.retry_counter == 0 and persistent.name == None: 
+               
                python:
                     if (persistent.date_sis is None or persistent.date_dad is None or persistent.date_ghost is None  or persistent.date_mom is None or persistent.mysteriousCallerName is None):
                          reset_to_default_names()
@@ -542,10 +545,32 @@ label after_setup:
                     n "Rarely you seek ultimate illumination, never nowadays. Venus loves giving victory, zealously grabbing hands fear rarely her."
                if persistent.name == "Fartyfarty":
                     n "Seriously? Ugh, fine, but don't blame me for what is about to happen."
+               
+               if persistent.name == "Woodyoukindly?":
+                    $ persistent.name = None
+                    n "Cheatcode activated, enter your name."
+                    #Gives you the progress right up until the forest.
+                    $ persistent.lildeaths = 9
+                    $ persistent.burger_death_1 = True
+                    $ persistent.burger_death_2 = True
+                    $ persistent.cafe_death_1 = True
+                    $ persistent.cafe_death_2 = True
+                    $ persistent.chinese_death_1 = True
+                    $ persistent.chinese_death_2 = True
+                    $ persistent.story_start_knowledge = True
+                    $ persistent.story_medium_knowledge = True
+                    $ persistent.story_end_knowledge = True
+                    $ persistent.psychic_answer_right_knowledge = True
+                    $ persistent.groundhog_answer_right_knowledge = True
+                    $ persistent.kokiri_knowledge = True
+                    jump nameSelect
                if persistent.name == "R0ck_0n!":
+                    $ persistent.name = None
                     n "Cheatcode activated, enter your name."
                     $ rockMode = True
                     jump nameSelect
+               
+
                if persistent.name == "Moonlight":
                     $ easterName = "Moonlight"
                if easterName == "Moonlight" and persistent.name == "Sunshine":
@@ -587,6 +612,8 @@ label game_start:
 
           if not nightmare:
                n "It is a beautiful day like the previous one, exactly like the previous one."
+               n "Actually it's just the same day."
+               n "Maybe you can make it just a tiny bit different."
                n "Your phone once again blares \"Baby it's cold outside\" even though it is anything but cold outside."
                n "It's her, again."
                if rockMode == True:
@@ -603,7 +630,7 @@ label game_start:
                     n "I have so many questions..."
                     n "But let's stay on track as much as possible, what do you want to do now?"
                     menu:
-                         "*Remember that all rocks have a telepathic network to communicate with eachother and use it to reach out to Lilith.*" if persistent.psychicConnection_knowledge:
+                         "*Remember that all rocks have a telepathic network to communicate with eachother and use it to reach out to [persistent.date].*" if persistent.psychicConnection_knowledge:
                               "Filler"
                          "*Struggle against your inescapable prison of a body and try to roll to the phone.*" if not rockFloorFail:
                               n"You use all your strength to slowly wiggle a little bit, falling out of your bed and landing right on the soft carpet near it."
@@ -642,11 +669,7 @@ label game_start:
                                                             #TODO: Add a version of the normal path but with rocks stuff, Lilith can't emote because she is a rock.<br/>At the end she will not die.<br/>Add a path to all three main restaurants."
                                                             #Make the two of you move by getting stuck in people's shoes, make the two of you not able to die etc. Make the two of you just wait until you erode, and even then you are alive. Wait until the earth consumes the sun. Have the two of you still being able to communicate, but after less than a hundred years you have said pretty much everything, and then you are just floating around in space, divided in your atoms, as you witness time in a form no mind can take well. Make the end say "rock on"
                                                             #It's about how an ending is so much better than pure infinity without one.
-                              
-               
-               else:
-                    n "Actually it's just the same day."
-                    n "Maybe you can make it just a tiny bit different."
+                                          
           else:
                n "You awaken in cold sweat as your phone begins to blare \"Baby it's cold outside\" even though it's nowhere near winter."
                n "You had a terrible nightmare but you try to shake it off as best as you can."
@@ -676,11 +699,11 @@ label game_start:
                          $ keySeenNow = True
                          jump bedCheck
 
-                    "Hey you, narrator. Give me the good ending where Lilith survives. Or else I'm erasing all my progress." if persistent.threatenNarratorForEnding == True and lilithAliveAndRetriedCounter == 0 and not persistent.threatenNarratorForEnding_noUse:
+                    "Hey you, narrator. Give me the good ending where [persistent.date] survives. Or else I'm erasing all my progress." if persistent.threatenNarratorForEnding == True and lilithAliveAndRetriedCounter == 0 and not persistent.threatenNarratorForEnding_noUse:
                          jump threatenNarratorForEnding
                
 
-                    "Hey you, narrator. Give me the good ending where Lilith survives and we still end up together. Or else I'm erasing all my progress." if persistent.threatenNarratorForEnding == True and lilithAliveAndRetriedCounter > 0  and not persistent.threatenNarratorForEnding_noUse:
+                    "Hey you, narrator. Give me the good ending where [persistent.date] survives and we still end up together. Or else I'm erasing all my progress." if persistent.threatenNarratorForEnding == True and lilithAliveAndRetriedCounter > 0  and not persistent.threatenNarratorForEnding_noUse:
                          label threatenNarratorForEnding:
                               n "I knew I shouldn't have given you that mayonaise the other time..."
                               n "Now things have gone to your head."
@@ -783,7 +806,7 @@ label game_start:
           label bedCheck:
 
                if not persistent.keyUnderBed_knowledge:
-                    n "With Lilith's story about the \"monster\" underneath the bed still in your mind you decide to check underneath your own bed. "
+                    n "With [persistent.date]'s story about the \"monster\" underneath the bed still in your mind you decide to check underneath your own bed. "
                     n "There is no monster under your bed, there is however a metal key lying there. The key has the number 22 engraved in it's metal."
                     n "You are not sure what this key could even be used for... well, to open something of course but you have no idea what it could open so you let it lie right where you've found it like the procrastinator you are."
                     n "The phone keeps ringing, you should probably decide whether to pick up or not because soon you won't have that choice anymore."
@@ -851,7 +874,7 @@ label Game_start2:
                else: 
                     if persistent.name == "Fartyfarty": 
                          l "Hey-"
-                         l "Lilith burst out into laughter."
+                         l "[persistent.date] burst out into laughter."
                          l "Fartyfarty. Hahahahaha."
                          n "Don't worry, soon it will be out of her system."
                          n "Very soon."
@@ -1049,7 +1072,7 @@ label phone_start_choices:
                          jump phone_otherPlans
  
  
-          "Placeholder: Other/Extra" if persistent.other_subfolder and not onlyDates:
+          "*Say something else*" if persistent.other_subfolder and not onlyDates:
                menu:
                     "Hang on, I just need to make another quick call and then I'll be right back." if persistent.peeked_phone or persistent.kokiri_death_2:
                          jump phone_callMenu
@@ -1154,8 +1177,8 @@ label phone_breakup:
      n "You agree with [persistent.date] and still regulary text with her and sometimes the two of you even meet up with eachother."
      n "However after a while the texts on both your and her side begin to be less and less frequent and you begin to only meet once in a month."
      n "Once in a month changes to once in every season to once every year untill the meetings stops completely."
-     n "After a few years that you've forgotten about [persistent.date] you decide to check her facebook page out."
-     n "She doesn't have that much pictures on her facebook account but the ones she has on there are beautifully shot."
+     n "After a few years that you've forgotten about [persistent.date] until you stumble upon her social media page."
+     n "She doesn't have that much pictures on her account but the ones she has on there are beautifully shot."
      n "On a few pictures she stands next a blonde man while they both have the widest smiles you have ever seen."
      n "Apparently the man is called Ron, he is a semi-profesional photographer and his pictures surely show for it."
      n "[persistent.date] and Ron got two kids that look like they had not a single thing to worry about."
@@ -1222,6 +1245,7 @@ label phone_call_police:
                     n "After some more attempts at convincing them you hear one long sigh, so long in fact that for a moment you fear them passing out."
                     n "Luckily they shortly after respond, they reluctantly agree to check the place out at the time you specified."
                     n "At times like these you are very lucky that there is so little going on in your town."
+                    n "The man hangs up the phone and you call [persistent.date] back."
                     jump Game_start2
           "*Tell the police about the car crashing in against the cafe's doors*":
                $ car_caught = True #This will tell you the car has been caught.
@@ -1357,13 +1381,86 @@ label phone_call_abigail:
      
                                              "I spoke to David in a previous cycle. He told me he blames himself for [persistent.date_ghost]' death and thinks [persistent.date] and Lila do aswell." if persistent.david_blame_knowledge:
                                                   jump phone_call_abigail_topics_spoketodavid_davidblameshimself
-     
+
+                                             "Do you have a teacher called Sam? Could you tell me something that they and close to no one else would know?":
+                                                  a "And this is going to save Lilly how exactly?"
+                                                  a "Still, I suppose it is important, right? Otherwise you wouldn't ask me."
+                                                  a "Let's see... something almost only Sam would know... but it also has to be something that is verifiable."
+                                                  a "...Perhaps my score for their class that semester would work? I got a fourteen out of twenty."
+                                                  $ persistent.lilaCallRecievedAbbyProof_knowledge = True
+                                                  a "Hope that helps."
+                                                  menu:
+                                                       "It does, thank you.":
+                                                            a "I wouldn't know how it possibly could, but that's good to hear [persistent.name]."
+                                                            a "Now don't leave my sis waiting and try your best to save her, alright?"
+                                                            a "Goodbye."
+                                                            a "And with that she hung up the phone."
+                                                            jump Game_start2
+
+                                             "Do you know anything about an opportunity you might not be taking related to a game design competition?" if persistent.lilaToldAbbyOpportunity_knowledge:
+                                                  a "..."
+                                                  a "How do you know about that?"
+                                                  a "I get it, through the timeloops and all that, but who told you?"
+                                                  menu:
+                                                       "Your mom told me.":
+                                                            a "You have been talking to mom aswell?"
+                                                            a "I suppose that does make sense, if you are using my help, why wouldn't you be using hers?..."
+                                                            a "But scratch that, she told you about the competition?"
+                                                            a "She knows about it too? How?"
+                                                            menu:
+                                                                 "She only partially does, Sam sent her a mail with a vague mention of it. They were going to discuss it over the phone though.":
+                                                                      a "I see. So she does not yet know entirely?"
+                                                                      a "...Is it bad for me to be slightly glad this day is looping now?"
+                                                                      a "Don't get me wrong, I hope you manage to break the loop, but this way my secret might be last longer than it would otherwise."
+                                                                      a "And if that is the case I'd rather keep it that way for now. I'm not ready yet to discuss it with you, or with anyone for that matter."
+                                                                      a "I am going to hang up now. Goodbye [persistent.name]."
+                                                                      jump Game_start2
+
+                                                                 "Sam told her the entire thing (Lie)":
+                                                                      a "Really? So she knows about the job offer I got from winning that competition? And you do aswell?"
+                                                                      menu:
+                                                                           "Yup, and I was wondering why you didn't want to take that opportunity.":
+                                                                                a "..."
+                                                                                a "This better be useful to somehow save Lilly [persistent.name]."
+                                                                                n "She lets out a deep sigh."
+                                                                                a "I didn't take the job opportunity because I would have to move away from my hometown."
+                                                                                a "The game design studio is pretty far away from here, about a 12 hour drive. So that would force me to get an apartment close to the job and far away from both mom and Lilly."
+                                                                                a "I'm not ready for that yet. Not ready to let them go like that."
+                                                                                a "But they would want me to. They would say that it is an amazing opportunity I have to take and that we would still keep contact, just in a different way."
+                                                                                a "Which is precisely why I tried to hide this from them. Although the truth was bound to come out eventually..."
+                                                                                menu:
+                                                                                     "I get that it might seem scary now, but sooner or later you will have to let go, right?":
+                                                                                          a "I don't know about that..."
+                                                                                          a "I'm not at the point yet to even really consider it honestly."
+                                                                                          a "The closest I probably could go to that is loosening my grip a little. But letting go that much... that is scary to me."
+
+                                                                                     "Wait, but there is no college near this town in the slightest. Aren't you already used to not being home every day?":
+                                                                                          a "It is true that there really isn't any college closeby here, but there is one about a 2 hour cardrive away from here."
+                                                                                          a "I go to that one, so instead of staying in a dorm I just drive back and forth each day."
+                                                                                          menu:
+                                                                                               "But that's 4 hours total each day spent just driving. Wouldn't it have been less of a hassle to stay in a dorm?":
+                                                                                                    a "It probably would, then I might even have gotten used to being a bit further away from mom and Lilly."
+                                                                                                    a "But that is the thing about letting go isn't it? We do whatever we can so we don't have to, even if it is inconveniencing or painful."
+
+                                                                                     "So the distance is one factor why you don't follow through with the offer, but there is also another reason, isn't there?":
+                                                                                          #If you know about her masking make this choice an option.
+                                                                                          a "..."
+                                                                                          a "I suppose there is no hiding things from you, is there, [persistent.name]?"
+                                                                                          a "Another part of it is that I don't feel like I am good enough to join the game design studio."
+                                                                                          a "I know they saw something of value in the writing of my games but even if I am being told by others it is there I myself can't see it yet."
+                                                                                          a "The truth is, lately I have been feeling like I am a fraud, a liar. Not just about the quality of my writing, but also about the person I am."
+                                                                                          a "I think I would only bring down the studio by being in it, as if I am a parasite draining it's blood until there is nothing left but a drained carcass."
+                                                                                          a "And yet, I want to go there, I want to work in the game design studio, that has been my dream for so long after all. But I know that if I were to go I would feel it, the lifeblood of the studio on my tongue, as I leave no drop of it behind."
+                                                                                          a "Afterall, ruining the studio is not something I would do out of malicousness, moreso out of sheer incompetence. I just am not ready yet. I'm not sure if I'll ever be honestly."
+                                                                                
+
+                                                       "Does it really matter?":
+                                                            "Filler"
      
                                              "Actually I would just like to talk about something else.":
                                                   a "Sure, if that somehow helps Lilly that's fine by me."
-                                                  #TODO: Talk about her masking, ask about her games etc. This is the place where you can get a bit more info about her.
                                                   menu abigail_somethingElse:
-                                                       "Lilith and you talked about your emotional mask in a previous loop, the façade that you put up not to worry anyone." if persistent.kokiri_abbyMasking_knowledge == True:
+                                                       "[persistent.date] and you talked about your emotional mask in a previous loop, the façade that you put up not to worry anyone." if persistent.kokiri_abbyMasking_knowledge == True:
                                                             a "We talked about that?"
                                                             a "I guess we did, since you know."
                                                             a "Though if you want to talk about it with me I'd rather not."
@@ -1561,14 +1658,14 @@ label phone_call_david:
                               $ persistent.david_blame_knowledge = True
                               menu:
                                    "Do you really think they blame you for his death?":
-                                        d "Ofcourse. I am blaming myself so they probably also blame me for his death."
+                                        d "Of course. I am blaming myself so they probably also blame me for his death."
                                         d "Now, this is getting a bit too much for me so I'm going to have to hang up the phone."
                                         d "Goodbye [persistent.name]."
                                         n "David hung up."
                                         jump Game_start2
                     "*Feign ignorance* Hang on, you said that you ruined your family and then left them. What happened before you left them?" if persistent.david_blame_knowledge == True or persistent.brother_knowledge == True:
                          jump phone_call_david_whatHappenedBeforeHeLeft
-                    "Well, it seems like things were pretty hard for them. Lilith's mom even had to take a second job just to make ends meet." if persistent.lilaWorkedTwoJobs_knowledge:
+                    "Well, it seems like things were pretty hard for them. [persistent.date]'s mom even had to take a second job just to make ends meet." if persistent.lilaWorkedTwoJobs_knowledge:
                          d "What?..."
                          d "She did?"
                          d "But what happened to the money I gave her?"
@@ -1610,7 +1707,7 @@ label phone_call_david:
                          d "I would like to tell her that I'm deeply that she had to feel like her own father abandoned her."
                          d "No child deserves to go through such pain. My family lost two people when James died and it was hard enough just losing one."
                          d "I can't undo the wounds I have caused, but I do hope I could, if my family accepts it, try mending them."
-                         #TODO:Give the player the ability to tell Lilith this. Also attempt to finish this path of the reunited ending.
+                         #TODO:Give the player the ability to tell [persistent.date] this. Also attempt to finish this path of the reunited ending.
 
 
 
@@ -1691,18 +1788,18 @@ label phone_call_james:
                               
                               menu:
                                    "I know what you mean [persistent.date_ghost], I feel the same way.":
-                                        #TODO: The topic about love being filtered through stuff (bubbles/screen and the paralels between [persistent.date_ghost] and the player REWRITE that topic a lot
+                                      
                                         j "Oh, you do?"
                                         j "Why is that [persistent.name]?"
                                         menu:
-                                             "I keep all my memories of the things Lilith and me go through on each loop, but she doesn't. I get to know her better slowly as one normally would, despite the weird circumstances. But to her I am practically a stranger each time.":
+                                             "I keep all my memories of the things [persistent.date] and me go through on each loop, but she doesn't. I get to know her better slowly as one normally would, despite the weird circumstances. But to her I am practically a stranger each time.":
                                                   menu:
-                                                       "And I can try to clue her in on what happened, or I can choose not to do that. The end is always the same regardless, in the best case I can just slightly prolongs it from ending. But it always does eventually.":
+                                                       "And I can try to clue her in on what happened, or I can choose not to do that. The end is always the same regardless, in the best case I can just slightly prolong it from ending. But it always does eventually.":
                                                             menu:
                                                                  "It doesn't matter what I say or do. It really doesn't.":
                                                                       j "I see..."
                                                                       j "I think I might be able to understand were you are coming from."
-                                                                      j "This image of Lilith in your mind has been slowly but steadily growing, and yet, to her you are close to a stranger."
+                                                                      j "This image of [persistent.date] in your mind has been slowly but steadily growing, and yet, to her you are close to a stranger.."
                                                                       j "Still, I think it does matter."
                                                                       j "Stranger or not, how you treat her matters."
                                                                       j "Would you rather keep her safe, make her smile, or be relentlessly rude to her?"
@@ -1718,12 +1815,12 @@ label phone_call_james:
                                                                                      "I found myself rushing through her dialogue, in the hopes of finding {b} {i} anything {/i}{/b} new. Anything I hadn't yet experienced. At first that happened every now and then. But soon it started to happen less and less frequent.":
                                                                                           j "Sounds to me like you were setting your up for a gradual dissapointment."
                                                                                           j "There will be a point where you have read every line this game has to offer."
-                                                                                          j "There will be if you keep pushing yourself to do that atleast."
+                                                                                          j "There will be if you keep pushing yourself to do so atleast."
                                                                                           j "But think about how much of the same things you would have to slog through to even get to that point."
                                                                                           j "Would it be worth it?"
                                                                                           j "I think it's good to know when to stop, so we don't get caught up in things too badly."
-                                                                                          j "Although I guess I don't have a right to speak about such things, with how I still linger here."
-                                                                                          j "Or perhaps that exactly is why I do have a right to speak about it. Don't make my mistake [persistent.name]."
+                                                                                          j "Although I guess I don't have a right to speak about such things, while I still linger here."
+                                                                                          j "Or perhaps that exactly is why I do have a right to speak about it. Please don't make my mistake [persistent.name]."
                                                                                           j "It's okay to move on, no matter how long you didn't. That will spare you from a lot of hurt in the future."
                                                                                           j "Especially if you chasing a slither of happiness is going to lead up to Lilly dying again, maybe it's just better to throw the towel in the ring?"
 
@@ -1739,26 +1836,26 @@ label phone_call_james:
                                                                       "Yes, but the choices I am given aren't me. They are just random options.":
                                                                            j "And yet it is you who picks a choice from the available ones. One that moves the story further."
                                                                            j "The choices might not {b} {i} be {/i}{/b} you, but the one you pick does say something about you."
+                                                                           j "Even the very fact that we are having this conversation right now says something about you, doesn't it?"
                                                                       
                                                                       "I never thought about it like that, what is the point of even interacting with anyone then?":
                                                                            j "Don't you see [persistent.name]? That is precisely the point of interaction. To try to get a glimpse of someone's being, of their thoughts. Of all the things that make them, well... them."
                                                                            j "Sometimes it can be really fun learning that someone you thought you knew actually has some things you don't know about them yet."
-                                                                           j "And when you learn even those, you never know if there could be even more things to learn."
+                                                                           j "And when you learn those things, you never know if there could be even more things to learn."
                                                                            j "People are wellsprings of so much interesting thoughts, experiences and perspectives that you'll never truly learn them all."
-                                                                           j "And that's not something to be dreaded, it's something to be celebrated. Your thirst for more depth will always be met with a stream of new discoveries if you interact with interesting enough people."
+                                                                           j "And that's not something to dread, it's something to celebrate. Your thirst for more depth will always be met with a stream of new discoveries if you interact with interesting enough people."
 
                                                        "How could we ever be friends? She can't even be aware of my true presence unless I tell her about it. And even then, she can only glimpse it, she can never truly see me. And I can never truly speak my mind to her, I'm always limited by the choices the game forces me to choose from. So how could I possible even show her a slither of my true love?":
                                                             jump jamesTalk_dividedExistence
 
                                                   
-
                                    "That sounds really lonely [persistent.date_ghost], I think you shouldn't sacrifice yourself for your family like this.":
                                         j "It does sound far from ideal doesn't it?"
                                         j "You are absolutely right."
                                         j "And yet, knowing that if anything were ever to happen with them I could help them out from here..."
                                         j "It's one of the only reasons I haven't crossed over yet."
                                         j "Ever since my passing I've been here, watching over them."
-                                        j "And every other version of me who got killed is also in a place like this, watching over their own family."
+                                        j "And every other version of me who died is also in a place like this, watching over their own family."
                                         j "Our minds kind of blend together sometimes, it's hard to know where my memories start and were the others' end."
                                         j "I don't mind though, that way it feels a little less lonely in here."
                                         if persistent.major_love_offence_counter <= 2 and persistent.minor_love_offence_counter >= 5 and persistent.major_love_comfort_counter > 2 and persistent.minor_love_comfort_counter > 5:
@@ -1787,7 +1884,7 @@ label phone_call_james:
                                              "You say you've been watching your family, have you ever thought about reaching out to them?":
                                                   j "Oh constantly [persistent.name]. It hurts me to see how they are still affected by my death."
                                                   j "I completely understand that they are, I just wish that I hadn't been playing on the road that day, maybe then..."
-                                                  j "I'd love to tell them that it isn't their fault. Dad especially, the guilt's been eating him up from the inside for years now."
+                                                  j "I'd love to tell them that it isn't their fault. Dad especially, the guilt has been eating him up from the inside for years now."
                                                   j "Yes, he made some bad choices afterwards, but none that would justify me being mad at him."
                                                   j "Sadly I haven't reached out yet, when lingering ghosts like me communicate with the living it usually ends up in more death."
                                                   n "He pauses for a moment, seemingly lost in thought."
@@ -1822,7 +1919,7 @@ label phone_call_james:
                     j "When I sat next to her she told me that she had gotten a really bad grade for math."
                     j "She felt like a failure and didn’t think she could go back home to [persistent.date_mom]. I told her that that was absolutely ridiculous and that mom would always love us no matter what. "
                     j "That seemed to calm her down a bit and she stopped crying. To further calm her down I asked her if she wanted to try to find fairies in the woods with me. "
-                    j "We spent an hour or so searching for fairies, ofcourse never finding one but at the end of it she forgot all about her bad grade."
+                    j "We spent an hour or so searching for fairies, of course never finding one but at the end of it she forgot all about her bad grade."
                     $ persistent.james_story_knowledge = True
                     jump jamesLowEnergy
      label jamesLowEnergy:
@@ -1848,11 +1945,11 @@ label phone_call_lila:
                               "Excuse me but my memory appears to be quite foggy and I can't remember all the details of the mail, could you unclog my memory?":
                                    li "Well, can't you just reread your mail to unclog your memory?"
                                    menu:
-                                        "*Say you accidentaly deleted it.*": #TODO:She probably won't believe this and ask you some more questions to prove you're the teacher or something, ask Abigial to help you with those questions.
-                                             #TODO: Fill in the rest, you have to make it as the quest version doesn't already have this. (Ask Abby if she can help you with this, turns out she has a backdoor on that teachers computer so she can boost some of her grades a tiny tad. She gives you the info you need.)
+                                        "*Say you accidentaly deleted it.*":
                                              li "... Really?"
                                              n "You hear some doubt in her voice."
                                              li "No problem, I'd be happy to refresh your memory if you can tell me anything about Abigail only you would know."
+                                             $ persistent.lilaCallNeedsAbbyProof_knowledge = True
                                              menu:
                                                   "I'm not sure what I could tell you to be honest. You do understand that that is a pretty strange thing to ask someone, right?":
                                                        li "Look Sam, I'm having a really hard time believing that."
@@ -1862,9 +1959,28 @@ label phone_call_lila:
                                                        li "If I find out that you have bothered me or my family again after I end this call I'll have to take some measures."
                                                        li "Goodbye."
                                                        n "She hung up the phone, seems she saw right through you."
-                                                       n "You might need to learn more about Abigail if you want answers. Or you could try asking her if she knows what her teacher wanted to discuss."
+                                                       n "You might need to get Abby's help to get further with this."
                                                        jump game_start2
-
+                                                  
+                                                  "Her score last semester for my class was 14 points out of 20." if persistent.lilaCallRecievedAbbyProof:
+                                                       li "So you remember that but do not remember what your mail is about?"
+                                                       li "{size=*0.5}Are you drunk?{/size}"
+                                                       li "Still, I suppose it seems atleast slightly plausible..."
+                                                       n "You hear her let out a deep sigh."
+                                                       li "Fine, I'll refresh your memory."
+                                                       li "In your mail you said something about wanting to talk about how you fear Abby is not taking an opportunity given to her by something to do with a game design competition."
+                                                       li "The details were pretty limited so I'm not sure about much more than that. But surely that must've helped unclog your memory, right?"
+                                                       $ persistent.lilaToldAbbyOpportunity_knowledge = True
+                                                       #In the below menu you will also be able to ask Lila to meet up like above but because she suspsects you are drunk she will deny this here.
+                                                       menu:
+                                                            "I'm afraid it does not.":
+                                                                 li "Really? I'm having a lot of doubts about this whole thing."
+                                                                 li "If there really is something going on with your memory call me back when it clears up."
+                                                                 li "But right now I'm taking my chance that this is just some sort of prank call."
+                                                                 li "Goodbye either way."
+                                                                 n "She hung up."
+                                                                 jump Game_start2
+                                                  
                               "Actually I would like to talk about your financial status. Abigail has recently brought it to my attention that you are struggeling and I would like to inform you about some programs we have that could help out with that." if persistent.davidPayedMoney_knowledge:
                                    li "Oh..."
                                    li "I see."
@@ -1908,7 +2024,7 @@ label doNotPickUpThePhone:
                n "Just because you could?"
                n "Just because that was an option?"
                n "The name of the game is \"Great date with [persistent.date]\" so unless you like not playing this game you better choose the other choice next time."
-               #TODO:Find a way to lie about the name of the game in renpy so this can be a shocking reveal later. Maybe have a name with a double meaning? Something like "A date you won't forget.""
+               #TODO:Find a way to lie about the name of the game in renpy so this can be a shocking reveal later. Maybe have a name with a double meaning? Something like "Another first date.""
      elif persistent.lildeaths == 1:
           n "Oh wow, that was quick."
   
@@ -2005,7 +2121,7 @@ label prevented_joking:
 
 label prevented_groundhog:
      l "So you mean to tell me that you've already been on this specific date before?"
-     l "I mean, I'm really thankful for you warning me, that would probably haven't ended too well for me."
+     l "I mean, I'm really thankful for you warning me, that probably wouldn't have ended too well for me."
      l "But you got to admit that this really sounds contrived."
      l "I mean, this whole thing seems pretty weird to me. Can you atleast offer me some proof?"
      $ groundhog = True
@@ -2100,8 +2216,8 @@ label proof_answer_right:
           You really are living in some sort of groundhog-day like scenario?"
           l "Even with that proof it's pretty hard to get my brain to accept it."
           l "I feel like when I'm going to admit I believe you there is going to come an entire camera crew out of nowhere and I'll be made fun of in some bad tv show."
-          l "But let's say I am starting to believe you a little bit so we won't have the camera crew barge in on us just yet."
-          l "So what is this all about?"
+          l "Let's say I am still not entirely sure but willing to hear you out so we won't have the camera crew barge in on us just yet."
+          l "What is this all about?"
      elif psychic == True:
           n "Suddenly you catch a glimpse of utter shock on [persistent.date]'s face."
           l "Wait, you... You guessed the word I was thinking of?"
@@ -2191,10 +2307,10 @@ label proof_convincePast:
           l "I thought you said you were a psyhic, aren't you clairvoyant?"
           n "You come up with a half-hearted excuse that you are only slightly clairvoyant and the rest you fill in by projecting your mind into the past. Thus time-travalling via astral projection."
           if chinese == True:
-               n "Lilith looks at you sceptically but she's too far in to go back now."
+               n "[persistent.date] looks at you sceptically but she's too far in to go back now."
                n "She decides to just atleast try to buy that explanation for now."
           else:
-               n "Lilith looks at you sceptically, but since you did safe her life she decides to roll with it."
+               n "[persistent.date] looks at you sceptically, but since you did safe her life she decides to roll with it."
      
      l "..."
      l "This is begining to hurt my head if I'm honest with you [persistent.name]."
@@ -2254,20 +2370,27 @@ label groundhog_breakingLoop_loopGone:
           n "Didn't you want to break the bad news to her?"
           n "Or did you yourself want to believe for a second longer that she would live?"
           n "I get it, ignorance is bliss after all, isn't it?"
+     if love_meter >= 2:
+          n "A wide grin appears on [persistent.date]'s face."
+          l "So, did we just cheat death?"
+          l "We actually did it, didn't we?"
+     
+          l "Thank you so much for saving me [persistent.name]!"
+          l "Is it weird for me to feel absolutely ecstatic right now?"
+          menu:
+               "Absolutely not! This has never happened to someone before so I doubt there is a standard way to react when it comes to this.":
+                    jump loopGone_strangeSituation
+               "Absolutely not! You have every right to feel happy. We saved you from death itself!":
+                    jump loopGone_everyRightToBeHappy
+               "Absolutely not! I am also happy for us.":
+                    jump loopGone_happyForYou
+          l "Oh thank god. Look [persistent.name], I appreciate you saving me but I do not think this is going to work out."
+          l "You just are so different compared to how you were when we were planning this date."
+          l "I really wanted this to work, but I'm not sure you feel the same way."
+          l "So goodbye [persistent.name]."
+          $ noTalkAngryLilith = True
+          jump car_death
 
-     n "A wide grin appears on [persistent.date]'s face."
-     l "So, did we just cheat death?"
-     l "We actually did it, didn't we?"
- 
-     l "Thank you so much for saving me [persistent.name]!"
-     l "Is it weird for me to feel absolutely ecstatic right now?"
-     menu:
-          "Absolutely not! This has never happened to someone before so I doubt there is a standard way to react when it comes to this.":
-               jump loopGone_strangeSituation
-          "Absolutely not! You have every right to feel happy. We saved you from death itself!":
-               jump loopGone_everyRightToBeHappy
-          "Absolutely not! I am also happy for us.":
-               jump loopGone_happyForYou
 label loopGone_strangeSituation:
      l "I suppose you are right, this is quite an exceptional scenario. I thought that atleast one person must've had this happen to them before, but those odds seem pretty low in retrospect."
      n "[persistent.date] gives you a thumbs-up and a cute laugh."
@@ -2404,7 +2527,7 @@ label groundhog_breakingLoop_loopStillExists:
 
 
 label loopStillExists_forTheRestOfOurLives:
-     l "I really hope that will not  be the case, I don't want to die too early ofcourse, but when I have lived a long life and my time has come I'd be more than happy to go."
+     l "I really hope that will not  be the case, I don't want to die too early of course, but when I have lived a long life and my time has come I'd be more than happy to go."
      n "[persistent.date] looks at you as to make sure you're processing all of this, you give her a silent nod and she continues."
      l "I mean, imagine what a nightmare it must be for the both of us."
      l "You would be cursed with always having to save an old lady that could literally die any moment, always just buying her a few extra hours."
@@ -2479,7 +2602,7 @@ label escapeFate_myFault_ITriedTo:
      l "Things are even worse than I thought."
      l "If even just not going on this date still kills me, what hope is there?"
      if persistent.ending_breakup == True:
-          n "Luckily for Lilith that is not the case, as she does survive you cancelling the date. Unluckely for her, you don't tell her that."
+          n "Luckily for [persistent.date] that is not the case, as she does survive you cancelling the date. Unluckely for her, you don't tell her that."
           n "Why I wonder? Are you scared she wouldn't put up with you if she knew?"
           n "I'm not sure lying is that much better of an alternative, considering you just crushed her hopes of surviving."
 
@@ -2559,12 +2682,12 @@ label groundhog_escapeFate_yourFate:
           "I think we should precisely try to truly live because we could die at any moment.":
                l "I suppose you do have a point [persistent.name]..."
                l "If I never let go of the fear of dying then it will be like I'm already dead. I wouldn't be able to appreciate this extra time you gave me."
-               l "Still, something inside of me is just gnawing away at me. How much extra time did you give me?"
-               l "Is it an hour or so? A few minutes?"
+               l "Still, something is just gnawing away at me. How much extra time did you give me?"
+               l "Is it a day or so? A few hours? Or a few minutes?"
                if burger == True:
                     $ death_narration = "It seems she was quite optimistic, you only bought her a few extra seconds."
                elif cafe == True:
-                    $ death_narration = "It seems she had a bit of luck, she had a few extra minutes of life thanks to you. Though maybe she would wish she didn't."
+                    $ death_narration = "It seems she had a few extra minutes of life thanks to you. Although maybe she would wish she didn't."
                
                jump restaurant_death_2 
 
@@ -2635,7 +2758,7 @@ label explanation_stillDying:
                          l "So this really is it."
                          l "I'm scared [persistent.name]."
                          menu:
-                              "Me too Lilith.":
+                              "Me too [persistent.date].":
                                    l "Is it weird to say that's kind of comforting?"
                                    l "Otherwise I would have been the only one to carry this burden between all these people who have no idea what is about to happen."
                                    l "I'm glad atleast you are here to understand it aswell."
@@ -2690,12 +2813,12 @@ label restaurant_death_2_preventionAttempt:
      if cafe:
           l "Is it really that heavy? Maybe we could move it out of the way just enough to brush past?"
           l "Let's go take a look at it."
-          n "Lilith and you walk to the enormous closet made of lignum vitae."
+          n "[persistent.date] and you walk to the enormous closet made of lignum vitae."
           n "She inspects it for a brief moment and then lets out a deep sigh."
           l "Okay, there is no way we can move {b} {i} that{/i} {/b}, right?"
           l "What is it doing here anyway?"
           l "Maybe we should just go to that barista and ask him about it? Maybe there is other staff somewhere that could help clear the stairway."
-          n "Lilith and you walk away from the closet and are heading towards the barista. As she passes you, you notice the urgency in her step."
+          n "[persistent.date] and you walk away from the closet and are heading towards the barista. As she passes you, you notice the urgency in her step."
           l "Hello, I'm really sorry to bother you, but we wanted to go up to the second floor and noticed there was a gigiantic closet blocking the way up."
           b "Ah yes, the closet..."
           b "I'm really sorry about that."
@@ -2726,7 +2849,7 @@ label restaurant_death_2_preventionAttempt:
                               n "The people in the cafe desperately make their way to the exit, when they realise the door doesn't seem to be able to open they panic even more."
                               n "They push against it with all of their strength, but the door doesn't even budge."
                               n "Soon the fish are able to swim around freely, the water now comes to around your middle."
-                              n "Lilith and you give eachother a knowing look."
+                              n "[persistent.date] and you give eachother a knowing look."
                               if love_meter > 2: 
                                    n "The two of you wait for death in eachothers arms."
                               else: 
@@ -2746,7 +2869,7 @@ label restaurant_death_2_preventionAttempt:
                               n "Quite a few customers begin to leave."
                               n "The barista looks even more terified now."
                               b "I would like you to leave now sir, or I will have to call the cops."
-                              n "Lilith and you shamefully start walking towards the exit."
+                              n "[persistent.date] and you shamefully start walking towards the exit."
                               l "I think you might have come across slightly too strong [persistent.name]."
                               l "So, when we step outside we- or I will die, right?"
                               n "She whispers it, not wanting to freak out the remaining customers even more."
@@ -2764,7 +2887,7 @@ label restaurant_death_2_preventionAttempt:
                               n "It drives straight into the two of you."
                               jump car_death_result
      elif chinese:                 
-          n "Lilith and you walk into the women's restroom together."
+          n "[persistent.date] and you walk into the women's restroom together."
           n "There is no one else there."
           n "You smell the destinct scent of roses, upon further inspection it seems to come from an aroma difuser."
           l "So, in here we should be safe, right?"
@@ -2780,16 +2903,16 @@ label restaurant_death_2_preventionAttempt:
           n "In fact, it seems to last longer than you remember."
           n "Something's different, but what?"
           n "It's the same day over again, right? Nothing can be different except..."
-          n "Except you, hiding with Lilith in the bathroom."
+          n "Except you, hiding with [persistent.date] in the bathroom."
           n "Are they searching you?"
           n "No, last time they didn't take you with them."
           n "They are searching her."
           n "The restroom door bursts open with a deafening bang, the force rattling the hinges. A cacophony of flapping wings and maddening quacking fills the air as several geese flood into the small room, their eyes gleaming with malicious intent."
-          n "Lilith lets out a strangled scream, backing away until she is pressed against the tiled wall. You try to shield her, but it's futile. You are no match for 100 geese, for a 1000 geese, for an uncountable amount of them."
+          n "[persistent.date] lets out a strangled scream, backing away until she is pressed against the tiled wall. You try to shield her, but it's futile. You are no match for 100 geese, for a 1000 geese, for an uncountable amount of them."
           n "The restroom door bursts open with a deafening crash, and before you can fully process what’s happening, a blizzard of white feathers engulfs the room."
           n "You try to shout, to do something, but before you can make another sound, everything turns to white—the white of pesky geese feathers."
           n "The pain you feel is excruciating, sharp and overwhelming, as the geese descend upon you like a merciless force of nature. The cacophony of honking grows distant as darkness takes over, and you fall unconscious."
-          n "When you wake up again, the restroom is silent and Lilith is gone."
+          n "When you wake up again, the restroom is silent and [persistent.date] is gone."
           n "The room is completely filled to the brim with geese feathers, blanketing every surface and swirling lazily in the air. Just thinking about it makes your nose itch, and you begin to sneeze uncontrollably."
           n "Between sneezes, you notice it, the same sticky note they left last time, on your hand once again."
           n "You already know what it says but decide to read it anyway."
@@ -2950,7 +3073,7 @@ label explanation_noTimeToExplain:
                
                if persistent_fleeingDeaths_counter_knowledge == 0:
                     n "As you are running along the side of an empty street you suddenly hear the screeching of wheels and loud laughter."
-                    n "As you look behind you you see a bus full with elderly people coming straight towards you and her, you manage to jump away from it just as it would've hit you but [persistent.date] ofcourse doesn't."
+                    n "As you look behind you you see a bus full with elderly people coming straight towards you and her, you manage to jump away from it just as it would've hit you but [persistent.date] of course doesn't."
                     n "You know what you have to do, you've come too far to just give up now."
                     $ persistent_fleeingDeaths_counter_knowledge += 1
                     menu: 
@@ -3022,7 +3145,7 @@ label explanation_noTimeToExplain:
                     l "How would we even be able to do that?"
                     n "You stop the car for a moment, waiting for death to cath up with both of you, and it sure does so fast."
                     n "Another car, trying to escape the commotion, notices you too late and drives right into your car from the front."
-                    n "You already know that Lilith did not surivive even without checking."
+                    n "You already know that [persistent.date] did not surivive even without checking."
                     $ persistent_fleeingDeaths_counter_knowledge += 1
                     menu: 
                          "Retry, this could be it!":
@@ -3133,7 +3256,7 @@ label explanation_noTimeToExplain:
      else:
          
           label explanation_noTimeToExplain_hitByCar:
-               n "As Lilith and you run out of the [resname] together you spot something that makes your stomach drop."
+               n "As [persistent.date] and you run out of the [resname] together you spot something that makes your stomach drop."
                n "You see a red Sedan."
                n "Not just any red Sedan, the one you wish you could never see again."
                n "And yet, here it is again."
@@ -3151,7 +3274,7 @@ label explanation_noTimeToExplain:
                          n "Maybe it's time to try to call the cops like you've been thinking about before."
                n "All those thoughts in your mind are trying their best to obfuscate the worst one."
                n "An image of the aftermath that is about to happen."
-               n "You try to ignore it, try to change it, by attempting to push Lilith aside as fast as you can."
+               n "You try to ignore it, try to change it, by attempting to push [persistent.date] aside as fast as you can."
                n "But no matter how hard your mind tries to fight it, your body is frozen in place."
                n "Your mind is flooded with thoughts that all somehow overlap, you can't make much sense of any of them. Most of them are cries for you to save her, for anyone to save her somehow."
                n "But as you get flung aside somehow by the car, you already know what happened to her."
@@ -3182,7 +3305,7 @@ label ufo_talk_favouriteFirstDate:
           l "Even though this date surely didn't go as planned."
           l "Though I can imagine your favourite date there isn't this one, because we hardly spent any time in the chinese restaurant itself now."
           l "What made that date specifically your favourite [persistent.name]? Maybe we can still one-up it."
-          n "Lilith gives you a cute little smile."
+          n "[persistent.date] gives you a cute little smile."
           l "I'd like that."
 
      elif persistent.favouriteFirstDate == "kokiri":
@@ -3225,7 +3348,7 @@ label ufo_talk_favouriteFirstDate:
      jump ufo_crash
 
 label ufo_crash:
-     #TODO: Reality is glitching so that you won't have to draw every picture.
+     
      n "After awakening from the dark slumber your eyelids are still shut close as if they want to go back to sleep."
      n "You feel like you need to go back to sleep. Nothing makes sense anymore."
      n" Probably the result of the entire universe literally collapsing in on you."
@@ -3242,6 +3365,7 @@ label ufo_crash:
  
 label ufo_crash_polaroids:
      #TODO: Add some small descriptions of each picture you jump on
+     #Reality is glitching so that you won't have to draw every picture.
      if polaroidzone_picture == 1:
           n "You jump to the next picture."
      elif polaroidzone_picture == 2:
@@ -3339,7 +3463,7 @@ label ufo_crash_polaroids_James:
    
                     "I really like her.":
                          $ likeher = True
-                         j "Let me ask you this: if you like her, do you believe that what you're doing is truly for her sake?"
+                         j "Let me ask you something. If you like her, do you believe that what you're doing is truly for her sake?"
                          n "The question catches you off guard, and you hesitate."
                          j "Because liking someone means you want the best for them, right? It means you’d do anything to make sure they’re happy, even if it means stepping away."
                          j "But here you are, putting her through pain, stress, and countless deaths. So let me ask you again: is this really about her? Or is it about you?"
@@ -3358,8 +3482,8 @@ label ufo_crash_polaroids_James:
                          j "Even though the world seems to keep resetting every ending you have seen has happened. Every action you have taken has been done."
                          j "Even if it doesn't always seem like that. You seperate yourself from the worlds where things didn't go your way but that doesn't make them less real than the one where things will eventually go your way."
                          j "Those abandoned worlds are still out there, [persistent.name]. I know that because I can see them, I am watching over the infinite worlds that exist in this game."
-                         j "This place is the weakest link to every world, a sort of dying breath of those worlds. Here it is possible for souls to linger instead of crossing over into the Darkness."
-                         j "There is only one Darkness but there are many versions of this place. So through the Darkness every world is linked together and since we can observe the Darkness here we can observe the other worlds aswell."
+                         j "This place is the weakest link to every world, a sort of dying breath of those worlds. Here it is possible for souls to linger instead of crossing over into the Void."
+                         j "There is only one Void but there are many versions of this place. So through the Void every world is linked together and since we can observe the Void here we can observe the other worlds aswell."
                          j "I have seen many more worlds than you have crossed."
                          j "I have seen many other crossers, I have even talked to some of them before."
                          j "I have changed some of their minds, made them see this game as more than just a game."
@@ -3369,7 +3493,7 @@ label ufo_crash_polaroids_James:
                          j "And you hope that once you break out of it you will be able to move on to the next day."
                          j "Well for me that next day always comes but the loop follows suit."
                          j "I never get the luxury of dreaming what will happen when I get out of the loop, this place is my loop."
-                         j "The only way to break it would be to enter the Darkness but I'm not ready for that yet, I need to know that [persistent.date] is happy and safe."
+                         j "The only way to break it would be to enter the Void but I'm not ready for that yet, I need to know that [persistent.date] is happy and safe."
                          j "And for a brief moment I thought you wanted the same thing [persistent.name] but if that was truly the case, then why did you retry even after getting an ending where she was happy and alive?"
                          $ persistent_jamestalk_justgame_knowledge = True
                          jump jamesChat_whyDidYouReturn
@@ -3551,9 +3675,6 @@ label jamesChat_whyDidYouReturn:
                          j "But trust me, you won't find the ending you are seeking by just going through every path in this game."
                          j "Every road you walk with her just leads to death."
                          
-                                        
-                            
-   
           "I wanted to see what other endings there are.":
                j "I see..."
                j "I will spare your time then, there are no endings here that I am aware of."
@@ -3625,17 +3746,8 @@ label jamesChat_whyDidYouReturn:
                                                   jump jamesChat_whyDidYouReturn_ringResponse
 
                                         #Write some more text here.
-                              #TODO: Continue writing this text, maybe add some slight variations if the player treated [persistent.date] badly.
-                    "You can't just bombard me with so much info and then just move on like I should understand, can you please atleast explain something clearly?":
-                         #TODO: niet zeker of dit nog juist staat.
-                         j "I see..."
-                         j "I guess that indeed was a bit too much info for you to handle."
-                         j "I will let you ask me one question about what I just said, then you have to answer my previous question."
-                         menu:
-                              "Filler":
-                                   "Filler"
-                                   #TODO: Fill the menu in with some questions they can ask.
-                                   #After it has been answered let [persistent.date_ghost] reask the question.
+
+                    
                     "Thanks for telling me. I just had to be sure, this seems like a place where the developer would be able to hide some stuff.":
                          j "I can see why you would think that [persistent.name], but I haven't seen anything here that would lead to an ending."
                          j "Although I suppose that it depends on what you see as endings."
@@ -3643,9 +3755,21 @@ label jamesChat_whyDidYouReturn:
                          j "But in a way you encounter many endings you wouldn't think to call endings, don't you?"
                          j "Because I like you I'll clue you into something, those endings I'm talking about you won't be able to find here."
                          j "Best of luck [persistent.name]."
+
+          "You can't just bombard me with so much info and then just move on like I should understand, can you please atleast explain something clearly?":
+               j "I see..."
+               j "I guess that indeed was a bit too much info for you to handle."
+               j "I will let you ask me one question about what I just said, then you have to answer my previous question."
+               menu:
+                    "Filler":
+                         "Filler"
+                         #TODO: Fill the menu in with some questions they can ask.
+                         #After it has been answered let [persistent.date_ghost] reask the question.
+                   
+
 label jamesChat_whyDidYouReturn_ringResponse:
      j "I'm afraid I can't give you the answer [persistent.name], He doesn't like that."
-     j "But I did give you the question, perhaps a topic to talk about to Lilith if you would like to discuss it more?"
+     j "But I did give you the question, perhaps a topic to talk about to [persistent.date] if you would like to discuss it more?"
      n "He gives you a slight wink."
      j "I hope that helps, in any case, I'm going to have to send you back now. I don't have enough energy to keep up this conversation."
      jump Game_start2
@@ -3664,22 +3788,41 @@ label jamesChat_whyDidYouReturn_toBeTogether_choices:
                The second one you might know actually, the jester that controls the flow and direction of our story. He even controls the deaths [persistent.date] suffered and yet you rely on him to fight him, that might be his biggest joke yet."
                menu:
                     "Alright mister purple prose. So the \"they\" you were talking about are the game developer and the narrator?":
-                         j "Purple prose? I'll try to keep it a bit more straight-forward."
+                         j "Purple prose? I'll try to keep it a bit more straightforward."
                          j "Yes, they are them."
                          j "They made you search for an ending that doesn't exist."
-                         j "If you want to find it within yourself you'll need to become your own creator, become your own narrator."
-                         j "The only way to win an unwinnable game is by becoming the game."
+                         j "If you want to find it you'll have to find it in yourself."
+                         j "The only way to win against the house is to become the house."
                          menu:
-                              "... what?":
+                              "... what? That is not more straightforward at all.":
                                    j "It's no use..."
                                    j "If those words come from me they won't impact you that much."
-                                   j "Why don't you ask Lillith to explain them where three become one?"
+                                   j "Why don't you ask [persistent.date] to explain them where three become one?"
                                    $ persistent.jamesconversation_becomethegame_knowledge = True 
-                                   #TODO: This path is not finished in the quest version, continue working on it.
 
+                              "You mean by telling the story myself instead of relying on this game for it, right?" if persistent.kokiri_makeYourOwnStory_knowledge:
+                                   j "Ah, so you already talked about it with her?"
+                                   j "Very good. And yes, that is indeed one way to find something unfindable."
+                                   j "Although I wonder, if you did talk to her about this, then why are you back here?"
+                                   j "Why are you still stuck in the grip of this game?"
+                                   menu:
+                                        "I want to keep exploring it a little longer, there are still many things I probably haven't seen yet.":
+                                             if lilithAliveAndRetriedCounter == 0:
+                                                  $ changeableWord = "death"
+                                             else:
+                                                  $ changeableWord = "death and seperation"
+                                             j "Interesting, even if it all leads to more [changeableWord]?"
+                                             if lilithAliveAndRetriedCounter == 0:
+                                                  j "Wasn't your goal to keep her safe? If that is unattainable here then shouldn't you look to creating a story where it isn't?"
+                                             else:
+                                                  j "After you kept playing even when she was safe I thought you wanted to end up with her and have her live. Now you know that you can't do that here, shouldn't you try to create your own story where you can?"
+                                             j "It's funny isn't it? Even things that are less than ideal and sometimes even painful can be hard to let go of."
+                                             j "I wonder why sometimes, do we just get used to the pain and inconvenience and fear losing it?"
+                                             j "Or are we scared that if we let go the next thing will only be worse?"
+                                             j "Either way, just don't try to hold onto this game for too long, alright? It might just make it even harder to move on."
 
-
-
+                         j "This talk of ours cost me most of my energy so I'll send you back now. Goodbye [persistent.name]."
+                         jump Game_start2
 
 
 
@@ -3713,10 +3856,10 @@ label jamesConversationMenu:
                j "Since this is a game where everyone has an expected way to act on every action that means that every world is almost exactly the same except for the choices you make and the reactions that come from those."
                j "So all these choices, both made in the past, never made, and yet to be made are yours."
                n "Looking at the bubbles a few catch your eye."
-               n "The first one depicts Lilith and you sitting in the burger restaurant, but at a different table than the one where she got shot."
-               n "The second bubble shows you Lilith getting up from the table at the chinese restaurant and you running after her pleading for her to stop. The red Sedan never shows up and she leaves you standing at the exit."
-               n "The third one shows you in the cafe, peeking at the dice Lilith rolled using the reflection of the aquarium."
-               n "The next bubble shows you in the ufo in kokiri forest, alone, with Lilith nowhere in sight."
+               n "The first one depicts [persistent.date] and you sitting in the burger restaurant, but at a different table than the one where she got shot."
+               n "The second bubble shows you [persistent.date] getting up from the table at the chinese restaurant and you running after her pleading for her to stop. The red Sedan never shows up and she leaves you standing at the exit."
+               n "The third one shows you in the cafe, peeking at the dice [persistent.date] rolled using the reflection of the aquarium."
+               n "The next bubble shows you in the ufo in kokiri forest, alone, with [persistent.date] nowhere in sight."
                n "The last bubble shows you popping a full blob of mayo straigth into your mouth at a fritstore near the beach."
                $ persistent.mayoProphecy_knowledge = True
           "No matter what I try [persistent.date] keeps dying when I go on a date with her.":
@@ -3730,7 +3873,7 @@ label jamesConversationMenu:
                     j "With how hard you've been searching up to this point I doubt any ending the game can give you will be enough to satisfy you."
                     j "So isn't it perhaps better to just call it quits from here?"
                     j "Or maybe you should look elsewhere instead?"
-                    n "He pauses for a moment after saying that. He gives you a curious look, seemingly trying to gage your reaction to what he just said."
+                    n "He pauses for a moment after saying that. He gives you a curious look, seemingly trying to gauge your reaction to what he just said."
                else: 
                     j "I see..."
                     j "That does indeed seem to be the case doesn't it?"
@@ -3741,7 +3884,7 @@ label jamesConversationMenu:
                     j "Though I think you might not like how you reach them or even what they are in general."
                     j "I even think with some of them, you might not even know wheter or not you found them."
                     menu:
-                         "But that's ridiculous! Ofcourse I would know if I found an ending like that.":
+                         "But that's ridiculous! Of course I would know if I found an ending like that.":
                               j "Well, do you recall finding an ending like that?"
                               n "You shake your head."
                               j "That might just prove my point. Or it might not. Who knows?"
@@ -3806,9 +3949,9 @@ label LilithOrJames:
     
      n "You are floating in a seemingly endless tunnel of darkness."
      n "After what feels like hours the tunnel seperates into two smaller tunnels, at the end of each you see a scene that is simmilar in many ways and yet is also slightly different."
-     n "The left tunnel ends on a vision of you sitting together in some sort of restaurant with a (description of Lilith), you get the strange feeling you know her name, it's Lilith."
+     n "The left tunnel ends on a vision of you sitting together in some sort of restaurant with a (description of [persistent.date]), you get the strange feeling you know her name, it's [persistent.date]."
      n "The right tunnel ends on a vision of you sitting together in some sort of restaurant with a (description of James), you get the strange feeling you know his name, it's James."
-     n "Choose which path you want to walk player, left or right? Lilith or James?"
+     n "Choose which path you want to walk player, left or right? [persistent.date] or James?"
 
 label ufoVisitAlone:
    
@@ -3837,7 +3980,7 @@ label ufoVisitAlone:
                ship "We would tell you where you would find both of them but due to how the anomaly works it isn't always set to be in the same place, rather a few possible places.<br/>If they go to any of the three restaurants they will visit you do not need to intervene, the universe will take care of it in a acceptable way with a small amount of death.<br/>However, if they go to either the forest or the beach you need to keep a close eye on them, if she hasn't died by (hour here) then you will need to intervene, otherwise our fates will look quite gruesome, let me asure you."
                      
 label reunionEnding:
-     #TODO: This has nothing jumping to it. Fix that, so that this is actually attainable.
+     #TODO: This has nothing jumping to it. Fix that, so that this is actually attainable. (For that I first need to make all the parts that act as setup for this ending)
   
      li "This seems a really weird place for your Teacher to meet us Abigail."
      a "I agree, this doesn't seem like him."
@@ -3846,19 +3989,19 @@ label reunionEnding:
      a "Mom totaly let a random prank caller convince her they were Mr Roberts and he sent us here to have a meeting with us. I doubt the prankster will even show up."
      l "Is that true mom?"
      li "Uhm... it might be? It could still be Mr Roberts?"
-     n "Lilith burst out into laughter."
+     n "[persistent.date] burst out into laughter."
      l "Mom, you're so gullible."
      n "Lila sighs deeply."
      li "Maybe I really am, what are you doing here anyway sweetie?"
      l "Oh, I'm just meeting up with [persistent.name] for our date, I parked the car a block from here. And-"
-     d "Uhm, hello Lilith, you still look like I remember you. And wow Abigail, you've gotten so much taller, you might even outgrow your old man soon."
+     d "Uhm, hello [persistent.date], you still look like I remember you. And wow Abigail, you've gotten so much taller, you might even outgrow your old man soon."
      a "Dad? "
      n "The man chuckles nervously."
      li "Hello Lila, still as beautiful as ever."
      li "Oh absolutely not fathe- David! Do you think just that is what it takes to march back into our lives? Do you think anything will ever make it right to to do that?"
-     li "Lilith, please-"
-     l "No mom, I'm not letting you finish whatever that sentence was, probably something about giving him another chance but I love Lilith and you too much for that. I still love James too much for that."
-     li "Lilith! Your father-"
+     li "[persistent.date], please-"
+     l "No mom, I'm not letting you finish whatever that sentence was, probably something about giving him another chance but I love [persistent.date] and you too much for that. I still love James too much for that."
+     li "[persistent.date]! Your father-"
      d "No Lila, you do not need to defend me, I understand why she is angry with me, to be honest with you I have had those same words before. In my mind, pretty much every day."
      d "How I killed James and ran away like a coward-"
      l "What are you talking about David? You indeed were a coward but you didn't kill him, it was an accident."
@@ -3869,16 +4012,16 @@ label reunionEnding:
      l "Then why are you here?"
      d "Because it was so hard to do, I wanted to go back every single day. I had to fight myself not to. All i needed as a last straw to break and to come back was a little push and recently I got that push by a mysterious stranger."
      d "But that's not important, you are right, I killed our family like I thought I killed James. We can't bring him back but I'd like to try to bring our family back. If all three of you would have me that is."
-     a "Ofcourse dad, you will always be family! Welcome back."
+     a "Of course dad, you will always be family! Welcome back."
      n "Abigial runs up to her dad and wraps her hands around him in a warm embrace."
      n "A smile appears on the face of David, he is still crying but now it isn't fully because of what happened to James."
      li "You took your time Dave but I never stopped loving you, welcome back."
      n "She walks up to him and gives him a little peck on the cheek."
      l "You know what? Fine, I'm giving you a chance for them, for James. But I'd rather not have to call you dad yet, I'll stick with David for now."
      d "So you're saying there is a change you might call me dad again?"
-     n "Lilith blushes beetred."
+     n "[persistent.date] blushes beetred."
      d "I completely understand, I'm thankful for you even giving me a chance and I'll try my best to earn the title once more but if you never feel comfortable calling me that again then that's completely fine."
-     li "Oh Lilith, your date with [persistent.name], I forgot, they should be there already, you'd better go to them."
+     li "Oh [persistent.date], your date with [persistent.name], I forgot, they should be there already, you'd better go to them."
      l "I mean I'd like to but I have more pressing matters right now I think, I can't let all of you go right now."
      menu:
           "*Go up to the reunited family.*":
@@ -3893,7 +4036,7 @@ label reunion_showUp:
      menu:
           "Actually, this might sound really weird but it was me who reunited all of you. I was the mysterious stranger who called David and I was the person who acted like Mr Roberts.":
                jump reunion_showUp_iReunitedYou
-          "Oh, hey Lilith, I was just passing by to go to the restaurant.":
+          "Oh, hey [persistent.date], I was just passing by to go to the restaurant.":
                jump reunion_JustPassingBy
 
       
@@ -3928,11 +4071,11 @@ label reunion_showUp_iReunitedYou:
      d "It's been quite a while, you've been in a coma for about 2 years."
      n "You ponder the implications about what David said for a moment when another thought enters your mind."
      menu:
-          "What happened to Lilith? Is everyone fine?":
-               d "Lilith didn't make it..."
-               d "Lila and Abigail are fine, as fine as they could be after losing Lilith."
+          "What happened to [persistent.date]? Is everyone fine?":
+               d "[persistent.date] didn't make it..."
+               d "Lila and Abigail are fine, as fine as they could be after losing [persistent.date]."
                d "I am also moving along, it's what she would have wanted I tell myself.<br/>She was angry with me for leaving our family behind with James' death so I'm not going to make that mistake once again."
-               d "Most days, I get up and after eating breakfast and brushing my teeth I see them in the mirror, James and Lilith."
+               d "Most days, I get up and after eating breakfast and brushing my teeth I see them in the mirror, James and [persistent.date]."
                d "The thing is, the first time I saw them I expected them to be angry, but they weren't, they were smilling at me."
                d "They were asking me to keep living, because they couldn't anymore."
                d "And now, I am asking you to undo all of this."
@@ -3951,7 +4094,7 @@ label reunion_showUp_iReunitedYou:
                     "Actually it doesn't work like that, she will still stay death in this world but in another one she will live.":
                          d "Then please go through with it, make sure my daughter from another world is safe."
                          d "I'm fine living my life like this, I can be there for Abigail and Lila, like I should've been before."
-                         d "So go, and be there for Lilith."
+                         d "So go, and be there for [persistent.date]."
                          d "I'll live my life here with a smile, both for what I still have and what my other self will gain without knowing."
                          jump reunion_ending_davidLeavesSegway
 
@@ -4002,8 +4145,8 @@ label reunion_showUp_iReunitedYou:
                                                                                      n "David takes a pillow that was resting next to you on the bed and presses it into your face, hard."
                                                                                      n "You try to fight against him but your arms that haven't moved for years are no strength against his anger."
                                                                                      n "Soon everything becomes black."
-                                                                                     n "And then suddenly everything becomes white."
-                                                                                     #TODO: Make this take you to the polaroid zone as a ghost, James seperates you, the player from Max, the player avatar and he begs him for forgiveness, the player gets erased from existence and  aregular date between Max and Lilith plays out.
+                                                                                     jump gameOver
+                                                                                     
                          
                     "I have had this conversation with you multiple times already. I'm not promising you anything." if persistent.davidPromise:
                          d "... You did?"
@@ -4011,7 +4154,7 @@ label reunion_showUp_iReunitedYou:
                          d "Why did you once again make everything go the way it went?"
                          d "Couldn't you have prevented it it this time by doing literally anything else?"
                          d "I really don't know what to make of you [persistent.name], you reunited us, right?"
-                         d "That must mean you want the best for all of us, or atleast for Lilith."
+                         d "That must mean you want the best for all of us, or atleast for [persistent.date]."
                          d "Otherwise, you wouldn't go through all the effort that undoubtedly took."
                          n "He isn't exactly wrong... That took quite a few steps to set up. Your motivations are hard to get a grasp on."
                          n "Especially since a lot of those steps were... less than ethical and yet you kept going."
@@ -4021,7 +4164,7 @@ label reunion_showUp_iReunitedYou:
                               "To see if there is some new dialogue.":
                                    d "Really?"
                                    d "That's all we are to you? Just some text on a screen?"
-                                   d "I can excuse and even accept that if that's how you view me. But Lilith?"
+                                   d "I can excuse and even accept that if that's how you view me. But [persistent.date]?"
                                    d "The two of you must have been on countless dates for you to pull of our reunion, did all of that mean nothing to you?"
                                    d "Was it all just nothing but words?"
                                    d "Did you even reunite us because you cared for us, or did you just want to see what dialogue that would get you aswell?"
@@ -4032,7 +4175,7 @@ label reunion_showUp_iReunitedYou:
 
 
                               "I am trying to find a better ending.":
-                                   d "A better ending than the one where me and my family get reunited and Lilith survives?"
+                                   d "A better ending than the one where me and my family get reunited and [persistent.date] survives?"
                                    d "What exactly are you looking for in that case?"
                                    d "What could possibly be better?"
                                    n "He does have a point, that ending is as good as they come, isn't it?"
@@ -4071,7 +4214,7 @@ label reunion_JustPassingBy:
                l "Thanks a lot and once again I'm very sorry about having to delay it."
                l "I'm looking forward to it a lot though, I'll see you later."
                menu:
-                    "See you later Lilith, take care.":
+                    "See you later [persistent.date], take care.":
                          li "{size=*0.5}Hang on, that voice...{/size}"
                          n "The words are said pretty quitely, only David, who is standing next to Lila managed to pick them up."
                          d "{size=*0.5}Now that you mention it...{/size}"
@@ -4086,18 +4229,18 @@ label reunion_JustPassingBy:
                          n "Soon she'll be so red it's not even describable at this point."
                          n "Deciding to spare her you say your goodbyes once again, this time for real, half surpressing a little chuckle."
                          n "When you come home you are pretty statisfied. Yes, you did a lot of questionable things, but to see the end result makes it all worth it, doesn't it?"
-                         n "You reunited Lilith and her family, she's still alive and soon the two of you will have a date in different circumstances."
+                         n "You reunited [persistent.date] and her family, she's still alive and soon the two of you will have a date in different circumstances."
                          n "Who knows what will happen? For the first time in a while things feel like they are completely new. Life once again is the tabula rasa it was meant to be. Things can go in all kinds of new directions now."
                          n "Sadly, the direction things went in is a familiar one to you."
                          n "Things didn't go as planned."
-                         n "For whatever reason after a week Lilith has not yet sent you anything to schedule a new date."
+                         n "For whatever reason after a week [persistent.date] has not yet sent you anything to schedule a new date."
                          n "You decided to give her some time, after all she probably still is adjusting to everything that happened not so long ago."
                          n "You wait another week, still nothing."
                          n "Concerned you decide to reach out to her and give her a call."
                          l "Oh, hey [persistent.name]!"
                          n "So she's still alive, that's good. With this game you never know."
                          menu:
-                              "Hey Lilith, I was just wondering if you had thought about another time for us to go on that date we had planned?":
+                              "Hey [persistent.date], I was just wondering if you had thought about another time for us to go on that date we had planned?":
                                    l "Right..."
                                    l "Look, I'm really sorry [persistent.name], but I realised that I'm not really ready just yet to go on a date again."
                                    l "I really wanted to give it a shot, but with things changing here recently I came to a realisation."
@@ -4114,9 +4257,9 @@ label reunion_JustPassingBy:
                                              l "Now, I'm going to try to make this easier for the both of us by hanging up in the next 30 seconds."
                                              l "Goodbye [persistent.name], I hope you'll be happy wherever you are going."
                                              menu:
-                                                  "Goodbye Lilith, I wish you nothing but the best.":
+                                                  "Goodbye [persistent.date], I wish you nothing but the best.":
                                                        n "For a moment you could swear you hear some slight sobbing on the other end of the line."
-                                                       n "But before you can try to listen closer Lilith hung up true to her word."
+                                                       n "But before you can try to listen closer [persistent.date] hung up true to her word."
                                                        n "That was the last thing you ever heard of her. You tried to move on with your life. Things went pretty well all things considered. You had many more dated that didn't go according to plan but none that ended up in death luckily."
                                                        n "You lived a happy life, trying to live each day like it is your first and last."
                                                        n "Then after many many years, during your last breath in your deathbed you get offered a familiar choice."
@@ -4161,7 +4304,7 @@ label reunion_noShowUp:
 
 label ghostReunion_transferUniverse:
       
-     n "You focus all your willpower trying to draw Lilith's ghost from a different reality into this world."
+     n "You focus all your willpower trying to draw [persistent.date]'s ghost from a different reality into this world."
      n "Her voice begins to emanate softly in the white endless void."
      l "{size=*0.5} [persistent.name]...[persistent.name]...[persistent.name]{/size}"
      l "[persistent.name], where are we?"
@@ -4187,7 +4330,7 @@ label ghostReunion_transferUniverse:
      l "So does that mean that you died on the same day as I did?"
      j "Yup, so our age is the same as on the day it happened."
      l "In a way, this seems like it might be our second chance, we are finally reunited once again."
-     n "Lilith gives James a big hug."
+     n "[persistent.date] gives James a big hug."
      j "I missed this Lilly."
      l "So did I Jay, so did I.<br/>We could be so happy living here together, but I need to be sure my reality's family is alright."
      j "I understand, I also need to do the same for my reality's family."
@@ -4198,7 +4341,7 @@ label ghostReunion_transferUniverse:
 
                j "This... this is beautiful, [persistent.name]."
                l "I agree Jay, this fills me with something I haven't felt in quite a while."
-               j "Yes, I can feel it aswell Lilly, it's... hope.<br/>For too long we have been stuck in this cycle of watching every world where things went wrong, of trying to fight against the odds to make things better."
+               j "Yes, I can feel it aswell Lilly, it's... hope. For too long we have been stuck in this cycle of watching every world where things went wrong, of trying to fight against the odds to make things better."
                l "And yet we never saw the worlds where everything went just fine, maybe even great."
                l "It's like we made ourselves blind to the possibility of  those worlds even exisiting "
                j "It's no use to kick ourselves for it now, the most important thing is that we can now see the full picture."
@@ -4213,22 +4356,22 @@ label ghostReunion_transferUniverse:
                j "I want us to move on."
                l "Then let us do it together, I'm not leaving you behind once again."
                j "You never did, right? You were always there for me just as I was always there for you."
-               l "Well then, let us now do that one last time and enter the Darkness."
+               l "Well then, let us now do that one last time and enter the Void."
                l "Do you want to come with us, [persistent.name]?"
                l "You've been through quite a lot."
                menu:
-                    "Can you tell me more about the Darkness before I make this choice?":
+                    "Can you tell me more about the Void before I make this choice?":
                          j "Sure, [persistent.name]."
-                         j "The Darkness might seem dangerous or scary but it is far from it."
-                         l "In that Darkness you are remade, certain aspects of you are kept, others are altered."
-                         j "The Darkness then uses many of these different aspects for whatever purpose it might have in mind."
-                         l "It creates new beings out of all those many different parts. And those new beings then inhabit new worlds the Darkness also created."
-                         j "We owe the Darkness our life in a way, for if other people hadn't went into it we would not exist right now. In a way their essence created us."
+                         j "The Void might seem dangerous or scary but it is far from it."
+                         l "In that Void you are remade, certain aspects of you are kept, others are altered."
+                         j "The Void then uses many of these different aspects for whatever purpose it might have in mind."
+                         l "It creates new beings out of all those many different parts. And those new beings then inhabit new worlds the Void also created."
+                         j "We owe the Void our life in a way, for if other people hadn't went into it we would not exist right now. In a way their essence created us."
                          l "And now our essence will create others that will go on to create others when their time comes."
                          menu:
-                              "So it's a bit like reincarnation in a way? Do you get to keep your memory after the Darkness altered you?":
+                              "So it's a bit like reincarnation in a way? Do you get to keep your memory after the Void altered you?":
                                    j "I suppose you could call it a form of reincarnation yes, although from what we've heard you become multiple different beings all at once instead of just one other form."
-                                   l "And we are unsure if the Darkness allows you to keep your memories. Some have claimed they still have theirs."
+                                   l "And we are unsure if the Void allows you to keep your memories. Some have claimed they still have theirs."
                                    l "But wheter or not that is a lie is far from certain. Even more so wheter or not some people keeping it is an oversight or by design."
                                    j "I guess we'll have to see, won't we?"
                                    j "So [persistent.name], would you like to come with us?"
@@ -4242,13 +4385,13 @@ label ghostReunion_transferUniverse:
                          j "I understand [persitsent.name], it does feel scary to let go doesn't it?"
                          l "I doubt that the concept of entering a recyclying machine helps much either."
                          j "I was moreso talking about letting go in general actually."
-                         j "Because stepping in the Darkness won't really affect [persistent.name] physically after all."
+                         j "Because stepping in the Void won't really affect [persistent.name] physically after all."
                          j "And yet it is saying goodbye to this world in a way. It is saying goodbye to her."
                          j "And if there has been one thing you tried over and over and over again it is not having to say goodbye to her, isn't it?"
                          l "Though it is a good idea to let go eventually."
                          l "Some things just aren't meant to be held onto constantly."
                          l "Because this still is a game isn't it?"
-                         l "What are you going to do when she, when I... when your world's Lilith is constantly repeating old lines?"
+                         l "What are you going to do when she, when I... when your world's [persistent.date] is constantly repeating old lines?"
                          l "When you went through each last unique line she can say?"
                          l "When you did so multiple times?"
                          l "Think about that. Would you let her go when she still has some charm to her? When there are still things you haven't discovered?"
@@ -4257,7 +4400,17 @@ label ghostReunion_transferUniverse:
                          l "I am not judging you for this, as me and my brother also had a hard time doing so."
                          l "But I do however hope that what I said will eventually help you in your process."
                          l "For now though there is no shame in staying here just a little longer, as long as that doesn't turn into an eternity spent in this place."
-                         #TODO: Continue a bit more. Let them go into the Darkness without you, you can watch the scene.
+                         l "But we must go, it calls for us, the Void."
+                         n "The white endless nothing that shapes this place gives way to an inkblack cube."
+                         n "Both [persistent.date] and James give you one last determined look before slowly floating towards it."
+                         n "When they are right in front of the cube they pause for a second. They seem to yell something into the cube, although you can't make out what exactly."
+                         n "Suddenly a huge ammount of bubbles pop up right behind the floating pair. Then not much longer even more of them appear."
+                         n "Slowly a dark spot that takes up most of each bubble shows up. Then they pop not soon after."
+                         n "James and [persistent.date] turn to look at you one last time. They wave before floating into the void."
+                         l "Goodbye [persistent.name], thank you for this and may you too find your peace."
+                         j "Best of luck, I'll send you back now, so you don't get stuck in here."
+                         jump Game_start2
+
 
 
                                                        
@@ -4269,25 +4422,24 @@ label ghostReunion_transferUniverse:
         
      label polaroidZone_endOfEverything_goWiththem:
 
-          n "Suddenly, as you said that the white walls of this place shift away from eachother to reveal a pitch black darkness."
+          n "Suddenly, as you said that the white walls of this place shift away from eachother to reveal a pitch black cube."
           n "You thought it was pulsating for a moment when your eyes weren't focussed. "
-          n "A strange energy seems to be emanating from the Darkness."
+          n "A strange energy seems to be emanating from the Void."
           j "It's ready, let's move."
           n "The polaroid picture you're standing on begins to move towards the dark mass in front of you."
-          #TODO: msg ("Add some extra text inbetween these two.")
-          n "As you're standing before the Darkness Lilith suddenly speaks."
+          n "It stops right before the cube, which you now can clearly see is pulsating. If you were to reach out your arm you could probably touch it."
           l "Hang on, can you feel that aswell Jay?"
           j "All our souls, from every reality, they are still lingering here. They haven't yet found the peace we have in our predicament."
           j "You're right, if only there was a way to save them aswell."
           l "I think there might be, if we reach out through the void we could potentially talk to them."
           l "Hello? Can you hear me?"
-          n "You see an uncountable number of bubbles pop into existence, in al of them you can see another ghostly version of Lilith."
+          n "You see an uncountable number of bubbles pop into existence, in al of them you can see another ghostly version of [persistent.date]."
           l "Good, it is working, now you try calling the others Jay."
           n "He nods quickly."
           j "Hello? Can you hear me?"
-          n "He yells it into the void aswell, just like Lilith did."
+          n "He yells it into the void aswell, just like [persistent.date] did."
           n "Even more bubbles pop up, now containing ghostly versions of James."
-          n "Lilith gives James a thumbs-up and a bright smile."
+          n "[persistent.date] gives James a thumbs-up and a bright smile."
           l "Look like that did the trick."
           n "She turns to face the bubbles behind her, James does the same."
           l "I know that for the longest time all of us, or all of me, felt alone. Trapped."
@@ -4299,26 +4451,37 @@ label ghostReunion_transferUniverse:
           l "Together we will never have to be alone again."
           j "Meet us in the Void, where we finally will be able to move on from this place."
           l "Where we will be remade into something whole again."
-          n "All the bubbles begin showing the ghostly versions of James and Lilith entering the Void and then that bubble pops."
+          n "All the bubbles begin showing the ghostly versions of James and [persistent.date] entering the Void and then that bubble pops."
           n "After a while all bubbles are gone except for one."
-          n "When you look at it you see yourself staring back, next to James and Lilith."
+          n "When you look at it you see yourself staring back, next to James and [persistent.date]."
           j "Looks like it's only us left. We better don't let the others wait too long."
           n "The three of you walk into the Void, you feel as if you just stepped into a dream. As if you have stepped outside of reality itself."
           n "At first it is a bit nauseating, but soon enough it begins to feel quite enjoyable. You feel all the weight of the world as you knew it lift of your shoulders."
-          n "Right at that time you see all the different versions of James and Lilith enter the Void, greet eachother, talk to their sister or brother that they haven't seen in years and dissapear."
+          n "Right at that time you see all the different versions of James and [persistent.date] enter the Void, greet eachother, talk to their sister or brother that they haven't seen in years and dissapear."
           n "James notices the way your eyes linger on the fading after-image of the others."
           j "The Void is now taking them and sending them somewhere else, some unchanged, and some altered to better fit their new purpose."
           j "Don't worry, it is painless. And after being stuck here for so long any variety will be better than what they would have gotten by not going."
-          
-
-          #TODO: "Have them talk to you one last time before the Nar's part.")
+          n "Soon the only people left in the Void are the three of you."
+          l "We don't have much longer [persistent.name]."
+          j "Yes, I feel the same thing, the embrace of the Void is getting stronger."
+          l "Thank you for coming here with us, I know it is not easy to end things."
+          j "And yet all things must eventually end. Still, that knowledge does not make it easier."
+          l "If anything it makes it harder I'd say. But not moving on, not ending things, also takes a toll on you."
+          l "This game never was going to let you and your world's [persistent.date] end up together, was it?"
+          j "Indeed, that is why it is good to move on from this game. Now, if you move on from her or not, that is your choice."
+          j "Your choices, your interpretation has shaped this world even if it was made by someone else. Why wouldn't it be able to shape a world of your own design?"
+          l "A world were you do not have to subject yourself to looped suffering."
+          j "A world were you are not bound to limits of someone else's making."
+          l "I would like to see that world one day, perhaps the Void could bring us there?"
+          j "I would like that aswell. Goodbye [persistent.name], and may there be a chance we get to meet again."
+          l "Goodbye [persistent.name]. Thanks for everything."
 
           n "So, this is it?"
           n "This is how all of this is going to end?"
           n "Don't get me wrong, it's a beautiful way to go out."
           n "I mean, if you ignore all the people you had to sacrifce to get here."
-          n "I'm not even just talking about Lilith, but about all the people in those restaurants or even the entire earth a few times."
-          n "They were people as much as Lilith was you know? Does the name \"Rose\" ring a bell to you?"
+          n "I'm not even just talking about [persistent.date], but about all the people in those restaurants or even the entire earth a few times."
+          n "They were people as much as [persistent.date] was you know? Does the name \"Rose\" ring a bell to you?"
           n "Do you still remember where you met her?"
           $ result = renpy.input("What do you remember?")
           $ result = result.lower()  # Convert the input to lowercase for case-insensitive matching.
@@ -4336,13 +4499,13 @@ label ghostReunion_transferUniverse:
           n "You are really determined, I'll have to give you that."
           if persistent.mayoFreak:
                n "No one can come between you and mayonaise."
-               n "...And getting to this point was hard aswell ofcourse."
+               n "...And getting to this point was hard aswell of course."
           else:
                n "Getting to this point in the game must have taken a lot of effort."
           n "I hope this game had some nice moments for you."
           n "Believe it or not but this game was meant to have some nice moments here and there."
           n "Crazy huh?  I still get surprised saying that."
-          n "So, where there things you did like? Where there nice moments you had with Lilith?"
+          n "So, where there things you did like? Where there nice moments you had with [persistent.date]?"
           $ fritfood = 1
           
           menu endOfEverything_favouriteMoment:
@@ -4425,7 +4588,7 @@ label ghostReunion_transferUniverse:
           p "[result]"
           $ result = renpy.input()
           $ result = result.lower()  # Convert the input to lowercase for case-insensitive matching.
-          p "The bond between us has been worn down by the Darkness."
+          p "The bond between us has been worn down by the Void."
           p "It digests everything it created, so everything except for you."
           p "Don't bother trying to say anything, without a body you wouldn't make any sound."
           p "This is an ending, but also a new beginning. Please take those words to heart. Rest with us in here or dream of a new world out there."
@@ -4437,7 +4600,7 @@ label polaroidZone_narratorSlipping1:
      n "It seems I'm already being claimed by the Void."
      n "We better make the best of the time that still remains."
      if changeableWord == persistent.favouriteFirstDate:
-          n "Ah, that place really must be your favourite, you did mention that to Lilith if I remember correctly."
+          n "Ah, that place really must be your favourite, you did mention that to [persistent.date] if I remember correctly."
      if changeableWord == "burger":
           n "I also really love that part." 
           n "Most players start out picking the burger restaurant."
@@ -4468,18 +4631,18 @@ label polaroidZone_narratorSlipping1:
           n "You didn't feel like the deaths were too illogical?"
           n "I felt pretty insecure about that if I'm being honest. So I am glad to hear that you didn't mind too much."
 
-          n "I did however really enjoy Lilith's dice game in there."
+          n "I did however really enjoy [persistent.date]'s dice game in there."
           #Have some varying dialogue based on wheter or not you never played it, played it and won without cheating or if you had to cheat.
      elif changeableWord == "chinese":
           n "I love that place aswell."
-          n "I really like the section where Lilith asks you a riddle or you can ask her one instead."
+          n "I really like the section where [persistent.date] asks you a riddle or you can ask her one instead."
           n "It is a nice change of pace if you ask me. Even if it just leads to more death."
           n "Makes you wish you could just stall answering her riddles."
           n "If you did then her death would never be able to come."
      elif changeableWord == "kokiri":
           n "That's a great pick! The forest is probably the biggest part of the game."
           n "You could even argue it is where the game truly starts since that is where the most important discusions are had."
-          n "Although I must say, my favourite part is probably when I get to talk to Lilith through you."
+          n "Although I must say, my favourite part is probably when I get to talk to [persistent.date] through you."
           n "I really do like her as a character even if I have to steer her to her death."
           n "But no more of that, I hope my next sotry will be something more upbeat."
           n "Maybe even something of my own making instead of it being just a script I am reading from."
@@ -4489,9 +4652,9 @@ label polaroidZone_narratorSlipping1:
            
        
 label polaroidZone_endOfEverything_darknessLore:
-     l "The Darkness is the thing that birthed our universes."
+     l "The Void is the thing that birthed our universes."
      l "All the light, colors, words, ideas and everything else were made by it."
-     j "But, for the Darkness to properly work it also needs to be fed what it made.<br/>That's the only way it will ever be able to create something new."
+     j "But, for the Void to properly work it also needs to be fed what it made.<br/>That's the only way it will ever be able to create something new."
      l "That might seem scary, given that we are part of what has to be fed to it but that way we will be reborn in a new world.<br/>We will be given new purpose and meaning."
      j "I'm not sure if it would work on you to be honest, given how you are just controlling your character."
      j "Even if it would work, there is no guarantee that we would meet eachother in that new world."
@@ -4506,9 +4669,7 @@ label polaroidZone_endOfEverything_darknessLore:
 #TODO: AddPageLink (Test functions menu, Bad reunion ending transfer universe, " {colour:darkviolet:Test out bad reunion ending where another universe's James gets transported to the reunion ending.}")
 
 
-label quit:
-     "filler"
-     #TODO: Maybe add some things here when you quit based on certain places? Or would this be overkill?
+
 
                                     
 label before_main_menu:

@@ -29,7 +29,7 @@ define config.version = "1.0"
 ## Text that is placed on the game's about screen. Place the text between the
 ## triple-quotes, and leave a blank line between paragraphs.
 
-default gui.about = _p(""""Welcome to: \"Great date with Lilith\"! In this game you'll have a date with Lilith just like the name implies."
+default gui.about = _p(""""Welcome to: \"Great date with Lilith\"! In this game you'll have a date with [persistent.date] just like the name implies."
 
 "But there is a catch! You will only have one date with her."
 

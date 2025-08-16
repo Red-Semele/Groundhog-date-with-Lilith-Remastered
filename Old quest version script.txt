@@ -10131,7 +10131,7 @@
             SetForegroundColour (player.Narcolor)
             msg ("Lilith leaves the burger restaurant, you rush after her in an effort to calm her down. <br/>This time there is no red Sedan in sight, it seems as if the cops handled it well.")
             wait {
-              msg ("However, just as you're processing that your mind wanders to the gas explosion that always appears arround this time. (Different dialogue if they have never seen the gas-explosion)")
+              msg ("However, just as you're processing that your mind wanders to the gas explosion that always appears arround this time. (Different dialogue if they have never seen the gas explosion)")
               wait {
                 msg ("It was probably not a good idea to come here.")
                 wait {

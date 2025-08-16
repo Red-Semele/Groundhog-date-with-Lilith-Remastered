@@ -170,6 +170,9 @@ label gdwl_functions:
                 renpy.jump("didYouInvolveFamily")
 
         def family_curiosity_checker_movetox(): #This function moves you back to the right story about [persistent.date]'s family if you promise to not use them for your own gain.
+            if familyCheck_talkedDavid == True:
+                renpy.say (l, "Now that that is cleared up, what would you like to talk about [persistent.name]?")
+                renpy.jump("talkKokiri")
             if kokiri_chatchar_abigail_recent == True:
                 renpy.jump("askAboutAbigail_tellMeAbout_" + str(kokiri_chatchar_abigail_counter))
 
@@ -194,7 +197,6 @@ label gdwl_functions:
 
             else:
                 renpy.say (n, "[persistent.date] grows quiet for a moment. She gives you an expecting look, as if she's waiting for you to say something.")
-                #TODO: Make this line also change depending on the meteorite and the car, check the kokiri_conversation value.If the kokiri chat value is 2 this can jump to the scne where she notices the meteorite.
                 renpy.jump("silentconversationsbackontrack")
 
         def kokiri_call_potentialdeathcheck():
@@ -398,6 +400,7 @@ label gdwl_functions:
                 "kokiri_chatchar_james_recent", 
                 "kokiri_chatchar_david_recent", 
                 "kokiri_chatchar_lila_recent", 
+                "familyCheck_talkedDavid",
                 #CONVERSATION TRACKERS
                 "conversationtracker_poems", 
                 "conversationtracker_tellheraboutnarrator", 

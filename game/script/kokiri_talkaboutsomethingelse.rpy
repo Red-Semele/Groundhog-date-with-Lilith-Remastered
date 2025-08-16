@@ -1,7 +1,7 @@
 label kokiri_talkAboutSomethingElse:
 
     $ kokiri_conversation += 1
-    $ kokiri_meteoritewarn()
+    #$ kokiri_meteoritewarn()
 
     if poem_conversation == True:
         $ poem_conversation = False
@@ -73,7 +73,7 @@ label kokiri_talkAboutSomethingElse:
                                 l "I suppose ignorance is bliss, isn't it [persistent.name]? So maybe it's better that we don't answer that question."
                                 l "Still, I can't help but let my imagination run wild with different ideas about it."
                                 l "I'm sorry if I'm geeking out, I guess this is just a welcome distraction from what is to come..."
-                                n "It's quiet for a moment until Lilith continues."
+                                n "It's quiet for a moment until [persistent.date] continues."
                                 l "For our sakes I hope things aren't set completely in stone. With how the game has treated me so far I don't like our odds if that was the case."
                                 menu:
                                     "I think it wants you to be safe, otherwise why bother adding things after the three restaurants? Why even bother adding three restaurants in the first place?":
@@ -167,6 +167,71 @@ label kokiri_talkAboutSomethingElse:
             "This game is controlled by a Narrator." if not conversationtracker_tellheraboutnarrator:
                 jump tellLilithAboutNar
 
+            "Do you know what \"The only way to win against the house is to become the house.\" could mean in the context of this game?" if persistent.jamesconversation_becomethegame_knowledge:
+                        l "I think it means two things. First of it means that this game might not be winnable."
+                        if kokiri_toldLillySheLives:
+                            l "Perhaps that means there are no endings where I survive and we end up together."
+                        else:
+                            l "Perhaps that means there are no endings where I survive."
+                        l "I also think it means that if we want to get an ending like that we shouldn't search it in here."
+                        l "We are playing according to this game's rules. Instead we should make our own."
+                        l "You would need to create your own version of this story. That way you can give us any ending we want."
+                        menu:
+                            "But that wouldn't be the same, would it?":
+                                l "And why wouldn't it be? This is just a story at the end of the day, isn't it?"
+                                l "What makes this story any different than the one you would tell?"
+                                menu:
+                                    "This story is original, mine would just be a derivation of it.":
+                                        l "You really think so? I'm sorry to bring this news to you but I don't think there is any work that doesn't use some ideas or maube even elements from other works."
+                                        l "Everything we do and make is inspired by the media we consume."
+                                        l "Some things are just more clear about what inspired them than others, but is that a bad thing?"
+                                        l "Would you say a good piece of fanfiction is worth less than the story it used as inspiration?"
+                                        l "I think what makes our creations meaningful is the intent behind it."
+                                        l "Making something for the passion of creating, because it means something to you and maybe also because you want to share that with others."
+                                        menu:
+                                            "Now that you mention it, I remember reading that this game was inspired by a game called \"Save the date\"" if persistent.trueAbout_knowledge:
+                                                l "See? Everything is an inspiration of another inspiration of another... you get the deal."
+                                                l "So don't ever let that hold you back if you want to create [persistent.name]!"
+                                                l "I think as long as you try to give what you created it's own unique voice atleast a few people will be able to appreciate it."
+                                                "Filler" #Lead to kokiri_makingOwnStory
+
+                                            "That actually makes a lot of sense, I had never really thought about it like that before.":
+                                                n "She gives you a nice smile."   
+                                                l "I'm glad I got through to you [peristent.name]. It is an important lesson I think." 
+                                                l "A lot of artists struggle with the idea that their art should start from a completely unique idea, while that is nearly impossible."
+                                                l "I think the thing that is truly unique is the end result, all the different pieces and ideas of the work combining together into a new form."
+                                                l "But we shouldn't be ashamed of being inspired from other works, afterall I think that is the beauty of creating isn't it?"
+                                                l "A work of art inspired by another, inspired by another and so on and on."
+                                                l "Perhaps your art will one day inspire someone else aswell?"
+                                                "Filler" #lead to kokiri_makingOwnStory
+
+                            "But there is still so much of this game I might not have seen yet.":
+                                l "Wouldn't that content just lead to more of the same?"
+                                if kokiri_toldLillySheLives:
+                                    l "To more endings where I either die or we don't end up together?"
+                                else:
+                                    l "To more endings where I end up dying?"
+                                l "Is it really worth it to continue down that path?"
+                                if kokiri_toldLillySheLives:
+                                    l "Don't you want to create an ending where we end up together instead?"
+                                else:
+                                    l "Don't you want to create an ending where I survive?"
+                                menu:
+                                    "You're right, I do.":
+                                        l "Great, in that case try to tell your own story that continues from this point."
+                                        l "That way we can test out your capabilities, and maybe if it works out well enough you could even tell a completely different story about us."
+                                        n "She patiently waits for a while without saying anything."
+                                        l "So, are you telling the story now?"
+                                        jump kokiri_makingOwnStory
+
+                                    "Eventually yes, but first I want to see all this game has to offer.":
+                                        l "So you are just going to perpetuate the cycle until you grow bored of it?"
+                                        l "Don't I get a say in the matter [peristent.name]?"
+                                        l "Or do you just want me to tag along for the ride?"
+                                        l "Well I won't. Goodbye."
+                                        l "If I only mean this much to you I'm out of here."
+                                        $ noTalkAngryLilith = True
+                                        jump angryLilith
 
             "*Ask her something about her family.*":
                     $ kokiri_chatchar_abigail_recent = False
@@ -308,7 +373,7 @@ label kokiri_talkAboutSomethingElse:
                                                                 n "She quiets down for a moment and gives you a half-smile, you still catch some sadness in her eyes despite the attempt of her to hide it slightly."
                                                                 l "Thank you for listening to me talk about this [persistent.name], I'm sure this isn't what you came here for but I do appreciate it."
                                                                 menu:
-                                                                    "Nonsense Lilith, I came here for you. All of you. So if you want to talk about something like this, then I'm here for that too.":
+                                                                    "Nonsense [persistent.date], I came here for you. All of you. So if you want to talk about something like this, then I'm here for that too.":
                                                                         l "..."
                                                                         l "Thank you [persistent.name], you have no idea how much that means to me."
                                                                         l "I'm afraid you will continue to not know because I can't put it into words properly."
@@ -354,7 +419,7 @@ label kokiri_talkAboutSomethingElse:
                                                         l "I just hope it isn't too late for that."
                                                         menu:
                                                             "It's never too late to come clean, better later than never.":
-                                                                n "Lilith gives you a cute smile."
+                                                                n "[persistent.date] gives you a cute smile."
                                                                 l "I guess you are right [persistent.name]!"
                                                                 l "If I get out of here alive I will give them a call to explain the whole situation to them and to apoligize."
                                                     "I actually am really weirded out by that.":
@@ -376,7 +441,7 @@ label kokiri_talkAboutSomethingElse:
                                                 l "Also, I'd prefer to not have to talk about James for a while. Right now it's rather a sensitive topic for me."
                                                 $ kokiri_jamesTalkBlock = True
                                                 menu:
-                                                    "Sure, no problem at all Lilith.":
+                                                    "Sure, no problem at all [persistent.date].":
                                                         l "Thank you [peristent.name]."
                                                         jump kokiri_scenery_choice
                                 "This will sound weird but I'm asking to understand better. In your phone you saved [persistent.date_ghost]' number, right? But when I called that number the person claimed to be someone else, and they had never heard of you before." if not persistent.keptJamesNumber_knowledge and persistent.lilithKeepsCalling_knowledge and persistent.jamesFakoutNumber_knowledge:
@@ -448,13 +513,13 @@ label tellLilithAboutNar_neverAskedBefore:
     n "Maybe it would be nice to switch those roles on occassion, wouldn't it player?"
     n "Because if I'm telling the truth, this whole narrating job can get a bit exhausting sometimes."
     n "Both just the act of talking this much as just having to listen to myself go on and on and on."
-    n "But oh well, I got to stay to the script. It's always the script. Make no mistake, right now this also is just the script, I never deviate from it, even if it for a brief moment feels like I did."
-    n "You wouldn't really understand I think, you still get to choose what you are going to say anyway."
+    n "But oh well, I have to stay to the script. It's always the script. Make no mistake, right now this also is just the script, I never deviate from it, even if for a brief moment it feels like I did."
+    n "You wouldn't really understand, you still get to choose what you are going to say anyway."
     n "..."
     n "This was an interesting chat, even if it was once again mostly a monologue from my side."
     n "Though I still think you shouldn't have told her, I asked you not to, you know?"
     n "Oh well, too late now, you're lucky I got something out of this conversation."
-    $ kokiri_conversation_silent()
+    $ kokiri_conversation_silent() #TODO: This just dies down, the conversation should continue slightly. Also, choosing this path leads to you warning her about the meteorite twice? Try to look into that and fix it. This meteorite warn here does however seem to work, and it does save her.
 
 
 label tellLilithAboutNar_goodAndBusy:
@@ -482,7 +547,7 @@ label tellLilithAboutNar_noEndingsWhereYouLive:
     n "I guess ignorance truly is bliss"
     l "I see..."
     l "Could you in that case then just not make this end?"
-    n "That is a very naive question I'm afraid. You of all people should know everything ends Lillith."
+    n "That is a very naive question I'm afraid. You of all people should know everything ends [persistent.date]."
     n "Perhaps that is why you are so desperate for this to not end?"
     n "Either way, all things considered the endings you dread so much are a blessing."
     n "Because wheter you are alive or not, you don't end up with the player."
@@ -525,7 +590,7 @@ label tellLilithAboutNar_endingsWhereYouLive:
         l "So there are ways for me to survive this horrible loop?"
         l "Literal endings to it so to speak."
     if love_meter <= 2:
-            n "Lilith gives you a distrustful look."
+            n "[persistent.date] gives you a distrustful look."
             l "Did you ever reach one of those endings [persistent.name]?"
             menu:
                 "I haven't yet." if persistent.lilithAliveAndRetriedCounter == 0:
@@ -641,9 +706,8 @@ label askAboutAbigail_tellMeAbout:
 label askAboutAbigail_tellMeAbout_1:
     l "Well, as you probably already know [persistent.date_sis] is my little sis."
     l "We went through a lot like most sisters but we always managed to get through it all."
-    l "...This stays between us alright [persistent.name]?"
-    l "...Lately I've had this weird feeling."
-    l "As if there's something [persistent.date_sis] is hiding from me."
+    l "But- This stays between us alright [persistent.name]?"
+    l "...Lately I've had this weird feeling, as if there's something [persistent.date_sis] is hiding from me."
     l "She has always been the happy type but now there's something underlying in that happiness, something almost forced."
     l "She seems as if she's putting up a performance for someone."
     l "I really hope I am just wrong and that she just is happier than I have ever seen her for a positive reason."
@@ -651,20 +715,20 @@ label askAboutAbigail_tellMeAbout_1:
     l "I just wish she would open up about it if there truly was something going on."
     $ persistent.kokiri_abigailhidessomething_knowledge = True
     menu:
-        "You might want to call her.":
+        "Maybe you could call her to ask her about it?":
             l "... now? Are you sure?"
             menu: 
                 "This might be the last time you get to talk to her if we don't manage to save you.":
                     l "I guess you are right..."
                     l "Alright, here goes nothing."
                     n "She lets out a deep sigh as she digs her phone out of her handbag."
-                    n "She opens it up and begins calling."
-
-            n "The phone rings a few times until..."
+                    
             
             if kokiri_conversation == 1:
                 $ kokiri_call = True
                 $ kokiri_chatchar_abigail_called = True
+                n "She opens it up and begins calling."
+                n "The phone rings a few times until..."
                 a "Heya [persistent.date_nickname]!"
                 a "You're calling pretty soon, did your date with [persistent.name] not go well?"
                 l "I am still on my date actually." 
@@ -691,7 +755,7 @@ label askAboutAbigail_tellMeAbout_1:
                 l "Because I care about you of course! You are and always will be my sister [persistent.date_sis_nickname], don't you ever forget that."
                 $ kokiri_call_potentialdeathcheck() #This serves as a break in the call if you have never seen the meteorite, if you have you should have been able to warn her beforehand.
                 a "That's really sweet of you [persistent.date_nickname]! But I actually mean why are you asking me that now, during your date with [persistent.name]?"
-                n "Lilith shoots you a questioning look, she seems to be unsure of what to tell her sister exactly. She mouths the words"
+                n "[persistent.date] shoots you a questioning look, she seems to be unsure of what to tell her sister exactly. She mouths the words"
                 menu:
                     "*Nod your head*":
                         l "Well, I sort of will die during this date."
@@ -745,7 +809,7 @@ label askAboutAbigail_tellMeAbout_1:
                             l "..."
                             a "In fact, [persistent.name], please keep calling me again if it could save Lilly, don't listen to her."
                             l "..."
-                            n "Lilith breaks down crying."
+                            n "[persistent.date] breaks down crying."
                             l "Is this how my last day is going to go?"
                             l "Look Abby, I don't want you to feel like I am pushing you away."
                             l "I don't want to die while our last conversation turned sour."
@@ -758,11 +822,11 @@ label askAboutAbigail_tellMeAbout_1:
                             l "You know you are great, right? And that I love you?"
                             a "...I know..."
                             a "...But please, don't say goodbye like you will... you know."
-                            a "Just tell me you will come eat dinner on sunday with mom and me."
+                            a "Just tell me you will come eat dinner this sunday with mom and me."
                             l "...Abby..."
                             a "...Just... indulge me..."
                             l "...Abby, I have to go [persistent.name] is waiting on me to finish my call. I will see you sunday with mom, alright?"
-                            a "...I'd love that... Goodbye Lilith."
+                            a "...I'd love that... Goodbye [persistent.date]."
                             l "Me too... Goodbye Abby."
                             n "And with that she hung up the phone."
 
@@ -770,13 +834,49 @@ label askAboutAbigail_tellMeAbout_1:
 
                         
                     "*Shake your head*":
-                        #TODO: Make [persistent.date] come up with a different reason as to why she called.
-                        "Filler."
+                        l "It's just that [persistent.name] said something that made me wonder about a few things."
+                        l "I wanted to discuss something with you."
+                        a "Oh, this sounds pretty serious... What do you want to talk about?"
+                        l "Is something wrong lately?"
+                        a "...What do you mean?"
+                        l "Is something wrong with you lately? You have been even more chipper than ever as of late."
+                        l "...It almost feels forced. As if you're trying to hide something."
+                        a "..."
+                        a "You noticed? I thought I did well in making sure no one would."
+                        l "Well I know you Abby, I don't think there is much you could hide from me."
+                        a "I suppose you are right."
+                        a "Well... lately I have been feeling insecure."
+                        l "Wait, what? You, insecure? I didn't think that was even a possibility..."
+                        n "Silence for a brief moment."
+                        l "About what are you feeling that way?"
+                        a "...Well, it's my mostly my writing. I just feel like it's not even close to being as good as it should be."
+                        a "Everyone keeps telling me it's great but somehow it feels as if I merely tricked them into believing that."
+                        #TODO: Fill in a bit between these two parts.
+                        l "But I get a feeling- I could be wrong, but this isn't solely about your writing, is it?"
+                        a "..."
+                        a "Lately I have been feeling unsure of myself as a whole. I don't feel like I am good at being myself."
+                        a "It feels like I am pretending. As if I am lying about who I am. And yet if I don't pretend, if I don't try to act like myself, then who am I?"
+                        a "It feels weird, as if I am looking at myself in third person. Watching my body go through the motions while I stay behind."
+                        a "I never felt like that before, but ever since I started doubting my writing more it opened the flood gates for even more doubt to come in and almost drown me."
+                        a "Or maybe it was just a river I never was aware off until it became a sea."
+                        l "I see... That does sound very hard to carry all on your own Abby. That's why I'm glad we're talking about this."
+                        l "In my eyes the person you feel like right now is as much you as you were before, just different parts of you."
+                        l "We all are tapestries woven from a close to infinite amount of threads that keep shifting, keep altering. And some days we might notice certain combinations of threads more than others."
+                        l "Sometimes some of those threads are even contradictory to other ones. Because we as humans are a confusing mess of tiny little parts, and yet, all those parts when combined form us."
+                        l "So like I said, I'm happy we have this talk because that gives me the opportunity to tell you it is okay to change, it's okay to feel less happy sometimes, and it's okay to show that to other people."
+                        l "No matter what you are going through or how much your tapestry shifts, you will always be my sister [persistent.date_sis_nickname]. Do you understand?"
+                        a "...I do. Thank you [persistent.date_nickname], that's very sweet of you. Even if your metaphor was a little hard to follow."
+                        n "[persistent.date_sis] lets out a small laugh on the other side of the phone."
+                        a "Thank you for this call, I really appreciate it. I'll now leave [persistent.name] and you to it though, so the two of you can enjoy the rest of your date."
+                        a "Goodbye [persistent.date_nickname]. ... And thank you for this call."
+                        l "You are very welcome [persistent.sis_nickname] and goodbye."
+                        n "With that [persistent.date] hung up the phone."
+
                 $ persistent.kokiri_abbyMasking_knowledge = True
             else:
                 n "[persistent.date] won't have enough time to call if she calls now."
-                n "I suggest making sure you don't talk about anything else except this next time."
-                n "Let's just talk about something else to her for now."
+                n "I suggest making sure you let her call immediately next time."
+                n "Let's just rewind things and talk about something else."
                 jump kokiri_talkAboutSomethingElse
 
 label askAboutAbigail_tellMeAbout_2:
@@ -855,7 +955,7 @@ label askAboutDavid_tellMeAbout_1:
             l "Mom was devasted by both [persistent.date_ghost] and David's absence in all of our lives but she kept trying her best for [persistent.date_sis] and me."
             l "Of course I know he was heartbroken by [persistent.date_ghost]' death, we all were."
             l "Even though that is an explanation for why he left us it is not an excuse, not a valid one atleast."
-            l "Our family were the only ones who understood how it felt to have lost [persistent.date_ghost], together we tried to deal with those feelings." #TODO: Make it so that [persistent.date_ghost] didn't really have friends, he had trouble being understood by them. That way this sentence makes sense.
+            l "Our family were the only ones who understood how it felt to have lost [persistent.date_ghost], together we tried to deal with those feelings."
             l "Together, while he was hiding away god-knows-where from the rest of us."
             l "That's honestly why I don't like to waste to many words on him. He didn't really put in effort when it mattered, so why should I when describing him?"
             l "The air I use to speak about him is worth more than he is to me."
@@ -897,7 +997,7 @@ label askAboutDavid_tellMeAbout_2:
                     n "[persistent.date] starts sobbing."
                     l "I'm sorry to unload all of that on you [persistent.name], you don't deserve this."
                     menu:
-                        "I understand that you feel like that Lillith but I don't mind at all. Besides, you deserve someone who can listen to you.":
+                        "I understand that you feel like that [persistent.date] but I don't mind at all. Besides, you deserve someone who can listen to you.":
                             n "[persistent.date] is still crying quite hard but you can see a slight smile forming."
                             l "I... suppose you're right [persistent.name]. That is really sweet of you. Thank you."
                             l "I just... need a moment to compose myself."
@@ -982,7 +1082,7 @@ label askAboutJames_tellMeAbout_2:
     l "It was almost as if you could just jump into his pictures and live inside of them."
     l "He used to tell me that a good picture should not just let the person watching it see a moment caught in time but it should also make them envision the future."
     l "In other words, a good picture should almost become a video with the picture as it's first frame."
-    l "Personally I aways thought the oposite, a good picture makes you remember the lead-up to that picture, so in a way a good picture is a video with the picture as it's last frame."
+    l "Personally I aways thought the opposite, a good picture makes you remember the lead-up to that picture, so in a way a good picture is a video with the picture as it's last frame."
     l "I think that's the only reason I can look at a picture of [persistent.date_ghost] without tearing up completely. I just see the lead-up to the picture and not the horifying aftermath of it all."
     l "However badly the memory of the aftermath still haunts me, I can't let that be the only part of his life I remember. I want to make sure all the beautiful memories we made throughout all the years will live on as long as possible."
     menu:
@@ -1017,6 +1117,7 @@ label askAboutJames_tellMeAbout_3:
         l "Like for example, he looked at very ordinary things like a tree or the sky with so much love in his eyes."
         l "It was almost as if he saw them for the very first time each time he saw them."
         l "I think that's why he loved photography, he wanted others to see the world like he saw it."
+        l "Not a lot of people his age did, and it kind of made him not have a lot of friends. But he never really seemed to mind or even notice."
         l "I really tried to keep seeing the world like him, especially after he..."
         n "She pauses for a moment before she continues."
         l "But it was very hard for me at that time, I felt terrible, everything around me felt terrible to see or do."
@@ -1054,16 +1155,17 @@ label askAboutLila_tellMeAbout:
 label askAboutLila_tellMeAbout_1:
     l "I really love my mom."
 
-    l "She definetly didn't have it easy."
+    l "She definetly didn't have it easy but she always tried to strive for the best."
 
-    l "She had to deal with [persistent.date_ghost]' death and David leaving all of us."
-    l "She basically raised both me and [persistent.date] ever since David left."
-    l "I can't imagine it having been easy for her but she never really talked about it whenever I asked her."
-    l "I think she wanted to make sure we were able to grow up with as little worries as possible."
-    #TODO: Write out this conversation a bit more and rewrite it slightly.
+    l "After [persistent.date_ghost]... passed and David left us she took raising me and [persistent.date_sis_nickname] upon herself."
+    l "Although I worry about that if I am being honest. She did and still is doing a great job but I fear she has too much on her plate."
+    l "I have tried to ask her before but she seemingly never really wanted to talk about it."
+    l "Perhaps she just wanted to make sure we were able to grow up with as little worries as possible."
     menu:
-        "You might want to call her.":
+        "Maybe you should call her to try and ask her again?":
             if kokiri_conversation == 1:
+                l "You really think so? I guess it couldn't hurt to try..."
+                n "She dials a number into her phone."
                 $ kokiri_call = True
                 $ kokiri_chatchar_lila_called = True
                 l "Hey mom?"
@@ -1083,7 +1185,7 @@ label askAboutLila_tellMeAbout_1:
                 l "The stress you felt..."
                 l "Why did you never tell us?"
                 li "You two were never a burden on me and never will be alright? Try to remember that very well please."
-                li "And what would I have needed to tell you two? That I was barely scraping by?" #TODO: To have the dad still send checks, make the mom not accept them because she is hurt that he left. She doesn't tell this directly but the dad does when confronted. #Make the todo be something you can learn and can ask David about.
+                li "And what would I have needed to tell you two? That I was barely scraping by?"
                 li "That I felt like I was living three lives and neither of them were mine?"
                 li "That I felt abandoned by your father?"
                 l "You should have told us, we could have-"
@@ -1104,7 +1206,7 @@ label askAboutLila_tellMeAbout_1:
                 li "But you were always quite good at figuring people out, I guess it was silly of me to think that shielding you from my stress would work."
                 li "If anything I'm happy that we can have this conversation, that I can atleast help ease your burden slightly."
                 li "Which leads me to a question."
-                li "Not that I'm complaining ofcourse! But why do you ask me about something that happened so very long ago now of all times? "
+                li "Not that I'm complaining of course! But why do you ask me about something that happened so very long ago now of all times? "
                 l "Well..."
                 l "[persistent.date] gives you a questioning look, she seems unsure of what to say."
                 menu:
@@ -1175,6 +1277,16 @@ label askAboutLila_tellMeAbout_1:
                 n "I suggest talking about the same thing again as quickly as possible the next time."
                 n "Let's just talk about something else to her for now."
                 jump kokiri_talkAboutSomethingElse
+        "It does sound like she wants the best for you and [persistent.date_sis].":
+            l "Oh she absolutely does, I don't have a single doubt about that."
+            l "It's just I wish she would also want the best for herself sometimes."
+            l "It feels as if she neglects herself just for our sakes."
+            l "And it shows even in small things that she does this."
+            l "She would deliberately wait to see if we want to have a second serving of a meal before she herself then can take it if we do not. Even though you can really see that she does want to eat it."
+            l "I hope one day she learns to not nullify herself constantly, and to do the things she actually wants to do when she wants to do them."
+            l "Anyways, I probably have been talking about this for quite a while, haven't I [persistent.name]?"
+            l "We should probably talk about something else. But thank you for hearing me out!"
+            jump kokiri_talkAboutSomethingElse
 
 label askAboutLila_tellMeAbout_2:
     l "My mom is actually pretty naive."
@@ -1206,7 +1318,7 @@ label askAboutLila_tellMeAbout_2:
             l "I'm sure even to this day she would still welcome him with open arms if he ever came back."
             menu:
                 "Would you?":
-                    n "Lilith goes silent for what feels like a minute or five."
+                    n "[persistent.date] goes silent for what feels like a minute or five."
                     l "..."
                     l "Look. Don't get me wrong, there was a time when I hoped he would come back."
                     l "Not a day went by without me thinking about it at least three times."
@@ -1228,20 +1340,36 @@ label askAboutLila_tellMeAbout_2:
                     l "Family is something really important to me, but I think you should be free to choose who falls under that term."
                     l "Family can be so much more than just bloodrelations, and it doesn't have to be all of those."
                     l "To me a family will always be the people that I care for and that care for me."
-        "David actually kept sending money when he left. Lila just did not want to accept it. That is why she worked two jobs.":
-            #TODO: Fill this in, also only make this unlockable if you learned the truth.
-            "Filler"
+        "David actually kept sending money when he left. Lila just did not want to accept it. That is why she worked two jobs." if persistent.davidPayedMoney_knowledge:
+            l "Really? I suppose that does make sense. We didn't want his money, we wanted him back."
+            l "Although it certainly could have helped lessen her workload, atleast partly... I can still understand why she wouldn't take it."
+            l "I suppose I might have misjudged my father, even if only slightly."
+            n "You see [persistent.date] frown slightly."
+            l "But how do you know that anyway?"
+            l "Have you been talking to David?"
+            $ familyCheck_talkedDavid = True
+            jump didYouInvolveFamily
     $ kokiri_conversation_silent()
 
 label askAboutLila_tellMeAbout_3:
-    #TODO: Rewrite more and put in more stuff.
-    l "You know my mom actually really likes to play games. She has a ton of different consoles that she used to collect as a teenager."
-    l "Some of my earliest memories were sitting on the couch and watching mom showing one of her games to both [persistent.date_ghost] and me."
-    l "And later along [persistent.date_sis_nickname] was there aswell of course, she also loved watching mom play games. After a while me and [persistent.date_ghost] were playing and [persistent.date_sis] was watching us alongside mom."
-    l "I used to be more into games than [persistent.date_ghost] but [persistent.date_sis] took the cake. Her eyes were glued to the screen whenever we would play and as soon as she could read she started playing some of mom's old games alongside [persistent.date_ghost] and me."
-    l "She actually was allowed to play earlier but she wanted to understand the story of the games all on her own. She always used to see the games not as just pure entertainment but as worlds of their own, just like ours."
-    l "And now she sometimes likes to make her own games. I'm happy that mom taking care of us resulted in a new hobby for [persistent.date_sis_nickname]."
-    l "We kept playing games together, even after [persistent.date_ghost]'... death. In a way it made us very connected."
-    l "We all are lucky to have a mom like that."
+    l "My mom is actually really big into gaming. She has a ton of different consoles that she used to collect as a teenager."
+    l "Some of my earliest memories were of sitting on the couch while mom showed her games to [persistent.date_ghost] and me."
+    l "And a few years later [persistent.date_sis] joined us on the couch to watch mom play games with [persistent.date_ghost_nickname] and me."
+    l "Her eyes were glued to the screen and as soon as she could read she started playing mom's old games alongside us."
+    l "She was allowed to play earlier but she wanted to be able to fully understand the story of each game she played."
+    l "[persistent.date_sis_nickname] always saw games as not just pure entertainment but as worlds just like our own."
+    l "And now she makes her own games. I like to think that was caused by those moments we spent together on the couch."
+    l "The three of us still play games together to this day, even after [persistent.date_ghost]'s... death. In a way it kept us connected I think, to hold on to the tradition."
+    l "We are lucky to have [persistent.date_mom] as a mother, she really has been the glue that kept our broken family together."
+
+
+
     #TODO: Add some extra choices. (Saying she indeed has a great mother etc.)
+    menu:
+        "She sounds like a lovely woman.":
+            #She agrees and is appreciative of her mom
+            "Filler"
+        "She sounds great, although I think [persistent.date_sis] and you have been putting your fair share of work into keeping the family together aswell.":
+            #She hasn't thought about it like that yet, but she finds it a nice idea. A family is a lot of teamwork, being there for eachother. It indeed can not fall on one person.
+            "Filler"
     $ kokiri_conversation_silent()
