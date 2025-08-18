@@ -514,7 +514,7 @@ label kokiri_deaths:
                     l "Wow, it really sounds as if death is following me wherever I go."
                     l "Thank you for helping me survive this whole ordeal [persistent.name]!"
 
-
+            
             menu:
                 "I tried everything [persistent.date], I even took you to space but it didn't work out, no matter wich path I choose you still end up dying." if persistent.reality_knowledge:
                     jump kokiri_death_2_prevented_triedEverything
@@ -537,14 +537,23 @@ label kokiri_deaths:
                     l "I guess this feels refreshing?"
                     l "Deep down I guess I always blamed myself for what happened, for them leaving."
                     l "As if there some curse cast on me that would make all my loved ones leave me."
-                    l "If anything, I am thankful that I now have another piece of evidence to hold on to whenever I experience that thought again."
+                    l "If anything, I am thankful that I now have another piece of evidence proving the opposite whenever I experience that thought again."
                     l "So thank you very much for that [persistent.name], that means more to me than I could ever express fully."
                     n "Things grow quiet for a little. You see [persistent.date] thinking about something."
                     l "I'd like to show you something."
                     jump kokiri_pictureChoice
 
-                "We're running out of time. Could we please continue talking?":  
-                    jump kokiri_continue_talking
+                "We're running out of time. Could we please keep talking?":  
+                    "Sure, what would you like to talk about?"
+                    $ showContinueTalk()
+                    if showContinueTalkKokiri:
+                        menu:
+                            "*Continue talking.*":
+                                jump kokiri_continue_talking
+                            "*Talk about something else.*":
+                                jump kokiri_talkAboutSomethingElse
+                    else:
+                            jump kokiri_talkAboutSomethingElse
                     
 label kokiri_death_2_prevented_triedEverything:
     p "I tried everything I could think of [persistent.date]."
@@ -710,15 +719,16 @@ label kokiri_pictureChoice:
     menu:
         "*Take her hand*":
             jump kokiri_showpicture
-        "You actually already showed me the beach picture in that big tree over there. It fell over right on top of you..." if persistent.kokiri_death_3:
+        "You actually already showed me the beach picture hidden in the big tree. It fell over right on top of you..." if persistent.kokiri_death_3:
             jump kokiri_death_3_prevented
 label kokiri_showpicture:
     $ persistent.beach_knowledge = True
     n "You grab her hand and get up."
     l "But close your eyes, alright?"
     l "I don't want to reveal where we are going."
+    n "You let your eyelids fall shut."
     n "With your hand in hers she leads you down the hill and takes you to the left. You feel a bush brush against your legs."
-    n "She brings you even deeper and deeper into the forest. You take a few more turns along the way, one left and two right."
+    n "She brings you deeper and deeper into the forest. You take a few more turns along the way, one left and two right."
     n "Suddenly she stops."
     l "Alright, you can open your eyes now [persistent.name]!" 
     n "As you do you find yourself in front of a very high tree surrounded by a bunch of smaller trees."
@@ -726,9 +736,9 @@ label kokiri_showpicture:
     l "Well, I hid something... precious here."
     n "She looks at the big tree and the trees surrounding it, a smile growing on her face."
     n "She moves to the back of the big tree, and comes back with a small wooden box, decorated with red details."
-    n "Then she takes of her necklace you somehow never noticed before, a key is dangling on it."
+    n "Then she takes off her necklace you somehow never noticed before, a key is dangling on it."
     n "She uses the key to unlock the box and takes out a polaroid."
-    n "The photo shows two adults,two small girls and a prebuscent boy on a beach. The children are all building a sandcastle together and the adults are smiling while watching them."
+    n "The photo shows a man and a woman with a wide smile on both of their faces. They are standing behind three children, one boy and two daughters, you can quite easily tell the eldest daugther is [persistent.date]. The children are all building a sandcastle together."
     l "This is a photo of our family at a day on the beach, those were the happy days..."
     l "Even to this day I still have an afinity for the beach because it is linked to those happy days."
     l "But I know i will never truly get them back, not like it used to be anyway.."
@@ -807,7 +817,9 @@ label kokiri_showpicture:
                 $ persistent.kokiri_death_3 = True
                 jump gameOver
         label kokiri_death_3_prevented:
-            l "Oh I see, so it's safer on this hill?"
+            l "...Wow, I'm not sure what to say to that. This is all a lot to take in."
+            l "So I died there?..."
+            l "Are we safer here?"
             menu:
                 "I'm not sure to be honest, this is the farthest we've made it so far." if not persistent.kokiri_death_4:
                     jump kokiri_death_3_prevented_talk_farthestWeHaveGone
@@ -858,7 +870,7 @@ label kokiri_showpicture:
                 n "The increased force of the gravity is pinning you against the hill but not for long, you begin to roll off the hill and fall down in the middle of a lake close to where it used to sit. "
                 p "[persistent.date], it's safe in here, jump down!"
                 l "I.... I can't... it's already too high..."
-                n "She's right, you can barely hear her words anymore from that height."
+                n "She's right, you can barely hear her words anymore from that height, jumping down in the water now would be a terrible idea."
                 n "All you can do is float there, powerless, while you watch the hill and [persistent.date] getting swallowed by the ink-black sky."
                 n "As you do you notice that there are some sort of thrusters sticking out from the bottom of it."
                 if damoclesAsked == True:
@@ -1018,15 +1030,15 @@ label gameOver:
             elif ending_check == "lettingGo":
                 $ persistent.ending_lettingGo_counter = 0
             elif ending_check == "unseenContent":
-                default persistent.ending_unseenContent_counter  = 0
+                $ persistent.ending_unseenContent_counter  = 0
             elif ending_check == "anEnding":
-                default persistent.ending_anEnding_counter  = 0
+                $ persistent.ending_anEnding_counter  = 0
             elif ending_check == "quitter":
-                default persistent.ending_quitter_counter = 0
+                $ persistent.ending_quitter_counter = 0
             elif ending_check == "breakup":
-                default persistent.ending_breakup_counter = 0
+                $ persistent.ending_breakup_counter = 0
             elif ending_check == "abigailDistraction":
-                default persistent.ending_abigailDistraction_counter = 0
+                $ persistent.ending_abigailDistraction_counter = 0
             elif ending_check == "badDate":
-                default persistent.ending_badDate_counter = 0
+                $ persistent.ending_badDate_counter = 0
             jump game_start

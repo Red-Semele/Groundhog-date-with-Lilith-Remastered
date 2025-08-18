@@ -37,7 +37,7 @@ label kokiri_hillSit:
         n "You hope that things will be better now, you feel strangely optimistic that they will indeed be."
         n "You take a moment to enjoy the view as suddenly you get snapped out of your thoughts by a familiar voice."
     else: 
-        n "You barely give it a glance, you have seen it before and you don't like to think too much about all the death and destruction you have seen."
+        n "You barely give it a glance, you have seen it before and you don't like to think too much about all the death and destruction you have seen." #TODO: If you did not watch the scenery have this be a slightly different line, yes, you feel less optimistic but you do not have the same shock as seeing the scenery before.
         n "Instead you wait for [persistent.date] who will come now at any moment."
     l "Oh hey, I see you already found this place, it has a really great view, right? Nice work scaling this hill [persistent.name], it's almost like a mountain!"
     n "[persistent.date] gives you a playful pat on the back as she places her picknick blanket down on the ground with a small chuckle."
@@ -180,7 +180,7 @@ label kokiri_explanation_game:
                             l "It all means something, even if you didn't think it did."
                             l "Even if you did something to just have fun in a videogame or to see what it would do, that still says something about you as a person."
                             l "Sometimes we hide behind the roles we play to make actions that would not be acceptable to ourselves and others if our true self would make them."
-                            l "That's why it might feel scary to some if they catch a glimpse of themselves in the reflection of their screen. Because it's someone they don't recognise.<br/>Do you ever feel like that, [peristent.persistent.name_real]?..."
+                            l "That's why it might feel scary to some if they catch a glimpse of themselves in the reflection of their screen. Because it's someone they don't recognise.<br/>Do you ever feel like that, [persistent.persistent.name_real]?..."
                             l "All these different roles form a web of half-truths and lies, and in the center of it all you can find our true self."
                             l "Not the self we think we are, not the self others see us as, but the self we inevitably are."
                             l "Speaking about that self, what do you really do for a living? I'd like to get to know you better, the one playing this game."
@@ -395,13 +395,13 @@ label kokiri_explanation_game_playerIdentity:
 
                     "I think the goal is to reach an ending where you live.":
                         $ kokiri_conversation += 1
-                        l "That's great to hear, that means we have the same goal!"
+                        l "That's great to hear, that means we have the same goal afterall."
                         l "Although what you said kind of raises a few questions."
                         l "If I somehow survive, would the game just end?"
-                        l "And even then, do we know how long random things would keep killing me?"
-                        l "Is it just this day or would you have to save me for the next couple of years?"
+                        l "And even then, how do we know we truly reached that point?"
+                        l "Do you just need to save me for this day or would it go on for the next couple of years?"
                         l "Either way, I have trust in you [persistent.name], we will brave this together."
-                        l "But I do wonder, what happens when we succeed? Will you stop playing this game once you reach an ending where I live?"
+                        l "But I do wonder, what happens when we finally succeed? Will you stop playing this game once you reach an ending where I live?"
                         
                         menu:
                             "I would stop playing if you were safe.":
@@ -479,7 +479,7 @@ label kokiri_explanation_game_playerIdentity:
                                 l "Maybe living doesn’t mean the game ends right away. Maybe it just means we’ve found one chapter in a bigger story."
                                 n "[persistent.date] smiles at you, her eyes reflecting a sense of curiosity and wonder."
                                 l "Or maybe there are multiple endings, some where I live, some where I don’t... but if I survive, then maybe it’s just the beginning of something else."
-                                l "I’d like to believe that. That if I make it out, there’s still more to come. Maybe I can make my own choices then... maybe I can finally be free from all of this."
+                                l "I’d like to believe that. That if I make it out, there’s still more to come. I can't help but just wonder about what exactly would come next."
                                 jump kokiri_gamegoal_succesful_live_end
 
            
@@ -578,6 +578,9 @@ label kokiri_gamegoal_succesful_live_end:
     l "Thanks for talking about this with me. It’s a lot to think about, but it helps, you know?"
     l "I think no matter what happens, we’ll figure it out together. And if there is a way for me to live... well, I trust you to help me find it."
     n "She gives you a warm smile, the heaviness of the moment lifting slightly."
+    if lilithAliveAndRetriedCounter > 0:
+        n "She is quite right that you are capable of finding an ending where she lives, isn't she?"
+        n "But it doesn't seem like that matters as much to you as it does to her, since you still are coming back."
     jump kokiri_scenery_choice
 
 label kokiri_topic_questMade:
@@ -920,7 +923,7 @@ label kokiri_gamegoal_noIdea_2:
                                         
                                             n "[persistent.date] laughs."
                                             
-                                            l "Not sure if I would be able to take you seriously with that name though, you're probably safer off with \"[peristent.name]\" as name."
+                                            l "Not sure if I would be able to take you seriously with that name though, you're probably safer off with \"[persistent.name]\" as name."
                                             if kokiri_conversation >= 4:
                                                 jump kokiri_4
         $ kokiri_conversation_silent()
@@ -1503,11 +1506,15 @@ label kokiri_poems:
                         "Of course I understand! It's completely fine if you don't want to share those poems right now.":
                             n "[persistent.date] flashes you a thankful smile and gives you a small nod."
                             l "So, what would you like to talk about now [persistent.name]?"
-                            menu:
-                                "I'd like to talk about something else.":
+                            $ showContinueTalk()
+                            if showContinueTalkKokiri:
+                                menu:
+                                    "I'd like to talk about something else.":
+                                        jump kokiri_talkAboutSomethingElse
+                                    "I'd like to continue to talk about something.":
+                                        jump kokiri_continue_talking
+                            else:
                                     jump kokiri_talkAboutSomethingElse
-                                "I'd like to continue to talk about something.":
-                                    jump kokiri_continue_talking
 
         else:
             jump kokiri_poems_oldPoems
@@ -1889,7 +1896,7 @@ label kokiri_death_4_noDeath:
                                 l "But will it ever feel like it is enough [persistent.name]?"
                                 l "If you would keep coming back, replaying the good ending over and over, wouldn't it lose it's charm quickly?"
                                 l "I worry that's just not going to be sustainable at all."
-                                l "At one point you will have to learn to let go [peristent.name]."
+                                l "At one point you will have to learn to let go [persistent.name]."
 
                             "I'd play through the entire game again, not just that one route.":
                                 l "..."
@@ -2767,7 +2774,7 @@ label kokiri_thereIsMore:
                                 l "You want to save me, right?"
                                 l "Is it really saving me if I have to be subjected to dying over and over just to get to that point, of which we don't even really know if it even exists?"
                                 l "I don't blame you at all for trying, I'm just trying to convince you to call it here. To give it a rest."
-                                l "Do you want to give that a try [peristent.name]? For me? For us?"
+                                l "Do you want to give that a try [persistent.name]? For me? For us?"
                                 menu:
                                     "I do.":
                                         n "She gives you a sincere smile."
@@ -2979,13 +2986,13 @@ label kokiri_scenery_choice:
                 jump kokiri_scenery
 
             "Could we do something else instead?":
+                $ showContinueTalk()
                 if kokiri_scenery_headhurt == False:
                     l "Sure! What would you like to do then?"
                     menu kokiri_noScenery:
                         "I'd like to talk about something else.":
                             jump kokiri_talkAboutSomethingElse
-                        "I'd like to continue to talk about something.":
-                            #TODO: Make all of these only an option if you truly have something to continue talking about.
+                        "I'd like to continue to talk about something." if showContinueTalkKokiri:
                             jump kokiri_continue_talking
                 else:
                     l "We can just talk about something else then."
@@ -3028,7 +3035,7 @@ label kokiri_scenery_choice:
                         n "You give her a nod, deciding to spare her feelings and spare your eyes from reading yet another of her poems."
                         jump kokiri_talkAboutSomethingElse
                     
-            
+        
 
         #The second thing I want to do is to just enable the player to talk about something else, if they can't continue to talk about something
         menu:
@@ -3038,6 +3045,7 @@ label kokiri_scenery_choice:
 label didYouInvolveFamily:
     if familyCheck_talkedDavid == True:
         $ fam_obsession = "David"
+    #TODO: For some reason the last two options of this meny both don't show up.
     menu:
         "I have actually":
             $ kokiri_familyContacted = True
@@ -3087,7 +3095,7 @@ label didYouInvolveFamily:
         "I haven't." if persistent.familyContacted == False:
             jump didYouInvolveFamily_no
 
-        "I haven't. *Lie*" if persistent.familyContacted == False:
+        "I haven't. *Lie*" if persistent.familyContacted == True:
             jump didYouInvolveFamily_no
            
 
@@ -3109,7 +3117,7 @@ label didYouInvolveFamily:
                 if persistent.familyContacted == True:
                     if love_meter > 2:
                         n "You hear a slight hint of hestiation in her voice. It is subtle, but talking to her over and over has made you really good at picking up things like that."
-                        n "However, it seems she wants to give you the benefit of the doubt, that is probably why she hasn't called you out on your lie just yet."
+                        n "However, it seems she wants to give you the benefit of the doubt. That is probably why she hasn't called you out on your lie just yet."
                     else:
                         n "You can pick up on the tiniest hint of hestitation in her voice, however she tries her best to hide it."
                         n "She fails, on the account that you have talked to her for many loops and know the ins and outs of her voice quite well."
@@ -3120,7 +3128,7 @@ label didYouInvolveFamily:
                 if persistent.familyContacted == True and love_meter <= 2:
                     n "The hestitation is gone, in her voice at the very least. Something tells you she still doesn't believe you but she doesn't confront you on it."
                     n "Why? Is she scared for what might happen if she does? Or maybe she is trying to play along for now, hoping to eventually get through to you?"
-                l "I know that you are really trying to get me out of this loop of death and suffering, and I really appreciate that."
+                l "I know that you are trying your best to get me out of this loop of death and suffering, and I really appreciate that."
                 l "But I wouldn't want my family to carry such a heavy burden."
                 l "For all we know this loop could somehow spread over to them. I'll admit that seems very unlikely but it is yet another reason I do not want them involved."
                 l "Do you understand [persistent.name]?"
@@ -3152,8 +3160,8 @@ label noContactFamilyPromise:
                     l "I don't want to give anyone else that kind of burden too."
                     l "I don't want anyone to have to worry about me."
                 l "I'm glad we got to talk this through."
-                l "After all, communication is key isn't it [peristent.name]?"
-                l "That applies to all kind of situations, so even to ours, although it is a very unusual one."
+                l "After all, communication is key isn't it [persistent.name]?"
+                l "That applies to all kind of situations, even to ours, although it is a very unusual one."
                 if love_meter < 3:
                     l "Although I suppose we will have to see if you truly keep your word..."
                     l "But for the sake of my own state of mind I'll trust you on it for now."
@@ -3334,12 +3342,16 @@ label noContactFamilyPromise_cannotPromise_confrontation_aliveFamily:
 
 label silentconversationsbackontrack:
     #$ kokiri_meteoritewarn()
-    menu talkKokiri:
-        "*Talk about something else*":
-            jump kokiri_talkAboutSomethingElse
+    $ showContinueTalk()
+    if showContinueTalkKokiri:
+        menu talkKokiri:
+            "*Talk about something else*":
+                jump kokiri_talkAboutSomethingElse
 
-        "*Continue talking*":
-            jump kokiri_continue_talking
+            "*Continue talking*" if showContinueTalkKokiri:
+                jump kokiri_continue_talking
+    else:
+        jump kokiri_talkAboutSomethingElse
 
 
 
@@ -3432,7 +3444,7 @@ label silentconversationsbackontrack:
                     jump game_start
                 elif "go around" in result:
                 
-                    sg "Welcome [peristent.name], I'm suprised to see you here. Not that you would be here, just that you would meet me."
+                    sg "Welcome [persistent.name], I'm suprised to see you here. Not that you would be here, just that you would meet me."
                     sg "Although the circumstances are far from... ideal I am happy I can speak to you;"
                     sg "Due to my nature you won't find me in the real world but rather in this twisted nightmare but don't worry, I'm sure I'm not nightmarish."
                     sg "Although, I suppose they are both equally real right?"

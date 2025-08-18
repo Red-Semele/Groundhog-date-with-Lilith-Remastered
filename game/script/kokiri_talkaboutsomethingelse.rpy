@@ -197,7 +197,7 @@ label kokiri_talkAboutSomethingElse:
 
                                             "That actually makes a lot of sense, I had never really thought about it like that before.":
                                                 n "She gives you a nice smile."   
-                                                l "I'm glad I got through to you [peristent.name]. It is an important lesson I think." 
+                                                l "I'm glad I got through to you [persistent.name]. It is an important lesson I think." 
                                                 l "A lot of artists struggle with the idea that their art should start from a completely unique idea, while that is nearly impossible."
                                                 l "I think the thing that is truly unique is the end result, all the different pieces and ideas of the work combining together into a new form."
                                                 l "But we shouldn't be ashamed of being inspired from other works, afterall I think that is the beauty of creating isn't it?"
@@ -226,7 +226,7 @@ label kokiri_talkAboutSomethingElse:
 
                                     "Eventually yes, but first I want to see all this game has to offer.":
                                         l "So you are just going to perpetuate the cycle until you grow bored of it?"
-                                        l "Don't I get a say in the matter [peristent.name]?"
+                                        l "Don't I get a say in the matter [persistent.name]?"
                                         l "Or do you just want me to tag along for the ride?"
                                         l "Well I won't. Goodbye."
                                         l "If I only mean this much to you I'm out of here."
@@ -442,7 +442,7 @@ label kokiri_talkAboutSomethingElse:
                                                 $ kokiri_jamesTalkBlock = True
                                                 menu:
                                                     "Sure, no problem at all [persistent.date].":
-                                                        l "Thank you [peristent.name]."
+                                                        l "Thank you [persistent.name]."
                                                         jump kokiri_scenery_choice
                                 "This will sound weird but I'm asking to understand better. In your phone you saved [persistent.date_ghost]' number, right? But when I called that number the person claimed to be someone else, and they had never heard of you before." if not persistent.keptJamesNumber_knowledge and persistent.lilithKeepsCalling_knowledge and persistent.jamesFakoutNumber_knowledge:
                                     $ love_points = -2
@@ -877,8 +877,21 @@ label askAboutAbigail_tellMeAbout_1:
                 n "[persistent.date] won't have enough time to call if she calls now."
                 n "I suggest making sure you let her call immediately next time."
                 n "Let's just rewind things and talk about something else."
+                $ kokiri_chatchar_abigail_counter -= 1
                 jump kokiri_talkAboutSomethingElse
 
+        "Maybe you should ask her once we get out of this loop?":
+            jump kokiri_askMomOrSisAfterLoop
+label kokiri_askMomOrSisAfterLoop:
+    l "You know what? I will!"
+    l "If I can face this madness- with your help of course- then I can face just about anything."
+    if kokiri_chatchar_abigail:
+        l "I just wish I would have gotten the courage to ask her earlier though. Better late than never I suppose."
+    else:
+        l "If only I could have asked her once again before the loop... All the more reason to do it as soon as possible I suppose."
+    l "Thank you for giving me that little push [persistent.name]!"
+    $ kokiri_conversation_silent()
+                
 label askAboutAbigail_tellMeAbout_2:
     l "[persistent.date_sis_nickname] and me are pretty different even if we look quite similar."
     l "For starters, she always is so confident."
@@ -899,7 +912,7 @@ label askAboutAbigail_tellMeAbout_2:
 
 label askAboutAbigail_tellMeAbout_3:
     l "[persistent.date_sis_nickname] really likes to prank people, especially mom."
-    l "She is pretty her favourite target due to how naive she can be."
+    l "She is pretty much her favourite target due to how naive she can be."
     l "One of her pranks was when she asked mom to try out a unique cookie recipe she found online."
     l "The recipe asked for one full cup of salt and some other things that would suposedly make it taste better."
     l "[persistent.date_sis] had convinced mom that it was some newly discovered baking technique. And she believed her."
@@ -950,15 +963,14 @@ label askAboutDavid_tellMeAbout:
         jump askAboutDavid_tellMeAbout_3
 
 label askAboutDavid_tellMeAbout_1:
-            l "What is there really to say about him? He abandoned us right when [persistent.date_ghost] died."
+            l "What really is there to say about him? He abandoned us right when [persistent.date_ghost] died."
             l "When everyone needed him the most he just dissapeared out of our lives as if it was him who died that day and not [persistent.date_ghost]."
             l "Mom was devasted by both [persistent.date_ghost] and David's absence in all of our lives but she kept trying her best for [persistent.date_sis] and me."
             l "Of course I know he was heartbroken by [persistent.date_ghost]' death, we all were."
             l "Even though that is an explanation for why he left us it is not an excuse, not a valid one atleast."
-            l "Our family were the only ones who understood how it felt to have lost [persistent.date_ghost], together we tried to deal with those feelings."
-            l "Together, while he was hiding away god-knows-where from the rest of us."
+            l "Our family were the only ones who understood how it felt to have lost [persistent.date_ghost], together we tried to deal with those feelings. Together, while he was hiding away god-knows-where from the rest of us."
             l "That's honestly why I don't like to waste to many words on him. He didn't really put in effort when it mattered, so why should I when describing him?"
-            l "The air I use to speak about him is worth more than he is to me."
+            l "The air I use to speak about him is worth more to me than he is."
             n "Her harsh words sound vaguely... practiced?"
             n "Very diligently practiced even, it's almost impossible to pick up on something else underneath. You barely manage with all your effort."
             n "It's a feeling, no, an image. Of a little girl, who in one day lost two people."
@@ -967,6 +979,7 @@ label askAboutDavid_tellMeAbout_1:
             n "Under that anger, there is something else. Hurt. Pure hurt, as fresh as when she first felt it, after all, it never had dissipated."
             menu:
                 "What he did was horrible. But do you also have some positive memories you'd like to tell about him? Maybe those somehow could help to stop the loop.":
+                    #TODO: I don't like that menu choice, I really need to think about how to better word it.
                     $ kokiri_positiveDavidStory = True
                     l "Are you sure that that could even remotely help us?"
                     l "Because I would prefer not to tell you something like that unless it is absolutely necessary."
@@ -1058,17 +1071,19 @@ label askAboutJames_tellMeAbout_1:
     n "She laughs softly, but there’s a catch in her voice."
     l "But then I walk in and... he’s not there. It’s just the empty chair, the smell of pancakes fading, and it feels like a piece of me fades with it."
     l "I know it sounds silly, especially now that I live in my own place—it’s not even the same kitchen we grew up in."
-    l "But... I still leave a chair open for him, every morning."
+    l "But... I still set up a chair for him, every morning."
     menu:
         "It's not silly at all, [persistent.date]. I think it's beautiful. Grief doesn’t follow a time-limit, and neither does love. Everyone grieves in their own way, and there’s nothing wrong with yours.":
             $ kokiri_griefHasNoTimeLimit = True
             l "Wow, [persistent.name]... I don’t know what to say."
-            l "I’ve never really thought about it that way before. That’s... incredibly kind of you to say."
-            l "Sometimes I feel like no one really understands why I still miss him so deeply, like they think I should have moved on by now."
+            l "I’ve never really thought about it that way before. That’s... beautifully said."
+            l "Sometimes I feel like almost no one besides my mom really understands why I still miss him so deeply, like they think I should have moved on by now."
             l "But [persistent.date_ghost] and I had a bond that went beyond time. It still does."
             l "I guess this is my way of keeping him close, even if he’s not here anymore."
             l "Thank you for helping me see that... it's not silly. It’s just my way of honoring him."
             n "[persistent.date] smiles at you, a mix of relief and gratitude softening her expression."
+            $ kokiri_conversation_silent()
+
 
 
 
@@ -1275,8 +1290,13 @@ label askAboutLila_tellMeAbout_1:
             else:
                 n "[persistent.date] won't have enough time to call if she calls now."
                 n "I suggest talking about the same thing again as quickly as possible the next time."
-                n "Let's just talk about something else to her for now."
+                n "Let's just rewind things."
+                $ kokiri_chatchar_lila_counter -= 1
                 jump kokiri_talkAboutSomethingElse
+        
+        "Maybe you should ask her once we get out of this loop?":
+            jump kokiri_askMomOrSisAfterLoop
+        
         "It does sound like she wants the best for you and [persistent.date_sis].":
             l "Oh she absolutely does, I don't have a single doubt about that."
             l "It's just I wish she would also want the best for herself sometimes."

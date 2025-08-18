@@ -139,7 +139,7 @@ label start:
           default persistent.polaroidTracker = False
           default persistent.runAwayLilith_counter = 0
           default persistent.trinity_lakeMet = False
-          default persistent.trinity_lakeMet = False
+          default persistent.trinity_sunMet = False
           default persistent.trinity_moonMet = False
           default persistent.mayoFreak = False
           default persistent.kokiri_watchedScenery = False
@@ -221,17 +221,14 @@ label start:
           default persistent.passWrongOnPurpose_narratorRant_wrongTimesInARowCounter = 0
           default persistent.passWrongOnPurpose_narratorRant = False
           #Extra:
-          default persistent.keyUnderBed_knowledge = False
           default persistent.keyUse_knowledge = False
           default persistent.keyUnderBed_knowledge = False
           default persistent.chickenTendiesUnlock = False
           default persistent.burgerGameJoke = False
           default persistent.CancelledBeforeBeingAsked = False
-          default persistent.kokiriHonoredPromiseCancelDate = False
           default persistent.kokiri_HonoredPromiseCancelDate = False
           default persistent.reachEndingRecent = False
           default persistent.damocles_knowledge = False
-          default persistent.trinity_sunMet = False
           default persistent.trinity = False
           default persistent.psychicConnection_knowledge = False
           default persistent.key = False
@@ -243,6 +240,7 @@ label start:
           default persistent.fisher = False
           default persistent.trueAbout_knowledge = False
           default persistent.fakeAbout_knowledge = False
+          default persistent.lilaCallRecievedAbbyProof_knowledge = False
 
           #Characters:
           default persistent.date_dad = ""
@@ -266,7 +264,6 @@ label start:
           default persistent.game_credits = False
           default persistent.ending_semiEnding = False
           default persistent.ending_abigailDistraction = False
-          default persistent.ending_breakup = False
           default persistent.ending_badDate = False
           default persistent.ending_reunionGoodEnding = False
 
@@ -313,6 +310,8 @@ label start:
           default persistent.davidPromise = False
           default persistent.firstLocation = ""
           default persistent.ringRiddle_knowledge = False
+          default persistent.lilaToldAbbyOpportunity_knowledge = False
+          default persistent.lilaCallNeedsAbbyProof_knowledge = False
 
           #Non-persistent
 
@@ -359,6 +358,9 @@ label start:
           default angryLilith = False
           default kokiri_poemBad = False
           default kokiri_promiseCancelDate = False
+          default kokiri_toldLillySheLives = False
+          default kokiri_fullControlAndStillDying = False
+          default persistent.lilaCallRecievedAbbyProof = False
 
           default kokiri_poems_rated_once = False
           default kokiri_poems_rateblock = False
@@ -1233,7 +1235,6 @@ label phone_callMenu:
                jump phone_call_lila
  
 label phone_call_police:
-     $ persistent.familyContacted = True
      n "A bored sounding man picks up the phone."
      n "Knowing how small the town is, he's probably not expecting this call to be any more exciting than it was to wait on it."
      menu:
@@ -1309,7 +1310,7 @@ label phone_call_abigail:
                                    a "So now, either you give me some real proof or I'm hanging up."
                                    jump phone_call_Abigail_convinceHer
  
-                              "I actually have no proof besides the number thing." if persistent.abigail_numberfakeout and if abby_phone_counter == 0:
+                              "I actually have no proof besides the number thing." if persistent.abigail_numberfakeout and abby_phone_counter == 0:
                                    a "..."
                                    a "You really thought that would somehow win me over?"
                                    n "You hear laughing on the other side of the phone."
@@ -1319,7 +1320,7 @@ label phone_call_abigail:
                                    a "Now I have to go, don't ever call me back"
                                    n "She hung up on you, this is going to be really awkward on family gatherings if you ever get that far."
                                    jump phone_start_choices
-                              "I actually don't have any proof left" if persistent.abigail_numberfakeout and if abby_phone_counter > 0:
+                              "I actually don't have any proof left" if persistent.abigail_numberfakeout and abby_phone_counter > 0:
                                    a "I see..."
                                    a "It still doesn't sound very plausible but there is a chance you might be telling the truth."
                                    a "If you really can redo today, come back with more proof, alright?"
@@ -3543,7 +3544,7 @@ label jamesChat_whyDidYouReturn:
                          if fritfood >= 1:
                               $ changeableWord == "Or"
 
-                    if peristent.times_phone_declined > 0:
+                    if persistent.times_phone_declined > 0:
                          $ fritfood += 1
                          j "[changeableWord] when you didn't pick up the phone at all, ensuring her safety."
                          if fritfood >= 1:

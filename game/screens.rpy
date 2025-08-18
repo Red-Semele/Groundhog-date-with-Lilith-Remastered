@@ -1663,8 +1663,13 @@ init python:
         ]
         # Reset each variable to its default value
         for npc_var, npc_default, nickname_default in default_values:
-            setattr(persistent, npc_var, npc_default)
-            setattr(persistent, f"{npc_var}_nickname", nickname_default)
+            if getattr(persistent, npc_var, None) is None:
+                setattr(persistent, npc_var, npc_default)
+
+            nickname_attr = f"{npc_var}_nickname"
+            if getattr(persistent, nickname_attr, None) is None:
+                setattr(persistent, nickname_attr, nickname_default)
+
 
 screen show_name_input_screen(npc_var, npc_default):
     frame:

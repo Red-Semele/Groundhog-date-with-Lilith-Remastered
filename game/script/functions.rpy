@@ -87,9 +87,9 @@ label gdwl_functions:
 
 
                 if james_interest == True:
-                    fam_obsession = "[persistent.date_ghost]"
+                    fam_obsession = persistent.date_ghost
                 elif james_obsession == True:
-                    fam_obsession = "[persistent.date_ghost]"
+                    fam_obsession = persistent.date_ghost
                     only_one_asked = True
                     fam_pronoun = "him"
 
@@ -101,9 +101,9 @@ label gdwl_functions:
                     fam_pronoun = "him"
 
                 elif abigail_interest == True:
-                    fam_obsession = "[persistent.date_sis]"
+                    fam_obsession = persistent.date_sis
                 elif abigail_obsession == True:
-                    fam_obsession = "[persistent.date_sis]"
+                    fam_obsession = persistent.date_sis
                     only_one_asked = True
                     fam_pronoun = "her"
 
@@ -173,6 +173,8 @@ label gdwl_functions:
             if familyCheck_talkedDavid == True:
                 renpy.say (l, "Now that that is cleared up, what would you like to talk about [persistent.name]?")
                 renpy.jump("talkKokiri")
+            else:
+                renpy.say (l, "Now, you asked for another story right?")
             if kokiri_chatchar_abigail_recent == True:
                 renpy.jump("askAboutAbigail_tellMeAbout_" + str(kokiri_chatchar_abigail_counter))
 
@@ -362,7 +364,9 @@ label gdwl_functions:
                 "playerCalledSomeone", 
                 "kokiri_positiveDavidStory",
                 "kokiri_familyContacted",
-                "kokiri_ToldLillyHowManyRetries,"
+                "kokiri_ToldLillyHowManyRetries",
+                "kokiri_toldLillySheLives",
+                "kokiri_fullControlAndStillDying",
                 
                 
                 "peeked_phone_temp",
@@ -463,6 +467,12 @@ label gdwl_functions:
                 globals()[var] = False
 
             
+        def showContinueTalk():
+            global showContinueTalkKokiri
+            if conversationtracker_poems or conversationtracker_questmade:
+                showContinueTalkKokiri = True
+            else:
+                showContinueTalkKokiri = False
 
              
             
