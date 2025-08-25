@@ -367,6 +367,8 @@ label gdwl_functions:
                 "kokiri_ToldLillyHowManyRetries",
                 "kokiri_toldLillySheLives",
                 "kokiri_fullControlAndStillDying",
+                "noTalkAngryLilith",
+                "kokiri_griefHasNoTimeLimit",
                 
                 
                 "peeked_phone_temp",
@@ -421,6 +423,10 @@ label gdwl_functions:
                 "conversationtracker_poem_shadowman", 
                 "conversationtracker_poem_lights", 
                 "conversationtracker_poem_bang", 
+                "conversationtracker_mayo",
+                "conversationtracker_determinism",
+                "conversationtracker_crosser",
+                "conversationtracker_becomeGame",
 
 
 
@@ -477,7 +483,33 @@ label gdwl_functions:
              
             
         
-           
+        def progressUpToWoods():
+            persistent.lildeaths = 9
+            persistent.burger_death_1 = True
+            persistent.burger_death_2 = True
+            persistent.cafe_death_1 = True
+            persistent.cafe_death_2 = True
+            persistent.chinese_death_1 = True
+            persistent.chinese_death_2 = True
+            persistent.story_start_knowledge = True
+            persistent.story_medium_knowledge = True
+            persistent.story_end_knowledge = True
+            persistent.psychic_answer_right_knowledge = True
+            persistent.groundhog_answer_right_knowledge = True
+            persistent.kokiri_knowledge = True
+
+        def allProgress():
+            progressUpToWoods()
+            persistent.kokiri_death_1 = True
+            persistent.kokiri_death_2 = True
+            persistent.kokiri_death_3 = True
+            persistent.kokiri_death_4 = True
+            persistent.lilithKeepsCalling_knowledge = True
+            persistent.kokiri_determinism_knowledge = True
+            persistent.mayoFreak = True
+            persistent.jamesconversation_becomethegame_knowledge = True
+            persistent.burger_poem_knowledge = True
+
             
             
       

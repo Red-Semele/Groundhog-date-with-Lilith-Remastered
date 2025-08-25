@@ -312,6 +312,7 @@ label start:
           default persistent.ringRiddle_knowledge = False
           default persistent.lilaToldAbbyOpportunity_knowledge = False
           default persistent.lilaCallNeedsAbbyProof_knowledge = False
+          default persistent.lilaCallRecievedAbbyProof = False
 
           #Non-persistent
 
@@ -360,7 +361,8 @@ label start:
           default kokiri_promiseCancelDate = False
           default kokiri_toldLillySheLives = False
           default kokiri_fullControlAndStillDying = False
-          default persistent.lilaCallRecievedAbbyProof = False
+          
+          default noTalkAngryLilith = False
 
           default kokiri_poems_rated_once = False
           default kokiri_poems_rateblock = False
@@ -464,6 +466,10 @@ label start:
           default burger_jokeFromAbigailTold = False
           default onlyDates = False
           default death_narration = ""
+          default conversationtracker_mayo = False
+          default conversationtracker_determinism = False
+          default conversationtracker_crosser = False
+          default conversationtracker_becomeGame = False
           
           default keySeenNow = False
           default ending_check = ""
@@ -552,24 +558,18 @@ label after_setup:
                     $ persistent.name = None
                     n "Cheatcode activated, enter your name."
                     #Gives you the progress right up until the forest.
-                    $ persistent.lildeaths = 9
-                    $ persistent.burger_death_1 = True
-                    $ persistent.burger_death_2 = True
-                    $ persistent.cafe_death_1 = True
-                    $ persistent.cafe_death_2 = True
-                    $ persistent.chinese_death_1 = True
-                    $ persistent.chinese_death_2 = True
-                    $ persistent.story_start_knowledge = True
-                    $ persistent.story_medium_knowledge = True
-                    $ persistent.story_end_knowledge = True
-                    $ persistent.psychic_answer_right_knowledge = True
-                    $ persistent.groundhog_answer_right_knowledge = True
-                    $ persistent.kokiri_knowledge = True
+                    $ progressUpToWoods()
                     jump nameSelect
                if persistent.name == "R0ck_0n!":
                     $ persistent.name = None
                     n "Cheatcode activated, enter your name."
                     $ rockMode = True
+                    jump nameSelect
+               
+               if persistent.name == "Dev":
+                    $ persistent.name = None
+                    n "Cheatcode activated, enter your name."
+                    $ allProgress()
                     jump nameSelect
                
 

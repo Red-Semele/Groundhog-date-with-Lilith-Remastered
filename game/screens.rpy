@@ -209,10 +209,40 @@ style input:
 screen choice(items):
     style_prefix "choice"
 
-    vbox:
-        for i in items:
-            textbutton i.caption action i.action
+    default max_visible = 5
 
+    if len(items) > max_visible:
+        # Scrollable version inside a centered window
+        window:
+            background None
+            xalign 0.5
+            yalign 0.5
+            
+
+            viewport:
+                draggable True
+                mousewheel True
+                pagekeys True
+                scrollbars "vertical"
+                xalign 0.5
+                yalign 0.5
+                xsize 1200  
+                ymaximum 300 
+
+                vbox:
+                    spacing 10
+                    xalign 0.5
+                    yalign 0.5
+                    for i in items:
+                        textbutton i.caption action i.action
+    else:
+        # Normal centered choices without any frame or viewport
+        vbox:
+            spacing 10
+            xalign 0.5
+            yalign 0.5
+            for i in items:
+                textbutton i.caption action i.action
 
 style choice_vbox is vbox
 style choice_button is button
@@ -1663,11 +1693,13 @@ init python:
         ]
         # Reset each variable to its default value
         for npc_var, npc_default, nickname_default in default_values:
-            if getattr(persistent, npc_var, None) is None:
+            value = getattr(persistent, npc_var, None)
+            if not value or str(value).strip() == "":
                 setattr(persistent, npc_var, npc_default)
 
             nickname_attr = f"{npc_var}_nickname"
-            if getattr(persistent, nickname_attr, None) is None:
+            nickname_value = getattr(persistent, nickname_attr, None)
+            if not nickname_value or str(nickname_value).strip() == "":
                 setattr(persistent, nickname_attr, nickname_default)
 
 

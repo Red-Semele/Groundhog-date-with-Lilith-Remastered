@@ -22,7 +22,8 @@ label kokiri_talkAboutSomethingElse:
                 n "She puts her hand on yours and gives you a small smile."
                 #TODO: Continue this, you can talk about certain nightmares here. Also add a flag so that this text option only appaears when you have had your first nightmare.
 
-            "I am a crosser, I basically travel across different realities almost exactly like this one. So I don't really undo what I caused, you died [persistent.lildeaths] times already and I can only try to make sure you won't die again. " if persistent_jamestalk_justgame_knowledge:
+            "I am a crosser, I basically travel across different realities almost exactly like this one. So I don't really undo what I caused, you died [persistent.lildeaths] times already and I can only try to make sure you won't die again. " if persistent_jamestalk_justgame_knowledge and not conversationtracker_crosser:
+                $ conversationtracker_crosser = True
                 l "Interesting... so my previous deaths weren't prevented, they all happened in another reality?"
                 l "What made you come to that conclusion?"
                 menu:
@@ -46,7 +47,8 @@ label kokiri_talkAboutSomethingElse:
                                         l "But that does not mean you have to accept whatever the game tells you? No."
                         $ kokiri_conversation_silent()
 
-            "Do you believe in determinism?" if persistent.kokiri_determinism_knowledge:
+            "Do you believe in determinism?" if persistent.kokiri_determinism_knowledge and not conversationtracker_determinism:
+                $ conversationtracker_determinism = True
                 l "That is a very interesting question [persistent.name]!"
                 l "I think it really depends on what you mean with that question."
                 l "If you are asking me wheter or not I think someone could predict the future perfectly I'd have to be inclined to say no."
@@ -60,6 +62,7 @@ label kokiri_talkAboutSomethingElse:
                 l "I believe that even though it would be impossible to predict the state of the future from the past it is possible that the future would always be the same if the circumstances are the same."
                 l "So in other words, if you play the game once again from the start and you make the same choices like you did right now, you would once again read this conversation with me since I don't remember it and all circumstances are the same."
                 l "Does that sound like it might be true [persistent.name]?"
+                #TODO: Add a small extra option where if you don't have any of these options, or just in general you can say you have no idea, that it is messign with your head or something.
                 menu:
                     "Well, there is this one thing you did that might support that. You threw 2 dice in cafe for some sort of puzzle." if persistent.dice_counter >= 2:
                         menu:
@@ -111,18 +114,17 @@ label kokiri_talkAboutSomethingElse:
                                                 l "Even if there weren't, you'd still remember your past attempts, which means something did indeed change."
                                                 l "Pantha Rhei and all that, just like you said."
 
-            "I managed to threaten the narrator into letting me eat pure mayo and nothing else." if persistent.mayoFreak:
+            "I managed to threaten the narrator into letting me eat pure mayo and nothing else." if persistent.mayoFreak and not conversationtracker_mayo:
+                $ conversationtracker_mayo = True
                 if love_meter > 1:
                     l "... Really?"
                     l "So you managed to \"fight\" the narrator?"
                     l "And you {b}won{/b}?"
                     l "How did you manage that?"
-                    l "Even if it's about something so silly as eating nothing but mayo."
-                    l "It might be a lead for us to get through this whole ordeal."
+                    l "Even if it's something so silly as eating nothing but mayo it might be a lead for us to get through this whole ordeal."
                     menu:
                         "I threatened to reset all my progress. Which also apparently resets him.":
-                            l "Now if that isn't ironic."
-                            l "Seems like I'm not the only one stuck in a loop. Only his one is a lot bigger."
+                            l "Now if that isn't ironic. Seems like I'm not the only one stuck in a loop. Only his one is a lot bigger."
                             if kokiri_toldLillySheLives == False:
                                 l "Would it be possible to threaten him into letting me survive?"
                             else: 
@@ -159,7 +161,7 @@ label kokiri_talkAboutSomethingElse:
                             l "I think I'm taking my chances to survive on my own. Goodbye [persistent.name]."
                         else: 
                             l "There are endings where I survive seperate from you, right? Well, I'm taking my chances that this is one of those endings. Goodbye [persistent.name]."
-
+                
             "You actually showed me a poem of yours on one date we had in the burger restaurant. I really liked it, could you show me another one?" if not conversationtracker_poems and persistent.burger_poem_knowledge:
                     $ kokiri_conversation -= 1
                     jump kokiri_poems
@@ -167,7 +169,8 @@ label kokiri_talkAboutSomethingElse:
             "This game is controlled by a Narrator." if not conversationtracker_tellheraboutnarrator:
                 jump tellLilithAboutNar
 
-            "Do you know what \"The only way to win against the house is to become the house.\" could mean in the context of this game?" if persistent.jamesconversation_becomethegame_knowledge:
+            "Do you know what \"The only way to win against the house is to become the house.\" could mean in the context of this game?" if persistent.jamesconversation_becomethegame_knowledge and not conversationtracker_becomeGame:
+                        $ conversationtracker_becomeGame = True
                         l "I think it means two things. First of it means that this game might not be winnable."
                         if kokiri_toldLillySheLives:
                             l "Perhaps that means there are no endings where I survive and we end up together."
