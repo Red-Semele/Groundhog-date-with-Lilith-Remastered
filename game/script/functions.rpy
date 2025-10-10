@@ -369,6 +369,7 @@ label gdwl_functions:
                 "kokiri_fullControlAndStillDying",
                 "noTalkAngryLilith",
                 "kokiri_griefHasNoTimeLimit",
+                "kokiri_notReadyToLetGo",
                 
                 
                 "peeked_phone_temp",
@@ -509,6 +510,11 @@ label gdwl_functions:
             persistent.mayoFreak = True
             persistent.jamesconversation_becomethegame_knowledge = True
             persistent.burger_poem_knowledge = True
+            persistent.lila_call_knowledge = True
+            persistent.david_call_knowledge = True
+            persistent.james_call_knowledge = True
+            persistent.beachroute_visited_knowledge = True
+            persistent.beach_knowledge = True
 
             
             

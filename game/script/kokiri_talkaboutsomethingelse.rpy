@@ -62,7 +62,6 @@ label kokiri_talkAboutSomethingElse:
                 l "I believe that even though it would be impossible to predict the state of the future from the past it is possible that the future would always be the same if the circumstances are the same."
                 l "So in other words, if you play the game once again from the start and you make the same choices like you did right now, you would once again read this conversation with me since I don't remember it and all circumstances are the same."
                 l "Does that sound like it might be true [persistent.name]?"
-                #TODO: Add a small extra option where if you don't have any of these options, or just in general you can say you have no idea, that it is messign with your head or something.
                 menu:
                     "Well, there is this one thing you did that might support that. You threw 2 dice in cafe for some sort of puzzle." if persistent.dice_counter >= 2:
                         menu:
@@ -94,8 +93,6 @@ label kokiri_talkAboutSomethingElse:
                                         l "Thank you [persistent.name], it feels good to hear you say that."
                                         l "Even if I have my doubts, I know you will give it your all, and so I will aswell."
 
-                                
-
                     "I don't know, it might be slightly true yes, but even when I do the exact same things some very small things can change." if persistent.kokiri_heraclitus_knowledge:
                         menu:
                             "Like things the narrator says, or things I think. Pantha Rhei and all that, isn't it?":
@@ -114,6 +111,20 @@ label kokiri_talkAboutSomethingElse:
                                                 l "Even if there weren't, you'd still remember your past attempts, which means something did indeed change."
                                                 l "Pantha Rhei and all that, just like you said."
 
+                    "I don't know, I feel like I'm not really able to think of arguments for either viewpoint. Could we maybe talk about something else?" if persistent.dice_counter < 2 and persistent.kokiri_heraclitus_knowledge == False:
+                        $ kokiri_conversation -= 1
+                        l "Oh, that's okay, sometimes we don't have all the answers yet immediately, that's what makes finding them later all the more statisfying, right?"
+                        l "Maybe after a few extra loops you'll get some inspiration to answer my question. But either way, what would you like to talk about now?"
+                        $ showContinueTalk()
+                        if showContinueTalkKokiri:
+                            menu:
+                                "*Continue talking about a previous topic.*":
+                                    jump kokiri_continue_talking
+                                "*Talk about something else.*":
+                                    jump kokiri_talkAboutSomethingElse
+                        else:
+                                jump kokiri_talkAboutSomethingElse
+                        
             "I managed to threaten the narrator into letting me eat pure mayo and nothing else." if persistent.mayoFreak and not conversationtracker_mayo:
                 $ conversationtracker_mayo = True
                 if love_meter > 1:
@@ -182,12 +193,12 @@ label kokiri_talkAboutSomethingElse:
                         menu:
                             "But that wouldn't be the same, would it?":
                                 l "And why wouldn't it be? This is just a story at the end of the day, isn't it?"
-                                l "What makes this story any different than the one you would tell?"
+                                l "What makes this story any different from the one you would tell?"
                                 menu:
                                     "This story is original, mine would just be a derivation of it.":
-                                        l "You really think so? I'm sorry to bring this news to you but I don't think there is any work that doesn't use some ideas or maube even elements from other works."
+                                        l "You really think so? I'm sorry to bring this news to you but I don't think there is any work that doesn't use some ideas or maybe even elements from other works."
                                         l "Everything we do and make is inspired by the media we consume."
-                                        l "Some things are just more clear about what inspired them than others, but is that a bad thing?"
+                                        l "Some things are just more clear about their inspirations than others, but is that a bad thing?"
                                         l "Would you say a good piece of fanfiction is worth less than the story it used as inspiration?"
                                         l "I think what makes our creations meaningful is the intent behind it."
                                         l "Making something for the passion of creating, because it means something to you and maybe also because you want to share that with others."
@@ -203,7 +214,7 @@ label kokiri_talkAboutSomethingElse:
                                                 l "I'm glad I got through to you [persistent.name]. It is an important lesson I think." 
                                                 l "A lot of artists struggle with the idea that their art should start from a completely unique idea, while that is nearly impossible."
                                                 l "I think the thing that is truly unique is the end result, all the different pieces and ideas of the work combining together into a new form."
-                                                l "But we shouldn't be ashamed of being inspired from other works, afterall I think that is the beauty of creating isn't it?"
+                                                l "But we shouldn't be ashamed of being inspired from other works, after all I think that is the beauty of creating isn't it?"
                                                 l "A work of art inspired by another, inspired by another and so on and on."
                                                 l "Perhaps your art will one day inspire someone else aswell?"
                                                 "Filler" #lead to kokiri_makingOwnStory
@@ -521,8 +532,11 @@ label tellLilithAboutNar_neverAskedBefore:
     n "..."
     n "This was an interesting chat, even if it was once again mostly a monologue from my side."
     n "Though I still think you shouldn't have told her, I asked you not to, you know?"
-    n "Oh well, too late now, you're lucky I got something out of this conversation."
-    $ kokiri_conversation_silent() #TODO: This just dies down, the conversation should continue slightly. Also, choosing this path leads to you warning her about the meteorite twice? Try to look into that and fix it. This meteorite warn here does however seem to work, and it does save her.
+    n "Oh well, too late now, you're lucky I got something out of this conversation. But this is all you'll get out of me for now."
+    menu:
+        "He refuses to continue the conversation now.":
+            l "Oh I see..."
+    $ kokiri_conversation_silent()
 
 
 label tellLilithAboutNar_goodAndBusy:
@@ -629,7 +643,23 @@ label tellLilithAboutNar_endingsWhereYouLive:
                     jump endingsWhereYouLive_notReachedYet
     
                 "I did." if persistent.lilithAliveAndRetriedCounter > 0:
-                    "Filler"
+                    l "So then why are we still here [persistent.name]?"
+                    if kokiri_goalSurvive == True:
+                        l "I thought you said you wanted me to survive, was that not the whole reason for all of this?"
+                        l "Apparently that was a lie."
+                        if kokiri_psychic_lie or kokiri_groundhog_lie == True:
+                            l "And here I thought I was good at picking up your lies... Maybe I wanted to believe that one so badly I forced myself to look past it?"
+                            l "I can't do this anymore [persistent.name]. This is too much. I thought you were going to help me get through this, but I think that was also a lie, just one I told myself."
+                            l "Goodbye [persistent.name]."
+                        else:   
+                            l "So with or without your help I'm still stuck in this loop? Well, in that case I think I will take my chances. Goodbye [persistent.name]."
+                    else:
+                        l "You're telling me that you found an escape from this loop of death yet you kept it going?"
+                        l "I had hoped you wanted to make sure I was safe, but that doesn't seem to be the case, does it?"
+                        l "Was it just because I didn't end up with you? Are you truly that selfish? In that case I think I'm better off on my own. Goodbye [persistent.name]."
+                    $ noTalkAngryLilith = True
+                    jump angryLilith
+
     else:
         l "But we don't end up together with eachother..."   
         l "Well Nar, could you maybe steer the story to a direction where [persistent.name] and I end up together and I get to live?"
@@ -854,9 +884,13 @@ label askAboutAbigail_tellMeAbout_1:
                         l "About what are you feeling that way?"
                         a "...Well, it's my mostly my writing. I just feel like it's not even close to being as good as it should be."
                         a "Everyone keeps telling me it's great but somehow it feels as if I merely tricked them into believing that."
-                        #TODO: Fill in a bit between these two parts.
-                        l "But I get a feeling- I could be wrong, but this isn't solely about your writing, is it?"
-                        a "..."
+                        l "Oh [persistent.date_sis_nickname]... your writing is genuinely really great. But I know that me saying that might not really help all that much right now."
+                        l "Just know that I hope that one day you will be able to look back on it like everyone is looking at it right now."
+                        l "Sure, improvement is always possible, no matter how far someone already got, but that doesn't mean their work is bad, it just means it can become even more polished."
+                        l "Ofcourse it's also important to know when to stop, a piece of art you spend your entire life on never to show because it needs more polishing will never reach the people it could have delighted."
+                        a "I suppose you are right [persistent.date]. Thank you for hearing me out. And thank you for your words, even if I can't entirely see the value of my work yet, I'll try to think about what you just said."
+                        l "You are very welcome sis, you know I am always there for you. But I get a feeling- I could be wrong, but this isn't solely about your writing, is it?"
+                        a "... I suppose you are right, you are quite perceptive, you know that?"
                         a "Lately I have been feeling unsure of myself as a whole. I don't feel like I am good at being myself."
                         a "It feels like I am pretending. As if I am lying about who I am. And yet if I don't pretend, if I don't try to act like myself, then who am I?"
                         a "It feels weird, as if I am looking at myself in third person. Watching my body go through the motions while I stay behind."
@@ -981,8 +1015,7 @@ label askAboutDavid_tellMeAbout_1:
             n "And yet, she never truly did grow up, did she? She merely draped the image of someone grown around herself out of necessity."
             n "Under that anger, there is something else. Hurt. Pure hurt, as fresh as when she first felt it, after all, it never had dissipated."
             menu:
-                "What he did was horrible. But do you also have some positive memories you'd like to tell about him? Maybe those somehow could help to stop the loop.":
-                    #TODO: I don't like that menu choice, I really need to think about how to better word it.
+                "What he did was horrible. Do you also have some stories about him from before he left?":
                     $ kokiri_positiveDavidStory = True
                     l "Are you sure that that could even remotely help us?"
                     l "Because I would prefer not to tell you something like that unless it is absolutely necessary."
@@ -1384,15 +1417,27 @@ label askAboutLila_tellMeAbout_3:
     l "And now she makes her own games. I like to think that was caused by those moments we spent together on the couch."
     l "The three of us still play games together to this day, even after [persistent.date_ghost]'s... death. In a way it kept us connected I think, to hold on to the tradition."
     l "We are lucky to have [persistent.date_mom] as a mother, she really has been the glue that kept our broken family together."
-
-
-
-    #TODO: Add some extra choices. (Saying she indeed has a great mother etc.)
     menu:
         "She sounds like a lovely woman.":
-            #She agrees and is appreciative of her mom
-            "Filler"
+            l "Oh she absolutely is. Like I said, she is the glue that held us together for all these years."
+            l "Even after James' death she tried her best to keep things together, maybe even more than before."
+            l "Her perseverance is really inspiring, it might just be the thing that keeps me going right now."
+            l "Sometimes all we can do when we find ourselves in darkness is to push on hoping that there is light at the end of the tunnel."
+            l "..."
+            l "I suppose we need to go further and hope that there is even an end at all."
+            menu:
+                "That just means we have to hope even harder, since we have more to hope for.":
+                    n "She gives you a slight smile."
+                    l "I guess you are right [persistent.date], even if our tunnel seems endless we can't let it consume us."
+                    l "Let's give it all we've got. With our combined hoping we might get out of this situation. Your powers will help aswell I'm sure."
+
         "She sounds great, although I think [persistent.date_sis] and you have been putting your fair share of work into keeping the family together aswell.":
-            #She hasn't thought about it like that yet, but she finds it a nice idea. A family is a lot of teamwork, being there for eachother. It indeed can not fall on one person.
-            "Filler"
+            l "I never really thought about it like that before..."
+            l "I suppose you are right, almost any relationship be it familiar, platonic or romantic requires teamwork to keep it running."
+            l "Even in our predicament, however unusual it might be, we need to work together, don't we?"
+            menu:
+                "You are absolutely right, I couldn't do this without you.":
+                    l "And I most definetly couldn't do this without you either. So we are quite lucky to have eachother I suppose."
+                    n "She lets out a small chuckle."
+                    l "But really, thank you [persistent.name], I feel quite safe placing my fate in your hands for some reason, well, as safe as anyone could feel in such a situation."
     $ kokiri_conversation_silent()

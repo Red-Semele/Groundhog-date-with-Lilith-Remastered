@@ -598,9 +598,7 @@ screen about():
                         $ gui.about = _p("""
                         As you've already noticed I may have lied a little...
 
-                        This game is called: "Groundhog Date with Lilith"
-
-                        This is not really a game about a good date you see.
+                        This is not really the game I said it would be.
 
                         It's more about choice, or the lack thereof.
 

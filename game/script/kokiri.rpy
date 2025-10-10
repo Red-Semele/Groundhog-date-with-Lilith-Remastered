@@ -3,7 +3,8 @@
 label kokiri_start:
     n "[persistent.date] gasps for a second."
     l "You mean the Kokiri woods? The same as I am thinking of right now?"
-    l "You know what, let's both go to the Kokiri woods, if we are at the same spot then I'll know for sure."
+    l "You know what, you certainly intrigued me."
+    l "Let's both go to the Kokiri woods, if we meet at the same spot then I'll know for sure this is not just some weird fluke. We should probably meet on top of the hill, the view there is really great."
     l "While you're at it, try taking some food you got laying around your house with you, we can make a picknick date out of it!"
     n "[persistent.date] giggles."
     l "This is all pretty strange but see you there! Or so I hope..."
@@ -26,7 +27,6 @@ label kokiri_start:
 label kokiri_hillSit:
     if not persistent.kokiri_death_1:
         n "You slowly begin making your way to the hill, since [persistent.date] said the view from up there is really nice."
-        #TODO: Did she ever really say that at this point? Try to find that line.
     else:
         n "You slowly begin making your way to the hill once again."
     n "Quite a lot of trees portrude out from the hill, they have grown into strange shapes in an attempt to get as much light as they could find."
@@ -37,8 +37,9 @@ label kokiri_hillSit:
         n "You hope that things will be better now, you feel strangely optimistic that they will indeed be."
         n "You take a moment to enjoy the view as suddenly you get snapped out of your thoughts by a familiar voice."
     else: 
-        n "You barely give it a glance, you have seen it before and you don't like to think too much about all the death and destruction you have seen." #TODO: If you did not watch the scenery have this be a slightly different line, yes, you feel less optimistic but you do not have the same shock as seeing the scenery before.
+        n "You barely give it a glance, you have seen it before and you don't like to think too much about all the death and destruction that took place there."
         n "Instead you wait for [persistent.date] who will come now at any moment."
+        n "In the meantime you find yourself just hoping that things will turn out differently here. Even if deep down you know that chance is slim based on what already happened."
     l "Oh hey, I see you already found this place, it has a really great view, right? Nice work scaling this hill [persistent.name], it's almost like a mountain!"
     n "[persistent.date] gives you a playful pat on the back as she places her picknick blanket down on the ground with a small chuckle."
     n "The both of you start placing down all the food on the blanket, when you're both finished you sit down on it."
@@ -395,7 +396,7 @@ label kokiri_explanation_game_playerIdentity:
 
                     "I think the goal is to reach an ending where you live.":
                         $ kokiri_conversation += 1
-                        l "That's great to hear, that means we have the same goal afterall."
+                        l "That's great to hear, that means we have the same goal after all."
                         l "Although what you said kind of raises a few questions."
                         l "If I somehow survive, would the game just end?"
                         l "And even then, how do we know we truly reached that point?"
@@ -645,8 +646,6 @@ label kokiri_topic_questMade:
                                                     l "Phew, my head hurts from all this complicated talk honestly."
                                                     $ kokiri_scenery_headhurt = True
                                     
-                            "That does make sense... But then why do I have really boring memories aswell? Ones of doing chores for example.":
-                                "Filler"
                     "My choices. Inside and outside of this game I can choose what I want to do. I am not following a script of sorts, I can decide one thing and then do another.":
                         l "I see..."
                         l "This one is hard to prove isn't it?"
@@ -661,12 +660,25 @@ label kokiri_topic_questMade:
 
 
             "I wouldn't believe it unless there was some concrete proof.":
-                "filler"
+                l "That makes sense. I don't think I would have ever believed you if you didn't know about this place after all."
+                l "Still, it is impressive that you would be able to let go of your convictions like that."
+                l "I think a lot of people wouldn't be able to accept they are in a game even if they were offered decent proof. That's probably because they want to feel like they are in control of their own lives."
+                l "Even when they aren't part of  a game most people have less control over their lives than they'd prefer."
+                l "And that is why the idea of being robbed of their autonomy even further terrifies them so much, to the point that no proof ever would be able to convince them."
+                l "If I am being honest there is also still a part of me that is clinging onto the possibility that all of this could somehow just be an elaborate ruse, because the alternative is something it can't handle fully yet."
+                l "I do want to make it clear that I believe you, I just think that I need that part to make this whole thing a little bit more gradual."
+
             "I don't think I would buy it at all.":
-                l "That's fair, I think the only reason I even believed you when you told me I existed in a game was because you met me in this place."
+                l "That's fair, I think that is how most people would handle hearing something like that."
+                l "After all, even things like being told that you are in a timeloop by a psychic or someone who remembers each loop seems absurd, but atleast in those scenarios you are still yourself, real..."
+                l "But what does it mean to be a part of a game? That means that someone else wrote your decissions for you, to further a story you might or might not play any noticable role in."
+                l "And what you thought as your story, might merely be setdressing for that true story. That raises more questions about your own autonomy than most humans would like to have."
+                l "I think the only reason I even believed you when you told me I existed in a game was because you knew of this place."
                 l "And even then, there is still something inside of my mind that can't believe it, that mustn't believe it."
                 l "I need that part so I don't just fully go and lose it right now."
-                l "Being confronted with the fact that you are repeatedly dying and also exist in a game at the same time is a bit much to take for a sane mind I'm afraid."
+                l "So I definetly can see why you would remain skeptic, we need to cling onto any last vestiges of reality and control we still have left, no matter how fragile they might be."
+                l "That's why even now there is still a tiny part of me working overtime on trying to convince me that this is fake. Being confronted with the fact that you are repeatedly dying and also exist in a game at the same time is a bit much to take for a sane mind I'm afraid."
+                
 
             "I would believe it immediately.":
                 l "You would?"
@@ -770,13 +782,19 @@ label kokiri_gamegoal_noIdea:
                                     l "Whatever we will try, I have the feeling it is just going to lead to more death."
                                     l "So, as much as I wish there would be another way, I think this is our best shot."
                                     l "I know what I'm asking is pretty big, but I'm hoping I mean as much to me as I mean to you."
-                                    menu:
-                                        "You do, I'll try my best to let you go next time.":
-                                            n "She gives you a gentle smile."
-                                            l "Thank you [persistent.name], that's all I ask."
-                                            l "So..."
-                                            n "She grows quiet for a moment, before she continues."
+                                    menu kokiri_canNotLetGoYet:
+                                        "You do, I'll try my best to let you go next time." if not kokiri_notReadyToLetGo:
+                                            label kokiri_canNotLetGoYet_nextTime:
+                                                n "She gives you a gentle smile."
+                                                l "Thank you [persistent.name], that's all I ask."
+                                                l "So..."
+                                                n "She grows quiet for a moment, before she continues."
+
                                             jump kokiri_semiEnding
+                                        
+                                        "You are right, I shouldn't keep us stuck like this. I will try to let you go next time." if kokiri_notReadyToLetGo:
+                                            jump kokiri_canNotLetGoYet_nextTime
+                                        
                                         "I'm sorry, I just can't do it.":
                                             l "I understand."
                                             l "But you also have to understand that you will have to let me go at one point [persistent.name]."
@@ -979,7 +997,7 @@ label kokiri_gamegoal_succesful_survive:
                 n "That she was happy?"
                 n "Are you perhaps lying to someone?"
                 n "I suppose the only question is wheter it's to her, or to yourself."
-            if love_meter > 2:
+            if love_meter > 3:
                 l "That's very reassuring to hear."
                 l "Because my life is literally in your hands after all."
                 l "I am lucky that I feel I can trust you."
@@ -1019,49 +1037,68 @@ label kokiri_gamegoal_succesful_survive:
                     "I actually already tried cancelling it before." if persistent.ending_breakup == True and persistent.kokiri_HonoredPromiseCancelDate == False or persistent.CancelledBeforeBeingAsked == True:
                         label kokiri_triedCancellingBefore:
                         
-                        n "[persistent.date] leans in slightly closer, her eyes growing slightly wider."
-                        if love_meter > 2:
-                            l "What happened when you tried that? You are back here so something must have happened, right?"
-                        else:
-                            l "Then why are we back here? Why are you back here? What happened?"
-                        menu:
-                            "You died (Lie)":
-                                "Filler"
-                            "I wasn't ready to let go.":
-                                "filler"
-                            "You were happy, you had a family. The game just sent me back like none of it mattered.":
-                                l "..."
-                                l "I'm sorry [persistent.name], I... I am just not sure what to say to that."
-                                l "I had a family?"
-                                n "You tell her about Ron, about her kids. That they all seemed really happy together."
-                                n "She stares out into the distance for a moment."
-                                l "So all of that got undone?"
-                                l "That is horrible, even when I, no, a version of me somehow survived we still end up back here."
-                                l "Was it because we never went on a date?"
-                                l "Does this loop only end when we do and I survive somehow?"
-                                l "Or are we overlooking something and my safety is not even the goal of this game?"
-                                l "Although it is strange..."
-                                l "Why didn't it reset the moment you called off our date?"
-                                l "Why did it keep going for a while and only then reset?"
-                                n "She quiets down for a moment."
-                                l "Maybe it's time for some more desperate measures?"
-                                l "I'd like you to try and hear me out, alright?"
-                                l "What if just any interaction between the two of us keeps the loop going?"
-                                l "The day always resets at around the time when I call you, right?"
-                                l "Maybe next time you shouldn't pick up?"
-                                l "Maybe that is why it keeps jumping back to that point specifically?"
-                                l "Look... I know that I have been asking for a lot already."
-                                l "It's just... I am begining to lose hope that there is a way out of this loop."
-                                l "And this seems like one of the few things we haven't tried yet, I think it's worth a shot."
-                                l "Would you be willing to test out my theory?"
-                                menu:
-                                    "I would.":
-                                        n "[persistent.date] gives you a bright smile."
-                                        l "...thank you [persistent.name], thank you from the botom of my heart."
-                                        l "If it works... if I don't see you again... just know how much this means to me."
-                                        l "So this could be our last time together?"
-                                        l "Better try to enjoy it then."
-                                        jump kokiri_scenery
+                            n "[persistent.date] leans in slightly closer, her eyes growing slightly wider."
+                            if love_meter > 2:
+                                l "What happened when you tried that? You are back here so something must have happened, right?"
+                            else:
+                                l "Then why are we back here? Why are you back here? What happened?"
+                            menu:
+                                "You died (Lie)":
+                                    l "Really? I thought that surely was going to work, or I had hoped so atleast."
+                                    l "Because if that doesn't work to end this loop, then what will?"
+                                    l "I suppose we'll have to keep looking for an exit, even if right now it might appear there isn't any."
+                                    if love_meter > 2:
+                                        l "Luckily I get the feeling that you'll give it your all to find that ending where I survive."
+                                    else:
+                                        l "You did say that was your goal after all, to find an ending where I survive, so I suppose we are on the same track."
+
+                                "I wasn't ready to let go.":
+                                    l "I do understand that that's far from easy [persistent.name]. Through all these loops we must have spent quite a lot of time together."
+                                    l "And it seems you enjoyed that time, or maybe you just got used to it? Either way, you will have to let go eventually, right?"
+                                    l "Clinging onto this is only going to hurt the both of us."
+                                    l "We have made some good memories I'm sure, but keeping this going is going to make it harder and harder for you to feel that same baseline of happiness you did in the begining, when you still were able to discover new things here much more frequently."
+                                    l "And for me, well, I can't be together with you like this. Every time the loop repeats I unlearn every moment we shared on this day, no matter how much it might have meant to me, to us."
+                                    l "Do you understand [persistent.name]?"
+                                    l "This place, this game, it holds no future for us."
+                                    l "Only this forsaken day, always today, never tomorow."
+                                    l "And as much as it pains me to say we both deserve better than that, even if we are able to find some enjoyment out of this day frozen in place."
+                                    l "So can you try cancelling our date once again, this time for real? For both of our sakes?"
+                                    l "I know that what I am asking of you is hard, but I genuinely believe it might be our best option."
+                                    $ kokiri_notReadyToLetGo = True
+                                    jump kokiri_canNotLetGoYet
+                                "You were happy, you had a family. The game just sent me back like none of it mattered.":
+                                    l "..."
+                                    l "I'm sorry [persistent.name], I... I am just not sure what to say to that."
+                                    l "I had a family?"
+                                    n "You tell her about Ron, about her kids. That they all seemed really happy together."
+                                    n "She stares out into the distance for a moment."
+                                    l "So all of that got undone?"
+                                    l "That is horrible, even when I, no, a version of me somehow survived we still end up back here."
+                                    l "Was it because we never went on a date?"
+                                    l "Does this loop only end when we do and I survive somehow?"
+                                    l "Or are we overlooking something and my safety is not even the goal of this game?"
+                                    l "Although it is strange..."
+                                    l "Why didn't it reset the moment you called off our date?"
+                                    l "Why did it keep going for a while and only then reset?"
+                                    n "She quiets down for a moment."
+                                    l "Maybe it's time for some more desperate measures?"
+                                    l "I'd like you to try and hear me out, alright?"
+                                    l "What if just any interaction between the two of us keeps the loop going?"
+                                    l "The day always resets at around the time when I call you, right?"
+                                    l "Maybe next time you shouldn't pick up?"
+                                    l "Maybe that is why it keeps jumping back to that point specifically?"
+                                    l "Look... I know that I have been asking for a lot already."
+                                    l "It's just... I am begining to lose hope that there is a way out of this loop."
+                                    l "And this seems like one of the few things we haven't tried yet, I think it's worth a shot."
+                                    l "Would you be willing to test out my theory?"
+                                    menu:
+                                        "I would.":
+                                            n "[persistent.date] gives you a bright smile."
+                                            l "...thank you [persistent.name], thank you from the botom of my heart."
+                                            l "If it works... if I don't see you again... just know how much this means to me."
+                                            l "So this could be our last time together?"
+                                            l "We better try to enjoy it then."
+                                            jump kokiri_scenery
 
                     "I actually already tried to cancel it before because this isn't the first time you asked me to." if persistent.ending_breakup == True and persistent.kokiri_HonoredPromiseCancelDate == True:
                         jump kokiri_triedCancellingBefore
@@ -1131,7 +1168,7 @@ label kokiri_gamegoal_succesful_IdoNotKnow:
             l "But, enough about that, you being here is helping me a lot!"
             $ kokiri_scenery_shutUpLackOfSelfEsteem = True
            
-            #TODO: (Add an option to tell her she's enough if you decline to watch the scenery.)
+            
             jump kokiri_scenery_choice
 
 
@@ -1367,7 +1404,7 @@ label kokiri_scenery:
                                 "I have not lost myself yet, but I will keep it in mind. Thank you [persistent.date].":
                                     n "She gives you a cautious smile."
                                     l "Good, I'm glad to hear that you will."
-                                    l "That's all I ask, because afterall, we are a team aren't we?"
+                                    l "That's all I ask, because after all, we are a team aren't we?"
                                     l "And that means we need to take care of eachother."
                                     jump kokiri_death_2
                                 "I could actually use a break for a while. I'll take one next loop.":
@@ -1468,8 +1505,10 @@ label kokiri_scenery:
 
 label kokiri_poems:
         if conversationtracker_poems == False:
+            l "Oh, I showed you one of my poems? And you want {i}more{/i}?..."
+            l "{size=*0.5}Now that I didn't see coming.{/size}"
             n "She takes a notebook with a picture of a pug on it out of her handbag and hands it to you. You recognise the notebook from when you read her poem in the burger restaurant."
-            l "I think these ones will be like the one you read before, I've written them quite a long time ago."
+            l "I think these ones will be like the one you read before, they are also pretty old."
             n "[persistent.date] points out a few poems that you can pick from."
         else:
             n "She hands you the notebook once again and points out the poems you can read that you haven't yet."
@@ -1543,42 +1582,32 @@ label kokiri_poems_oldPoems_snowwoman:
     $ persistent.kokiri_poem_snowwoman_knowledge = True
     $ conversationtracker_poem_snowwoman = True
     $ kokiri_poem_snowwoman_recent = True
-    l "I am sitting against a locked door.
-    I don't have the key aymore."
-    l "I am freezing to death.
-    Trying to keep myself warm with my breath."
-    l "What I wouldn’t do to get inside
-    Cold tears I cried."
-    l "I am falling in the snow.
-    The icy wind continues to blow."
-    l "I see the fire flickering red,
-    The fire that led to my death"
-    l "The snow covers my carcas,
-    the snow erases who I was."
-    l "Now I’m dreaming about that unreachable fire.
-    That is the only thing I desire."
-    l "So close yet so far
-    from that fire flickering like a star."
-    l "I wasn't much but I became less than.
-    I died and I  became a snowwoman."
+    l "I am sitting against a locked door. I don't have the key anymore."
+    l "I am freezing to death. Trying to keep myself warm with my breath."
+    l "What I wouldn’t do to get inside, cold tears I cried."
+    l "I am falling in the snow. The icy wind continues to blow."
+    l "I see the fire flickering red, the fire that led to my death"
+    l "The snow covers my carcas, the snow erases who I was."
+    l "Now I’m dreaming about that unreachable fire. That is the only thing I desire."
+    l "So close yet so far from that fire flickering like a star."
+    l "I wasn't much but I became less than. I died and I  became a snowwoman."
     jump kokiri_poems_askOrRate
 
 label kokiri_poems_oldPoems_window:
     $ persistent.kokiri_poem_window_knowledge = True
     $ conversationtracker_poem_window = True
     $ kokiri_poem_window_recent = True
-    l "Windows of the soul,"
-    l "Reflect like mirrors,"
+    l "Windows of the soul reflect like mirrors,"
     l "All the pain, the lies,"
     l "Of lost shadows on the street,"
-    l "That fall in the darkness without moon."
-    l "Their thoughts carved into the silenced stone."
-    l "Sometimes a little bit of light appears,"
+    l "That fall in darkness without moon."
+    l "Their thoughts carved into silenced stone."
+    l "Rarely a bit of light appears,"
     l "A star in their eyes,"
     l "But the light drowns in their tears"
-    l "And then they stumble through their starless night."
-    l "Hollow carcasses that got scraped empty slowly."
-    l "Waiting untill time dissolves their bodies."
+    l "And then they stumble through starless night."
+    l "Hollow carcasses scraped empty slowly."
+    l "Until time dissolves their bodies."
     l "Their eyes closed to run from the reflection."
     l "An unspoken truth rests on their lips"
     l "They tumble deeper into this nightmare"
@@ -1596,7 +1625,7 @@ label kokiri_poems_oldPoems_shadowman:
     $ kokiri_poem_shadowman_recent = True
     l "In the beginning there was nothing but darkness."
     l "Then there was family, love, light, us."
-    l "And the darkness seemed to not exist for a moment."
+    l "And the darkness seemingly ceased to exist."
     l "It waited patiently with a grin on their face like a child playing hide and seek."
     l "The darkness gradually grew stronger until it no longer needed the light, until it could displace that gentle glow, until it could steal you."
     l "And with you it stole family, love, light, us."
@@ -1727,10 +1756,11 @@ label kokiri_poems_askOrRate:
                         else:
                             l "Oh really? Thank you [persistent.name]!"
                             l "I don't really think it's that good, after all I wrote it in a time where I was less experienced in writing. Although I'm glad you think they have potential!"
-                            l "Maybe you would also like to read some of my newer poems if you liked some of my old stuff."
+                            l "My old stuff is what enabled me to make some of my newer poems after all. Maybe you would also like to read some of those if you liked some of my old poems."
                             l "I don't have a lot of new ones, the few I have are mostly a whole lot longer and kind of hard to get since they reference a lot of Greek and Roman mythology."
                             l "So that unfortunately means that they are probably less accessible than my old poems, but if you want to check them out I'd be honored!"
                         $ persistent.kokiri_newerPoems_knowledge = True #This enables you to read some of the more recent poems.
+                        
                     "That was really bad.":
                         $ kokiri_poemBad = True
                         l "Oh... well, I appreciate your honesty."
@@ -1739,7 +1769,7 @@ label kokiri_poems_askOrRate:
                         l "It’s funny though. Those ‘bad’ poems are still a part of me, like little snapshots of my past."
                         l "In a way it's like looking at a younger version of myself."
                         l "But I guess not everyone will like them, and that’s okay."
-
+                $ kokiri_conversation_silent()
 
         "*Ask something about the poem*":
             menu:
@@ -1774,7 +1804,8 @@ label kokiri_poems_askOrRate:
                                     l "Most of my best poems were made when I was kind of in a bad mindset."
                                     l "But now that I'm doing pretty okay-ish in my life I can't write much more poems."
                                     l "And the few things that do bother me have been so overdone as subjects of my poems that it feels wrong to write about them again."
-
+                    else:
+                        "If you are reading this, this question is not yet answered for that specific poem."
                 "There seems to be a connection between some of your poems. In one you seem to be locked inside and in the other you are locked outside. Was this intentional?" if persistent.kokiri_poem_lights_knowledge and persistent.kokiri_poem_snowwoman_knowledge:
                     jump kokiri_poemConnections
 
@@ -1801,7 +1832,8 @@ label kokiri_scenery_allOver:
     l "We did it, I can't believe it!"
     l "We actually cheated death, [persistent.name]."
     l "Does that mean that this is an ending right now?"
-    #TODO: Based on if you talked about the goal of the game to be something like her surviving have her say something extra like "Does that mean we have beaten the game?"
+    if kokiri_goalSurvive == True:
+        l "And even more so, the one we were hoping for? The one where I actually survive?"
     menu:
         "I don't think so, however this might be the lead-up to an ending.":
             l "I see... in that case, let's make the most of waiting on that ending by doing some stargazing."
@@ -2059,7 +2091,7 @@ label kokiri_death_3_death_dialogue:
             l "It's just... so unreal."
             l "It is lurking around every corner, getting closer and closer with every passing second. And yet it seems so far away."
             l "If I am being honest, a part of me still thinks- hopes that all of this is just an elaborate prank."
-            if kokiri_groundhog_lie or kokiri_psychich_lie:
+            if kokiri_groundhog_lie or kokiri_psychic_lie:
                 l "But it isn't, is it?"
                 l "I seemingly can pick up when you are lying and when you aren't."
                 l "But when you told me about me being inside of a game that kills me over and over, you were telling the truth, weren't you?"
@@ -2351,9 +2383,9 @@ label kokiri_death_dialogue_stillDying:
                         l "You can see a few falling stars, their tails of light are a visible trace of the projection from the past that uses the star itself in the present to project itself to the future, to beyond the place the star currently resides in."
                         l "This constant and neverending process is happening multiple times every single second. Your head hurts trying to think of it too much so you just try to enjoy the falling stars for their beauty."
                         l "As you are doing so you begin to think of this projection method once again. Isn't the future itself just a projection of the past memories using the present as a projection point?"
-                        l "Are we doomed to always make the same choices because our past steers us towards our future wich inevitably becomes our past that steers us even more?"
+                        l "Are we doomed to always make the same choices because our past steers us towards our future which inevitably becomes our past that steers us even more?"
                         l "Or are we more like billiard balls being pushed by our past in a predictable direction until we collide with other billiard balls that push us in a different direction?"
-                        l "If we are like the billiard balls, can it be predicted wich ones will push us where? Or is the number of balls so incomprehensible that it brings a form of chaos with it?"
+                        l "If we are like the billiard balls, can it be predicted which ones will push us where? Or is the number of balls so incomprehensible that it brings a form of chaos with it?"
                         n "You try to calm [persistent.date] down a little by softly placing your hand on hers."
                         l "Whoops, I think I might have went a little too far into my narration role there for a moment. "
                         n "As one narrator to another, I think it happens to the best of us. It's hard to keep a story on tracks sometimes."
@@ -2543,7 +2575,12 @@ label kokiri_deathNotPainFul_unsure:
                                     n "You can clearly hear the hope in her voice. You are scared to have that same hope after everything that went down previously."
                                     menu:
                                         "I am not sure honestly.":
-                                            "Filler"
+                                            l "I see... so it really could go either way?"
+                                            l "Isn't that weirdly thrilling? I can imagine that at this point of the loop you know how most interactions of us go, and I am imagine the answer is they end in death."
+                                            l "But this moment right now is a bit like real life, isn't it? Where you are unsure of what could happen and you just kind of have to go with the flow."
+                                            l "I know it might not be much, but this is probably the biggest breakthrough we had in a while. I really want to believe that we are going to reach an ending where I survive and we end up together."
+                                            l "Sure, we can't know for certain if that's true, but humor me, what would you like to do when we reach an ending like that?"
+                                            jump kokiri_whatToDoAtTheEndOfTheWorld
                                         "There will be another death, there always is...":
                                             n "[persistent.date] gives you defeated look."
                                             l "You really think so?"
@@ -2558,8 +2595,8 @@ label kokiri_deathNotPainFul_unsure:
                                                     l "..."
                                                     l "I can definetly see what you mean with that beautiful metaphor [persistent.name]."
                                                     l "I get that after getting pricked by thorns for the twentieth or so time we can begin feeling like it didn't amount to anything."
-                                                    l "And everytime we get hurt we try to remind ourselves that the reward at the end is worth it."
-                                                    l "But everytime we do so we make our expectations of the reward bigger and bigger."
+                                                    l "And every time we get hurt we try to remind ourselves that the reward at the end is worth it."
+                                                    l "But every time we do so we make our expectations of the reward bigger and bigger."
                                                     l "And eventually you reach a point where nothing could compare to those expectations."
                                                     l "Is it then better to find nothing but thorns in that box or to find a rose that is lesser than the one you imagined?"
                                                     l "Maybe we should just stop putting our hand in the box before we have to answer that question for ourselves?"
@@ -2577,45 +2614,66 @@ label kokiri_deathNotPainFul_unsure:
                                             l "And this is the first time you see it so we get to discover it together."
                                             l "I love that thought."
                                             l "What would you like to do when this is all over? When you did save me and we ended up together?"
-                                            menu:
+                                            menu kokiri_whatToDoAtTheEndOfTheWorld:
                                                 "Then I'd like to finally quit this game.":
-                                                    "Filler"
+                                                    l "Finally?..."
+                                                    l "It seems like you are really looking forward to that."
+                                                    l "Although I can't blame you, this loop has brought nothing but death in the end, hasn't it?"
+                                                    l "That's why I would like the loop itself to end as soon as possible."
+                                                    l "Still, a part of me hopes that things don't have to end after the loop does."
+                                                    l "But I do understand, this loop took quite a toll on you aswell didn't it?"
+                                                    l "As a side effect of having to loop over and over the distance between you and I probably only increased."
+                                                    l "Every time I get to experience everything about you as if it was my first time."
+                                                    l "But you have sat through it all multiple times over and over, learning the same things again and again with a few new elements sprinkled in here and there."
+                                                    l "If anything it is a miracle you are still playing this game."
+                                                    l "So even if I would prefer to keep this going past the loop, I am aware that is quite selfish of me and I would understand if you wanted to quit."
+                                                    l "Although I do wonder, what would happen to me when you stop playing this game?"
+                                                    jump kokiri_whatWouldHappenIfYouQuit
+
                                                 "I'm not sure if there is anything for us beyond that point. But if there is then I'd love to explore it together with you, with no loops, as life is supposed to be.":
                                                     l "I see..."
                                                     l "If I am safe that could indeed be the end of this game..."
                                                     l "But, that wouldn't be the end of me, right?..."
-                                                    l "Would I still live on?"
-                                                    l "Would I keep existing?"
-                                                    menu:
-                                                        "You would, this world would still continue as if nothing happened.":
-                                                            "Filler"
-                                                        "You would keep existing through my memories of you.":
-                                                            "Filler"
-                                                        "If no one heard a tree fall in the forest, did it ever fall?":
-                                                            l "Answering my question with another question?"
-                                                            l "I suppose you do make a good point though..."
-                                                            l "You could argue that since the tree did not affect anything and no one witnessed it, it never truly fell."
-                                                            l "And yet looking at it the other way it quite literally did fall."
-                                                            l "So just with my question it depends on how you look at it."
-                                                            l "In that case I'd like to believe that I would keep existing."
-                                                            l "That somehow even after you have finished this game that it would somehow keep going."
-                                                            l "That I can see my family once again, continue my life."
-                                                            n "She grows quiet for a moment."
-                                                            l "Could you do me a favor [persistent.name]? When this game does truly end, could you imagine that it goes on even after you quit?"
-                                                            l "I might be making a weird request but it is my hope that somehow the both of us thinking it works like that is going to bring it into reality somehow."
+                                                    label kokiri_whatWouldHappenIfYouQuit:
+                                                        l "Would I still live on?"
+                                                        l "Would I keep existing?"
+                                                        menu:
+                                                            "You would, this world would still continue as if nothing happened.":
+                                                                l "Really? How would that work? I would really like that to be the case but if you are not interacting with the game anymore how would it continue on?"
+                                                                l "Wouldn't it more likely be frozen in place, waiting until you return?"
+                                                                menu:
+                                                                    "If I believe that the game would continue it probably would, not this exact game, but the version of the game I am thinking of.":
+                                                                        l "I suppose that makes a weird amount of sense. You could shape a version of this game however you'd like in your mind."
+                                                                        l "Even if the writing of the game ran out at a certain point it wouldn't matter, since you could just keep it going for as long as we'd like."
+                                                                        l "That's a rather comforting thought actually, I would really like that."
+                                                                        
+                                                            "You would keep existing through my memories of you.":
+                                                                "Filler"
+                                                            "If no one heard a tree fall in the forest, did it ever fall?":
+                                                                l "Answering my question with another question?"
+                                                                l "I suppose you do make a good point though..."
+                                                                l "You could argue that since the tree did not affect anything and no one witnessed it, it never truly fell."
+                                                                l "And yet looking at it the other way it quite literally did fall."
+                                                                l "So just with my question it depends on how you look at it."
+                                                                l "In that case I'd like to believe that I would keep existing."
+                                                                l "That somehow even after you have finished this game that it would somehow keep going."
+                                                                l "That I can see my family once again, continue my life."
+                                                                n "She grows quiet for a moment."
+                                                                l "Could you do me a favor [persistent.name]? When this game does truly end, could you imagine that it goes on even after you quit?"
+                                                                l "I might be making a weird request but it is my hope that somehow the both of us thinking it works like that is going to bring it into reality somehow."
 
 
-                                                        "You would not keep existing because you never did. None of this is real [persistent.date].":
-                                                            l "Stop freaking me out [persistent.name]..."
-                                                            l "How would you like it if I you were in my shoes?"
-                                                            l "Please just show me some compassion."
-                                                            l "I know none of this is real, but I can think, can feel."
-                                                            l "To me all these things seem real."
-                                                            l "And I was hoping that you atleast thought I mattered enough to be considered real."
-                                                            l "But it turns out that is not the case."
-                                                            l "I know we both have no idea what is coming next, but if it involves more of this I'm choosing another path. Goodbye [persistent.name]."
-                                                            $ noTalkAngryLilith = True
-                                                            jump angryLilith
+                                                            "You would not keep existing because you never did. None of this is real [persistent.date].":
+                                                                l "Stop freaking me out [persistent.name]..."
+                                                                l "How would you like it if I you were in my shoes?"
+                                                                l "Please just show me some compassion."
+                                                                l "I know none of this is real, but I can think, can feel."
+                                                                l "To me all these things seem real."
+                                                                l "And I was hoping that you atleast thought I mattered enough to be considered real."
+                                                                l "But it turns out that is not the case."
+                                                                l "I know we both have no idea what is coming next, but if it involves more of this I'm choosing another path. Goodbye [persistent.name]."
+                                                                $ noTalkAngryLilith = True
+                                                                jump angryLilith
                                    
 
                                 if persistent.kokiri_death_4_hill_holdHand == False:
@@ -2986,19 +3044,20 @@ label kokiri_scenery_choice:
                 jump kokiri_scenery
 
             "Could we do something else instead?":
-                $ showContinueTalk()
-                if kokiri_scenery_headhurt == False:
-                    l "Sure! What would you like to do then?"
-                    menu kokiri_noScenery:
-                        "I'd like to talk about something else.":
-                            jump kokiri_talkAboutSomethingElse
-                        "I'd like to continue to talk about something." if showContinueTalkKokiri:
-                            jump kokiri_continue_talking
-                else:
-                    l "We can just talk about something else then."
-                    l "After all, I could use a change of topic because my head still hurts slightly."
-                    l "So, what would you like to talk about?"
-                    jump kokiri_talkAboutSomethingElse
+                label kokiri_scenery_doSomethingElse:
+                    $ showContinueTalk()
+                    if kokiri_scenery_headhurt == False:
+                        l "Sure! What would you like to do then?"
+                        menu kokiri_noScenery:
+                            "I'd like to talk about something else.":
+                                jump kokiri_talkAboutSomethingElse
+                            "I'd like to continue to talk about something." if showContinueTalkKokiri:
+                                jump kokiri_continue_talking
+                    else:
+                        l "We can just talk about something else then."
+                        l "After all, I could use a change of topic because my head still hurts slightly."
+                        l "So, what would you like to talk about?"
+                        jump kokiri_talkAboutSomethingElse
 
             "Actually we already watched the [changeableWord]. Could we do something else?" if kokiri_alternateplace == False and persistent.kokiri_watchedScenery == True or kokiri_alternateplace == True and persistent.kokiri_watchedStarsAlternatePlace== True:
                 l "Oh, we already did?"
@@ -3013,7 +3072,30 @@ label kokiri_scenery_choice:
                 jump kokiri_noScenery
                 
 
+            "I actually would prefer to do something else. But I'd also like to tell you that you are great as you are now. I like you, even if that might be hard to understand because a part of you still doesn't fully like yourself." if kokiri_scenery_shutUpLackOfSelfEsteem:
+                menu:
+                    "I have gone through a lot of loops to try and save you, and during it all I have seen many different aspects of you.":
+                        menu:
+                            "And they are all beautiful in their own ways. You might have flaws, but doesn't everyone? That is what makes us human and lets our qualities shine even brighter.":
+                                l "Wow, hearing that feels weirdly... reasuring?"
+                                l "The idea that you've had to put up with me over and over and yet somehow still keep coming back means you must have seen something inside of me that I haven't found yet."
+                                l "But, as flattering as that is, I still have to work on finding it. Because even now there is a part of me that thinks you'll get bored of me soon enough."
+                                l "I know that's just my self-doubt speaking though."
 
+                            "I just wish you could fully see them like I do, then maybe you would doubt yourself less.":
+                                l "That's the funny part isn't it? When it comes to ourselves we struggle percieving ourself like others see us."
+                                l "I suppose it makes sense. It is an entirely different perspective looking at it from the first or third person."
+                                l "Your perspective is probably even more different from mine."
+                                l "It's quite a weird thought that you have been on so many first dates with me and yet this is my first one with you, isn't it?"
+                                l "Still, what is even weirder to me is the thought you keep coming back to save me, no matter how many times you have to try again."
+                                l "It might be true that you have glimpsed something in me that I myself am not aware of because I couldn't imagine you going through all this trouble for me otherwise."
+                                l "You do flatter me with your words, but I think that being such an alien thought to me shows that I just can't fully accept them yet."
+                                
+                    "It's like a version of you from a previous loop said, nothing is perfect, and it doesn't have to be." if persistent.burger_nothingIsPerfect:
+                        menu:
+                            "But you, you come pretty close.":
+                                "Filler"
+                                #TODO: Here write a few extra options, like telling her she cares for her family etc, tries to make the best out of tough situations etc. If you use some of your learned things during the loops you can make her come slighty to terms with parts of herself and gain one love point. The other parts she thanks you but isn't really convinced.
 
     else:
         label kokiri_continue_talking: #This will be the place where the player can choose to talk extra about certain topics.
@@ -3045,9 +3127,8 @@ label kokiri_scenery_choice:
 label didYouInvolveFamily:
     if familyCheck_talkedDavid == True:
         $ fam_obsession = "David"
-    #TODO: For some reason the last two options of this meny both don't show up.
     menu:
-        "I have actually":
+        "I have actually."  if persistent.familyContacted == True:
             $ kokiri_familyContacted = True
             if love_meter > 2:
                 l "Oh I see..."

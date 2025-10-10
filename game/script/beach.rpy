@@ -152,7 +152,7 @@ label beach_start:
                                         #TODO: "[persistent.date] rain dialogue.
                                         $ raintalked = True
                                     "Continue with the path.":
-                                        #TODO: Add dialogue wich eventually triggers falling in hole and it collapsing death.")
+                                        #TODO: Add dialogue which eventually triggers falling in hole and it collapsing death.")
                                         if hole_death == True:
                                             jump beach_holeWarnChoice
                                     
@@ -169,7 +169,7 @@ label beach_start:
                                     $ raintalked = True
                           
                                 "Continue with the path.":
-                                    #TODO: Add dialogue wich eventually triggers falling in hole and it collapsing death.")
+                                    #TODO: Add dialogue which eventually triggers falling in hole and it collapsing death.")
                                     if jelly_death == True:
                                         jump beach_jellyWarnChoice
                                 

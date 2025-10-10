@@ -325,6 +325,7 @@ label burger_ordering:
                                         l "So I'm really happy to hear that you think the same thing [persistent.name]!"
                     
                     "It's pretty good.":
+                        $ persistent.burger_nothingIsPerfect = True
                         l "Pretty good, huh? That's high praise!"
                         n "[persistent.date] gives you a warm smile, clearly pleased by your response."
                         l "I think \"pretty good\" is better than \"perfect\"."
@@ -453,7 +454,7 @@ label burger_ordering:
                                     l "Okay, I do not know what makes you think that you can talk to me like that [persistent.date]."
                                     l "If you have just come here to be mean to me than why did you even come here at all?"
                                     if persistent.lildeaths == 0:
-                                        n "She does have a point, this game after all is called \"Great date with Lilith\". I wouldn't exactly call this date great at all..."
+                                        n "She does have a point, if this is how you treat all your dates it is no wonder you are on \"Another first date\"."
                                     else:
                                         n "She does make a good point, even if she does not know the full extent of it. You tried playing the game again to save her, didn't you?"
                                         n "Then why are you treating her like that?"
@@ -683,7 +684,7 @@ label burger_poem_rating_fantastic:
     l "A wide smile appears on [persistent.date]'s face."
     l "Thanks [persistent.name]! I'm glad you like it so much."
     l "It's funny isn't it? I wrote that poem many years ago, when I was in a slightly edgy phase."
-    l "And now, everytime I read it again or show it to someone else it is like a timecapsule of how I was at that time."
+    l "And now, every time I read it again or show it to someone else it is like a timecapsule of how I was at that time."
     l "I think that it is beautiful how writing more than any other form of art can so delicately capture the imprints of the people we were at the time we made it."
     l "Isn't that amazing? How you could capture one moment and freeze it in place?"
     if persistent.lildeaths > 3:

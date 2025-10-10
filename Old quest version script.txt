@@ -2463,7 +2463,7 @@
                       msg ("You tell her about how Lilith was laughing for almost a full hour becuase of that joke when Abigail told it to her.")
                       SetForegroundColour (player.Abbycolor)
                       msg ("I mean, I just found that joke on the internet...")
-                      msg ("Maybe you just got lucky and found it aswell, or you somehow managed to check my browser history wich would be really weird.")
+                      msg ("Maybe you just got lucky and found it aswell, or you somehow managed to check my browser history which would be really weird.")
                       msg ("<br/>Although I got to admit that her laughing for about an hour at my joke is a pretty specific detail... ")
                       SetForegroundColour (player.Abbycolor)
                       msg ("You'll need more proof than that to convince me {player.alias}, do you have any extra proof?")
@@ -7775,7 +7775,7 @@
             msg ("Sorry, I can't get used to all this death stuff, even when I know it's coming.")
             SetFlagOn ("Meteorite_prevented")
             if (GetBoolean(game, "realityknowledge")) {
-              AddPageLink (Kokiri_Death_1_prevented, breakdownreality, "I tried everything Lilith, I even took you to space but it didn't work out, no matter wich path I choose you still end up dying.")
+              AddPageLink (Kokiri_Death_1_prevented, breakdownreality, "I tried everything Lilith, I even took you to space but it didn't work out, no matter which path I choose you still end up dying.")
             }
             if (not GetBoolean(game, "Car_caught")) {
               wait {
@@ -7819,7 +7819,7 @@
                 SetForegroundColour (player.Narcolor)
                 msg ("She pauses for a moment and then continues.")
                 SetForegroundColour (player.Lilcolor)
-                msg ("We tend to create these new worlds all the time, sometimes even without realising it.<br/>When you are thinking about what the next season of your favourite show will be about then you're technically creating an entire new world where the show's characters go through your story.<br/>And who's to say wich version is the superior one? Afterall, they're both telling a story, personally I think that's absolutely beautiful.<br/>So let's try to do just that!")
+                msg ("We tend to create these new worlds all the time, sometimes even without realising it.<br/>When you are thinking about what the next season of your favourite show will be about then you're technically creating an entire new world where the show's characters go through your story.<br/>And who's to say which version is the superior one? Afterall, they're both telling a story, personally I think that's absolutely beautiful.<br/>So let's try to do just that!")
                 SetForegroundColour (player.Narcolor)
                 msg ("Lilith hugs you for a long period of time, you feel her warmth as it reaches your cold body.")
                 msg ("After a while she stops embracing you and looks at you with a soft smile on her lips.")
@@ -9132,7 +9132,7 @@
                 <inherit name="scripttext" />
                 <script type="script">
                   SetForegroundColour (player.Devcolor)
-                  msg ("Add dialogue wich eventually triggers falling in hole and it collapsing death.")
+                  msg ("Add dialogue which eventually triggers falling in hole and it collapsing death.")
                   if (GetBoolean(game, "Hole_death")) {
                     MovePlayer (Beachtrue_walk near sand_warn choice)
                   }
@@ -9253,7 +9253,7 @@
                 <inherit name="scripttext" />
                 <script type="script">
                   SetForegroundColour (player.Devcolor)
-                  msg ("Add dialogue wich eventually triggers stepping on a jellyfish and going into cardiac arrest.")
+                  msg ("Add dialogue which eventually triggers stepping on a jellyfish and going into cardiac arrest.")
                   if (GetBoolean(game, "Jelly_death")) {
                     MovePlayer (Beachtrue_walk near water_warn choice)
                   }
@@ -10644,7 +10644,7 @@
                     msg ("If I have to go now I atleast get some comfort out of the fact that you are here for me.")
                     wait {
                       if (GetBoolean(game, "groundhog")) {
-                        msg ("add different ending greet depending on wich excuse you gave.")
+                        msg ("add different ending greet depending on which excuse you gave.")
                       }
                       else {
                         msg ("Goodbye {player.alias}, thank you for everything.")
@@ -11289,7 +11289,7 @@
             msg ("Do you have any proof to maybe show you're a psychic?")
             SetForegroundColour (player.Narcolor)
           }
-          AddPageLink (Psychic, Prove_test, "Alright, pick a word, doesn't matter wich one but make it a hard one to guess.")
+          AddPageLink (Psychic, Prove_test, "Alright, pick a word, doesn't matter which one but make it a hard one to guess.")
           AddPageLink (Psychic, No_prove, "I've got no clue what to tell you honestly.")
           SetForegroundColour (player.playcolor)
           SetFlagOff ("Groundhog")
@@ -12367,7 +12367,7 @@
     <script type="script"><![CDATA[
       JS.eval ("var today = new Date();var dd = today.getDate();var mm = today.getMonth()+1;var yyyy = today.getFullYear();var hrs = today.getHours();var mins = today.getMinutes();var secs = today.getSeconds();ASLEvent('SetHours',hrs);ASLEvent('SetMinutes',mins);if(mm<10) {	mm = '0'+mm} today = mm + '/' + dd + '/' + yyyy;if(hrs>12) {	ampm = 'pm';	hrs = '0' + '' + hrs - 12}else{	ampm = 'am'}; if(dd<10) { dd = '0'+dd} if (mins<10) {	mins = '0'+mins} if(secs<10) {secs = '0' + secs}time = hrs + ':' + mins + ':' + secs + ' ' + ampm;ASLEvent('SetDate',today);ASLEvent('SetTime',time);ASLEvent('SetYear',yyyy);ASLEvent('SetMonth',mm);ASLEvent('SetDay',dd);if(mm==12&&(dd>27&&dd<=31)){ASLEvent('SetHoliday','newYears');};")
       SetForegroundColour (player.Narcolor)
-      msg ("As you are walking to your picknickspot on the hill you pass a bench you've never seen before, or maube you just never paid it attention.")
+      msg ("As you are walking to your picknickspot on the hill you pass a bench you've never seen before, or maybe you just never paid it attention.")
       msg ("On it sits a man, I would describe him more but frankly, he is not really worth describing, just picture an ordinary man in your head.")
       SetForegroundColour ("SeaGreen")
       msg ("Oh dear, odd to catch you here.")
@@ -15852,7 +15852,7 @@
                     msg ("You give her a thumbs up and she gives you a smile in return.")
                     SetForegroundColour (player.Lilcolor)
                     msg ("Alright, I'll narrate some more then, this is pretty fun!")
-                    msg ("You can see a few falling stars, their tails of light are a visible trace of the projection from the past that uses the star itself in the present to project itself to the future, to beyond the place the star currently resides in.<br/>This constant and neverending process is happening multiple times every single second. Your head hurts trying to think of it too much so you just try to enjoy the falling stars for their beauty.<br/><br/>As you are doing so you begin to think of this projection method once again. Isn't the future itself just a projection of the past memories using the present as a projection point?<br/>Are we doomed to always make the same choices because our past steers us towards our future wich inevitably becomes our past that steers us even more?<br/>Or are we more like billiard balls being pushed by our past in a predictable direction until we collide with other billiard balls that push us in a different direction?<br/>If we are like the billiard balls, can it be predicted wich ones will push us where? Or is the number of balls so incomprehensible that it brings a form of chaos with it?")
+                    msg ("You can see a few falling stars, their tails of light are a visible trace of the projection from the past that uses the star itself in the present to project itself to the future, to beyond the place the star currently resides in.<br/>This constant and neverending process is happening multiple times every single second. Your head hurts trying to think of it too much so you just try to enjoy the falling stars for their beauty.<br/><br/>As you are doing so you begin to think of this projection method once again. Isn't the future itself just a projection of the past memories using the present as a projection point?<br/>Are we doomed to always make the same choices because our past steers us towards our future which inevitably becomes our past that steers us even more?<br/>Or are we more like billiard balls being pushed by our past in a predictable direction until we collide with other billiard balls that push us in a different direction?<br/>If we are like the billiard balls, can it be predicted which ones will push us where? Or is the number of balls so incomprehensible that it brings a form of chaos with it?")
                     SetForegroundColour (player.Narcolor)
                     msg ("You try to calm Lilith down a little by softly placing your hand on hers.")
                     SetForegroundColour (player.Lilcolor)

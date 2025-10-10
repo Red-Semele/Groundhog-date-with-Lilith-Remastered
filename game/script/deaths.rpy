@@ -494,14 +494,14 @@ label kokiri_deaths:
             jump gameOver
 
         label kokiri_death_2_prevented:
-            n "You tell [persistent.date] about how the red Sedan would've hit her if you wouldn't have called the police." #TODO Make that an optional choice and continue working from here.
+            n "You tell [persistent.date] about how the red Sedan would've hit her if you wouldn't have called the police."
             if kokiri_alternateplace == False:
                 if kokiriSceneryWatched == True:
                     $ carDescription = "that car we just watched"
                 else:
                     $ carDescriptiion = "a car"
-                l "I see... first a meteorite and now [carDescription]?... It really seems like the universe has it out for me today."
-                l "Well thank you for going through such efforts to help me!"
+                l "I see... first a meteorite and now [carDescription]?... It almost seems like the universe has it out for me today..."
+                l "Thank you for going through such efforts to help me [persistent.name]."
                 n "[persistent.date] gives you a big smile, a look of gratitude is plastered across her face."
             else:
                 l "A car?..."
@@ -516,7 +516,7 @@ label kokiri_deaths:
 
             
             menu:
-                "I tried everything [persistent.date], I even took you to space but it didn't work out, no matter wich path I choose you still end up dying." if persistent.reality_knowledge:
+                "I tried everything [persistent.date], I even took you to space but it didn't work out, no matter which path I choose you still end up dying." if persistent.reality_knowledge:
                     jump kokiri_death_2_prevented_triedEverything
 
                 "Am I really helping you though? One of the things I saw while playing the game is that if we didn't date anymore you would keep being alive and find happiness with a nice guy called Ron." if persistent.ending_breakup:
@@ -579,7 +579,7 @@ label kokiri_death_2_prevented_triedEverything:
             l "She pauses for a moment and then continues."
             l "We tend to create these new worlds all the time, sometimes even without realising it."
             l "When you are thinking about what the next season of your favourite show will be about then you're technically creating an entire new world where the show's characters go through your story."
-            l "And who's to say wich version is the superior one? After all, they're both telling a story, personally I think that's absolutely beautiful."
+            l "And who's to say which version is the superior one? After all, they're both telling a story, personally I think that's absolutely beautiful."
             l "So let's try to do just that!"
             n "[persistent.date] hugs you for a long period of time, you feel her warmth as it reaches your cold body."
             n "And yet, it's not really your body, right?"
@@ -597,14 +597,35 @@ label kokiri_death_2_prevented_triedEverything:
                         menu:
                             "I just want to see what happens when I choose this path.":
                                 $ death_narration = "It appears you got your wish. This path, like many others only leads to death."
-                                #TODO: Try playing through this part to see if this actually works like I want it to, right now it seems like it might have some issues.
                                 if kokiri_alternateplace == False:
-                                    jump kokiri_death_4_hill
-                                else:
+                                    
                                     if kokiri_conversation == 1:
-                                        jump kokiri_death_1
-                                    else:
+                                            jump kokiri_death_1
+                                    elif  kokiri_conversation == 4:
+                                        jump kokiri_death_4_hill
+                                else:
+                                    if kokiri_conversation == 4:
                                         jump kokiri_death_4_noHill
+                                if love_meter < 3:
+                                    l "Really? I think that settles it then. This really all is a game to you."
+                                    l "You kept me in this loop for your own wants. Even when I'm offering you a potential way out of it."
+                                    if lilithAliveAndRetriedCounter > 0:
+                                        n "She is more correct than she might know in this moment, isn't she player?"
+                                        if lilithAliveAndRetriedCounter == 1:
+                                            n "Or are you going to pretend like that time you came back even when she survived was for her sake?"
+                                        else:
+                                            n "Or are you going to pretend like the times you came back even when she survived were for her sake?"
+                                        n "...Or even worse, perhaps you aren't pretending. Maybe some part of you genuinely believes that?"
+                                        n "Either way, it doesn't matter in the end. The result still is the same."
+                                    l "Look, if you don't atleast attempt to try this potential escape from the loop, then I might aswell try to escape on my own."
+                                    l "Goodbye [persistent.name]. Until never again if everything goes right."
+                                else:
+                                    l "Really? So this is all just a game to you?... I know it literally is, but I had hoped that we could have tried to escape this loop together."
+                                    l "But now I see you don't have my best interests at heart like I had hoped you would."
+                                    l "In that case I think I'm better of taking my chances on my own."
+                                    l "Goodbye [persistent.name]. It really is a shame things have to go like this, I was really enjoying our time together."
+                                $ noTalkAngryLilith = True
+                                jump angryLilith
                                 
 
 
@@ -943,7 +964,6 @@ label beach_deaths:
     label beach_holeDeath:
         $ hole_death = True
         n "She fell down a hole in the sand, it collapses."
-        #TODO: Write this out more.
         jump gameOver  
             
     label beach_jellyDeath:

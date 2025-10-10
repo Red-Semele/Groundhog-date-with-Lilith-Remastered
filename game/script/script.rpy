@@ -148,6 +148,7 @@ label start:
           default persistent.kokiriBrokenPromiseCancelDateTurnCounter = 0
           default persistent.threatenNarratorForEnding = False
           default persistent.kokiri_abbyMasking_knowledge = False
+          default persistent.burger_nothingIsPerfect = False
           
           #Phone-numbers
           default persistent.david_call_knowledge = False
@@ -391,6 +392,7 @@ label start:
           default kokiri_silentMoment = False
           default kokiri_positiveDavidStory = False
           default kokiri_familyContacted = False
+          default kokiri_notReadyToLetGo = False
           #Kokiri recent poems
           default kokiri_poem_snowwoman_recent = False
           default kokiri_poem_shadowman_recent = False
@@ -1137,7 +1139,7 @@ label phone_otherPlans:
                                         n "She begins to sob again, this time louder."
                                         l "I'm sorry, I can't say it, even after all those years I just can't."
                                         l "How did you even know that story? Like I said earlier, I haven't shared it with anyone else and never wrote it down, it exist solely in my mind and I guess yours aswell now."
-                                        n "You tell [persistent.date] about the groundhog-esque scenario you are trapped in and the many dates you've had together."
+                                        n "You tell [persistent.date] about the loop you are trapped in and the many dates you've had together."
                                         n "You also tell her about a few of the different deaths she's suffered but try to not make your descriptions too gruesome."
                                         n "You continue."
                                         n "About all the experiences the both of you shared, some better than others."
@@ -1334,7 +1336,7 @@ label phone_call_abigail:
                               "So a priest, a monk and a rabbit enter a bar. Says the rabbit :\"Whoops, did you slip your tongue there [persistent.name]?\"" if persistent.abigail_numberfakeout and persistent.joke_knowledge and not abby_phone_joke :
                                    a "You tell her about how [persistent.date] was laughing for almost a full hour because of that joke when [persistent.date_sis] told it to her."
                                    a "I mean, I just found that joke on the internet..."
-                                   a "Maybe you just got lucky and found it aswell, or you somehow managed to check my browser history wich would be really weird."
+                                   a "Maybe you just got lucky and found it aswell, or you somehow managed to check my browser history which would be really weird."
                                    a "Although I got to admit that her laughing for about an hour at my joke is a pretty specific detail... "
                                    $ abby_phone_counter -= 1
                                    $ abby_phone_joke = True #I'll use this to make sure that you can't select the same choice two times.
@@ -1452,11 +1454,9 @@ label phone_call_abigail:
                                                                                           a "The truth is, lately I have been feeling like I am a fraud, a liar. Not just about the quality of my writing, but also about the person I am."
                                                                                           a "I think I would only bring down the studio by being in it, as if I am a parasite draining it's blood until there is nothing left but a drained carcass."
                                                                                           a "And yet, I want to go there, I want to work in the game design studio, that has been my dream for so long after all. But I know that if I were to go I would feel it, the lifeblood of the studio on my tongue, as I leave no drop of it behind."
-                                                                                          a "Afterall, ruining the studio is not something I would do out of malicousness, moreso out of sheer incompetence. I just am not ready yet. I'm not sure if I'll ever be honestly."
+                                                                                          a "After all, ruining the studio is not something I would do out of malicousness, moreso out of sheer incompetence. I just am not ready yet. I'm not sure if I'll ever be honestly."
                                                                                 
 
-                                                       "Does it really matter?":
-                                                            "Filler"
      
                                              "Actually I would just like to talk about something else.":
                                                   a "Sure, if that somehow helps Lilly that's fine by me."
@@ -1982,7 +1982,7 @@ label phone_call_lila:
                                                                  n "She hung up."
                                                                  jump Game_start2
                                                   
-                              "Actually I would like to talk about your financial status. Abigail has recently brought it to my attention that you are struggeling and I would like to inform you about some programs we have that could help out with that." if persistent.davidPayedMoney_knowledge:
+                              "Actually I would like to talk about that later today, first I'd like to talk about your financial status if I may. Abigail has recently brought it to my attention that you are struggeling and I would like to inform you about some programs we have that could help out with that." if persistent.davidPayedMoney_knowledge:
                                    li "Oh..."
                                    li "I see."
                                    li "Well Sam, I'm not sure why Abigail has brought that up because that's not really the truth at all."
@@ -1992,6 +1992,12 @@ label phone_call_lila:
                                              li "I indeed have taken up two jobs for quite a while, I find it weird that Abigail decided to mention it now actually."
                                              li "But let me assure you Sam, without going too much into unnecessary detail, that that's fully my own choice and we won't need your programs."
                                              li "Thank you for informing me about it though, that was a very sweet thing of you to do."
+                                             li "If that's all for now then I suppose I will be hearing from you again later today?"
+                                             menu:
+                                                  "You will, thank you for your time.":
+                                                       li "Thank you aswell to make some time for this, goodbye Sam."
+                                                       n "She hung up the phone."
+                                                       jump Game_start2
                                              #TODO: Fill this out a bit more, and make it learnable that she is not in debt, you can confront her during the phone call in the kokiri woods about this.
   
   
@@ -2024,8 +2030,7 @@ label doNotPickUpThePhone:
                n "You stood up your date before even knowing what she was like, why?"
                n "Just because you could?"
                n "Just because that was an option?"
-               n "The name of the game is \"Great date with [persistent.date]\" so unless you like not playing this game you better choose the other choice next time."
-               #TODO:Find a way to lie about the name of the game in renpy so this can be a shocking reveal later. Maybe have a name with a double meaning? Something like "Another first date.""
+               n "The name of the game is \"Another first date\" so unless you like not playing this game you better choose the other choice next time."
      elif persistent.lildeaths == 1:
           n "Oh wow, that was quick."
   
@@ -2554,7 +2559,7 @@ label groundhog_escapeFate:
      l "So, why do you think I keep dying all of the sudden?"
  
      menu:
-          "I think it has to do with me, everytime we are together you seem to end up dying.":
+          "I think it has to do with me, every time we are together you seem to end up dying.":
                jump groundhog_escapeFate_myFault
  
           "It seems like fate wants it for some reason.":
@@ -3034,7 +3039,7 @@ label prevented_psychic:
           "I've got no clue what to tell you honestly":
                jump prevented_noProof
  
-          "Alright, pick a word, doesn't matter wich one but make it a hard one to guess.":
+          "Alright, pick a word, doesn't matter which one but make it a hard one to guess.":
                jump prevented_proof 
 
 label prevented_silent:
@@ -3471,9 +3476,16 @@ label ufo_crash_polaroids_James:
                          n "You feel a pang of guilt as James' words cut through your thoughts."
                          j "I'm not saying this to make you feel bad, [persistent.name]. I just want you to think about it."
                          j "Because if you can't see this through for the right reasons, then maybe you shouldn't see it through at all."
-                         
+                         j "Things like this tend to have a chance to hurt both parties, even if it starts out with good intentions."
+                         j "Intentions can shift overtime, and even if they never do, good intentions can sometimes also lead to hurt."
+                         j "Still, don't take this as me telling you that this is pointless."
+                         j "Everything can lead to hurt or harm in some way. If we should never do anything that has a chance of leading to hurt then we wouldn't be doing anything at all."
+                         j "Then we would never discover the beauty that our actions can sometimes lead to. Still, it is important to be mindful."
+                         j "It is a bit like driving a car. It is a very handy tool to get us to so many wonderful destinations."
+                         j "But it is also essentially a weapon. We shouldn't not use it, but we should be thoughtful about how we use it."
+                         j "So please try giving it some thought, alright [persistent.name]?"
+                         j "In time that might come in handy..."
                          $ persistent_jamestalk_ilikeher_knowledge = True
-                         #TODO: Add more text for this
                     "I don't really think anything of her, she's just a game character.":
                          $ justgame = True
                          j "This is going to be pretty hard..."
@@ -3786,7 +3798,7 @@ label jamesChat_whyDidYouReturn_toBeTogether_choices:
      menu:
           "Who are they?":
                j "The first one you probably haven't met, not for long anyway. He is the one that created this world, gave you acces to it and made the second one.
-               The second one you might know actually, the jester that controls the flow and direction of our story. He even controls the deaths [persistent.date] suffered and yet you rely on him to fight him, that might be his biggest joke yet."
+               The second one you might know actually, the jester that controls the flow and direction of our story. He even controls the deaths [persistent.date] suffered. And yet you rely on him to fight him, that might be his biggest joke yet."
                menu:
                     "Alright mister purple prose. So the \"they\" you were talking about are the game developer and the narrator?":
                          j "Purple prose? I'll try to keep it a bit more straightforward."
@@ -4300,7 +4312,7 @@ label reunion_noShowUp:
      d "Now that you mention it, it's-"
      li "It's James."
      l "Hello brother, welcome back."
-     #TODO= msg ("Cue a piece of music.")
+     #Cue some music here once you have a track for this.
 
 
 label ghostReunion_transferUniverse:
