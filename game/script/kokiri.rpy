@@ -57,7 +57,7 @@ label kokiri_altSit:
     n "She first suggests the hill but you shake your head and tell her that she will soon understand why that might not be the best idea."
     l "Well, that one spot over there is also a good spot to sit, we just won't have a view overlooking the town as the hill kind of blocks it."
     l "But that doesn't mean we can't have a good time, right?"
-    n "She chuckles but the chuckles have a slight nervosity to them, which is very understandable giving the current situation."
+    n "She chuckles but it carries a slight nervosity underneath, which is very understandable giving the current situation."
     n "[persistent.date] and you walk over to the spot she pointed at and place the picknick-blanket on the ground. The two of you begin placing the food down on it."
     n "Then she begins to speak."
     l "You know, I'm really glad to be back here.."
@@ -189,38 +189,30 @@ label kokiri_explanation_game:
                             $ player_job = player_job.strip()
                             $ player_job = player_job.lower()
                             if player_job == "teach":
-                                l "Ah, so you're also a teacher? That's really cool!"
-                                l "Teaching can be such a rollercoaster, can't it?"
-                                l "It's funny; a lot of people think teaching is just about imparting knowledge, but there's so much more to it."
-                                l "You’re not just guiding students through the curriculum; you’re helping shape their perspectives, their confidence, even how they see the world."
-                                l "I love the moments when I can see something finally click for a student. That feels like a small victory, doesn’t it?"
-                                l "But then there are the hard days too, the ones where it feels like nothing you say gets through."
-                                l "Sometimes it’s exhausting, especially when you’re really invested in your students’ progress. But at the end of the day, knowing I’ve made a difference, even a small one, makes it worth it."
-                                l "Do you ever feel that way too, [persistent.name_real]?"
-
+                                l "Ah, so you're also a teacher? That's really cool!" 
+                                l "It really is such an interesting job isn't it?"
+                                #TODO: Make this jump the player to the next part (also still write the upside)
+                                l "The only downside I sometimes experience is that it doesn't always feel like I am maing much progress in the big picture."
+                                l "The children move on to the next year, but I always teach the same class."
+                                l "The same lessons, just to different people."
+                                l "I know the progress happens, but I'll never be able to witness it myself."
+                                l "In a way it is almost like having to assemble one wheel, and passing it along, to in the end have made a car."
+                                l "But did you make the car? Or did you just assemble one specific wheel your entire life long?"
+                                n "She grows quiet for a moment, lost in thought."
+                                l "Sometimes that's what we are, an important stepping stone for people but not their final destination."
+                                l "It's like that for many parts of our lives."
+                                l "So many things are fleeting, or atleast not forever."
+                                l "Perhaps it is fate making two roads cross on a moment both or either one of them needs it most."
+                                l "And then it would be fate once again diverging them later when they no longer do."
+                                l "The only thing we can do is try our best to be there for the people with who we cross paths."
                                 menu:
-                                    "Yes, seeing a student succeed is so rewarding. It’s the best part of teaching.":
-                                        l "I completely agree! It’s like all the effort and late nights are worth it when you see them flourish."
-                                        l "Teaching is a job where you don’t always see immediate results, but when you do, it’s incredibly fulfilling."
-                                        l "Sometimes, even years later, a student reaches out to tell you what they’ve accomplished… Those are the moments I treasure."
-                                        n "Lilith’s eyes light up with excitement, as though she’s recalling a memory of her own."
-                                        l "Thank you for sharing that with me, [persistent.name_real]. It’s nice to meet someone who understands that unique joy of teaching."
-
-                                    "It can be tough sometimes, but I feel like I’m learning just as much as they are.":
-                                        l "Oh, absolutely! I think that’s one of the best parts of teaching. Each student brings something new to the table."
-                                        l "I’ve found myself adapting my lessons, learning new things, and sometimes even questioning my own perspectives."
-                                        l "They challenge us to grow, don’t they? In a way, they end up teaching us as much as we teach them."
-                                        n "[persistent.date] smiles thoughtfully, seeming to reflect on her own teaching journey."
-                                        l "It’s good to know you see it that way too, [persistent.name_real]. Teaching is a two-way street, and I think that’s what makes it so special."
-
-                                    "It’s rewarding, but sometimes the workload is overwhelming.":
-                                        l "Oh, I know exactly what you mean. Some days, it feels like the pile of work just never ends."
-                                        l "Between lesson planning, grading, and helping students who need extra support, it’s easy to get swamped."
-                                        l "It’s important to find ways to recharge—teaching is demanding, and burnout is real."
-                                        n "Lilith’s expression softens as she empathizes with your experience."
-                                        l "I try to remind myself why I started teaching in the first place, especially on the rough days. It helps me push through."
-                                        l "I hope you have your own way of dealing with it too, [persistent.name_real]. We’ve got to take care of ourselves to be the best for our students."
-                                    #TODO: Make this jump the player to the next part (also rewrite this part)
+                                    "But isn't that sad? All the effort we put into things only for them not to last?":
+                                        l "Do they need to last? We humans thrive on transitions, entropy is the very thing we strive for."
+                                        l "Don't get me wrong [persistent.name_real], it is beautiful to be blessed with something lasting."
+                                        l "But it can never last eternal. All things will eventually end."
+                                        l "If we would have endless time with someone eventually we would have shared every possible situation and scenario together, every last unique thing."
+                                        l "And from then on out, it would lose it's charm."
+                                        l "Finding water in the dessert is refreshing, sure, but you wouldn't want to be stuck in an infinite lake for all of eternity."
 
                                 
 
@@ -236,9 +228,9 @@ label kokiri_explanation_game:
                                             label kokiri_notRealName_teacher_menu:
                                                 menu:
                                                     "That's really nice to hear! What other things do you like about teaching?":
-                                                        l "That's a very good question [persistent.name]!"
+                                                        l "That's a very good question [persistent.name_real]!"
                                                         l "I think it’s the moments when the kids finally understand something they've been struggling with. You can almost see the light bulb flicker on above their heads, and it’s just... magical."
-                                                        l "And of course, there’s the fun kinds of chaos it brings. Every day feels different, you know? It keeps me on my toes, but I wouldn’t trade it for anything."
+                                                        l "And of course, there’s the variety it brings. Every day feels different, you know? It keeps me on my toes, but I wouldn’t trade it for anything."
                                                         n "Every day feeling different... That's hard for you to imagine at this point isn't it?"
                                                     "That's great to hear! Why did you choose to be a teacher specifically?":
                                                         l "Well, to be honest, part of it is that I really enjoy helping people. There’s a satisfaction in knowing you’re making a positive impact on a young person’s life."
@@ -579,7 +571,7 @@ label kokiri_gamegoal_succesful_live_end:
     l "Thanks for talking about this with me. It’s a lot to think about, but it helps, you know?"
     l "I think no matter what happens, we’ll figure it out together. And if there is a way for me to live... well, I trust you to help me find it."
     n "She gives you a warm smile, the heaviness of the moment lifting slightly."
-    if lilithAliveAndRetriedCounter > 0:
+    if persistent.lilithAliveAndRetriedCounter > 0:
         n "She is quite right that you are capable of finding an ending where she lives, isn't she?"
         n "But it doesn't seem like that matters as much to you as it does to her, since you still are coming back."
     jump kokiri_scenery_choice
@@ -731,7 +723,7 @@ label kokiri_gamegoal_noIdea:
         menu:
             "It's not automatic, a link with the text \"Retry\" shows up and when I click it I restart the day but I get to keep the knowledge of the things that happened.":
                 jump kokiri_gamegoal_noIdea_2
-            "You don't always die, sometimes we are just not together. For example because I break up with you or because you don't want to be around me anymore. But the game still considers it a game over." if lilithAliveAndRetriedCounter > 0:
+            "You don't always die, sometimes we are just not together. For example because I break up with you or because you don't want to be around me anymore. But the game still considers it a game over." if persistent.lilithAliveAndRetriedCounter > 0:
                 $ kokiri_toldLillySheLives = True
                 l "...Interesting."
                 l "So there are moments where I survive?"
@@ -953,8 +945,7 @@ label kokiri_gamegoal_noIdea_2:
         menu:
             "Alright, that actually makes a lot of sense. But what is the point of it all?":
                 l "Well, that's the big question isn't it? I have my own interpretation but I think it's better if we hear it from the source itself."
-                jump gamegoal_noIdea_2_stumped
-        $ kokiri_conversation_silent()            
+                jump gamegoal_noIdea_2_stumped  
          
                         
                         
@@ -1237,7 +1228,7 @@ label kokiri_scenery:
         l "And I did! Many times actually. I like to come here whenever I have some spare time or when I really need to get some time away from things."
         l "The sunrise here is absolutely beautiful, maybe we'll be able to share that moment today."
         l "I'd like that..."
-        n "As you enjoy eachother's company for a while while looking off into the distance the both of you spot a red Sedan as it drives closer and closer to the cafe at troubling speeds."
+        n "As you enjoy eachother's company for a moment while looking off into the distance the both of you spot a red Sedan as it drives closer and closer to the cafe at troubling speeds."
         if car_caught == False:
             n "When the car reaches the cafe it rams a garbage container that falls over in front of the doors and drives up on a ramp."
             n "It launches itself over the building, coming back the other way and driving away like nothing happened."
@@ -1260,15 +1251,15 @@ label kokiri_scenery:
             n "You know how unfortunately right she is. You wish it would sound as impossible to you as it does to her right now."
 
         n "Suddenly you can hear the sound of sirens, of police sirens."
-        n "The police sirens are coming from near the mall, where the burger restaurant is located."
+        n "The police sirens are coming from the shopping street, where the burger restaurant is located."
         n "The same restaurant where [persistent.date] got shot..."
-        n "You point at the mall and tell her about the events that took place there."
+        n "You point at it and tell her about the events that took place there."
         n "She gasps for a moment."
         l "Wow, it seems like we have gone through a lot together [persistent.name]. I'm not sure if it's a good or a bad thing that I can't remember."
         n "You shudder for a moment, it's definetly a good thing that she can't remember the gruesome ways she died."
         n "Ignorance is bliss after all."
-        n "In it's final act of destruction the car races at full speed and smashes against the entrance of the mall."
-        n "The burger restaurant explodes due to the gas explosion, taking a sizeable chunk of the mall with it."
+        n "In it's final act of destruction the car races at full speed and smashes against the entrance of the burger restaurant."
+        n "The gas explosion consumes the entire burger restaurant, taking a sizeable chunk of the shops around it."
         n "However the Sudan escapes without a scratch."
         n "After the explosion the village begins to grow calm once more, the whole ordeal seems to have finally ended."
         l "Has- Has it ended?"
@@ -1277,7 +1268,8 @@ label kokiri_scenery:
             "Yes, it's finally all over.":
                 jump kokiri_scenery_allOver
             "Not quite. You might want to sit on my right instead of my left." if persistent.kokiri_death_1:
-                jump kokiri_death_1_prevented
+                $ met_check = "meteorite_warn"
+                jump kokiri_death_1
     else: 
         $ persistent.kokiri_watchedStarsAlternatePlace= True
         n "[persistent.date] and you lay down on the blanket as you try to look to the star-filled sky between the trees."

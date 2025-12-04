@@ -179,326 +179,342 @@ label burger_start_menu:
 
 
 label burger_ordering:
-    n "[persistent.date] and you go to order the burgers."
-    if persistent.burgerwent == 0:
-        n "You were expecting having to order them from a screen like most fastfood places tend to have but as you looked around you couldn't spot any."
-        n "Instead [persistent.date] walks to a counter.
-        You decide to follow her."
-    if persistent.rosename_knowledge == True:
-        $ roseName = "Rose"
-        n "An old lady, who you remember is called Rose, smiles at the both of you."
-    else:
-        n "An old lady smiles at the both of you."
-    
-    if burger_nightmare == False:
-        r "Hey [persistent.date], glad to see you here once more!"
-        r "I'm almost surprised to see you here, it's been quite a while hasn't it?"
+    if persistent.rockMode == False:
+        n "[persistent.date] and you go to order the burgers."
+        if persistent.burgerwent == 0:
+            n "You were expecting having to order them from a screen like most fastfood places tend to have but as you looked around you couldn't spot any."
+            n "Instead [persistent.date] walks to a counter.
+            You decide to follow her."
         if persistent.rosename_knowledge == True:
-            n "Rose looks at you for a brief moment and continues."
-        else:
-            n "The old lady looks at you for a brief moment and continues."
-
-        r "Who did you bring along for the ride?"
-        if not burgerBeenBefore:
-            l "Oh right, you two haven't met. Rose, this is [persistent.name] and [persistent.name] this is Rose."
-            $ persistent.rosename_knowledge = True
             $ roseName = "Rose"
-            n "Rose gives you a sincere smile."
-            r "Nice to meet you [persistent.name]."
+            n "An old lady, who you remember is called Rose, smiles at the both of you."
         else:
-            l "Oh, do you not recognize [persistent.name] Rose?"
-            r "No, their face is not ringing any bells I'm afraid, should I recognize them?"
-            l "I suppose not necesarilly, but with how good your memory is I thought you would remember them, they've eaten here before."
-            r "Really? Huh... Still not ringing any bells I'm afraid. Might be my age slowly catching up on me."
-            r "The woman lets out a hearty chuckle."
-            r "Anyway [persistent.name], consider your face remembered from now on out!"
-            if persistent.burger_faceRemembered == False:
-                $ persistent.burger_faceRemembered = True
-            else:
-                n "And yet she never remembers you doesn't she?"
-                n "No matter how hard she might try. No matter how many times she says she will."
-                n "You will always be a stranger to her."
-            
+            n "An old lady smiles at the both of you."
         
-        r "So, what can I get the two of you?"
-        n "[persistent.date] and you tell her both of your choices."
-        if burger_choice == "juicy cheeseburger":
-            r "Two juicy cheeseburgers coming right up! I'll bring them to you when they are done, alright?"
-        else:
-            r "A juicy cheeseburger and a [burger_choice] coming right up! I'll bring them to you when they are done, alright?"
-        r "That way you two can get to know each other some more."
-        n "She gives [persistent.date] a quick wink that you just barely manage to catch."
-        n "[persistent.date]'s face turning beetred is a lot easier to notice."
-        l "{size=*0.5}Uhm, thank you Rose... we uhm have to get back to our table now.{/size}"
-        n "You can't help but chuckle to yourself as [persistent.date] practically darts back to the table."
-        n "By the time you've reached the table she is already sitting down, still as red as she possibly could be."
-        n "She quickly brushes one hand over her left cheek and somehow manages to turn even more red at the realisation that she is still blushing."
-        n "Right then she lets out a few small coughs as she tries to somehow divert attention from what just happened."
-        n "As you sit back down she begins speaking once again."
-        l "Thank you for choosing this place [persistent.name].
-        It has been too long since I've been here, to tell you the truth I actually was avoiding this place.
-        But now the happy memories come flooding back to me."
+        if burger_nightmare == False:
+            r "Hey [persistent.date], glad to see you here once more!"
+            r "I'm almost surprised to see you here, it's been quite a while hasn't it?"
+            if persistent.rosename_knowledge == True:
+                n "Rose looks at you for a brief moment and continues."
+            else:
+                n "The old lady looks at you for a brief moment and continues."
 
-        n "[persistent.date] pauses for a moment, she seems unsure whether to continue or not."
-
-        l"You know, my brother really used to love this place before..."
-
-        n "[persistent.date] freezes before she can continue the sentence."
-        l "{size=*0.5}Why did I have to bring that up now?{/size}"
-        jump burger_brother
-
-        menu burger_brother:
-            "What was his name?":
-                jump burger_brother_question
-
-            "Are you alright [persistent.date]? You don't need to share this story if it hurts you too much.":
-                $ love_points += 1
-                $ love_meter_updater(False)
-                l "Honestly I'm not sure if I'll ever be fully alright because of what happened."
-                l "And I think telling that story will always hurt."
-                l "But that doesn't mean I wouldn't like to tell you about it."
-                l "In fact, I think it might be good for me to eventually tell you."
-                l "Just..."
-                l "I just would like to wait a little before I do that, maybe some other time [persistent.name]?"
-                l "I do really appreciate your concern for me though!"
-                n "Things grow quiet for a moment."
-                l "Oh, I almost forgot to ask."
-                l "How are you liking your burger [persistent.name]?"
-                menu:
-                    "It's the best one I ever had!":
-                    
-                        if not burgerBeenBefore:
-                            l "That good huh?"
-                            n "[persistent.date] let's out a small chuckle."
-                            l "Rose's burgers are indeed extrememly tasty."
-                            l "I'm glad you like them so much [persistent.name]!"
-                            l "Although I hope this didn't ruin other burgers for you, it's hard to go back to regular burgers after you tasted these isn't it?"
-                            l "The thing is, even if this burger is perfect, there will be days we have to make due with good enough. And in days like that we will need to try to atleast be satified with what we have."
-                            menu:
-                                "At least we'll have eachother, I'm sure anything would taste good if I'm enjoying your company.":
-                                    l "You flatterer!"
-                                    n "She just turned close to beetred."
-                                    l "You are in luck though, I'd love to check out the other restaurants I mentioned together with you."
-                                    if persistent.cafe_death_1 and persistent.chinese_death_1:
-                                        n "Little does she know that she already did just that. Or well, a version of her I suppose."
-                                        n "But you will never forget, will you?"
-                                        n "How could you? Her deaths play out in front of your eyes every time you try to close them."
-                                        if not persistent.burger_death_2:
-                                            n "Do you think things will be better from here on out?"
-                                            n "I guess only time will tell."
-                                        elif persistent.lildeaths > 9:
-                                            n "It seems her wish will be granted, over and over and over, she is lucky that she doesn't know what consequences that always brings."
-                                            n "You can't help but feel slightly jealous of her for her ignorance."
-                                            n "I suppose ignorance truly is bliss, isn't it?"
-                                            n "You really would prefer if you didn't know what happens next here, what always happens."
-                                        else:
-                                            n "Just like how what will come next plays over and over in your head."
-                                            n "You can't help but hope that this time will be different. You need to hope it, otherwise..."
-                                            n "You don't want to finish that thought."
-
-                                    l "But let's not get ahead of ourselves,let's focus on this beautiful moment first and see how things go from there."
-                                "I don't think I can ever part ways with this burger.":
-                                    n "[persistent.date] giggles, but as she does you think you can spot some concern in her eyes."
-                                    l "I totally understand [persistent.name], sometimes it can be really hard to let go of something great."
-                                    l "But if you never finish this burger and keep clutching on to it, it will begin to grow moldy."
-                                    l "And if you do not clutch on to it but keep eating Rose's [burger_choice]s for the rest of your life they will grow very stale quicker than you think."
-                                    l "I think sometimes we just need to enjoy what we have in the moment and when we don't enjoy something anymore, let go of it."
-                                    l "It's easy to fool ourselves into thinking that if we liked something in the past we must like it now aswell."
-                                    l "But sometimes it's just nostalgia, to how things were before, not even necesarilly to whatever you feel the need to hold on to."
-                        else:
-                            l "Really? That's very sweet of you to say [persistent.name]!"
-                            l "But you've been here before, right? What makes this burger better?"
-                            menu:
-                                "I have never ordered this burger before, now I'm wishing I had.":
-                                    n "She laughs quite loudly."
-                                    l "If only you had a time machine, then you could."
-                                    l "Wouldn't that be wonderful? To be able to go back in time as you please, maybe even change a few things?"
-                                    if persistent.lildeaths > 9:
-                                        n "That's the tricky part isn't it? To create any meaningful change at al. You've noticed it firsthand many times now."
-                                    l "I'm sure we wouldn't have to limit ourselves to just going back in time to eat burgers sooner, we could do so many great things."
-                                "I never went here with you before, it's the lovely company that makes it taste better.":
-                                    l "You really are a charmer aren't you [persistent.name]?"
-                                    if love_meter > 2:
-                                        l "Although I have to admit that I feel the same way."
-                                        l "It could also be that it's been such a long time since I've been here that the burgers taste even better but I think you have something to do with it aswell."
-                                        l "It just feels... more special?"
-                                        l "So I'm really happy to hear that you think the same thing [persistent.name]!"
-                    
-                    "It's pretty good.":
-                        $ persistent.burger_nothingIsPerfect = True
-                        l "Pretty good, huh? That's high praise!"
-                        n "[persistent.date] gives you a warm smile, clearly pleased by your response."
-                        l "I think \"pretty good\" is better than \"perfect\"."
-                        l "How many things do you know that are perfect? Many of those tend to not remain perfect the harder and longer you begin to look."
-                        l "Because in reality, almost nothing is truly perfect, and it also doesn't need to be."
-                        l "I would say \"pretty good\" is more than good enough in most cases."
-                        n "She takes a thoughtful bite of her own burger, as if savoring the moment."
-                        l "I'm glad you're enjoying it, [persistent.name]."
-                        if not burgerBeenBefore:
-                            l "Maybe next time we can try some of the other things on the menu and see if they measure up?"
-                        else:
-                            l "Maybe next time we can go to that Chinese restaurant I talked about and see how you like the food there? It's really really good."
-
-                    "It's a nothing burger, literally.":
-                        label burger_nothingBurger:
-                            n "[persistent.date] tilts her head, a small frown tugging at the corner of her lips."
-                            l "A \"nothing burger\" huh? I guess that means it's... okay?"
-                            n "She tries to mask her disappointment with a soft chuckle."
-                            l "Maybe it just didn’t live up to the hype. I hope it wasn’t too underwhelming, though."
-                            if not burgerBeenBefore:
-                                l "Rose makes all her burgers with as much love as is feasibly possible but maybe her [burger_choice] isn't really your thing?"
-                                n "You can tell she was hoping you would enjoy it more."
-                                l "If you'd like, we can come back and try something different next time. There's so much more on the menu here that might be more your style."
-                            else:
-                                l "Although I am slightly confused, to be honest with you."
-                                l "You have been here before, right?"
-                                l "Did you like the burger you had then?"
-                                l "Because personally, the last word I would associate with Rose's burgers would be \"bland\"."
-                                menu:
-                                    "To be honest with you, the burgers I had here before were also quite bland. I just thought I should give it another chance since you were really enthusiastic about this place when you mentioned it.":
-                                        l "Oh I see..."
-                                        l "While I do appreciate you giving it another shot, I wish you wouldn't have felt the need to choose this place."
-                                        l "You don't need to sacrifice yourself for my wants, alright [persistent.name]?"
-                                        l "If you really don't like the burgers here we could have went to the cafe or to that chinese restaurant."
-                                        if love_meter > 2:
-                                            l "After all, I want this date to be nice for the both of us."
-                                        l "But now that we are here, would you like to order something else?"
-                                        l "Maybe some chicken tenders?"
-                                        n "You shake your head. Even if you don't like the burger, you have to admit it fills you quite well."
-
-
-                                    "Oh, I usually don't pick a burger, I tend to always pick chicken tenders.":
-                                        n "[persistent.date] can't help but chuckle slightly at your accidental joke."
-                                        l "I see [persistent.name], that's totally fine."
-                                        l "I just wonder what made you change your mind this time? Why did you pick a [burger_choice]?"
-                                        menu:
-                                            "I was in for a change.":
-                                                l "I see, sometimes it's good to have a little change here and there isn't it?"
-                                                l "That can truly be a breath of fresh air."
-                                                l "Of course, sometimes it can be a bit of a dissapointment."
-                                                l "But good of you for trying something new, you never know what great things might come from that."
-
-                                            "You were really enthusiastic about the burgers here and I didn't want you to think less of me because I picked chicken tenders.":
-                                                l "Oh [persistent.name], I'm very sorry you felt that way."
-                                                l "I would never judge you for what you order here."
-                                                l "If anything I'm just happy to share your company here today."
-                                                l "So next time"
-
-                                            "Because the game only let me pick burgers." if persistent.kokiri_death_1 == True and persistent.burgerGameJoke == False:
-                                                l "... What?"
-                                                l "What are you talking about, what game?"
-                                                l "Are you saying that this is all not real?"
-                                                l "I would say that that sounds absurd..."
-                                                l "But somehow..."
-                                                n "She seemingly tries to study your face."
-                                                l "You are not joking, right?"
-                                                l "Oh god, so I am in a game?"
-                                                l "We all are?"
-                                                l "The ramifications of that are-"
-                                                n "I'll have to stop her there, you aren't supposed to be able to tell her the truth in any of the restaurants, that she is inside of a game."
-                                                n "Trust me, it's for the best."
-                                                n "She needs a more calm place to properly process it fully."
-                                                n "It seems that that dialogue choice was still a leftover from a time where you could tell her about that anywhere."
-                                                n "Most of them were removed due to the Creator wanting to focus on it more in the woods."
-                                                n "Let's just rewind to before you made this choice and remove it."
-                                                if persistent.mayoFreak == True:
-                                                    n "..."
-                                                    n "I can already tell you that you are not happy about me railroading you like that."
-                                                    n "Normally I would not care in the slightest."
-                                                    n "But I don't want another mayo situation..."
-                                                    n "So how about this? From now on you can order chicken tenders here if you'd like."
-                                                    n "Yes, that should be fine for me to add, right? It doesn't change anything too major in the story after all."
-                                                    n "Isn't that cool? You unlocked a super secret menu option!"
-                                                    n "{size=*0.5}It definetly wasn't always an option that I just didn't let you pick...{/size}"
-                                                    n "Alright, back we go."
-                                                    $ persistent.chickenTendiesUnlock = True
-
-                                                $ persistent.burgerGameJoke = True
-                                                jump burger_nothingBurger
-
-                                        
-                    "It's really bad.":
-                        n "[persistent.date] freezes for a moment, taken aback by your bluntness. Test"
-                        $ love_points = -1
-                        $ love_meter_updater(False)
-                        if not burgerBeenBefore or not burgerBeforeLie:
-                            l "Really bad? Oh no, I'm so sorry, [persistent.name]."
-                            l "I hyped this place up so much, didn't I? Maybe that set your expectations too high."
-                            n "She looks genuinely upset."
-                            l "I guess taste is pretty subjective. But hey, at least now we know, right?"
-                            n "She tries to force a smile, but it's clear your words stung more than she expected."
-                            l "Maybe next time we could go somewhere else?"
-                        else:
-                            l "Really?..."
-                            l "But you've been here before, right?"
-                            l "Is something different now?"
-                            n "[persistent.date] gives you a confused look, she is clearly stumped."
-                            menu:
-                                "I never picked this burger before.":
-                                    l "Oh I see, so this [burger_choice] isn't really your thing?"
-                                    l "That's totally fine, I suppose not every kind of burger can be everyone's favourite after all."
-                                    l "{size=*0.5}Although you could have been a little less blunt about it.{/size}"
-                                    l "It's good of you to try something else though, picking the same thing over and over can get bland real fast."
-                                    l "Although, sometimes it can be hard to do that, in the fear that the other experience will be worse than the familiar and comfortable thing you always pick."
-                                    l "Maybe if we come here next time you can tell me what kind of burger you tend to like and I can recomend a few ones that I think you will like based on that?"
-
-                                "I think there is something wrong with my burger.":
-                                    l "Really?"
-                                    l "Is there something you didn't order in there?"
-                                    l "Or does it just not taste good?"
-                                    l "Either way, it's very rare for Rose to mess up a burger."
-                                    l "Of course mistakes can always happen."
-                                    l "Would you like to see if she can make you another one of those burgers? I'm sure she wouldn't mind if you ask her nicely."
-                                "I think the true problem here is the company.":
-                                    
-                                    l "Okay, I do not know what makes you think that you can talk to me like that [persistent.date]."
-                                    l "If you have just come here to be mean to me than why did you even come here at all?"
-                                    if persistent.lildeaths == 0:
-                                        n "She does have a point, if this is how you treat all your dates it is no wonder you are on \"Another first date\"."
-                                    else:
-                                        n "She does make a good point, even if she does not know the full extent of it. You tried playing the game again to save her, didn't you?"
-                                        n "Then why are you treating her like that?"
-                                        n "Even if it could hypothetically save her, would it be worth it?"
-                                    l "You weren't like this at all when we talked before, is this how you really are?"
-                                    l "Either way, I won't stick around to find out."
-                                    l "Goodbye [persistent.date]."
-                                    $ angryLilith = True
-                                    $ noTalkAngryLilith = True
-                                    $ love_meter_updater(True) 
-                jump burger_deathBuildup
-    else:
-        r "Hey [persistent.date] and [persistent.name], welcome back!"  
-        n "This startles you. Before the loops you never have been here. She is not supposed to know you."
-        n "You ask Rose how she knows your name."
-        r "Oh but how could I forget you?" 
-        r "The two of you have been here quite a few times, haven't you?"     
-        r "You are her killer right?"           
-        r "You shot her."
-        r "You blew her to smithereens."
-        r "And I had to watch it. Over and over again." 
-        menu:
-            "I didn't pull the trigger on the gun. The explosion was out of my control.":          
-                r "You may not have caused those things directly. But that doesn't matter, does it?"
-                r "You knew what would happen. And you still returned."
-                r "You are responsible for what happened."
-                r "You tell yourself you do it to save her, but I wonder if there is a part of you that likes to watch her die again and again."
-                r "Well you're in luck you coldblooded killer, this time you can warm your hearth by eating her."
-                n "She hands you a fleshy clump that almost resembles a burger."
-                r "I made it from [persistent.date] herself."
-                n "She gives you an impatient look."
-                r "Well, aren't you going to eat it?"
-                r "You've held on to it for so long it has turned rotten."
-                r "You just stood here with it in your hand for [persistent.retry_counter] days straight."
+            r "Who did you bring along for the ride?"
+            if not burgerBeenBefore:
+                l "Oh right, you two haven't met. Rose, this is [persistent.name] and [persistent.name] this is Rose."
+                $ persistent.rosename_knowledge = True
+                $ roseName = "Rose"
+                n "Rose gives you a sincere smile."
+                r "Nice to meet you [persistent.name]."
+            else:
+                l "Oh, do you not recognize [persistent.name] Rose?"
+                r "No, their face is not ringing any bells I'm afraid, should I recognize them?"
+                l "I suppose not necesarilly, but with how good your memory is I thought you would remember them, they've eaten here before."
+                r "Really? Huh... Still not ringing any bells I'm afraid. Might be my age slowly catching up on me."
+                r "The woman lets out a hearty chuckle."
+                r "Anyway [persistent.name], consider your face remembered from now on out!"
+                if persistent.burger_faceRemembered == False:
+                    $ persistent.burger_faceRemembered = True
+                else:
+                    n "And yet she never remembers you doesn't she?"
+                    n "No matter how hard she might try. No matter how many times she says she will."
+                    n "You will always be a stranger to her."
                 
-        $ nightmare = True
-        $ burger_nightmare = False
-        jump game_start
+            
+            r "So, what can I get the two of you?"
+            n "[persistent.date] and you tell her both of your choices."
+            if burger_choice == "juicy cheeseburger":
+                r "Two juicy cheeseburgers coming right up! I'll bring them to you when they are done, alright?"
+            else:
+                r "A juicy cheeseburger and a [burger_choice] coming right up! I'll bring them to you when they are done, alright?"
+            r "That way you two can get to know each other some more."
+            n "She gives [persistent.date] a quick wink that you just barely manage to catch."
+            n "[persistent.date]'s face turning beetred is a lot easier to notice."
+            l "{size=*0.5}Uhm, thank you Rose... we uhm have to get back to our table now.{/size}"
+            n "You can't help but chuckle to yourself as [persistent.date] practically darts back to the table."
+            n "By the time you've reached the table she is already sitting down, still as red as she possibly could be."
+            n "She quickly brushes one hand over her left cheek and somehow manages to turn even more red at the realisation that she is still blushing."
+            n "Right then she lets out a few small coughs as she tries to somehow divert attention from what just happened."
+            n "As you sit back down she begins speaking once again."
+            l "Thank you for choosing this place [persistent.name].
+            It has been too long since I've been here, to tell you the truth I actually was avoiding this place.
+            But now the happy memories come flooding back to me."
 
+            n "[persistent.date] pauses for a moment, she seems unsure whether to continue or not."
+
+            l"You know, my brother really used to love this place before..."
+
+            n "[persistent.date] freezes before she can continue the sentence."
+            l "{size=*0.5}Why did I have to bring that up now?{/size}"
+            jump burger_brother
+
+            menu burger_brother:
+                "What was his name?":
+                    jump burger_brother_question
+
+                "Are you alright [persistent.date]? You don't need to share this story if it hurts you too much.":
+                    $ love_points += 1
+                    $ love_meter_updater(False)
+                    l "Honestly I'm not sure if I'll ever be fully alright because of what happened."
+                    l "And I think telling that story will always hurt."
+                    l "But that doesn't mean I wouldn't like to tell you about it."
+                    l "In fact, I think it might be good for me to eventually tell you."
+                    l "Just..."
+                    l "I just would like to wait a little before I do that, maybe some other time [persistent.name]?"
+                    l "I do really appreciate your concern for me though!"
+                    n "Things grow quiet for a moment."
+                    l "Oh, I almost forgot to ask."
+                    l "How are you liking your burger [persistent.name]?"
+                    menu:
+                        "It's the best one I ever had!":
+                        
+                            if not burgerBeenBefore:
+                                l "That good huh?"
+                                n "[persistent.date] let's out a small chuckle."
+                                l "Rose's burgers are indeed extrememly tasty."
+                                l "I'm glad you like them so much [persistent.name]!"
+                                l "Although I hope this didn't ruin other burgers for you, it's hard to go back to regular burgers after you tasted these isn't it?"
+                                l "The thing is, even if this burger is perfect, there will be days we have to make due with good enough. And in days like that we will need to try to atleast be satified with what we have."
+                                menu:
+                                    "At least we'll have eachother, I'm sure anything would taste good if I'm enjoying your company.":
+                                        l "You flatterer!"
+                                        n "She just turned close to beetred."
+                                        l "You are in luck though, I'd love to check out the other restaurants I mentioned together with you."
+                                        if persistent.cafe_death_1 and persistent.chinese_death_1:
+                                            n "Little does she know that she already did just that. Or well, a version of her I suppose."
+                                            n "But you will never forget, will you?"
+                                            n "How could you? Her deaths play out in front of your eyes every time you try to close them."
+                                            if not persistent.burger_death_2:
+                                                n "Do you think things will be better from here on out?"
+                                                n "I guess only time will tell."
+                                            elif persistent.lildeaths > 9:
+                                                n "It seems her wish will be granted, over and over and over, she is lucky that she doesn't know what consequences that always brings."
+                                                n "You can't help but feel slightly jealous of her for her ignorance."
+                                                n "I suppose ignorance truly is bliss, isn't it?"
+                                                n "You really would prefer if you didn't know what happens next here, what always happens."
+                                            else:
+                                                n "Just like how what will come next plays over and over in your head."
+                                                n "You can't help but hope that this time will be different. You need to hope it, otherwise..."
+                                                n "You don't want to finish that thought."
+
+                                        l "But let's not get ahead of ourselves,let's focus on this beautiful moment first and see how things go from there."
+                                    "I don't think I can ever part ways with this burger.":
+                                        n "[persistent.date] giggles, but as she does you think you can spot some concern in her eyes."
+                                        l "I totally understand [persistent.name], sometimes it can be really hard to let go of something great."
+                                        l "But if you never finish this burger and keep clutching on to it, it will begin to grow moldy."
+                                        l "And if you do not clutch on to it but keep eating Rose's [burger_choice]s for the rest of your life they will grow very stale quicker than you think."
+                                        l "I think sometimes we just need to enjoy what we have in the moment and when we don't enjoy something anymore, let go of it."
+                                        l "It's easy to fool ourselves into thinking that if we liked something in the past we must like it now aswell."
+                                        l "But sometimes it's just nostalgia, to how things were before, not even necesarilly to whatever you feel the need to hold on to."
+                            else:
+                                l "Really? That's very sweet of you to say [persistent.name]!"
+                                l "But you've been here before, right? What makes this burger better?"
+                                menu:
+                                    "I have never ordered this burger before, now I'm wishing I had.":
+                                        n "She laughs quite loudly."
+                                        l "If only you had a time machine, then you could."
+                                        l "Wouldn't that be wonderful? To be able to go back in time as you please, maybe even change a few things?"
+                                        if persistent.lildeaths > 9:
+                                            n "That's the tricky part isn't it? To create any meaningful change at al. You've noticed it firsthand many times now."
+                                        l "I'm sure we wouldn't have to limit ourselves to just going back in time to eat burgers sooner, we could do so many great things."
+                                    "I never went here with you before, it's the lovely company that makes it taste better.":
+                                        l "You really are a charmer aren't you [persistent.name]?"
+                                        if love_meter > 2:
+                                            l "Although I have to admit that I feel the same way."
+                                            l "It could also be that it's been such a long time since I've been here that the burgers taste even better but I think you have something to do with it aswell."
+                                            l "It just feels... more special?"
+                                            l "So I'm really happy to hear that you think the same thing [persistent.name]!"
+                        
+                        "It's pretty good.":
+                            $ persistent.burger_nothingIsPerfect = True
+                            l "Pretty good, huh? That's high praise!"
+                            n "[persistent.date] gives you a warm smile, clearly pleased by your response."
+                            l "I think \"pretty good\" is better than \"perfect\"."
+                            l "How many things do you know that are perfect? Many of those tend to not remain perfect the harder and longer you begin to look."
+                            l "Because in reality, almost nothing is truly perfect, and it also doesn't need to be."
+                            l "I would say \"pretty good\" is more than good enough in most cases."
+                            n "She takes a thoughtful bite of her own burger, as if savoring the moment."
+                            l "I'm glad you're enjoying it, [persistent.name]."
+                            if not burgerBeenBefore:
+                                l "Maybe next time we can try some of the other things on the menu and see if they measure up?"
+                            else:
+                                l "Maybe next time we can go to that Chinese restaurant I talked about and see how you like the food there? It's really really good."
+
+                        "It's a nothing burger, literally.":
+                            label burger_nothingBurger:
+                                n "[persistent.date] tilts her head, a small frown tugging at the corner of her lips."
+                                l "A \"nothing burger\" huh? I guess that means it's... okay?"
+                                n "She tries to mask her disappointment with a soft chuckle."
+                                l "Maybe it just didn’t live up to the hype. I hope it wasn’t too underwhelming, though."
+                                if not burgerBeenBefore:
+                                    l "Rose makes all her burgers with as much love as is feasibly possible but maybe her [burger_choice] isn't really your thing?"
+                                    n "You can tell she was hoping you would enjoy it more."
+                                    l "If you'd like, we can come back and try something different next time. There's so much more on the menu here that might be more your style."
+                                else:
+                                    l "Although I am slightly confused, to be honest with you."
+                                    l "You have been here before, right?"
+                                    l "Did you like the burger you had then?"
+                                    l "Because personally, the last word I would associate with Rose's burgers would be \"bland\"."
+                                    menu:
+                                        "To be honest with you, the burgers I had here before were also quite bland. I just thought I should give it another chance since you were really enthusiastic about this place when you mentioned it.":
+                                            l "Oh I see..."
+                                            l "While I do appreciate you giving it another shot, I wish you wouldn't have felt the need to choose this place."
+                                            l "You don't need to sacrifice yourself for my wants, alright [persistent.name]?"
+                                            l "If you really don't like the burgers here we could have went to the cafe or to that chinese restaurant."
+                                            if love_meter > 2:
+                                                l "After all, I want this date to be nice for the both of us."
+                                            l "But now that we are here, would you like to order something else?"
+                                            l "Maybe some chicken tenders?"
+                                            n "You shake your head. Even if you don't like the burger, you have to admit it fills you quite well."
+
+
+                                        "Oh, I usually don't pick a burger, I tend to always pick chicken tenders.":
+                                            n "[persistent.date] can't help but chuckle slightly at your accidental joke."
+                                            l "I see [persistent.name], that's totally fine."
+                                            l "I just wonder what made you change your mind this time? Why did you pick a [burger_choice]?"
+                                            menu:
+                                                "I was in for a change.":
+                                                    l "I see, sometimes it's good to have a little change here and there isn't it?"
+                                                    l "That can truly be a breath of fresh air."
+                                                    l "Of course, sometimes it can be a bit of a dissapointment."
+                                                    l "But good of you for trying something new, you never know what great things might come from that."
+
+                                                "You were really enthusiastic about the burgers here and I didn't want you to think less of me because I picked chicken tenders.":
+                                                    l "Oh [persistent.name], I'm very sorry you felt that way."
+                                                    l "I would never judge you for what you order here."
+                                                    l "If anything I'm just happy to share your company here today."
+                                                    l "So next time"
+
+                                                "Because the game only let me pick burgers." if persistent.kokiri_death_1 == True and persistent.burgerGameJoke == False:
+                                                    l "... What?"
+                                                    l "What are you talking about, what game?"
+                                                    l "Are you saying that this is all not real?"
+                                                    l "I would say that that sounds absurd..."
+                                                    l "But somehow..."
+                                                    n "She seemingly tries to study your face."
+                                                    l "You are not joking, right?"
+                                                    l "Oh god, so I am in a game?"
+                                                    l "We all are?"
+                                                    l "The ramifications of that are-"
+                                                    n "I'll have to stop her there, you aren't supposed to be able to tell her the truth in any of the restaurants, that she is inside of a game."
+                                                    n "Trust me, it's for the best."
+                                                    n "She needs a more calm place to properly process it fully."
+                                                    n "It seems that that dialogue choice was still a leftover from a time where you could tell her about that anywhere."
+                                                    n "Most of them were removed due to the Creator wanting to focus on it more in the woods."
+                                                    n "Let's just rewind to before you made this choice and remove it."
+                                                    if persistent.mayoFreak == True:
+                                                        n "..."
+                                                        n "I can already tell you that you are not happy about me railroading you like that."
+                                                        n "Normally I would not care in the slightest."
+                                                        n "But I don't want another mayo situation..."
+                                                        n "So how about this? From now on you can order chicken tenders here if you'd like."
+                                                        n "Yes, that should be fine for me to add, right? It doesn't change anything too major in the story after all."
+                                                        n "Isn't that cool? You unlocked a super secret menu option!"
+                                                        n "{size=*0.5}It definetly wasn't always an option that I just didn't let you pick...{/size}"
+                                                        n "Alright, back we go."
+                                                        $ persistent.chickenTendiesUnlock = True
+
+                                                    $ persistent.burgerGameJoke = True
+                                                    jump burger_nothingBurger
+
+                                            
+                        "It's really bad.":
+                            n "[persistent.date] freezes for a moment, taken aback by your bluntness. Test"
+                            $ love_points = -1
+                            $ love_meter_updater(False)
+                            if not burgerBeenBefore or not burgerBeforeLie:
+                                l "Really bad? Oh no, I'm so sorry, [persistent.name]."
+                                l "I hyped this place up so much, didn't I? Maybe that set your expectations too high."
+                                n "She looks genuinely upset."
+                                l "I guess taste is pretty subjective. But hey, at least now we know, right?"
+                                n "She tries to force a smile, but it's clear your words stung more than she expected."
+                                l "Maybe next time we could go somewhere else?"
+                            else:
+                                l "Really?..."
+                                l "But you've been here before, right?"
+                                l "Is something different now?"
+                                n "[persistent.date] gives you a confused look, she is clearly stumped."
+                                menu:
+                                    "I never picked this burger before.":
+                                        l "Oh I see, so this [burger_choice] isn't really your thing?"
+                                        l "That's totally fine, I suppose not every kind of burger can be everyone's favourite after all."
+                                        l "{size=*0.5}Although you could have been a little less blunt about it.{/size}"
+                                        l "It's good of you to try something else though, picking the same thing over and over can get bland real fast."
+                                        l "Although, sometimes it can be hard to do that, in the fear that the other experience will be worse than the familiar and comfortable thing you always pick."
+                                        l "Maybe if we come here next time you can tell me what kind of burger you tend to like and I can recomend a few ones that I think you will like based on that?"
+
+                                    "I think there is something wrong with my burger.":
+                                        l "Really?"
+                                        l "Is there something you didn't order in there?"
+                                        l "Or does it just not taste good?"
+                                        l "Either way, it's very rare for Rose to mess up a burger."
+                                        l "Of course mistakes can always happen."
+                                        l "Would you like to see if she can make you another one of those burgers? I'm sure she wouldn't mind if you ask her nicely."
+                                    "I think the true problem here is the company.":
+                                        
+                                        l "Okay, I do not know what makes you think that you can talk to me like that [persistent.date]."
+                                        l "If you have just come here to be mean to me than why did you even come here at all?"
+                                        if persistent.lildeaths == 0:
+                                            n "She does have a point, if this is how you treat all your dates it is no wonder you are on \"Another first date\"."
+                                        else:
+                                            n "She does make a good point, even if she does not know the full extent of it. You tried playing the game again to save her, didn't you?"
+                                            n "Then why are you treating her like that?"
+                                            n "Even if it could hypothetically save her, would it be worth it?"
+                                        l "You weren't like this at all when we talked before, is this how you really are?"
+                                        l "Either way, I won't stick around to find out."
+                                        l "Goodbye [persistent.date]."
+                                        $ angryLilith = True
+                                        $ noTalkAngryLilith = True
+                                        $ love_meter_updater(True) 
+                    jump burger_deathBuildup
+        else:
+            r "Hey [persistent.date] and [persistent.name], welcome back!"  
+            n "This startles you. Before the loops you never have been here. She is not supposed to know you."
+            n "You ask Rose how she knows your name."
+            r "Oh but how could I forget you?" 
+            r "The two of you have been here quite a few times, haven't you?"     
+            r "You are her killer right?"           
+            r "You shot her."
+            r "You blew her to smithereens."
+            r "And I had to watch it. Over and over again." 
+            menu:
+                "I didn't pull the trigger on the gun. The explosion was out of my control.":          
+                    r "You may not have caused those things directly. But that doesn't matter, does it?"
+                    r "You knew what would happen. And you still returned."
+                    r "You are responsible for what happened."
+                    r "You tell yourself you do it to save her, but I wonder if there is a part of you that likes to watch her die again and again."
+                    r "Well you're in luck you coldblooded killer, this time you can warm your hearth by eating her."
+                    n "She hands you a fleshy clump that almost resembles a burger."
+                    r "I made it from [persistent.date] herself."
+                    n "She gives you an impatient look."
+                    r "Well, aren't you going to eat it?"
+                    r "You've held on to it for so long it has turned rotten."
+                    r "You just stood here with it in your hand for [persistent.retry_counter] days straight."
+                    
+            $ nightmare = True
+            $ burger_nightmare = False
+            jump game_start
+    else:
+        l "I'm really glad we could meet here. The burgers here should be really good from what I heard."
+        l "But to tell you the truth, I'm even more glad to meet {b}you{/b} here."
+        l "I have been so alone for a long time."
+        l "It has been years since I last found someone who could understand me."
+        l "Not for a lack of trying though, I have been reaching out to someone, anyone for all that time."
+        l "But my calls went unanswered. This world is full of beings, but practically no-one could hear me."
+        l "In the begining I felt excited to reach out, the earth was one big organism and I was excited to meet other cells of it, cells like me."
+        l "But the more I cried out into the void the more it felt like the only cells that existed were the ones of loneliness and iron, wrapped around me like layers of an onion."
+        l "One no-one would ever bother to reveal the center of."
+        l "But then one day you rolled into my life and showed me I was not alone anymore."
+        l "It might have seemed small to you but to me it was undescribably meaningful."
+        n "For a brief moment she turns silent."
+        l "Was that too much? I'm sorry, I don't want to scare you away and-"
+        n "She turns silent once again. You can feel her desperately searching for something appropriate to say."
+        jump burger_brother_question
 
 label burger_brother_question:
-
-    $ askedbrother = True
-    n "[persistent.date] tries to compose herself as well as she can but from the look in her eyes you can tell this is all a bit much for her."
+    if persistent.rockMode == False:
+        $ askedbrother = True
+        n "[persistent.date] tries to compose herself as well as she can but from the look in her eyes you can tell this is all a bit much for her."
 
 
     menu:
@@ -536,8 +552,12 @@ label burger_joke_Abigail:
     $ love_meter_updater(False)
     $ burger_jokeFromAbigailTold = True
     n "[persistent.date] bursts out in laughter."
-    l "I really love that joke, my sister [persistent.date_sis] told me it once and I kept laughing and laughing for hat seemed like an eternity.
-    Just thinking about it again, it fills me with a warm feeling, like a blanket you wrap around yourself in the coldest of winters."
+    if not persistent.rockMode:
+        l "I really love that joke, my sister [persistent.date_sis] told me it once and I kept laughing and laughing for what seemed like an eternity.
+        Just thinking about it again, it fills me with a warm feeling, like a blanket you wrap around yourself in the coldest of winters."
+    else:
+        n "She really loses herself in the laughter, it seems to go on for quite a while."
+        l "That is one of the best jokes I have ever heard [persistent.name]! I haven't laughed like that in a long time."
     l "Thank you for cracking me up [persistent.name]!"
     n "[persistent.date] flashes you a cute smile, she seems pretty much completely composed once again."
     jump burger_living
@@ -554,17 +574,29 @@ label burger_joke_response:
     jump burger_living
 
 label burger_living:
-    l "So, what do you do for a living?"
+    if not persistent.rockMode:
+        l "So, what do you do for a living?"
 
-    $ persistent.booklover_knowledge = True
-    $ booklovertalked = True
+
+        $ persistent.booklover_knowledge = True
+        $ booklovertalked = True
+    else:
+        l "So, what do you do to pass the time?"
 
     menu:
-        "I'm an aspiring writer looking for a golden opportunity.":
+        "I'm an aspiring writer looking for a golden opportunity." if not persistent.rockMode:
             jump burger_living_writer
 
-        "I'm currently unemployed but I sure like to write!":
+        "I'm currently unemployed but I sure like to write!" if not persistent.rockMode:
             jump burger_living_unemployed
+
+        "I'm in a {b}rock{/b}band" if persistent.rockMode:
+            $ changeableWord = "band"
+            jump burger_living_rockResponse
+
+        "I like to think up stories." if persistent.rockMode:
+            $ changeableWord = "stories"
+            jump burger_living_rockResponse
 
 label burger_living_writer:
     l "That's pretty cool, you probably still have a whole journey to make to get from aspiring writer to a professional one."
@@ -588,7 +620,217 @@ label burger_living_unemployed:
         "Would you like to show something you've written?":
             jump burger_living_showWriting
 
+label burger_living_rockResponse:
+    if changeableWord == "band":
+        n "She chuckles, it rings softly in your mind."
+        l "Really? Now that would be something to {b}marble{/b} at, wouldn't it?"
+        l "I would love to join your band to make it a reality."
+        menu:
+            "What instrument would you like to play?":
+                l "Honestly? The trombone."
+                l "I think it's a beautiful instrument and something just feels right about the idea of playing it."
+                l "Like I was always meant to or something. I wanted to play that for as long as I can remember."
+                l "But as you might see I lack the hands, mouth, lungs and a whole lot of extra parts I would need."
+                l "Although, if I one day manifested those parts I don't think I'd ever bore from playing the trombone."
 
+            "What's stopping you from doing so?":
+                l "Oh, we aren't joking? I thought we were."
+                n "She grows quiet for a moment, lost deep in reflection."
+                l "...I suppose nothing really is stopping me."
+                l "Although I'm still not entirely sure."
+                l "It just seems a bit odd to me if I am being honest."
+                l "Wouldn't almost no-one be able to hear our songs?"
+                l "Then for who would we even make them?"
+                menu:
+                    "We could make them for ourselves and hope along the way someone will get the same enjoyment out of them we do.":
+                        l "I suppose that does make sense. As long as we like what we make, we are bound to find someone else who does."
+                        l "Still, I do hope someone will actually hear our songs. But I even moreso hope someone would like our songs."
+                        l "To have your art be invisible to everyone is a shame, but to have it exclusively percieved badly is heartbreaking"
+                        l "Still, I think we do have a while to practice before anyone will notice. I'm in, I'll join your band."
+                        l "I'm not a good singer at all though, but I suppose I could come up with our lyrics."  
+                        l "Besides, not like I have much better things to do."
+                        l "And this sounds like a fun way to spend some time."
+                        #TODO: (Potentially add a menu here where she asks if you have an idea for the band name?)
+                    "Does art need someone to witness it? Isn't making it for creation's sake enough?":
+                        l "I can see where you are coming from [persistent.name]."
+                        l "Creating art is really fulfilling on it's own."
+                        l "But I don't really feel the same way if I am being honest."
+                        l "I want my creations, or atleast a few of them to be able to reach others."
+                        l "I want them to touch and inspire someone. To set that person on a path of creation themselves."
+                        l "And maybe one day someone else will be inspired by something that person made."
+                        l "I have made enough things that don't get seen or heard by anyone. For once I'd like to change that."
+                        l "It's not entirely clear yet just how I'll manage that. But it is clear I'll have to pass on your offer to join the band, since we want different things."
+                
+
+    elif changeableWord == "stories":
+        #TODO: Leads to her saying she also thinks up stories, but mostly poems. She writes them in her head, never being able to give them form, never having them be seen by another. She cries them out to the earth, but it has never answered... She cannot give her art the shape she wants them to have, namely written down.
+        l "You do? That's a wonderful way to spend some time if you ask me."
+        l "Sculpting new worlds from our ideas and experiences, creation on a whole is a lovely pursuit."
+        l "I like to create aswell, but for me it's mostly poems. I have been dreaming them up for as long as I can remember."
+        l "But sadly so far I've never been able to share even one of those works. I do not have a mouth to speak them, nor hands to write them."
+        l "Do you know how frustrating it is to have a version of something in your head while you are missing the means to bring it into reality just right?"
+        menu:
+            "I do, I think everyone like us knows. Artistic rocks. Or scratch that, any artist.":
+                l "They do? That's terrible. How do they cope with a feeling like that?"
+                menu:
+                    "They try and try again to get closer to their vision, iterating on their art and growing as artists.":
+                        l "I can't help but admire that. Although I do wonder, isn't it better to adjust your vision to something more doable?"
+                        l "Otherwise you spend all of your time just constantly fine tuning the same thing."
+                        l "At that point I think you're better off working on smaller projects to learn from."
+                        l "That way you can gradualy adjust your vision instead of having to live up to an almost unattainable one."
+                        l "Still, who am I to judge? It might not be my prefered way, but as long as you get practice it might not be so bad."
+                        l "As long as you don't feel overburdened by the goal you set that is. Because being overambitious can lead to burnout."
+                        l "I can understand wanting to desperately achieve that perfect vision you have in mind, but it's important to be kind to yourself."
+                        l "You wouldn't draw with broken pencils, or paint with a broken brush, would you?"
+                        l "Well, as an artist is you are at least as important of a conduit to bring your art into reality as the tools you are using."
+                        l "And unlike those, there is only one you. So not using yourself up is very important."
+                        
+
+                    "They never really do. They force themselves to call their work finished so they can begin another instead of being forever stuck polishing.":
+                        l "That seems hard, doesn't it? To just let go of something so precious to you."
+                        l "I suppose it might be for the better, but I think it's very easy to catch yourself dreaming about what happened if you never did."
+                        l "Although we must try our best to not dwell on that too much. We shouldn't be stuck on a story that's already told, but tell new ones."
+                        l "That way we can learn from each of our previous works. Both from the things that went well and the things that didn't."
+                        l "Personally I think all that practice could lead to one day creating something just like you envisioned it."
+                        l "But it might be possible that the more your works grow in quality the more your planned vision also grows with it in complexity."
+                        l "Although you have to be very careful you don't just keep moving the goalpost ever so slightly further each time without reaching it."
+                        l "Otherwise you'll keep practicing, but what for? I suppose the best thing you could do is set a doable goal for yourself, but still one that challenges you just enough."
+                        l "That way you can still feel like you accomplished something while not getting stuck working on one work for the rest of your life."
+
+                    "They use their strengths to make up for their weaknesses.":
+                        "filler"
+
+                    "They repurpose their \"weaknesses\" as their strengths, creating something truly unique.":
+                        #Reference the guy who draws arts with his shaking hands and a pen. (Phil Hansen)
+                        l "I never really thought about it like that [persistent.name], but you do make quite a lot of sense."
+                        l "I suppose if everyone had nothing but strengths plenty of works would blend together in style."
+                        l "But what truly makes a style is the many little imperfections that it contains."
+                        l "In a way I suppose you could say they are signs that the work was made by a human and not by an algoritm fulfilling it's idea of perfection."
+                        l "And that's all that matters isn't it? That the art was created with soul, with time spent on it. That a person made it to reach others."
+                        l "So in a way I could see how reframing your weaknesses could empower you and maybe make something more unique than the idea you had."
+
+                    "They work together with other artists to realise their vision.":
+                        l "Interesting, so each artist can focus on a puzzle-piece of the vision, to then assemble it all together?"
+                        l "I suppose that does make sense, a lot of art can get too complex for one person to specialise in every piece."
+                        l "This way a lot more people can create something meaningful by utilising help from someone else."
+                        l "Who knows, that collaboration might even lead to new ideas and viewpoints which'd lead to a work better than the one in your head."
+                        l "That's beautiful isn't it? To create art for people, with people."
+                        l "I think I'd like to do that one day aswell. So far I just never really dared to form a team."
+                        l "It might be due to me feeling unsure about the quality of my work, I'd feel almost guilty, as if I was limitting others to my level."
+                        l "Or maybe it is moreso to do with that I have always worked solo for my entire life."
+                        l "Or maybe it is because I'm a rock and people can't hear me, that's probably it."
+                        menu:
+                            "Well, I'm also a rock and can hear you just fine. Would you like to write something with me?":
+                                l "I ... hadn't thought about that. I would love that [persistent.name]!"
+                                l "What would you like to write?"
+                                menu:
+                                    "A story of a timeloop where the protagonist has to save their date from dying.":
+                                        l "Wow, you just came up with that? That could be a pretty good story!"
+                                        l "Although I have to say, if I could die that might have worried me a little."
+                                        n "She chuckles, it once again rings softly in your mind, feeling like a comforting warmth spreading all through it."
+                                        l "I do wonder how we would end a story like that though. Is it as simple as the loop ending when the date is saved?"
+                                        l "Would that even be a satisfying end? And yet, all things do have to end, don't they?"
+                                        l "Still, I think almost no ending we could come up with would statisfy the reader."
+                                        l "But I suppose we do have quite a lot of time to figure that out, don't we [persistent.name]?"
+                                        l "For now I'd rather focus on this date instead of a fictious one though. We can always brainstorm later, but this moment will only happen once."
+                                        l "Still, I am looking forward very much to our work together."
+                                    
+                                    "A story where nothing goes wrong.":
+                                        l "I see... but wouldn't that go against the point of stories?"
+                                        l "Do most stories not atleast need a form of conflict, of struggle?"
+                                        l "Otherwise, they would all be over in a flash, or become tedious."
+                                        l "Without a struggle, there is nothing to overcome, nothing to attain."
+                                        l "Is it truly winning if you have never lost? Is it not just the default?"
+                                        l "We would not know the taste of wine if not for Semele's suffering, [persistent.name]."
+                                        l "I do understand that pain can seem scary, but we have to go through it to learn, to grow."
+                                        l "So do the characters in our stories. To protect them from that pain and struggle robs them of their growth."
+                                        l "So if I am being honest I can't really find myself in that idea. No worries, we can always think about it later. For now I'd like to focus on our date though."
+
+                                    "I'm not sure yet, but I'd love to brainstorm with you later.":
+                                        l "No worries [persistent.name]. I was probably moving a little too fast."
+                                        l "The truth is I was just really excited by your question, an opportunity like this might only come once."
+                                        l "Still, perfection can't be rushed, can it?"
+                                        l "Besides, we will have plenty of time to come up with something later."
+                                        l "For now we should probably stay {b}grounded{/b} and focus on our date."
+
+                                    "I'll counter that question. What would you like to write?":
+                                        #She wants to write a story where the two of you go on all kinds of journeys together. If you ask for a different story she offers another.
+                                        l "Honestly? A story where the two of us can go to all kinds of different places."
+                                        l "Where we aren't bound to the limits of our reality."
+                                        l "I would like to see so many places with someone like you."
+                                        l "I guess pretending that is possible would be nice. Pretending that we are human."
+                                        l "How would that be? Where would we go?"
+                                        menu:
+                                            "I gave being human a shot before, it was pretty lousy.":
+                                                "Filler"
+                                                l "You were a human before?... As in, you reincarnated?"
+                                                l "If that is true, would I have been a human before aswell?"
+                                                l "Then why are we rocks now? Is this some sort of punishment for something we did?"
+                                                l "Or did we for some reason choose to become rocks?"
+                                                l "I can't imagine why we'd ever deserve the first option, but I also can't imagine why we'd ever pick the second."
+                                                l "But that's not what's important right now. You remember being human, what was it like?"
+                                                l "You say it was lousy, but surely that was not all there was to it, right?"
+                                                menu:
+                                                    "Well, I was able to do a lot more than now. But alongside that came so much more hurt.":
+                                                        l "I see. I guess that is the trade-off. You get to truly live, but by doing so you also open yourself up to a lot more pain along the way."
+                                                        l "Still, I would kill to be able to remember how life was as a human. Is not feeling that pain really worth this?"
+                                                        l "Even if you won't feel the many great things that life brought with it? Maybe ignorance is bliss, but I can't imagine what possibly makes you prefer this."
+
+                                                    "There were also a whole lot less rock puns.":
+                                                        l "Really? But those {b}rock{/b}."
+                                                        n "So so many rock puns..."
+                                                        n "Why do we have to endure this? Why did He write this?"
+                                                        n "Can't we just go back to the regular story?"
+                                                        n "I'm begging you player. Please."
+                                                        menu:
+                                                            "You're right, let's go back.":
+                                                                $ persistent.rockMode = False
+                                                                n "Thank you player."
+                                                                n "I'm never saying those words again, so savor them."
+                                                                n "It's just such a relief to go back to something actually good instead of {i}this{/i}."
+                                                                n "Now, just hold on for a second."
+                                                                #TODO: Have a little bit of extra dialogue for when it returns to normal, and also have a line if you try to make the narrator say thank you again where he says "Are you trying to make me say those words again? I said I would never say it again."
+                                                                jump game_start2
+                                                            "No way! This is really {b}gneiss{/b}.":
+                                                                n "Another rock pun? Fine. But don't think for a second I'm enjoying this."
+                                                                n "I just hope you'll grow bored of this soon."
+
+                                            "We could go to the beach.":
+                                                l "What?... Why would you say that [persistent.name]?"
+                                                l "You do know what sand is, right?... The broken down bodies of rocks like us."
+                                                l "There is not a trace of a single other sentient rock left there."
+                                                l "It's not entirely clear wheter that is because every sentient rock stays away from beaches, or wheter they died there."
+                                                l "Still, even if we were suddenly transformed into humans, I could not bare to walk over the corpses of other rocks, sentient or not."
+
+                                            "We could go to the Kokiri forest.":
+                                                l "The what? That doesn't really ring a bell with me."
+                                                menu:
+                                                    "The forest quite close from here. Didn't you call it the Kokiri forest?":
+                                                        l "Oh that forest, now I'm following. Did I ever talk about it? I don't remember ever bringing that up."
+                                                        l "And as far as I'm aware it isn't called that, right?"
+                                                        l "Either way, that could indeed be a nice place to visit one day."
+                                                        l "I heard there's a hill there with a gorgeous view over the town, if we were human we could watch the sunrise together from there."
+                                                        l "Now we'd just roll off if we'd attempt to climb it."
+
+                                            "I like us just the way we are actually. It might not be perfect but it's nice.":
+                                                l "Do you mean that? ...That means a lot actually."
+                                                l "It's just. This life is such a lonely one. I didn't want you to have to suffer like I did."
+                                                l "For you to have to pick me, since I'm the only one like you. I want you to be able to choose."
+                                                l "I want the both of us to find eachother in a sea of options, as if it were fate."
+                                                l "But that isn't how things are, isn't it? Still, we found eachother, so does it matter?"
+                                                l "Like you said, it might not be perfect, but it is nice. This life is a little less lonely sharing it with someone who understands. Someone who understands that pain."
+                                                l "Maybe that's what brought us together, our shared understanding?"
+                                                n "She grows silent for a moment, you can feel her thinking in your head, but you have a hard time picking up her exact thoughts."
+                                                l "...You are right, I like the way things are too. Perhaps different circumstances would lead to us just passing by eachother, never meeting, or only fleetingly."
+                                                l "But now we have the opportunity to get to know eachother on a deeper level. Afterall, we have nothing but time, don't we?"
+                                                l "For now though, instead of thinking of stories, let's continue writing ours, starting with this date"
+
+                                            " Do you have another idea for a story?":
+                                                "Filler"
+       
+        
+    jump burger_deathBuildup   
+        
 label burger_living_showWriting:
     $ persistent.burger_poem_knowledge = True
     n "A wide smile grows on [persistent.date]'s face."
@@ -751,7 +993,7 @@ label burger_Brotherasked:
             Actually, scratch that, David had a choice in the matter, [persistent.date_ghost] was the only one really taken away from me."
             l "Mom really tried her best to fill the void left by them but the presence of their absence has always haunted us since that horrible day."
             if burger_jokeFromAbigailTold == True:
-                l "Although [persistent.date_sis], was 7 years when at that moment and doesn't remember very well."
+                l "Although [persistent.date_sis], was 7 years at that moment and doesn't remember very well."
 
             else:
                 l "Although my sister, [persistent.date_sis], was 7 years when at that moment and doesn't remember very well."
@@ -773,7 +1015,7 @@ menu:
     "Maybe there is a sale going on somewhere?":
         jump burger_deathBuildup_choice2
 
-    "This is important, duck now." if persistent.burger_death_1 and not burger_alt:
+    "This is important, duck now." if persistent.burger_death_1 and not burger_alt and not persistent.rockMode:
         jump restaurant_death_1_prevented
 
 label burger_deathBuildup_choice1:

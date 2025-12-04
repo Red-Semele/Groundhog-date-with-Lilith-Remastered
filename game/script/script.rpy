@@ -52,6 +52,8 @@ define cbv = Character("S.")
 
 
 label start:
+     $ _quit_slot = "quitsave" #This makes sure that when quiting it gets saved as "quitsave"
+     
      
 
      if persistent.firstboot == None: 
@@ -59,6 +61,7 @@ label start:
           #This line ensures all flags that don't need constant resetting get reset only the first time the player boots the game.
           default persistent.firstboot = True
           default persistent.name = None
+          default persistent.canSave = False
           #Deaths:
           default persistent.lildeaths = 0
           default persistent.retry_counter = 0
@@ -314,9 +317,10 @@ label start:
           default persistent.lilaToldAbbyOpportunity_knowledge = False
           default persistent.lilaCallNeedsAbbyProof_knowledge = False
           default persistent.lilaCallRecievedAbbyProof = False
+          default persistent.rockMode = False
 
           #Non-persistent
-
+          default from_menu = False
           default called_phone = False
           default love_meter = 3
           default nightmare = False
@@ -333,6 +337,7 @@ label start:
           default hugRequestedBeforeDeath  = False
           default carDescription = ""
           default changeableWord = ""
+          default kokiri_goalSurvive = False
           # Locations:
           default burger_poem_cleancheck = False
           default burger = False
@@ -454,6 +459,7 @@ label start:
           default demetrius = False
           default adriel = False
           default currentcar = False
+          default callsMade = 0
           default love_points = 0
           default booklovertalked = False
           default musiclovertalked = False
@@ -464,7 +470,7 @@ label start:
           default minor_love_offence = 0
           default major_love_comfort = 0
           default major_love_offence = 0
-          default rockMode = False
+          
           default burger_jokeFromAbigailTold = False
           default onlyDates = False
           default death_narration = ""
@@ -475,7 +481,11 @@ label start:
           
           default keySeenNow = False
           default ending_check = ""
-          
+          default abbyCalled = False
+          default lilaCalled = False
+          default jamesCalled = False
+          default davidCalled = False
+          default policeCalled = False
 
           #Beach
           default beachStart_doneBook = False
@@ -500,7 +510,7 @@ label start:
      jump gdwl_functions
 
      #NON-PERSISTENT FLAGS
-     $ resetRegularFlags()
+     $ resetRegularFlags() #TODO: This is not accessible because you jump to the functions first. But also, you can't use this function without establishing it, right? Try to find a fix for that later
 
 
 
@@ -539,7 +549,7 @@ label after_setup:
      label nameSelect:
           if not hasattr(persistent, "name"):
                     $ persistent.name = None
-          if persistent.retry_counter == 0 and persistent.name == None: 
+          if persistent.retry_counter == 0 and persistent.name == None or from_menu:
                
                python:
                     if (persistent.date_sis is None or persistent.date_dad is None or persistent.date_ghost is None  or persistent.date_mom is None or persistent.mysteriousCallerName is None):
@@ -565,13 +575,14 @@ label after_setup:
                if persistent.name == "R0ck_0n!":
                     $ persistent.name = None
                     n "Cheatcode activated, enter your name."
-                    $ rockMode = True
+                    $ persistent.rockMode = True
                     jump nameSelect
                
                if persistent.name == "Dev":
                     $ persistent.name = None
                     n "Cheatcode activated, enter your name."
                     $ allProgress()
+                    $ persistent.canSave = True
                     jump nameSelect
                
 
@@ -588,7 +599,15 @@ label after_setup:
                     $ persistent.fish = True
                if persistent.name == "Väinämöinen":
                     $ persistent.fisher = True
-              
+
+               if from_menu:
+                    $ from_menu = False
+                    if persistent.rockMode:
+                         n "Test"
+                         jump game_start
+                         
+                    
+                       
           
               
              
@@ -620,7 +639,7 @@ label game_start:
                n "Maybe you can make it just a tiny bit different."
                n "Your phone once again blares \"Baby it's cold outside\" even though it is anything but cold outside."
                n "It's her, again."
-               if rockMode == True:
+               if persistent.rockMode == True:
                     n "Actually... I'm not sure, something feels different."
                     n "Hang on, are you... are you a rock?"
                     n "You are!"
@@ -636,7 +655,9 @@ label game_start:
                     menu:
                          "*Remember that all rocks have a telepathic network to communicate with eachother and use it to reach out to [persistent.date].*" if persistent.psychicConnection_knowledge:
                               "Filler"
-                         "*Struggle against your inescapable prison of a body and try to roll to the phone.*" if not rockFloorFail:
+                              #TODO: Fill in.
+                              jump Game_start2
+                         "*Struggle against your inescapable prison of a body and try to roll to the phone.*" if not persistent.psychicConnection_knowledge:
                               n"You use all your strength to slowly wiggle a little bit, falling out of your bed and landing right on the soft carpet near it."
                               n "One problem... your phone is lying on the nightstand beside your bed and there is no way you are getting up there from the ground."
                               n "So, that brings us back to the question, what are you going to do?"
@@ -650,29 +671,34 @@ label game_start:
                                         l "[persistent.name]..."
                                         l "Can you hear me?"
                                         l "It's hard to set up a psychic link when you are thinking about other things."
-                                        $ persistent.psychicConnection_knowledge = True
+                                        
                                         menu:
                                              "...What? Psychic link? What are you talking about?":
-                                                  l "Huh? Are you feeling alright [persistent.name]? It's pretty hard to forget that all rocks have a psychic link to communicate..."
+                                                  l "Huh? Are you feeling alright [persistent.name]? It's pretty hard to forget that all sentient rocks have a psychic link to communicate..."
                                                   l "How else would we talk silly? With our mouths?"
                                                   n "You can hear her chuckle in your mind."
                                                   n "I guess that would be impossible."
-                                                  menu:
-                                                       "Then why did you call me on your phone? Why do we even have phones?":
+                                                  menu rockLinkChoice:
+                                                       "Then why did you call me on your phone? Why do we even have phones?" if not persistent.psychicConnection_knowledge == True:
                                                             n "..."
                                                             n "Look player, I know it's weird."
-                                                            n "But he was adamant about adding this, so it must mean something, right?"
+                                                            n "But He was adamant about adding this, so it must mean something, right?"
                                                             n "I can't just be narrating the work of a madman..."
                                                             n "{size=*2.5}Right?{/size}"
                                                             n "So, maybe it's best if we don't question it too much, let's just pretend like you didn't ask that question in the first place."
+                                                            $ persistent.psychicConnection_knowledge = True
+                                                            jump rockLinkChoice
+                                                            
                                                        "You're completely right, I guess I just forgot, silly me.":
                                                             n "Another soft chuckle in your mind."
                                                             n "It feels weird, cozy in a way, and yet slightly... invasive?"
                                                             n "Your mind is the only place that is truly fully yours, and now... it isn't anymore."
                                                             l "Don't even mention it [persistent.name], it can happen to anyone of us."
+                                                            $ persistent.psychicConnection_knowledge = True
                                                             #TODO: Add a version of the normal path but with rocks stuff, Lilith can't emote because she is a rock.<br/>At the end she will not die.<br/>Add a path to all three main restaurants."
                                                             #Make the two of you move by getting stuck in people's shoes, make the two of you not able to die etc. Make the two of you just wait until you erode, and even then you are alive. Wait until the earth consumes the sun. Have the two of you still being able to communicate, but after less than a hundred years you have said pretty much everything, and then you are just floating around in space, divided in your atoms, as you witness time in a form no mind can take well. Make the end say "rock on"
                                                             #It's about how an ending is so much better than pure infinity without one.
+                                                            jump Game_start2
                                           
           else:
                n "You awaken in cold sweat as your phone begins to blare \"Baby it's cold outside\" even though it's nowhere near winter."
@@ -703,11 +729,11 @@ label game_start:
                          $ keySeenNow = True
                          jump bedCheck
 
-                    "Hey you, narrator. Give me the good ending where [persistent.date] survives. Or else I'm erasing all my progress." if persistent.threatenNarratorForEnding == True and lilithAliveAndRetriedCounter == 0 and not persistent.threatenNarratorForEnding_noUse:
+                    "Hey you, narrator. Give me the good ending where [persistent.date] survives. Or else I'm erasing all my progress." if persistent.threatenNarratorForEnding == True and persistent.lilithAliveAndRetriedCounter == 0 and not persistent.threatenNarratorForEnding_noUse:
                          jump threatenNarratorForEnding
                
 
-                    "Hey you, narrator. Give me the good ending where [persistent.date] survives and we still end up together. Or else I'm erasing all my progress." if persistent.threatenNarratorForEnding == True and lilithAliveAndRetriedCounter > 0  and not persistent.threatenNarratorForEnding_noUse:
+                    "Hey you, narrator. Give me the good ending where [persistent.date] survives and we still end up together. Or else I'm erasing all my progress." if persistent.threatenNarratorForEnding == True and persistent.lilithAliveAndRetriedCounter > 0  and not persistent.threatenNarratorForEnding_noUse:
                          label threatenNarratorForEnding:
                               n "I knew I shouldn't have given you that mayonaise the other time..."
                               n "Now things have gone to your head."
@@ -721,7 +747,7 @@ label game_start:
                                         n "But this- this is something else player."
                                         n "If I really have to I can tell this story over and over and over again."
                                         n "It is a loop after all, isn't it? So maybe it's only fitting."
-                                        if lilithAliveAndRetriedCounter > 0: 
+                                        if persistent.lilithAliveAndRetriedCounter > 0: 
                                              n "And when you go through this game all over again only to find no new leads, what are you going to do?"
                                              n "Threaten me again?"
                                              n "Have to do it all over once again?"
@@ -873,8 +899,14 @@ label game_start:
 label Game_start2:
           #Here you can see how you insert a name.
           if big_sis_mode == False:
-               if playerCalledSomeone == True:
+               if callsMade == 1:
                     l "Welcome back [persistent.name]! So, like I was saying before, where do you want to go to today?"
+               elif callsMade == 2:
+                    l "Welcome back [persistent.name]."
+                    l "{size=*0.5}That took you pretty long...{/size}"
+                    l "So, where do you want to go to?"
+                    l "{size=*0.5}I'll ask you again to refresh your memory.{/size}"
+
                else: 
                     if persistent.name == "Fartyfarty": 
                          l "Hey-"
@@ -896,9 +928,12 @@ label Game_start2:
                          n "Anyway, change your name."
                          jump nameSelect
                     else:
-                         l "Hey [persistent.name]!"
-                         l "It's me, [persistent.date]."
-                         l "I'm just calling you to see where you'd like to go to for our date."
+                         if not rockMode:
+                              l "Hey [persistent.name]!"
+                              l "It's me, [persistent.date]."
+                              l "I'm just calling you to see where you'd like to go to for our date."
+                         else:
+                              l "I was just checking to see where you'd like to go for our date. "
                          l "I guess since you were so kind to let me come up with three suggestions I'll let you pick."
                          n "There's a certain kind of playfulness in her voice, you can tell that she is excited for your date."
                          l "So the three options you can pick are that one burger place I told you about, the chinese restaurant or that one cute cafe I haven't checked out yet but heard some good things about."
@@ -1014,36 +1049,38 @@ label phone_start_choices:
 
      menu:
  
-          "How do burgers sound?" if not persistent.restaurant_subfolder:
+          "How do burgers sound?" if not persistent.restaurant_subfolder or persistent.rockMode:
                jump burger_start
 
-          "I heard the cafe has many exotic fish that swim around in aquariums. I'd like to go there to see them." if not persistent.restaurant_subfolder and not persistent.cafe_taste_knowledge:
+          "I heard the cafe has many exotic fish that swim around in aquariums. I'd like to go there to see them." if (not persistent.restaurant_subfolder and not persistent.cafe_taste_knowledge) or (persistent.rockMode and not persistent.cafe_taste_knowledge):
                jump cafe_start
-          "I heard the cafe has many exotic fish that swim around in aquariums. You'll absolutely love them!" if persistent.restaurant_subfolder == False and persistent.cafe_taste_knowledge:
+
+          "I heard the cafe has many exotic fish that swim around in aquariums. You'll absolutely love them!" if (not persistent.restaurant_subfolder and persistent.cafe_taste_knowledge) or (persistent.rockMode and persistent.cafe_taste_knowledge):
                jump cafe_start
+
  
-          "I'd like to go to the Chinese restaurant." if not persistent.restaurant_subfolder:
+          "I'd like to go to the Chinese restaurant." if not persistent.restaurant_subfolder or persistent.rockMode:
                jump chinese_start
  
-          "You know, I have changed my mind, can't we just go take a walk in the park or something?" if persistent.burger_death_1 and persistent.cafe_death_1 and persistent.chinese_death_1 and not persistent.locations_subfolder and not onlyDates:
+          "You know, I have changed my mind, can't we just go take a walk in the park or something?" if persistent.burger_death_1 and persistent.cafe_death_1 and persistent.chinese_death_1 and not persistent.locations_subfolder and not onlyDates and not persistent.rockMode:
                jump phone_otherPlans
  
-          "I think it would be better if we didn't go on this date, for both of our sakes." if persistent.burger_death_2 and persistent.cafe_death_2 and persistent.chinese_death_2 and not persistent.other_subfolder and not onlyDates:
+          "I think it would be better if we didn't go on this date, for both of our sakes." if persistent.burger_death_2 and persistent.cafe_death_2 and persistent.chinese_death_2 and not persistent.other_subfolder and not onlyDates and not persistent.rockMode:
                jump phone_breakup
  
-          "Actually, could we meet in the Kokiri forest?" if persistent.kokiri_knowledge and not persistent.locations_subfolder:
+          "Actually, could we meet in the Kokiri forest?" if persistent.kokiri_knowledge and not persistent.locations_subfolder and not persistent.rockMode:
                jump kokiri_start
  
-          "Hang on, I just need to make another quick call and then I'll be right back." if persistent.peeked_phone or persistent.kokiri_death_2 and not called_phone and not persistent.other_subfolder and not onlyDates:
+          "Hang on, I just need to make another quick call and then I'll be right back." if persistent.peeked_phone or persistent.kokiri_death_2 and not called_phone and not persistent.other_subfolder and not onlyDates and not persistent.rockMode:
                jump phone_callMenu
  
-          "Would you like to go to the beach instead?" if persistent.beach_knowledge and not persistent.locations_subfolder:
+          "Would you like to go to the beach instead?" if persistent.beach_knowledge and not persistent.locations_subfolder and not persistent.rockMode:
                jump beach_start
           
         
  
  
-          "*Pick one of the three restaurants.*" if persistent.restaurant_subfolder:
+          "*Pick one of the three restaurants.*" if persistent.restaurant_subfolder and not persistent.rockMode:
                if kokiri_promiseCancelDate == True:
                               $ persistent.kokiriBrokenPromiseCancelDateTurnCounter += 1
                               $ kokiri_promiseCancelDate = False
@@ -1059,7 +1096,7 @@ label phone_start_choices:
                     "I'd like to go to the Chinese restaurant.":
                          jump chinese_start
           #Subfolders for the menu are below this line (Make them jump to the normal code to make sure I don't need to copy-paste complex code over and over:
-          "*Choose another location.*" if persistent.locations_subfolder:
+          "*Choose another location.*" if persistent.locations_subfolder and not persistent.rockMode:
                if kokiri_promiseCancelDate == True:
                               $ persistent.kokiriBrokenPromiseCancelDateTurnCounter += 1
                               $ kokiri_promiseCancelDate = False
@@ -1076,7 +1113,7 @@ label phone_start_choices:
                          jump phone_otherPlans
  
  
-          "*Say something else*" if persistent.other_subfolder and not onlyDates:
+          "*Say something else*" if persistent.other_subfolder and not onlyDates and not persistent.rockMode:
                menu:
                     "Hang on, I just need to make another quick call and then I'll be right back." if persistent.peeked_phone or persistent.kokiri_death_2:
                          jump phone_callMenu
@@ -1200,29 +1237,49 @@ label phone_breakup:
 
 label phone_callMenu:
      $ playerCalledSomeone = True
-     l "Oh, no problem [persistent.name]. Just give me a call when you're done."
-     n "You agree with her and hang up the phone."
-     p "Now I just need to call..."
-     menu:
-          "the police." if persistent.kokiri_death_2:
+     if callsMade == 0:
+          l "Oh, no problem [persistent.name]. Just give me a call when you're done."
+          n "You agree with her and hang up the phone."
+          p "Now I just need to call..."
+     if callsMade == 1:
+          p "Alright, now I should probably call..."
+     if callsMade == 2:
+          n "You should probably call [persistent.name] back now instead of calling everyone but her."
+          $ love_points = -1
+          $ love_meter_updater(False)
+          jump Game_start2
+     
+     menu callMenu:
+          "[persistent.date]" if callsMade == 1:
+               n "That's probably a good idea. We wouldn't want to leave her hanging."
+               jump Game_start2
+          "the police." if persistent.kokiri_death_2 and not policeCalled:
+               $ callsMade += 1
+               $ policeCalled = True
                jump phone_call_police
   
-          "[persistent.date_sis]." if persistent.abigail_call_knowledge:
+          "[persistent.date_sis]." if persistent.abigail_call_knowledge and not abbyCalled:
+               $ callsMade += 1
                $ persistent.playerCalledAbigail = True
+               $ abbyCalled = True
                if persistent.restrainingorderfamily_knowledge == True:
                     
                     #Karma
                     $ persistent.restrainingorderfamily_violation_counter += 1
                jump phone_call_abigail
   
-          "David." if persistent.david_call_knowledge:
+          "David." if persistent.david_call_knowledge and not davidCalled:
+               $ callsMade += 1
                $ persistent.playerCalledDavid = True
+               $ davidCalled = True
                if persistent.restrainingorderfamily_knowledge == True:
                     #Karma
                     $ persistent.restrainingorderfamily_violation_counter += 1
                jump phone_call_david
   
-          "[persistent.date_ghost]." if persistent.james_call_knowledge:
+          "[persistent.date_ghost]." if persistent.james_call_knowledge and not jamesCalled:
+               $ callsMade += 1
+               $ jamesCalled = True
                $ persistent.playerCalledJames = True
                if persistent.restrainingorderfamily_knowledge == True:
                     #Karma
@@ -1230,11 +1287,13 @@ label phone_callMenu:
                jump phone_call_james
   
           "[persistent.date_mom]." if persistent.lila_call_knowledge:
+               $ callsMade += 1
                $ persistent.playerCalledLila = True
                if persistent.restrainingorderfamily_knowledge == True:
                     #Karma
                     $ persistent.restrainingorderfamily_violation_counter += 1
                jump phone_call_lila
+
  
 label phone_call_police:
      n "A bored sounding man picks up the phone."
@@ -1248,8 +1307,8 @@ label phone_call_police:
                     n "After some more attempts at convincing them you hear one long sigh, so long in fact that for a moment you fear them passing out."
                     n "Luckily they shortly after respond, they reluctantly agree to check the place out at the time you specified."
                     n "At times like these you are very lucky that there is so little going on in your town."
-                    n "The man hangs up the phone and you call [persistent.date] back."
-                    jump Game_start2
+                    n "The man hangs up the phone."
+                    jump phone_callMenu
           "*Tell the police about the car crashing in against the cafe's doors*":
                $ car_caught = True #This will tell you the car has been caught.
                jump policeResponse
@@ -1289,7 +1348,7 @@ label phone_call_abigail:
                          $ persistent.drownRaven_knowledge = True
                          a "I'm going to hang up now. If you ever want to call me again do it before this moment and not after it. Hopefully I won't hear from you, otherwise that means [persistent.date] is truly in danger."
                          n "She hung up the phone."
-                         jump Game_start2
+                         jump phone_callMenu
 
 
 
@@ -1319,9 +1378,11 @@ label phone_call_abigail:
                                    a "Well, I suppose if what you are saying is true you will be able to gather better proof, right?"
                                    a "You're lucky [persistent.date_nickname] really needs this date, otherwise I'd probably tell her all about this."
                                    a "Just try to act normal to her, alright? She doesn't deserve to hear any of this."
+                                   a "Or maybe she will grow to understand that she doesn't need people like you."
                                    a "Now I have to go, don't ever call me back"
                                    n "She hung up on you, this is going to be really awkward on family gatherings if you ever get that far."
-                                   jump phone_start_choices
+                                   jump phone_callMenu
+
                               "I actually don't have any proof left" if persistent.abigail_numberfakeout and abby_phone_counter > 0:
                                    a "I see..."
                                    a "It still doesn't sound very plausible but there is a chance you might be telling the truth."
@@ -1329,7 +1390,7 @@ label phone_call_abigail:
                                    a "I can't believe I'm even entertaining the thought that this is real, but if it somehow ends up helping [persistent.date_nickname], then it's worth a shot."
                                    a "But for now, don't leave my sis waiting, alright [persistent.name]?"
                                    n "She just hung up on you. You should indeed not let [persistent.date] wait much longer."
-                                   jump phone_start_choices
+                                   jump phone_callMenu
 
  
  
@@ -1398,7 +1459,7 @@ label phone_call_abigail:
                                                             a "Now don't leave my sis waiting and try your best to save her, alright?"
                                                             a "Goodbye."
                                                             a "And with that she hung up the phone."
-                                                            jump Game_start2
+                                                            jump phone_callMenu
 
                                              "Do you know anything about an opportunity you might not be taking related to a game design competition?" if persistent.lilaToldAbbyOpportunity_knowledge:
                                                   a "..."
@@ -1417,7 +1478,7 @@ label phone_call_abigail:
                                                                       a "Don't get me wrong, I hope you manage to break the loop, but this way my secret might be last longer than it would otherwise."
                                                                       a "And if that is the case I'd rather keep it that way for now. I'm not ready yet to discuss it with you, or with anyone for that matter."
                                                                       a "I am going to hang up now. Goodbye [persistent.name]."
-                                                                      jump Game_start2
+                                                                      jump phone_callMenu
 
                                                                  "Sam told her the entire thing (Lie)":
                                                                       a "Really? So she knows about the job offer I got from winning that competition? And you do aswell?"
@@ -1508,7 +1569,7 @@ label phone_call_abigail:
                                                                                 a "Good luck and goodbye [persistent.name]!"
                                                                                 a "Keep Lilly safe will you?"
                                                                                 n "And with that she hung up."
-                                                                                jump phone_start_choices
+                                                                                jump phone_callMenu
                                                             
                                                                            "I see, and what are those games about if you don't mind me asking?" if abby_askedAboutGameTheme:
                                                                                 n "It's quiet once again, but this time it's different."
@@ -1551,7 +1612,7 @@ label phone_call_abigail:
           a "[phone_caller]? That doesn't sound familiar, sorry."
           n "Just like that she hung up on you."
           n "Maybe you should try using your real name? With a bit of luck [persistent.date] has already spoken about you to her sister."
-          jump phone_start_choices
+          jump phone_callMenu
 
 label phone_call_abigail_topics_distractionforlilith:
      a "Sure I can but why can't she just stay home?"
@@ -1581,7 +1642,7 @@ label phone_call_abigail_topics_distractionforlilith:
                     "Take care aswell, bye.":
                          n "She hung up."
                          $ big_sis_mode = True
-                         jump Game_start2
+                         jump phone_callMenu
 
 
 label phone_call_abigail_topics_spoketodavid_noonelovesdavid:
@@ -1600,7 +1661,7 @@ label phone_call_abigail_topics_spoketodavid_noonelovesdavid:
                a "Thank you [persistent.name]."
                a "We probably shouldn't leave [persistent.date] waiting any longer though. Good luck trying to save her and also don't forget to have fun alright?"
                n "She hung up."
-               jump Game_start2
+               jump phone_callMenu
 
 label phone_call_abigail_topics_spoketodavid_davidblameshimself:
      a "That's ridiculous!"
@@ -1613,7 +1674,7 @@ label phone_call_abigail_topics_spoketodavid_davidblameshimself:
                a "Thank you [persistent.name]."
                a "We probably shouldn't leave [persistent.date] waiting any longer though. Good luck trying to save her and also don't forget to have fun alright?"
                n "She hung up."
-               jump Game_start2
+               jump phone_callMenu
 
                                         
 
@@ -1627,16 +1688,16 @@ label phone_call_david:
      $ phone_caller = renpy.input("Enter your name.")
      $ phone_caller = phone_caller.strip()
      $ phone_caller = phone_caller.capitalize()
-     d "[persistent.name]? Well I'm not interested in what you're selling so thank you very much but I'm going to hang up no-"
+     d "[phone_caller]? Well I'm not interested in what you're selling so thank you very much but I'm going to hang up no-"
      menu:
-          "*Lie* Don't hang up! [persistent.date] asked me to call you.":
+          "Don't hang up! [persistent.date] asked me to call you. (Lie)":
                n "You hear the man laugh."
                d "I very much doubt that. Nobody loves me after what I did to them, especially not her. And who can blame them?"
                d "It should have been me instead of him, then all of them would be much happier."
                d "Now I'm going to hang up. Goodbye [phone_caller]"
                n "True to his world David hung up."
                $ persistent.david_nolove_knowledge = True
-               jump Game_start2
+               jump phone_callMenu
   
           "[persistent.date_sis] still loves and misses you. She would be happy if you come back." if persistent.david_love_knowledge:
                n "You hear the man sigh."
@@ -1663,7 +1724,7 @@ label phone_call_david:
                                         d "Now, this is getting a bit too much for me so I'm going to have to hang up the phone."
                                         d "Goodbye [persistent.name]."
                                         n "David hung up."
-                                        jump Game_start2
+                                        jump phone_callMenu
                     "*Feign ignorance* Hang on, you said that you ruined your family and then left them. What happened before you left them?" if persistent.david_blame_knowledge == True or persistent.brother_knowledge == True:
                          jump phone_call_david_whatHappenedBeforeHeLeft
                     "Well, it seems like things were pretty hard for them. [persistent.date]'s mom even had to take a second job just to make ends meet." if persistent.lilaWorkedTwoJobs_knowledge:
@@ -1691,7 +1752,7 @@ label phone_call_david:
                                    d "I just can't do this anymore. I need to go."
                                    n "He hung up on you."
                                    $ persistent.davidPayedMoney_knowledge = True
-                                   jump Game_start2
+                                   jump phone_callMenu
   
           "[persistent.date] is not mad for what happened with [persistent.date_ghost], she's just mad at you for leaving your family. She might even consider forgiving you if you give a good apology." if persistent.david_apology_knowledge:
                d "I can't face her just yet, can you tell my apology to her?"
@@ -1709,6 +1770,7 @@ label phone_call_david:
                          d "No child deserves to go through such pain. My family lost two people when James died and it was hard enough just losing one."
                          d "I can't undo the wounds I have caused, but I do hope I could, if my family accepts it, try mending them."
                          #TODO:Give the player the ability to tell [persistent.date] this. Also attempt to finish this path of the reunited ending.
+                         jump phone_callMenu
 
 
 
@@ -1722,9 +1784,8 @@ label phone_call_james:
           $ phone_caller = renpy.input("Enter your name.")
           $ phone_caller = phone_caller.strip()
           $ phone_caller = phone_caller.capitalize()
-          q "[persistent.name] eh? Sorry, that doesn't really ring a bell."
-          if not persistent.jamesFakoutNumber_knowledge:
-               $ persistent.jamesFakoutNumber_knowledge = True
+          q "[phone_caller] eh? Sorry, that doesn't really ring a bell."
+          
           menu:
                "Yeah, you don't know me. I am a friend of [persistent.date]." if not persistent.jamesFakoutNumber_knowledge and not persistent.brother_knowledge:
                     q "I also don't know a [persistent.date] so I think you might have the wrong number."
@@ -1739,7 +1800,7 @@ label phone_call_james:
                          n "Could it perhaps be [persistent.date]?"
                          $ persistent.lilithKeepsCalling_knowledge = True
                     n "This whole ordeal leaves you with more questions than answers, you should probably ask her about it sometime soon."
-                    jump Game_start2
+                    jump phone_callMenu
                "[persistent.date_ghost]? Aren't you supposed to be dead?" if not persistent.jamesFakoutNumber_knowledge and persistent.brother_knowledge:
                     q "Well I'm not [persistent.date_ghost] man and last time I checked I sure as hell wasn't dead."
                     q "I keep getting called randomy by the same number and now this?"
@@ -1754,15 +1815,17 @@ label phone_call_james:
                          $ persistent.lilithKeepsCalling_knowledge = True
                "Ah I see, I think I have the wrong number then, sorry to waste your time." if persistent.jamesFakoutNumber_knowledge:
                     n "You hang up."
-                    jump Game_start2
+                    jump phone_callMenu
 
+          if not persistent.jamesFakoutNumber_knowledge:
+               $ persistent.jamesFakoutNumber_knowledge = True
 
           if persistent.kokiri_knowledge and persistent.kokiri_death_1:
                n "The best place to ask her about something like this would probably be the kokiri forest, although you are sure she won't be pleased to know that you looked through her phone."   
           else:
                n "The only question is how you would bring something like that up, after all you had to go through her phone to even discover all of this."
                n "You decide it's better to keep this info to yourself until you find a better moment to ask her to explain."
-          jump Game_start2
+          jump phone_callMenu
      else:
           j "Ah, welcome [persistent.name]. I see you have managed to get my number?"
           j "Well it used to be my number anyway but you can still reach me through it."
@@ -1926,7 +1989,7 @@ label phone_call_james:
      label jamesLowEnergy:
           j "I have to go now, keeping up this connection asks a lot of energy from me."
           n "[persistent.date_ghost] hung up."
-          jump Game_start2                   
+          jump phone_callMenu              
  
 label phone_call_lila:
      $ persistent.familyContacted = True
@@ -1961,7 +2024,7 @@ label phone_call_lila:
                                                        li "Goodbye."
                                                        n "She hung up the phone, seems she saw right through you."
                                                        n "You might need to get Abby's help to get further with this."
-                                                       jump game_start2
+                                                       jump phone_callMenu
                                                   
                                                   "Her score last semester for my class was 14 points out of 20." if persistent.lilaCallRecievedAbbyProof:
                                                        li "So you remember that but do not remember what your mail is about?"
@@ -1980,7 +2043,7 @@ label phone_call_lila:
                                                                  li "But right now I'm taking my chance that this is just some sort of prank call."
                                                                  li "Goodbye either way."
                                                                  n "She hung up."
-                                                                 jump Game_start2
+                                                                 jump phone_callMenu
                                                   
                               "Actually I would like to talk about that later today, first I'd like to talk about your financial status if I may. Abigail has recently brought it to my attention that you are struggeling and I would like to inform you about some programs we have that could help out with that." if persistent.davidPayedMoney_knowledge:
                                    li "Oh..."
@@ -1997,18 +2060,18 @@ label phone_call_lila:
                                                   "You will, thank you for your time.":
                                                        li "Thank you aswell to make some time for this, goodbye Sam."
                                                        n "She hung up the phone."
-                                                       jump Game_start2
+                                                       jump phone_callMenu
                                              #TODO: Fill this out a bit more, and make it learnable that she is not in debt, you can confront her during the phone call in the kokiri woods about this.
   
   
   
-          "No, I am... " if not persistent.name == "Sam":
+          "No, I am [persistent.name]." if not persistent.name == "Sam":
                li "[persistent.name]? That doesn't really ring a bell right now..."
                jump call_lilaHangupPhone
                label call_lilaHangupPhone:
                     li "In any case, I have to go now. I'm expecting a call from my daugther's teacher soon so I can't be on the line with someone else."
                     n "And just like that she hung up on you."
-                    jump Game_start2
+                    jump phone_callMenu
                
 
           "I am a Sam, but not the Sam you're waiting for." if persistent.name == "Sam":
@@ -2132,7 +2195,6 @@ label prevented_groundhog:
      l "I mean, this whole thing seems pretty weird to me. Can you atleast offer me some proof?"
      $ groundhog = True
      $ psychic = False
-
      menu:
           "I have no proof":
                jump prevented_noProof
@@ -2390,6 +2452,7 @@ label groundhog_breakingLoop_loopGone:
                     jump loopGone_everyRightToBeHappy
                "Absolutely not! I am also happy for us.":
                     jump loopGone_happyForYou
+     else:
           l "Oh thank god. Look [persistent.name], I appreciate you saving me but I do not think this is going to work out."
           l "You just are so different compared to how you were when we were planning this date."
           l "I really wanted this to work, but I'm not sure you feel the same way."
@@ -2456,7 +2519,7 @@ label groundhog_breakingLoop_loopStillExists:
      l "We would be able to prevent disasters even before they happen."
      l "Well, that is if we ever get out of here alive in the first place."
      n "[persistent.date] lets out a small chuckle but the concern in her eyes is clearly visible."
-     l "Sorry, I know I'm overdoing it. This is all just a bit too much for me."
+     l "Sorry, I know I'm overdoing it. This is all just too much for me."
      l "I mean imagine that someone you were dating told you that you kept dying over and over in a timeloop."
      l "That would be pretty mind-boggling, wouldn't it?"
      l "Yes, I suppose that's one way to put it."
@@ -2464,9 +2527,11 @@ label groundhog_breakingLoop_loopStillExists:
      l "Even though another part of me does believe you, which might be even more terifying."
      n "[persistent.date] lets out a small sigh and tries to give you a sincere smile."
      l "But it's not that useful to keep groaning about our situation, is it?"
-     l "Maybe it's a better idea to get some information that we can use."
+     l "If it's fake that would make for bad television, and if it's real that would be wasted time."
+     l "Maybe it's a better idea to try to get some useful information."
      n "[persistent.date] pauses for a few seconds."
-     l "For example, what do you think will happen once we make it past this date? Past this day even, do you think you would be stuck in a loop of reloading day after day for the years that we spend together or that all of this will go away when we make it through today?"
+     l "For example, what do you think will happen once we make it past this date? Past this day even, do you think you the loop would keep existing day after day for the years that we spend together?"
+     l "Or that all of this will go away when we make it through today?"
      menu:
           "We might be in this situation for the rest of our lives.":
                jump loopStillExists_forTheRestOfOurLives
@@ -3067,6 +3132,7 @@ label prevented_silent:
 
 
 label explanation_noTimeToExplain:
+     n "Chinese [chinese] Burger [burger] Cafe [chinese]"
      if chinese == True:
           if car_caught == True:
                if persistent_fleeingDeaths_counter_knowledge == 0:
@@ -3262,9 +3328,16 @@ label explanation_noTimeToExplain:
      else:
          
           label explanation_noTimeToExplain_hitByCar:
+               if burger == True:
+                    $ resname = "burger restaurant"
+               elif cafe == True:
+                    $ resname = "cafe"
+               elif chinese == True:
+                    $ resname = "chinese restaurant"
+
                n "As [persistent.date] and you run out of the [resname] together you spot something that makes your stomach drop."
                n "You see a red Sedan."
-               n "Not just any red Sedan, the one you wish you could never see again."
+               n "Not just any red Sedan, but the one you wish you could never see again."
                n "And yet, here it is again."
                if car_free:
                     n "It seems your efforts of trying to call the police lead to nothing, maybe you should have sent them to a different place?"
@@ -3282,9 +3355,10 @@ label explanation_noTimeToExplain:
                n "An image of the aftermath that is about to happen."
                n "You try to ignore it, try to change it, by attempting to push [persistent.date] aside as fast as you can."
                n "But no matter how hard your mind tries to fight it, your body is frozen in place."
-               n "Your mind is flooded with thoughts that all somehow overlap, you can't make much sense of any of them. Most of them are cries for you to save her, for anyone to save her somehow."
-               n "But as you get flung aside somehow by the car, you already know what happened to her."
-               n "No one could save her this time."
+               n "Your mind is flooded with thoughts that all somehow overlap, causing you to be barely able to make sense of any of them."
+               n "You let out a bloodcurdling scream for her to move away, for anyone to save her somehow."
+               n "But as you get flung aside by the car, you already know what happened to her."
+               n "No one could save her this time, just like the last time. And just like the next time, if nothing changes."
                n "The horrible aftermath you tried so hard to avoid has caught up with you once again."
                jump gameOver
 
@@ -3562,7 +3636,7 @@ label jamesChat_whyDidYouReturn:
                          if fritfood >= 1:
                               $ changeableWord == "Or"
 
-                    if lilithAliveAndRetriedCounter > 0:
+                    if persistent.lilithAliveAndRetriedCounter > 0:
                          j "When this entire ordeal finally settled down..."
                          j "You didn't have to retry."
                          j "You didn't have to cause her to go through the bad things once again after you were even told that she was safe and secure."
@@ -3820,12 +3894,12 @@ label jamesChat_whyDidYouReturn_toBeTogether_choices:
                                    j "Why are you still stuck in the grip of this game?"
                                    menu:
                                         "I want to keep exploring it a little longer, there are still many things I probably haven't seen yet.":
-                                             if lilithAliveAndRetriedCounter == 0:
+                                             if persistent.lilithAliveAndRetriedCounter == 0:
                                                   $ changeableWord = "death"
                                              else:
                                                   $ changeableWord = "death and seperation"
                                              j "Interesting, even if it all leads to more [changeableWord]?"
-                                             if lilithAliveAndRetriedCounter == 0:
+                                             if persistent.lilithAliveAndRetriedCounter == 0:
                                                   j "Wasn't your goal to keep her safe? If that is unattainable here then shouldn't you look to creating a story where it isn't?"
                                              else:
                                                   j "After you kept playing even when she was safe I thought you wanted to end up with her and have her live. Now you know that you can't do that here, shouldn't you try to create your own story where you can?"
@@ -4211,9 +4285,10 @@ label reunion_showUp_iReunitedYou:
                     n "Especially without [persistent.date]."
                     n "Laying here, waiting, it is too much for you." 
                     n "You want to see her again, and preferably now."
+                    $ persistent.davidPromise = True
                     jump gameOVer
                     
-               $ persistent.davidPromise = True
+               
                
 
          

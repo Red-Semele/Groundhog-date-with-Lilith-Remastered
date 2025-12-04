@@ -280,6 +280,8 @@ label gdwl_functions:
             globals()["family_ask"] = 0
             globals()["riddleAnswersTold"] = 0
             globals()["chinese_lilithBreakupTrigger"] = 0
+            globals()["callsMade"] = 0
+            
             
             
             globals()["met_check"] = ""
@@ -332,6 +334,7 @@ label gdwl_functions:
                 "chinese", 
                 "peking", 
                 "orange", 
+                "kokiri_goalSurvive",
                 
                 "riddle_loop", 
                 "kokiri", 
@@ -449,11 +452,16 @@ label gdwl_functions:
                 "burger_explosion_outside", 
                 "called_phone", 
             
-                "rockMode", 
+                
                 "burger_jokeFromAbigailTold", 
                 "onlyDates", 
                 "kokiri_cherishAllDates", 
                 "davidPromise", 
+                "abbyCalled",
+                "lilaCalled",
+                "jamesCalled", 
+                "davidCalled", 
+                "policeCalled", 
 
                 #Beach
                 "beachStart_doneBook", 

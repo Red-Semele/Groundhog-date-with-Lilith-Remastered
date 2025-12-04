@@ -4,6 +4,10 @@
 
 init offset = -1
 
+if persistent.canSave == False:
+    define _game_menu_screen = "preferences"
+define config.auto_load = "quitsave"
+
 
 ################################################################################
 ## Styles
@@ -234,7 +238,9 @@ screen choice(items):
                     xalign 0.5
                     yalign 0.5
                     for i in items:
-                        textbutton i.caption action i.action
+                        textbutton i.caption action [i.action, Function(narrator.add_history, kind="adv", who=("{color=#7BCF7D}%s" % persistent.name), what=__(i.caption))]
+
+
     else:
         # Normal centered choices without any frame or viewport
         vbox:
@@ -242,7 +248,9 @@ screen choice(items):
             xalign 0.5
             yalign 0.5
             for i in items:
-                textbutton i.caption action i.action
+                textbutton i.caption action [i.action, Function(narrator.add_history, kind="adv", who=("{color=#7BCF7D}%s" % persistent.name), what=__(i.caption))]
+
+
 
 style choice_vbox is vbox
 style choice_button is button
@@ -284,9 +292,10 @@ screen quick_menu():
             textbutton _("History") action ShowMenu('history')
             textbutton _("Skip") action Skip() alternate Skip(fast=True, confirm=True)
             textbutton _("Auto") action Preference("auto-forward", "toggle")
-            textbutton _("Save") action ShowMenu('save')
-            textbutton _("Q.Save") action QuickSave()
-            textbutton _("Q.Load") action QuickLoad()
+            if persistent.canSave:
+                textbutton _("Save") action ShowMenu('save')
+                textbutton _("Q.Save") action QuickSave()
+                textbutton _("Q.Load") action QuickLoad()
             textbutton _("Prefs") action ShowMenu('preferences')
             
 
@@ -334,10 +343,10 @@ screen navigation():
         else:
 
             textbutton _("History") action ShowMenu("history")
-
-            textbutton _("Save") action ShowMenu("save")
-
-        textbutton _("Load") action ShowMenu("load")
+            if persistent.canSave:
+                textbutton _("Save") action ShowMenu("save")
+        if persistent.canSave:
+            textbutton _("Load") action ShowMenu("load")
 
         textbutton _("Preferences") action ShowMenu("preferences")
 
@@ -355,6 +364,17 @@ screen navigation():
 
             ## Help isn't necessary or relevant to mobile devices.
             textbutton _("Help") action ShowMenu("help")
+        
+        textbutton _("Start Over") action Confirm(
+            "This will erase all progress and restart the game. Continue?",
+            yes=[
+                Function(lambda: setattr(persistent, "firstboot", None)),
+                Call("start")
+            ],
+            no=None
+        )
+
+
 
         if renpy.variant("pc"):
 
@@ -872,6 +892,8 @@ screen preferences():
             ## Add the new button here
             null height gui.pref_spacing
             textbutton _("Change NPC Names") action Show("change_names_menu")
+            textbutton _("Change Your Name") action [SetVariable("from_menu", True), Start("nameSelect")]
+            
 
 
 style pref_label is gui_label
@@ -964,31 +986,37 @@ screen history():
 
         style_prefix "history"
 
+        
+
         for h in _history_list:
 
             window:
 
-                ## This lays things out properly if history_height is None.
                 has fixed:
                     yfit True
 
-                if h.who:
+                    if h.who:
+                        ## If the name already contains a color tag, wrap only the name
+                        if "{color=" in h.who:
+                            ## Close the name color tag immediately, then add colon and dialogue
+                            $ line = h.who + '{/color}: ' + renpy.filter_text_tags(h.what, allow=gui.history_allow_tags)
+                        else:
+                            $ line = '{color=#006400}' + h.who + '{/color}: ' + renpy.filter_text_tags(h.what, allow=gui.history_allow_tags)
+                    else:
+                        $ line = renpy.filter_text_tags(h.what, allow=gui.history_allow_tags)
 
-                    label h.who:
-                        style "history_name"
+                    text line:
                         substitute False
-
-                        ## Take the color of the who text from the Character, if
-                        ## set.
-                        if "color" in h.who_args:
-                            text_color h.who_args["color"]
-
-                $ what = renpy.filter_text_tags(h.what, allow=gui.history_allow_tags)
-                text what:
-                    substitute False
+                        xalign 0.0  # left-align
+                        yalign 0.0
 
         if not _history_list:
             label _("The dialogue history is empty.")
+
+
+
+
+
 
 
 ## This determines what tags are allowed to be displayed on the history screen.
@@ -1004,6 +1032,15 @@ style history_text is gui_text
 
 style history_label is gui_label
 style history_label_text is gui_label_text
+
+style history_name is text:
+    xalign 0.0
+    textalign 0.0
+
+style history_text is text:
+    xalign 0.0
+    textalign 0.0
+
 
 style history_window:
     xfill True

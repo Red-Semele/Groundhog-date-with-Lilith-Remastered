@@ -547,6 +547,7 @@ label tellLilithAboutNar_goodAndBusy:
         menu:
             "He said that he steers the story in the right diection and when we somehow get off track he gets us back on track.":
                 jump tellLilithAboutNar_storySteerer
+
 label tellLilithAboutNar_storySteerer:
     
     l "Funny that you mention that Nar, I was just thinking about that."

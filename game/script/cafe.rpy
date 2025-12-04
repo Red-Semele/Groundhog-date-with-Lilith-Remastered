@@ -6,32 +6,67 @@ label cafe_start:
         l "Oh my, you surely know how to get me excited! I'll meet you there!"
     else:
         l "That sounds good to me! I'll meet you there!"
+    if persistent.rockMode == False:
+        n "You arrive pretty early and find no space to park. Since you still have some time left you decide to park a few streets further away and walk to the cafe."
+        n "The inner walls are made out of glass and function as aquariums that seem to stretch on even beyond the ceiling."
+        n "There are some holes in the specially shaped aquarium to allow for easy feeding of the fish and it also makes the aquarium feel more alive."
+        n "Colorful fish sometimes poke their head out of the aquarium as if they want to watch the customers. It makes you feel as if you are the one in the glass cage and you just don't know it."
+        n "It's probably the other way around though. Atleast they seem to be enjoying themselves in their captivity, or you think so atleast."
+        n "Your eyes fall on [persistent.date], who is already sitting at a nice looking mahogany table."
+        n "When she notices you she waves at you enthusiastically with a wide grin on her face."
+        l "Heya, glad you could make it! "
+        l "This place has a really nice atmosphere, those mahogany tables and the aquariums are real eye catchers don't you think?"
+        l "Anyway, let's go order our food and then we can talk some more, I'm starving!"
+        n "[persistent.date] and you walk towards the barista, as he glances up from his phone he greets you with a shy smile."
+        n "He looks quite young, if you'd have to guess you would say he is somewhere around 17 years old."
+        n "You get lost in the thoughts of how life was when you still were 17 until [persistent.date] gives you a playful nudge."
+        b "What could I get the both of you?"
+        l " Hmm, I think I'm going for the ham and cheese sandwich and a cafe cubano.
+        What are you choosing [persistent.name]? "
+        menu:
+            "I'll have the same as you.":
+                jump cafe_food_choiceSame
 
-    n "You arrive pretty early and find no space to park. Since you still have some time left you decide to park a few streets further away and walk to the cafe."
-    n "The inner walls are made out of glass and function as aquariums that seem to stretch on even beyond the ceiling."
-    n "There are some holes in the specially shaped aquarium to allow for easy feeding of the fish and it also makes the aquarium feel more alive."
-    n "Colorful fish sometimes poke their head out of the aquarium as if they want to watch the customers. It makes you feel as if you are the one in the glass cage and you just don't know it."
-    n "It's probably the other way around though. Atleast they seem to be enjoying themselves in their captivity, or you think so atleast."
-    n "Your eyes fall on [persistent.date], who is already sitting at a nice looking mahogany table."
-    n "When she notices you she waves at you enthusiastically with a wide grin on her face."
-    l "Heya, glad you could make it! "
-    l "This place has a really nice atmosphere, those mahogany tables and the aquariums are real eye catchers don't you think?"
-    l "Anyway, let's go order our food and then we can talk some more, I'm starving!"
-    n "[persistent.date] and you walk towards the barista, as he glances up from his phone he greets you with a shy smile."
-    n "He looks quite young, if you'd have to guess you would say he is somewhere around 17 years old."
-    n "You get lost in the thoughts of how life was when you still were 17 until [persistent.date] gives you a playful nudge."
-    b "What could I get the both of you?"
-    l " Hmm, I think I'm going for the ham and cheese sandwich and a cafe cubano.
-    What are you choosing [persistent.name]? "
-    menu:
-        "I'll have the same as you.":
-            jump cafe_food_choiceSame
+            "I'll have the sandwich of the day and an espresso.":
+                jump cafe_food_choice1
 
-        "I'll have the sandwich of the day and an espresso.":
-            jump cafe_food_choice1
-
-        "I'll have the beef sandwich and a frappuchino.":
-            jump cafe_food_choice2
+            "I'll have the beef sandwich and a frappuchino.":
+                jump cafe_food_choice2
+    else:
+        #TODO: This needs to be written way better, just writing it as a first version of the persistent.rockMode part
+        n "You are lying on the sidewalk, waiting until the moment is right."
+        n "Then suddenly, your moment comes. You hear someone right in front of you talking to someone on the phone about a date in the cafe."
+        n "You decide to exert all your psychic energy to move a full 5 centimeters to the right."
+        n "You perfectly align yourself with the shoe stomping down right on you, using this opportunity to nudge yourself inbetween it."
+        n "You can't see anything, but you do feel the sensation of every step."
+        n "Suddenly you feel something soft brush against you, and then something plastic that gets pushed in and out."
+        n "These sensations feel quite familiar, even if a bit different than how you might experience them normally."
+        n "And then it dawns on you, the person you are lifting with is in their car."
+        n "After that it doesn't take long at all for you to feel the pavement brush against you with each step once more."
+        n "Eventually you make contact with a wooden floor, and a little bit later the walking stops. You use this opportunity to dislodge yourself from between the shoe."
+        n "Suddenly you feel a presence in your mind."
+        l "Heya [persistent.name]. Glad you could make it!"
+        l "And look, it seems we got really lucky, the person I lifted with is here to see your person."
+        l "That saves us a lot of rolling around."
+        l "This place has a really nice atmosphere, those mahogany tables and the aquariums are real eye catchers don't you think?"
+        l "It's a shame it's pretty hard to notice from down here, but atleast the food will be free."
+        l "My person already went to grab the food. It should be two beef sandwiches."
+        n "Right as she says that a tiny piece of beef falls right next to you."
+        l "Does it smell good?"
+        menu:
+            "I don't have a nose, so I can't smell it.":
+                n "That's very correct. But then, how are you able to look around with no eyes? To think with no mind?"
+                n "None of this makes sense. This script is giving me a headache."
+                n "Perhaps His vision is elevated far above what either of us could comprehend."
+                n "{size=*0.5}Or maybe He is just a hack. You are very lucky I'm paid per word I read, otherwise I would not be doing this.{/size}"
+                n "Either way, I think it is best to not think too much about it. Ignorance is bliss afterall, isn't it?"
+            
+            "It does, it's just a shame I can't eat it.":
+                l "Eat it? Why would we do that? We are rocks, we don't need to eat."
+                l "Just watching it is it's own experience, isn't it?"
+                l "Sure, it might be different than what you are used to, but it's an entirely different perspective."
+        #TODO: Have this lead to a better segway that then moves to the next part.
+        jump cafe_dice_stop
 
 label cafe_food_choice1:
     jump cafe_food_result
@@ -231,9 +266,14 @@ label cafe_dice_result:
 
 
 label cafe_dice_stop:
-    #This could be a good place to add something else, instead of just segwaying she offers another game of sorts.
-    l "Oh no worries [persistent.name]!
-    I might have made this a bit too daunting so I completely understand."
+    if not persistent.rockMode:
+        #This could be a good place to add something else, instead of just segwaying she offers another game of sorts.
+        l "Oh no worries [persistent.name]!
+        I might have made this a bit too daunting so I completely understand."
+    else: 
+        l "I was going to ask you to try out a little dice game I came up with."
+        l "But there was no way I would manage to carry any dice in this form."
+
     l "We can just continue talking if you'd like to."
     l "After all, we are hopefully not running out of topics already."
     n "[persistent.date] lets out a cute chuckle."
@@ -243,6 +283,8 @@ label cafe_dice_stop:
     l "But let's just see where things go and just enjoy ourselves, together."
     l "Speaking about enjoying this, I've been meaning to ask you, what do you think of this place now that it's the first time you've seen it?"
     jump cafe_rateCafe
+    
+
 
 
 label cafe_rateCafe:
@@ -271,14 +313,17 @@ label cafe_backOnTrack:
     l "Oh, my bad then."
     n "For a moment there's a slightly awkward silence."
     l "So uhm, anyway, would you like to hear a joke?"
-    n "You nod, you are thankfull for the icebreaker to get this conversation back on track."
+    n "You nod, thankfull for the icebreaker to get this conversation back on track."
     l "Perfect, here it comes!"
     jump cafe_abigailJoke
 
 
 label cafe_rateCafe_great:
     n "[persistent.date] let's out a small giggle."
-    l " I knew you would love it as much as me when I saw your smile."
+    if not persistent.rockMode:
+        l "I knew you would love it as much as me when I saw your smile."
+    else:
+        l "I feel the same way, this place just simply {b}rocks{/b}."
     l "I've never seen so many colors at the same time, thank you for taking me here [persistent.name]!"
     l "Just the fish on their own made this one of the best dates I ever had, it can only get better from here."
     $ persistent.cafe_taste_knowledge = True
@@ -301,7 +346,7 @@ label cafe_rateCafe_bad:
     l "There's no need to drag this place down just because you don't like it."
     l "[persistent.date] takes her phone and begins aimlessly scrolling on it, you can see her screen through the reflection on the aquarium.
     She's growing less and less responsive after every word you say until the two of you sit in pure silence for what feels like an hour."
-    if persistent.need_pass_knowledge == True:
+    if persistent.need_pass_knowledge == True and not persistent.rockMode:
         n "Atleast you also managed to catch her password thanks to the reflection, it's 81155."
         $ persistent.pass_knowledge = True
 
@@ -350,7 +395,7 @@ label cafe_joke_bad:
     l "Really? ..."
     l "I thought it was funny when [persistent.date_sis] told me..."
     menu:
-        "Quick, come stand next to me!" if persistent.cafe_death_1:
+        "Quick, come stand next to me!" if persistent.cafe_death_1 and not persistent.rockMode:
             jump restaurant_death_1_prevented
         "Well...":
             jump restaurant_death_1
@@ -362,7 +407,7 @@ label cafe_joke_good:
     But then again, she always makes me laugh so much that I just might pass out one time."
     l "I'm kidding, I'm kidding! About the passing out part that is, she really is funny though."
     menu:
-        "Quick, come stand next to me!" if persistent.cafe_death_1:
+        "Quick, come stand next to me!" if persistent.cafe_death_1 and not persistent.rockMode:
             jump restaurant_death_1_prevented
         "She sounds nice.":
             jump restaurant_death_1
@@ -373,7 +418,7 @@ label cafe_joke_dontGet:
     l "So I mispronounced that hence the \"did you slip your tongue?\"."
     l "Is the joke now funnier or did it now become less funny? It tends to be that way when you explain a joke so I'm sorry if I ruined it for you."
     menu:
-        "Quick, come stand next to me!" if persistent.cafe_death_1:
+        "Quick, come stand next to me!" if persistent.cafe_death_1 and not persistent.rockMode:
             jump restaurant_death_1_prevented
         "No need to apoligize, I made you explain it. Besides, it's still pretty funny now that I understand the joke.":
             jump restaurant_death_1
@@ -415,7 +460,7 @@ label cafe_badLove:
             l "I... kind of struggle with self-confidence."
             l "Sometimes I think other people find it a burden to talk to me or be around me at all."
             menu:
-                "Quick, come stand next to me!" if persistent.cafe_death_1:
+                "Quick, come stand next to me!" if persistent.cafe_death_1 and not persistent.rockMode:
                     jump restaurant_death_1_prevented
 
                 "Well, I really enjoy our time together!":

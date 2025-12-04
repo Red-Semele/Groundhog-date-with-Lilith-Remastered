@@ -9,108 +9,170 @@ label restaurant_deaths:
         label restaurant_death_1:
             if burger == True:
                 #Burgerscene here
-                n "Now the screaming is also paired with hellish sounds, just great. You look at [persistent.date] and tell her to hide under the table."
-                l "I..."
-                play music game_over
-                n "[persistent.date] seems to be frozen, on her face you can clearly see a mixture of fear and confusion. It takes you a moment to notice the steadily increasing red stains on [persistent.date]'s clothes."
-                l "I've been shot?"
-                n "She falls of her chair, you crawl towards her and try to call an ambulance."
-                n "With trembling hands you type the emergency number and beg for help."
-                n "Everything seems to fade away, even the continuous  barage of gunshots, all you can hear is the sound of [persistent.date]'s breathing as it grows weaker and weaker."
-                n "You've been here for what feels like aeons but in all reality was closer to a minute or five when an ambulance finally arrives."
-                n "A young man, with eyes that have grown old from all the things they saw, places [persistent.date]'s still body on a stretcher and rushes off with it to the ambulance."
-                n "The kind man throws some words at you, he tells you that everything will be just fine but you both know that he is lying. You have seen her suffering for what seemed like an eternity and a second at the same time."
-                n "You have no clue what caused all those gunshots that inadvertently killed her. Some robbery in a neighbouring store, or a gang war, or something else."
-                n "But sadly you do know what the aftermath of it all is."
-                $ persistent.burger_death_1 = True
-                jump gameOver
-
+                n "Now the screaming is also paired with hellish sounds, just great."
+                if not persistent.rockMode:
+                    n "You look at [persistent.date] and tell her to hide under the table."
+                    l "I..."
+                    play music game_over
+                    n "[persistent.date] seems to be frozen, on her face you can clearly see a mixture of fear and confusion. It takes you a moment to notice the steadily increasing red stains on [persistent.date]'s clothes."
+                    l "I've been shot?"
+                    n "She falls of her chair, you crawl towards her and try to call an ambulance."
+                    n "With trembling hands you type the emergency number and beg for help."
+                    n "Everything seems to fade away, even the continuous  barage of gunshots, all you can hear is the sound of [persistent.date]'s breathing as it grows weaker and weaker."
+                    n "You've been here for what feels like aeons but in all reality was closer to a minute or five when an ambulance finally arrives."
+                    n "A young man, with eyes that have grown old from all the things they saw, places [persistent.date]'s still body on a stretcher and rushes off with it to the ambulance."
+                    n "The kind man throws some words at you, he tells you that everything will be just fine but you both know that he is lying. You have seen her suffering for what seemed like an eternity and a second at the same time."
+                    n "You have no clue what caused all those gunshots that inadvertently killed her. Some robbery in a neighbouring store, or a gang war, or something else."
+                    n "But sadly you do know what the aftermath of it all is."
+                    $ persistent.burger_death_1 = True
+                    jump gameOver
+                else:
+                    #TODO: Fill a short description in about her not dying, because well, she is a rock.
+                    n "This time though, things will go different, since [persistent.date] and you are already safe and sound under the table."
+                    if persistent.burger_death_2:
+                        n "You do however know this is not the end, but you are hopeful that this time things will be different."
+                        n "Surely this rock mode has to be the answer you were looking for, right?"
+                    jump restaurant_death_1_prevented
             elif cafe == True:
                 #Cafescene here
-                n "Suddenly you hear someone scream, you can turn your head just quickly enough to see someone fall with a plate in their hands."
-                n "The plate flies in the air, with it the ham sandwich that was put on top of it."
-                n "You are apparently not the only one who has noticed, as you can see a beautiful blue merlin jump from an opening in the aquarium."
-                n "The merlin has a long and pointy bill, it pierces the sandwich in a feat of pure dexterity. "
-                n "Sadly it's traject leads right to [persistent.date]'s chest as it's sword-like bill pierces it, somehow you know it has pierced her heart aswell."
-                n "She gives you one last look of utter shock before she falls dead on the floor."
-                play music game_over
-                $ persistent.cafe_death_1 = True
-                jump gameOver
+                if not persistent.rockMode:
+                    n "Suddenly you hear someone scream, you can turn your head just quickly enough to see someone fall with a plate in their hands."
+                    n "The plate flies in the air, with it the ham sandwich that was put on top of it."
+                    n "You are apparently not the only one who has noticed, as you can see a beautiful blue merlin jump from an opening in the aquarium."
+                    n "The merlin has a long and pointy bill, it pierces the sandwich in a feat of pure dexterity. "
+                    n "Sadly it's traject leads right to [persistent.date]'s chest as it's sword-like bill pierces it, somehow you know it has pierced her heart aswell."
+                    n "She gives you one last look of utter shock before she falls dead on the floor."
+                    play music game_over
+                    $ persistent.cafe_death_1 = True
+                    jump gameOver
+                else:
+                    #TODO: Fill a short description in about her not dying, because well, she is a rock.
+                    jump restaurant_death_1_prevented
 
 
 
 
             elif chinese == True:
                 #Chinesescene here
-                n "For a moment you get lost in your thoughts."
-                n "When you refocus you notice [persistent.date] walking back to her chair."
-                l "Heya [persistent.name], I hope you didn't have to wait too long."
-                l "I hope our food will be ready soon, I'm kind of starving."
-                n "Just as she said those words, almost by magic you can see a waitress heading your way."
-                if peking == True:
-                    n "When the waitress arrives with your double plates of Peking duck [persistent.date] and you immediately dig in."
+                if not persistent.rockMode:
+                    n "For a moment you get lost in your thoughts."
+                    n "When you refocus you notice [persistent.date] walking back to her chair."
+                    l "Heya [persistent.name], I hope you didn't have to wait too long."
+                    l "I hope our food will be ready soon, I'm kind of starving."
+                    n "Just as she said those words, almost by magic you can see a waitress heading your way."
+                    if peking == True:
+                        n "When the waitress arrives with your double plates of Peking duck [persistent.date] and you immediately dig in."
+                    else:
+                        n "When the waitress arrives with your orange chicken and [persistent.date]'s peking duck the two of you immediately dig in."
+
+                    n "She takes a break from her food and looks at you for a moment."
+                    l "You know, I'm actually glad we could meet here, I wanted to tell you something."
+                    n "Before [persistent.date] can finish her sentence her face starts to swell."
+                    play music game_over
+                    l "Call an ambulance, now!"
+                    n "You grab your phone as you frantically start calling an ambulance."
+                    n "A woman with a warm voice listens to your incoherent ramblings and tries her best to get the details, she sends an ambulance your way."
+                    n "The ambulance arrives quite fast but not fast enough. The doctors conclude that it must have been some sort of severe allergic reaction that made her face swell untill she couldn't breathe anymore."
+                    $ persistent.chinese_death_1 = True
+                    jump gameOver
                 else:
-                    n "When the waitress arrives with your orange chicken and [persistent.date]'s peking duck the two of you immediately dig in."
-
-                n "She takes a break from her food and looks at you for a moment."
-                l "You know, I'm actually glad we could meet here, I wanted to tell you something."
-                n "Before [persistent.date] can finish her sentence her face starts to swell."
-                play music game_over
-                l "Call an ambulance, now!"
-                n "You grab your phone as you frantically start calling an ambulance."
-                n "A woman with a warm voice listens to your incoherent ramblings and tries her best to get the details, she sends an ambulance your way."
-                n "The ambulance arrives quite fast but not fast enough. The doctors conclude that it must have been some sort of severe allergic reaction that made her face swell untill she couldn't breathe anymore."
-                $ persistent.chinese_death_1 = True
-                jump gameOver
-
+                    #TODO: Fill a short description in about her not dying, because well, she is a rock.
+                    jump restaurant_death_1_prevented
             else:
                 "This is an error, if you can see it the location scene for the first death is broken."
 
         label restaurant_death_1_prevented:
-
-            if burger == True:
-                n "[persistent.date] gives you a sceptical look but decides to follow your instructions, right as she does so a cacophony of hellish sounds begins to emanate through the halls of the mall."
-                n " Knowing what is to come you try to pay attention to a specific sound, a gunshot is heard and a bullet flies where she would have been if you didn't warn her."
-                n "Alright that is crazy, how did you know that bullet would hit me?"
-            elif cafe == True:
-                n "[persistent.date] gives you a questioning look, as if she's trying to estimate if you are joking or not."
-                l "Eventually she decides to not take any chances.
-                She stands up and moves to your side of the table."
-                l "So..."
-                l "What is this all about [persistent.name]?"
-                n "Before you can answer her question you hear someone scream again, that's the sign.
-                You turn your head just quickly enough to see someone fall with a plate in their hands."
-                n "The plate flies in the air, with it the ham sandwich that was put on top of it."
-                n "You are not the only one who has noticed, as you can see a beautiful blue merlin jump from an opening in the aquarium."
-                n "The merlin has a long and pointy bill, it pierces the sandwich in a feat of pure dexterity. "
-                n "It's current trajectory leads it to pierce through the chair where [persistent.date] was sitting just mere moments ago."
-                n "The staff quickly rush towards your table to take the merlin away and to see if it hasn't been hurt, they offer [persistent.date] and you a short apology before disappearing."
-                l "..."
-                n "[persistent.date] looks as if she has seen a ghost, if you hadn't intervened she may have seen her own."
-                l "Alright, I'm trying my best to remain calm but how did you know that would even happen?"
-            elif chinese == True:
-                $ persistent.dumbo_knowledge = True
-                l "I suppose that makes sense, I am allergic to quite a few things."
-                l "When I was a kid I once ate a few peanuts while I was watching Dumbo, I felt my throat swell and I thought I was becoming a little elephant, just like Dumbo."
-                l "I ran to my parents and said:\"Look mommy, look daddy! I can fly!\" and then I started using my hands to flap my ears around like Dumbo."
-                l "At that point I was pretty swollen so it was a good thing my parents saw me, we went to the hospital as fast as we could and the kind doctors really helped me out."
-                l "When I finally was allowed to go home from the hospital my parents gave me a Dumbo plushie to always remember the story."
-                l "And I can say that I still remember it like it was yesterday,  the same counts  for my mom, she keeps joking about it to this day."
-                n "[persistent.date]  lets out a huge laugh as she looks at you."
-                n "Suddenly she stops, you see a look of worry in her eyes."
-                l "Oh sorry, I'm ranting again aren't I?"
-                l "I'm sorry, it's just that when I start talking it's pretty hard for me to stop, what were we talking about again?"
-                l "Oh yeah, the supposed allergy I would have if I ate that Peking duck."
-                l "How would you even know? I mean, I checked the ingredients on the list and as far as I'm aware I'm not allergic to any of those."
-                l "So let's say that there's something in this dish that I'm really allergic to but I don't know it yet, how would you know that?"
+            if persistent.rockMode == False:
+                if burger == True:
+                    n "[persistent.date] gives you a sceptical look but decides to follow your instructions, right as she does so a cacophony of hellish sounds begins to seep through the restaurant's entrance."
+                    n " Knowing what is to come you try to pay attention to a specific sound, a gunshot is heard and a bullet flies where she would have been if you didn't warn her."
+                    n "Alright that is crazy, how did you know that bullet would hit me?"
+                elif cafe == True:
+                    n "[persistent.date] gives you a questioning look, as if she's trying to estimate if you are joking or not."
+                    l "Eventually she decides to not take any chances.
+                    She stands up and moves to your side of the table."
+                    l "So..."
+                    l "What is this all about [persistent.name]?"
+                    n "Before you can answer her question you hear someone scream again, that's the sign.
+                    You turn your head just quickly enough to see someone fall with a plate in their hands."
+                    n "The plate flies in the air, with it the ham sandwich that was put on top of it."
+                    n "You are not the only one who has noticed, as you can see a beautiful blue merlin jump from an opening in the aquarium."
+                    n "The merlin has a long and pointy bill, it pierces the sandwich in a feat of pure dexterity. "
+                    n "It's current trajectory leads it to pierce through the chair where [persistent.date] was sitting just mere moments ago."
+                    n "The staff quickly rush towards your table to take the merlin away and to see if it hasn't been hurt, they offer [persistent.date] and you a short apology before disappearing."
+                    l "..."
+                    n "[persistent.date] looks as if she has seen a ghost, if you hadn't intervened she may have seen her own."
+                    l "Alright, I'm trying my best to remain calm but how did you know that would even happen?"
+                elif chinese == True:
+                    $ persistent.dumbo_knowledge = True
+                    l "I suppose that makes sense, I am allergic to quite a few things."
+                    l "When I was a kid I once ate a few peanuts while I was watching Dumbo, I felt my throat swell and I thought I was becoming a little elephant, just like Dumbo."
+                    l "I ran to my parents and said:\"Look mommy, look daddy! I can fly!\" and then I started using my hands to flap my ears around like Dumbo."
+                    l "At that point I was pretty swollen so it was a good thing my parents saw me, we went to the hospital as fast as we could and the kind doctors really helped me out."
+                    l "When I finally was allowed to go home from the hospital my parents gave me a Dumbo plushie to always remember the story."
+                    l "And I can say that I still remember it like it was yesterday,  the same counts  for my mom, she keeps joking about it to this day."
+                    n "[persistent.date]  lets out a huge laugh as she looks at you."
+                    n "Suddenly she stops, you see a look of worry in her eyes."
+                    l "Oh sorry, I'm ranting again aren't I?"
+                    l "I'm sorry, it's just that when I start talking it's pretty hard for me to stop, what were we talking about again?"
+                    l "Oh yeah, the supposed allergy I would have if I ate that Peking duck."
+                    l "How would you even know? I mean, I checked the ingredients on the list and as far as I'm aware I'm not allergic to any of those."
+                    l "So let's say that there's something in this dish that I'm really allergic to but I don't know it yet, how would you know that?"
+                else:
+                    "restaurant_death_1_prevented error."
+                jump restaurant_death_1_prevented_explanation
             else:
-                "restaurant_death_1_prevented error."
-            jump restaurant_death_1_prevented_explanation
+                if burger == True:
+                    "Filler"
+                    l "I would have been shot?..."
+                    l "That image in your mind... That's me as a human?"
+                    n "It seems as if your thoughts are not as well hidden as you might like."
+                    n "Yet hers are even harder to pick up on than ever. You can feel her thoughts racing all over the place."
+                    #TODO: Have her ask for an explanation, you tell her that in other worlds she is human but she kept on dying so you entered a universe where the both of you are rocks.
+                    l "What is going on [persistent.name]?"
+                    menu:
+                        "Me and you are both human in other worlds. But in those worlds you keep dying on our dates. That's why I entered this world.":
+                            "Filler"
+                            l "There are other worlds?... Where I am human and I keep dying?"
+                            l "This just hurts my head way too much."
+                            l "Although it does make me wonder about the logistics."
+                            l "You actively chose to enter this world? How did you do that? That hardly seems like something just anyone could do."
+                            menu:
+                                "This is a game and I am the one playing it. I accessed this world via a cheatcode.":
+                                    #TODO: This needs some rewriting
+                                    l "...I really shouldn't believe that. It is so outlandish."
+                                    l "Alternate worlds were something I could still believe slightly even if it was a lot of info to take in all at once."
+                                    l "But this, it's so far fetched, it couldn't possibly be true, right? And yet, I can sense it in your mind, you are telling the truth."
+                                    l "So all of this is fake? This world, this place, me?"
+
+                                "Believe me, telling you that right now would be way too much to handle when combined with the other info.":
+                                    l "It would? That only makes me more curious honestly. What is harder to handle than alternate worlds and a timeloop of death?"
+                                    l "I could read your mind to find out... But I suppose I'll take your word for it."
+                                    l "You did lift the veil a little bit so I'll just trust you that partial ignorance is bliss... for now atleast, when the time is right I do want to know the full story."
+                                    l "I do wonder though, I don't think the loop of death can get me in this form, can it? I'm not even sure if I can die at all."
+                                    l "So that means you did it, right? That means you saved me."
+                                    l "I guess you did in more ways than just one. With you here with me I don't have to feel so alone anymore."
+                                    l "It is quite a nice idea isn't it? That we always find eachother, no matter if we are humans, rocks or something else."
+                                    l "So thank you [persistent.name], for finding and saving me."
+                                    #TODO:"Have this lead to the second death, the two of you survive it and you tell her you never made it that farthen the two of you go on rock hyjinx only to witness the heat death of the universe and grow silent after you have nothing more to say.
+                                    jump restaurant_death_2
+
+                                
+                                
+                        
+                elif cafe == True:
+                    "Filler"
+                elif chinese == True:
+                    "Filler"
+                else:
+                    "restaurant_death_1_prevented error."
+                jump restaurant_death_1_prevented_explanation
 
     label restaurant_2:
         label restaurant_death_2:
             #Here the code of the second death will be.
             play music game_over
+           
             if burger == True:
                 $ persistent.burger_death_2 = True
                 if not burger_explosion_outside == True:
@@ -177,6 +239,111 @@ label restaurant_deaths:
                 if death_narration != "":
                     n "[death_narration]"
                 jump gameOver
+            else:
+                #TODO: Rewrite these below deaths to not affect you and Lilith. You then go on rock hyjinx eventually leading to the heat death of the universe, where you have said everything there is to say.
+                if burger == True:
+                    $ persistent.burger_death_2 = True
+                    n "Suddenly you are enveloped in a flash of pure white. That must be the explosion. The force of it is enough to send you flying, and yet you do not feel any pain."
+                    n "When the flash of white subsides you find yourself in the ruins of the burger restaurant. The wooden tables are flipped over, flames eating away at them."
+                    n "There is screaming and sobbing, but most of all there is death. Even with all the noise in the midst of the chaos the cold and looming silence of death is deafening."
+                    n "The burned and scarred survivors are fleeing, dragging their loved ones from underneath the flaming tables."
+                    n "They pretend they are still alive, but you have been around death enough times to know that it is merely that, pretending."
+                    n "You do hear one more thing. A voice, calling out to you. Hers."
+                    l "[persistent.name], are you... alright?"
+                    n "However loud the haunting silence of death is, this time it's not hers."
+                    n "But that does not mean it isn't yours to carry."
+                    menu:
+                        "I'm fine, but what about you?":
+                            "Filler"
+
+                        "I'm fine, but what about these other people?":
+                            n "Curious. I do wonder what makes you now care for these people."
+                            n "You didn't think the restaurant was empty all those other times, did you?"
+                            n "So what makes now any different from those [persistent.burgerwent] other times?"
+                            n "I suppose our problems only become problems when we become aware of them."
+                            n "Otherwise it's just a blur right outside of the corner our eye."
+                            n "Now it will be even harder to pretend that you are doing this for selfless reasons, won't it?"
+                            n "I suppose ignorance truly is bliss to you, isn't it player?"
+                            n "Because to not know is to believe what you want. But to know is to define, to confine."
+                            n "Now the truth can't be conveniently altered, can it? From now on, these people will suffer, they will die, each time you come here."
+                            n "I do wonder if that matters to you though, and if it does I wonder how long that will last."
+                            n "Because at the end of the day, they are just words and images to you, aren't they player?"
+                            n "I suppose I can't blame you for viewing them like that. Still, you do know [persistent.date] is the same, don't you?"
+                            n "Then what makes you go through all this trouble? Through all this death?"
+                            n "Are you doing this just to see everything this game has to offer? Or is this truly about saving her?"
+                            n "Don't bother answering, we've already been at this for too long and the result is the same either way."
+                            n "Now, let's move on."
+                            l "It's horrible isn't it? I'm glad we are fine, but the people, god- they once were people but now it's hard to see them as such while they are covered in debris and ash."
+                            l "Is it always like this? I just hope this time no-one... died."
+                            l "We are fine, well, as fine as one can be after something like this, but when I see all of them suffering I wish I could do something, anything, to help."
+                            l "But they can't hear us, nor can we reach our hands to them to try to comfort them. Even then, I don't think that would work, not at a time like this."
+                            l "They will need time, although they might never be the same again. That explosion blasted them away from their lives trajectory."
+                            l "Seeing this... Is all of that worth it just to save me?"
+                            l "In that other world you were talking about, the one where we are both human, couldn't we have warned them?"
+                            l "Couldn't we have prevented this? And yet you abandoned that world for this one where they cannot hear us?"
+                            #TODO: Make this an option? (Think about it beforehand wheter or not it is meaningful.)
+                            l "...I- I need some time to think about this [persistent.name]. I think it's better if we take some time apart from eachother."
+                            #TODO: Continue writing this, she does indeed take some time away, to later contact you and to tell you she understands. You were trying your best to save her. She might not agree entirely but is willing to give it a shot if you try to go back to another world and save those people. What is done is done, it can't be undone. But ammends can be made.
+                            
+                            "Filler"
+                    if death_narration != "":
+                        n "[death_narration]"
+
+                    $ burger_explosion_outside = False
+                    jump gameOver
+
+                elif cafe == True:
+                    n "Suddenly you begin to hear the sound of shattering glass."
+                    n "As you turn to look at the source of the sound you can see that the aquarium next to where [persistent.date] was sitting has shattered."
+                    n "The water is gushing out rapidly and it does not seem to be planning to stop."
+                    n "How could this happen?"
+                    n "Did the merlin somehow made a crack form?"
+                    n "Or was it something else?"
+                    n "You think about the pure shenanigans that were needed to even make this exact thing happen but you are soon interrupted by the water flowing past your shoes with some fish coming along for the ride."
+                    l "Quick [persistent.name], we need to do something!"
+                    if persistent.cafe_death_2 == True:
+                        n "You give [persistent.date] a firm hug and tell her that there's nothing else you two can do except for waiting."
+                        if love_meter >= 3:
+                            l "If I have to go now I atleast get some comfort out of the fact that you are here for me."
+                            l "Goodbye [persistent.name], thank you for everything."
+                            
+                        else:
+                            n "And so the both of you wait, in eachothers arms, for certain death. And it comes as expected."
+                        
+                    
+                    else:
+                        $ persistent.cafe_death_2 = True
+                        n "You try to open the main exit of the restaurant but it doesn't seem to be giving in, almost as if something is blocking it."
+                        n "Quick! Maybe we can still go to the first floor, we need to go higher!"
+                        n "Pretty much without any other option you two decide to make a rush for the first floor of the restaurant."
+                        n "When you turn around the corner you see that the stairs are blocked of by an extremely large closet made out of lignum vitae, you can not carry that, all you can do is admire the craftmanship."
+                        n "You give [persistent.date] a firm hug and tell her that there's nothing else you two can do except for waiting."
+                        n "And so the both of you wait, in eachothers arms, for certain death.
+                        And it surely came."
+                    if hugRequestedBeforeDeath == True:
+                        n "it seems [persistent.date] got the hug she asked for after all, just not in the way she thought she would."
+                    else:
+                        if death_narration != "":
+                            n "[death_narration]"
+                    jump gameOver
+
+                elif chinese == True:
+                    n "Suddenly you hear the faint sound of quacking."
+                    n "The sound of the quacking steadily grows louder and louder untill it's all you can hear."
+                    n "A true quackophony if you will."
+                    n "[persistent.date] looks over your shoulder with a frightend look in her eyes."
+                    n "When you turn around you see a wave of angry geese breaking through the doors of the once cozy Chinese restaurant, the staff is running around in sheer panic."
+                    n "Before you can make another sound everything turns to white, the white of pesky geese feathers."
+                    n "The pain you are experiencing is too much and you fall unconscious."
+                    n "When you wake up again all the cutomers and staff have dissapeared, including [persistent.date]."
+                    n "The room is completely filled to the brim with geese feathers, you begin to sneeze just thinking about that."
+                    n "While you are sneezing you notice that someone put a sticky note on your hand."
+                    n "It reads as following: \"We took everyone and you won't be seeing them back, let this be a lesson on why you should not eat or serve geese or ducks, as those are also part of our family.
+                    - Sincerely, the geese\""
+                    $ persistent.chinese_death_2 = True
+                    if death_narration != "":
+                        n "[death_narration]"
+                    jump gameOver
     label car_death:
         $ persistent.runAwayLilith_counter += 1
         if angryLilith == True:
@@ -415,9 +582,19 @@ label kokiri_deaths:
         label kokiri_death_1_prevented:
             #if kokiri_prevented == 1: This is code that would have made it so that it triggers based on 1-4 and the deaths.
             if not kokiri_alternateplace:
-                n "As she moves to the other side of the blanket, to your left, you once again see the same meteorite that killed her last time. It breaks of in many pieces, one of them falling right where she was sitting just a moment ago." #TODO: Make this a bit more nicely written out.
-                n "[persistent.date] gives you a startled look."
-                l "Oh wow, a meteorite? That was what was going to kill me now?"
+                n "[persistent.date] gives you a nod as she moves to the other side of the blanket, to your left."
+                l "That's a bit of an odd request but I guess I will see why I needed to do that soon enough, right?"
+                n "As she moves to the other side of the blanket, to your left, something catches her eye."
+                n "The sky once again is filled with bright falling stars."
+                l "Look, I never saw that many falling stars in my life!"
+                n "Soon she'll get to see one from really close, let's hope that this time it doesn't kill her."
+                n "It does not take long at all before you notice a familiar point in the sky that seems to be getting bigger and bigger at a frightening speed."
+                n "[persistent.date] watches in absolute terror as she now can clearly make out a decently sized meteorite heading straight to the hill the two of you are sitting on."
+                n "Meanwhile all you can do is hope that things are going to be different this time. They should, but you still find yourself fearing the worst."
+                n "Eventually due to the energy exerted on the meteorite it breaks into many different chunks that spread all around the forest. One of those very pieces would have gotten launched straight against [persistent.date]'s head if she hadn't moved, instead it now fell into the lake next to the hill."
+                n "[persistent.date] gives you a startled look. Even only lit by the moon and the stars it is not hard to tell she has become very pale."
+                l "...A meteorite? That was what was going to kill me now?"
+                n "She goes quiet for a moment."
             else:
                 l "That was beautiful..."
                 l "I've never seen anything like that."
@@ -428,13 +605,12 @@ label kokiri_deaths:
 
             l "So you spoke the truth... I keep on dying over and over on this date?"
             l "Seems like I woke up with some major bad luck today."
-            l "Although I suppose I am lucky enough to go through this with you, thank you for saving me once again [persistent.name]!"
+            l "Although I suppose I am lucky enough to go through this with you, thank you for saving me once again!"
             n "[persistent.date] pauses for a moment."
-            l "Alright, I have to put the levity aside for a moment and be honest with you."
-            l "I might look and sound calm right now but that's just because I kind of freeze in situations like this."
-            l "This..."
-            l "It's a lot to deal with right now."
-            l "I knew {b}something{/b} strange was going on when you told me about the kokiri forest."
+            l "Alright [persistent.name], I have to put the levity aside for a moment and be honest with you."
+            l "You might think I'm taking this remarkably well, but that's just because I kind of freeze in situations like this."
+            l "This- It's a lot to deal with right now."
+            l "I knew {i}something{/i} strange was going on when you told me about the kokiri forest."
             l "That's why I came here I suppose, to figure out how you knew about this place."
             l "But I guess even when you explained it to me, a part of me didn't believe you."
             l "A part of me didn't want to believe you."
@@ -444,7 +620,7 @@ label kokiri_deaths:
             n "You give a slight nod, the corners of [persistent.date]'s mouth subtly move up, you almost didn't quite catch it."
             n "You're not quite sure how long the moment lasts, but after a while she shifts her position and gives you a nod."
             l "I think I am ready now, this is still a lot but I might be able to see it through now."
-            l "Thank you for staying here with me, it helped me calm down a little while I was thinking."
+            l "Thank you for staying here with me, it helped me calm down a little while I was thinking. Well, as much as someone that is in a situation like this can calm down."
             if car_caught == False:
                 jump kokiri_death_2
             else:
@@ -544,7 +720,7 @@ label kokiri_deaths:
                     jump kokiri_pictureChoice
 
                 "We're running out of time. Could we please keep talking?":  
-                    "Sure, what would you like to talk about?"
+                    l "Sure, what would you like to talk about?"
                     $ showContinueTalk()
                     if showContinueTalkKokiri:
                         menu:
@@ -609,9 +785,9 @@ label kokiri_death_2_prevented_triedEverything:
                                 if love_meter < 3:
                                     l "Really? I think that settles it then. This really all is a game to you."
                                     l "You kept me in this loop for your own wants. Even when I'm offering you a potential way out of it."
-                                    if lilithAliveAndRetriedCounter > 0:
+                                    if persistent.lilithAliveAndRetriedCounter > 0:
                                         n "She is more correct than she might know in this moment, isn't she player?"
-                                        if lilithAliveAndRetriedCounter == 1:
+                                        if persistent.lilithAliveAndRetriedCounter == 1:
                                             n "Or are you going to pretend like that time you came back even when she survived was for her sake?"
                                         else:
                                             n "Or are you going to pretend like the times you came back even when she survived were for her sake?"
