@@ -3586,7 +3586,7 @@ label silentconversationsbackontrack:
                                     p "I am sorry for being more in love with the idea of being in love than I was in love with you."
                                     p "I am however not sorry for learning that the hard way, for figuring out I was in love with the idea of something perfect and not the good enough you were."
                                     p "And yet the world moves on. It always does, that is what I love about it."
-                            n "The Masked Girl waves a final time before dissapearing, leaving in her place a Nightingale made of the Sun's fire."
+                            n "The Masked Girl waves a final time before dissappearing, leaving in her place a Nightingale made of the Sun's fire."
                             menu:
                                 "*Apologize*":
                                     p "I do not have to say awefully much to you, just like you never said awefully much to me or at all."

@@ -2,82 +2,158 @@ label chinese_start:
     $ chinese = True
     l "That sounds like a plan!"
     l "I'll see you there."
-    n "You head to the Chinese restaurant, when you arive there [persistent.date] is already seated. She happily waves at you."
-    n "It's appears to be quite busy, there are people at every table."
-    n "You walk towards the table where [persistent.date] is sitting and greet her with a cheerful smile."
-    l "Heya [persistent.name]!
-    Glad to see you here.
-    You're in luck, I managed to save this table just in the nick of time."
-    n "She gives you an honest smile."
-    menu:
-        "Glad to be here.":
-            l "Oh you flatterer!"
-            n "[persistent.date] pauses for a moment, seemingly lost in a thought."
-            l "Or are you glad to be here for the restaurant itself?"
-            menu:
-                "Mostly the restaurant actually, otherwise I wouldn't have come her with you in the first place.":
-                    jump chinese_start_gladToBeHere_theRestaurant
+    if persistent.rockMode:
+        jump rockTransport
+    else:
+        n "You head to the Chinese restaurant, when you arive there [persistent.date] is already seated. She happily waves at you."
+        n "It's appears to be quite busy, there are people at every table."
+        n "You walk towards the table where [persistent.date] is sitting and greet her with a cheerful smile."
+    label chinese_arrived:
+        l "Heya [persistent.name]!
+        Glad to see you here."
+        if persistent.rockMode == False:
+            l "You're in luck, I managed to save this table just in the nick of time."
+            n "She gives you an honest smile."
+        else:
+            l "Looks I beat you here, my lift is already gone with their takeaway."
+            l "But you're in luck, I had to fight of a thousand other sentient rocks but I managed to fend of another spot under this table just for you."
+            n "She chuckles in your mind, you can feel something else too... a wave of warmth, of happiness, the translation of a smile."
+        menu:
+            "Glad to be here.":
+                l "Oh you flatterer!"
+                n "[persistent.date] pauses for a moment, seemingly lost in a thought."
+                l "Or are you glad to be here for the restaurant itself?"
+                menu:
+                    "Mostly the restaurant actually, otherwise I wouldn't have come her with you in the first place.":
+                        jump chinese_start_gladToBeHere_theRestaurant
 
-                "I'm glad to see you of course, otherwise I would've just come to this place on my own.":
-                    jump chinese_start_gladToBeHere_youOfcourse
+                    "I'm glad to see you of course, otherwise I would've just come to this place on my own.":
+                        jump chinese_start_gladToBeHere_youOfcourse
 
 label chinese_start_gladToBeHere_theRestaurant:
     $ love_points = -1
     $ love_meter_updater(False)
     l "Oh, I mean I like this place aswell I suppose..."
-    n "She seems slightly dissapointed with your answer."
-    l "Anyway, I think I'd starve if I don't eat soon so let's continue our little chat while we wait on our food.
-    What would you like to order?"
+    if persistent.rockMode == False:
+        n "She seems dissapointed with your answer."
+        n "Things turn silent for a moment. She seems to be trying to find anything at all to say."
+        l "Anyway, I think I'd starve if I don't eat soon so let's continue our little chat while we wait on our food.
+        What would you like to order?"
+    else:
+        n "You feel a wave of dissapointment well up. Then you realize, it's hers."
+        n "Things turn silent for a moment. You feel her mind desperately looking for something trying to keep the conversation going."
+        l "Humor me this [persistent.name], imagine you were a human, what would you like to order?"
     #Make her slightly more dissapointed.
     jump chinese_menu
 label chinese_start_gladToBeHere_youOfcourse:
-    l "[persistent.date] lets out a sigh of relief and chuckles slightly."
-    l "Sorry, that was just a thought that popped up in my head."
-    n "She looks like she could sink through the floor out of embarrassment so you decide it's best to forget what she has said."
-    l "Anyway, I think I'd starve if I don't eat soon so let's continue our little chat while we wait on our food.
-    What would you like to order?"
+    
+    if not persistent.rockMode:
+        l "[persistent.date] lets out a sigh of relief and chuckles slightly."
+        l "Sorry, that was just a thought that popped up in my head."
+        n "She looks like she could sink through the floor out of embarrassment so you decide it's best to forget what she has said."
+
+        l "Anyway, I think I'd starve if I don't eat soon so let's continue our little chat while we wait on our food.
+        What would you like to order?"
+    else:
+        n "You feel a wave of relief wash over her mind, then it makes way for another sensation. The embarassment of even having that thought."
+        n "You chuckle slightly at the thought of her being embarrassed over something so small."
+        n "She seemingly picks up on you glimpsing her thoughts and quickly tries to move past it."
+        l "Humor me this [persistent.name], imagine you were a human, what would you like to order?"
     jump chinese_menu
 label chinese_menu:
     $ peking = False
     $ orange = False
-    menu:
-        "I'm going for the peking duck.":
-            $ peking = True
-            jump chinese_menu_result
+    if not persistent.rockMode:
+        menu:
+            "I'm going for the peking duck.":
+                $ peking = True
+                jump chinese_menu_result
 
-        "I think I'll pick the orange chicken.":
-            $ orange = True
-            jump chinese_menu_result
+            "I think I'll pick the orange chicken.":
+                $ orange = True
+                jump chinese_menu_result
+    else:
+        menu:
+            "I think I'd go for the peking duck.":
+                $ peking = True
+                jump chinese_menu_result
+
+            "I think I'd pick the orange chicken.":
+                $ orange = True
+                jump chinese_menu_result
+
+            "What's the point of dreaming about food if neither of us can eat it?":
+                #TODO: Keep writing and fleshing this out, eventually link it to the burger and cafe path aswell.
+                l "Doesn't everyone dream of something they might never be able to attain?"
+                l "When something is out of reach it makes you want it even more, doesn't it?"
+                l "In fact, it might even keep you reaching out at all. To keep you going."
+                l "That's a beautiful thing, isn't it? As long as we stay aware it's unreachable deep down."
+                l "Hope is a beautiful thing, but it can quickly turn into delusion."
+                l "I know I'll never be able to enjoy the taste of food, but sometimes I pretend I can."
+                l "I guess I do it as a way to cope with things."
+                l "For others eating is something almost mundane, something normal even. But for us it's something we'll never do."
+                l "Even in something so simple as eating we are separated from these people around us."
+                l "That's a lonely existence isn't it [persistent.name]?"
+                l "I suppose that's why I like pretending. To lessen the distance between me and them even the tiniest bit."
+                menu:
+                    "But doesn't it sting more when the reality sets in again?":
+                        l "I suppose sometimes it does. To dream is to wake. And to wake is to leave the comfy blanket for cold reality."
+                        l "That change might be more startling, more uncomfortable than bearing the cold reality all of the time."
+                        l "But isn't the comfortable dream what keeps us going? If we live in a world where we deny our dreams, is it worth it to be awake?"
+                        l "I fear that sting might be a necessary evil."
+
+
+        
+
 
 label chinese_menu_result:
-    if peking == True:
-        l "That's a good choice!
-        So good in fact that I was thinking about picking the same thing."
-    elif orange == True:
-        l "That's a good choice!
-        I've had my fair share of orange chicken already throughout my life, so I think I'm going for something else."
-        n "[persistent.date] scratches her chin softly."
-        l "I think I'm going to pick the peking duck, beats another portion of orange chicken."
-        n "She lets out a small chuckle."
+    if not persistent.rockMode:
+        if peking == True:
+            l "That's a good choice!
+            So good in fact that I was thinking about picking the same thing."
+        elif orange == True:
+            l "That's a good choice!
+            I've had my fair share of orange chicken already throughout my life, so I think I'm going for something else."
+            n "[persistent.date] scratches her chin softly."
+            l "I think I'm going to pick the peking duck, beats another portion of orange chicken."
+            n "She lets out a small chuckle."
 
-    menu:
-        "Actually there is something in that peking duck that you are really allergic to, deathly even." if persistent.chinese_death_1:
-            jump restaurant_death_1_prevented
+        menu:
+            "Actually there is something in that peking duck that you are really allergic to, deathly even." if persistent.chinese_death_1:
+                jump restaurant_death_1_prevented
 
-        "Sounds good to me!":
-            n "Suddenly a waitress stands right before your table, slightly startling you."
-            n "[persistent.date] tries her best not to burst out with laughter but a few muffled laughs get through.
+            "Sounds good to me!":
+                n "Suddenly a waitress stands right before your table, slightly startling you."
+                n "[persistent.date] tries her best not to burst out with laughter but a few muffled laughs get through.
 
-            After writing down both of your choices she wanders of towards the kitchen."
+                After writing down both of your choices she wanders of towards the kitchen."
+                l "Do you want to try to answer a few riddles in the meantime?"
 
-            l "Do you want to try to answer a few riddles in the meantime?"
+                menu:
+                    "I'd rather not actually, I'm pretty bad at answering riddles.":
+                        jump chinese_riddle_decline
 
-            menu:
-                "I'd rather not actually, I'm pretty bad at answering riddles.":
-                    jump chinese_riddle_decline
+                    "Sure, I'd like that!":
+                        jump chinese_riddle_accept
 
-                "Sure, I'd like that!":
-                    jump chinese_riddle_accept
+               
+    else:
+        if peking == True:
+            l "That would be a lovely choice."
+            l "So lovely that I'd probably pick the same thing. Something about it just feels... right to me?"
+        elif orange == True:
+            l "That's a good choice!"
+            l "It's weird, but somehow I feel exhausted of orange chicken even though I've never eaten it before."
+            l "Maybe I ate enough of it in a past life for both that life and this one?"
+            n "She lets out a small chuckle, you feel it resonate in your mind."
+        
+        l "Would you like to answer a few riddles [persistent.name]? That should be fun, right?"
+        menu:
+            "I'd rather not actually, I'm pretty bad at answering riddles.":
+                jump chinese_riddle_decline
+
+            "Sure, I'd like that!":
+                jump chinese_riddle_accept
 
 
 label chinese_riddle_accept:
@@ -356,26 +432,77 @@ label adriel_unanswered_chat:
         jump chinese_riddle_railroad
 
 label chinese_riddle_railroad:
-    if love_meter >= 2:
-        l "You know, it's kind of funny to be here in this specific restaurant with you."
-        l "Usually I come here with my mom and my sister, so it's a bit weird to be here with someone else."
-        l "Weird in a good way though! It's a welcome change if I'm being honest."
-        l "The reason we come here so much is because my sister, [persistent.date_sis], really adores this place."
-        l "Since mom and me took her here for her fourteenth birthday she insisted on coming again for five years in a row."
-        l "She always picks the orange chicken, it really is her favourite."
-        #In the rude route she tells you this but a bit more rude, you get the option to shit on the restaurant (verbally, not literally)
+    if persistent.rockMode == True:
+        l "You know, I wanted to thank you [persistent.name]."
+        l "It's been so long since I last went somewhere."
+        l "This place is absolutely worth it, but I just never had anyone to visit it with."
+        l "...It's strange, in a way it feels very... nostalgic to me?"
+        l "But like I was saying, this restaurant is absolutely lovely! Maybe we could also check out the other two places I mentioned some other time?"
+        l "I've been dying to explore them aswell."
         menu:
-            "She sounds nice, can you tell me more about her?":
-                n "[persistent.date] gives you a big smile."
-                l "Sure, what would you like to know?"
-                menu:
-                    "What is the funniest memory the two of you share?":
-                        jump chinese_riddle_talk_abbyMemory
+            "So you haven't visited them on your own yet? What's holding you back to do so since you want to explore them so much?":
+                l "I don't know... I guess I never really felt I had a reason to go there on my own."
+                l "It just feels like that's something you do with someone else. To go alone, it wouldn't be any different than staying in my room, right?"
+                l "I can't eat the food or interact with people, so the only thing that would change would be the environment."
+                l "Meanwhile that is what I'm really after, to interact with someone. To feel seen and heard, to give that feeling to someone else."
+                l "That is what gives life meaning, sadly it is also what was lacking from mine."
+                l "The truth is however nice this place is, you are what makes it special [persistent.name]."
+                l "The reason I would like to go to those other places on our next dates is not for them, but for you, to get to know you better."
 
-                    "What does she like to do?":
-                        jump chinese_riddle_talk_abbyHobbies
+            "What do you mean it feels nostalgic?":
+                l "It's hard to explain, it almost feels like it's a memory of someone else yet mine at the same time."
+                l "It reminds me of the taste of orange chicken, which is strange since I can't eat."
+                l "...Does that make sense?"
+                menu:
+                    "It does, I also remember the food here.":
+                        l "Really? How odd. What do you think that means?"
+                        menu:
+                            "Perhaps memories from a past life?":
+                                l "Past lives? Like reincarnation?"
+                                l "No, that can't be it, can it?"
+                                l "This place would not have existed in my previous life if there is such a thing. It has only been open for twenty or so years."
+                                l "Although... it is strange, but your explanation doesn't feel... wrong."
+                                l "So hypothetically that means both you and I came here before, as humans?"
+                                l "Did we do so together? Perhaps in a version of this date?"
+                                #TODO: Write this out more
+
+
+                            "Maybe a memory we picked up from those humans?":
+                                l "That seems rather unlikely. We can only connect psychically with others like us."
+                                l "As far as I'm aware it's impossible to interface with humans. Believe me, I tried..."
+                                l "Besides, this memory feels as if it were my own, it's not the same feeling I get as reading someone else's."
+                                l "... I will need some time to think this through, but for now we should probably go back to enjoying our date."
+                                l "It's been so long, so better enjoy it for all it's worth."
+
+                    "Not really, it just confuses me more.":
+                        l "Oh, I'm sorry about that [persistent.name]."
+                        l "I wish I could explain it better, but it's just too hard to grasp, even for myself."
+                        l "Either way, it's probably nothing, right? I think we should just focus on this date."
+        
+        #TODO: For now this is a way to keep the game moving in the right direction, might add more content inbetween here.
+        jump chinese_phoneScene           
+    
     else:
-        jump chinese_phoneScene
+        if love_meter >= 2:
+            l "You know, it's kind of funny to be here in this specific restaurant with you."
+            l "Usually I come here with my mom and my sister, so it's a bit weird to be here with someone else."
+            l "Weird in a good way though! It's a welcome change if I'm being honest."
+            l "The reason we come here so much is because my sister, [persistent.date_sis], really adores this place."
+            l "Since mom and me took her here for her fourteenth birthday she insisted on coming again for five years in a row."
+            l "She always picks the orange chicken, it really is her favourite."
+            #In the rude route she tells you this but a bit more rude, you get the option to shit on the restaurant (verbally, not literally)
+            menu:
+                "She sounds nice, can you tell me more about her?":
+                    n "[persistent.date] gives you a big smile."
+                    l "Sure, what would you like to know?"
+                    menu:
+                        "What is the funniest memory the two of you share?":
+                            jump chinese_riddle_talk_abbyMemory
+
+                        "What does she like to do?":
+                            jump chinese_riddle_talk_abbyHobbies
+        else:
+            jump chinese_phoneScene
 
 label chinese_riddle_talk_abbyMemory:
     if persistent.tracker == 2:
@@ -447,6 +574,7 @@ label chinese_riddle_talk_abbyMemory:
                                                         l "As weird as it might be, I have the same feeling somehow."
                                                         l "But as good as it is that we feel comfortable with eachother, that still doesn't mean I feel ready to tell you anything."
                                                         l "Maybe some other time? Just not now. I hope you understand."
+                                                        jump chinese_phoneScene
                                                     else:
                                                         l "I'm not sure how I feel about that, it's pretty creepy if I'm being honest."
                                                         l "{size=*0.5}Have you been stalking me [persistent.name]?{/size}"
@@ -454,7 +582,10 @@ label chinese_riddle_talk_abbyMemory:
                                                         n "Either way, there isn't really a good answer is there?"
                                                         n "The alternative is telling her that you actually keep going on the same dates over and over, and that she ends up dead in most of them."
                                                         n "Best to just stay quiet."
-   
+                                                        l "...Look [persistent.name], I'm not sure what is going on, but I do not feel comfortable going on this date anymore."
+                                                        l "I think I'm just going to leave."
+                                                        jump car_death
+
 label chinese_riddle_talk_abbyHobbies:
     n "[persistent.date] chuckles slightly."
     $ persistent.quest_knowledge = True
@@ -607,22 +738,23 @@ label chinese_lostSomeone_questions:
     l "[persistent.date] gives you a cute little smile."
     jump chinese_phoneScene
 label chinese_phoneScene:
-    if love_meter == 1:
-        n "You notice a strange look on [persistent.date]'s face that is gone before you can realise just what it means."
-        $ chinese_lilithBreakupTrigger = 2
-    l "I'll be right back [persistent.name], I just need to go to the bathroom real quick."
-    n "[persistent.date] stands up from her chair and pushes it back under the table."
-    n "As she enters the bathroom stall you see that she has forgotten her phone, it is still laying on the table."
-    if persistent.lildeaths >= 7:
-        if persistent.peeked_phone == True:
-            n "You've already done it before, you might aswell do it again, right?"
-            n "After all, this might help give you another lead on how to solve all of this."
-            n "Is that what you are thinking? That she won't remember any of this so that it doesn't matter?"
-            n "Go on. I won't stop you, not as long as this remains my story."
-        else:
-            $ nopeek = True
-            n "You know it isn't right to do but maybe you could find a way to save her on her phone.
-            If there is even the slightest chance that it will help her you owe it to her to try that out, right?"
+    if persistent.rockMode == False:
+        if love_meter == 1:
+            n "You notice a strange look on [persistent.date]'s face that is gone before you can realise just what it means."
+            $ chinese_lilithBreakupTrigger = 2
+        l "I'll be right back [persistent.name], I just need to go to the bathroom real quick."
+        n "[persistent.date] stands up from her chair and pushes it back under the table."
+        n "As she enters the bathroom stall you see that she has forgotten her phone, it is still laying on the table."
+        if persistent.lildeaths >= 7:
+            if persistent.peeked_phone == True:
+                n "You've already done it before, you might aswell do it again, right?"
+                n "After all, this might help give you another lead on how to solve all of this."
+                n "Is that what you are thinking? That she won't remember any of this so that it doesn't matter?"
+                n "Go on. I won't stop you, not as long as this remains my story."
+            else:
+                $ nopeek = True
+                n "You know it isn't right to do but maybe you could find a way to save her on her phone.
+                If there is even the slightest chance that it will help her you owe it to her to try that out, right?"
 
 
 
@@ -631,11 +763,18 @@ label chinese_phoneScene:
 
 
 
-    menu:
-        "Take a quick peek at her phone.":
-            jump chinese_phone_peek
-        "Respect her privacy.":
-            jump chinese_phone_noPeek
+        menu:
+            "Take a quick peek at her phone.":
+                jump chinese_phone_peek
+            "Respect her privacy.":
+                jump chinese_phone_noPeek
+    else:
+        n "At around this time [persistent.date] and you would have recieved your food."
+        n "This time however things are different. There is no food. Even if there was, it's not like you two can eat it."
+        n "That's probably for the better however. Her bloated face still haunts your nightmares."
+        n "For a second it almost feels like you were the one suffocating, not her."
+        n "You try to remain calm by reminding yourself you don't need to breathe in this form."
+        jump restaurant_death_1_prevented
 
 label chinese_phone_peek:
     n "As you open her phone you are greeted by a picture of a pug as the phone's background and a prompt.

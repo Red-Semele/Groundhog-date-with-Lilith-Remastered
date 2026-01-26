@@ -486,6 +486,7 @@ label start:
           default jamesCalled = False
           default davidCalled = False
           default policeCalled = False
+          default rockMode_rockBand = False
 
           #Beach
           default beachStart_doneBook = False
@@ -501,6 +502,8 @@ label start:
           default no_nightmare = False
           default perm_nightmare = False
           default other_phone = 0
+          default hypotheticalBurger = False
+          default fakeBurger = False
 
           
      
@@ -509,8 +512,6 @@ label start:
      #FUNCTIONS:
      jump gdwl_functions
 
-     #NON-PERSISTENT FLAGS
-     $ resetRegularFlags() #TODO: This is not accessible because you jump to the functions first. But also, you can't use this function without establishing it, right? Try to find a fix for that later
 
 
 
@@ -695,9 +696,6 @@ label game_start:
                                                             n "Your mind is the only place that is truly fully yours, and now... it isn't anymore."
                                                             l "Don't even mention it [persistent.name], it can happen to anyone of us."
                                                             $ persistent.psychicConnection_knowledge = True
-                                                            #TODO: Add a version of the normal path but with rocks stuff, Lilith can't emote because she is a rock.<br/>At the end she will not die.<br/>Add a path to all three main restaurants."
-                                                            #Make the two of you move by getting stuck in people's shoes, make the two of you not able to die etc. Make the two of you just wait until you erode, and even then you are alive. Wait until the earth consumes the sun. Have the two of you still being able to communicate, but after less than a hundred years you have said pretty much everything, and then you are just floating around in space, divided in your atoms, as you witness time in a form no mind can take well. Make the end say "rock on"
-                                                            #It's about how an ending is so much better than pure infinity without one.
                                                             jump Game_start2
                                           
           else:
@@ -1523,7 +1521,7 @@ label phone_call_abigail:
                                                   a "Sure, if that somehow helps Lilly that's fine by me."
                                                   menu abigail_somethingElse:
                                                        "[persistent.date] and you talked about your emotional mask in a previous loop, the façade that you put up not to worry anyone." if persistent.kokiri_abbyMasking_knowledge == True:
-                                                            a "We talked about that?"
+                                                            a "We talked about that?..."
                                                             a "I guess we did, since you know."
                                                             a "Though if you want to talk about it with me I'd rather not."
                                                             a "We maybe already talked before during one of your previous loops but to me you're still nearly a total stranger."
@@ -1531,7 +1529,36 @@ label phone_call_abigail:
                                                             a "Don't get me wrong, she really cares deeply about me, she tries to express that as best as she can. But we never really had a chat like that before."
                                                             n "It's quiet on the other end for what feels like a minute."
                                                             a "Alright, you got me curious [persistent.name], how did our conversation roughly go?"
-                                                            #TODO: Have a few options to tell it.
+                                                            menu:
+                                                                 "She said you were coming across even more cheerful than normal. That something seemed off.":
+                                                                      a "...And what did I answer?"
+                                                                      menu:
+                                                                           "That you were feeling insecure about your writing.":
+                                                                                a "I see... that indeed is true."
+                                                                                a "I'll spare you the details, since you've already heard them before. But also because I don't want to go over them right now."
+                                                                                a "What interests me more is how she responded."
+                                                                                menu:
+                                                                                     "She said that your art is genuinely really great and that she hopes one day you see it the same way. That there is always room for improvement no matter how good you are but that you have to call your art finished eventually so it can be seen by others.":
+                                                                                          a "I guess she is right. I have to let my art go at some point if I want other people to see it." 
+                                                                                          a "Still, to tell you the truth, I don't think I'm ready yet for it to be seen. Letting go is scary isn't it? The moment I do so it's out of my control."         
+                                                                                          a "I'd prefer to hold on just a little longer..."    
+                                                                                          a "Although I'm glad she seems to like my writing at the very least, it makes me feel like I could be onto something."                                                  
+                                                                                          a "..."
+                                                                                          a "Did I say anything else?..."
+                                                                                          menu:
+                                                                                               "You didn't.":
+                                                                                                    n "You hear her let out a deep breath of relief, or is it a sigh of dissapointment?"
+                                                                                               "You also said you were unsure of yourself, as if you are bad at being you.":
+                                                                                                    a "...I did?..."
+                                                                                                    a "What did she say to that?"
+                                                                                                    menu:
+                                                                                                         "That people are complex tapestries of overlapping and sometimes contradicting things. That those tapestries keep changing, and that it is okay for them to do so. That no matter how much you change, you'll always be her sister.":
+                                                                                                              n "For a moment it's completely quiet on the other side of the line."
+                                                                                                              a "...I-I have to think about this for a moment."
+                                                                                                              a "Goodbye [persistent.name]."
+                                                                                                              a "...And thank you."
+                                                                                                              n "With that she hung up the phone."
+                                                                                                              jump phone_callMenu
                                                        "I would like to talk to you about your games." if persistent.quest_knowledge:
                                                             if abby_phone_games == True:
                                                                  a "Sure, what would you like to know about them?"
@@ -4732,7 +4759,7 @@ label polaroidZone_narratorSlipping1:
           n "You could even argue it is where the game truly starts since that is where the most important discusions are had."
           n "Although I must say, my favourite part is probably when I get to talk to [persistent.date] through you."
           n "I really do like her as a character even if I have to steer her to her death."
-          n "But no more of that, I hope my next sotry will be something more upbeat."
+          n "But no more of that, I hope my next story will be something more upbeat."
           n "Maybe even something of my own making instead of it being just a script I am reading from."
      elif changeableWord == "beach":
           "Filler"

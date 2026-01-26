@@ -10704,7 +10704,7 @@
                 wait {
                   msg ("The pain you are experiencing is too much and you fall unconscious.")
                   wait {
-                    msg ("When you wake up again all the cutomers and staff have dissapeared, including Lilith.")
+                    msg ("When you wake up again all the customers and staff have dissapeared, including Lilith.")
                     msg ("The room is completely filled to the brim with geese feathers, you begin to sneeze just thinking about that.")
                     msg ("While you are sneezing you notice that someone put a sticky note on your hand.")
                     wait {

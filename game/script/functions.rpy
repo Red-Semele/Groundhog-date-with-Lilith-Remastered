@@ -462,6 +462,7 @@ label gdwl_functions:
                 "jamesCalled", 
                 "davidCalled", 
                 "policeCalled", 
+                "rockMode_rockBand",
 
                 #Beach
                 "beachStart_doneBook", 
@@ -476,6 +477,8 @@ label gdwl_functions:
                 #QOL-settings:
                 "no_nightmare", 
                 "perm_nightmare", 
+                "hypotheticalBurger",
+                "fakeBurger"
             ]
 
             for var in global_vars:

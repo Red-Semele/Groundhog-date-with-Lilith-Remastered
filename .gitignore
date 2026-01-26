@@ -27,6 +27,8 @@ share/python-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+git rm --cached *.save
+git commit -m
 MANIFEST
 
 # PyInstaller

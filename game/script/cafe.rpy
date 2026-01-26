@@ -34,37 +34,62 @@ label cafe_start:
                 jump cafe_food_choice2
     else:
         #TODO: This needs to be written way better, just writing it as a first version of the persistent.rockMode part
-        n "You are lying on the sidewalk, waiting until the moment is right."
-        n "Then suddenly, your moment comes. You hear someone right in front of you talking to someone on the phone about a date in the cafe."
-        n "You decide to exert all your psychic energy to move a full 5 centimeters to the right."
-        n "You perfectly align yourself with the shoe stomping down right on you, using this opportunity to nudge yourself inbetween it."
-        n "You can't see anything, but you do feel the sensation of every step."
-        n "Suddenly you feel something soft brush against you, and then something plastic that gets pushed in and out."
-        n "These sensations feel quite familiar, even if a bit different than how you might experience them normally."
-        n "And then it dawns on you, the person you are lifting with is in their car."
-        n "After that it doesn't take long at all for you to feel the pavement brush against you with each step once more."
-        n "Eventually you make contact with a wooden floor, and a little bit later the walking stops. You use this opportunity to dislodge yourself from between the shoe."
-        n "Suddenly you feel a presence in your mind."
-        l "Heya [persistent.name]. Glad you could make it!"
-        l "And look, it seems we got really lucky, the person I lifted with is here to see your person."
-        l "That saves us a lot of rolling around."
-        l "This place has a really nice atmosphere, those mahogany tables and the aquariums are real eye catchers don't you think?"
-        l "It's a shame it's pretty hard to notice from down here, but atleast the food will be free."
-        l "My person already went to grab the food. It should be two beef sandwiches."
-        n "Right as she says that a tiny piece of beef falls right next to you."
-        l "Does it smell good?"
-        menu:
+        label rockTransport:
+            if burger == True:
+                $ changeableWord = "burger restaurant"
+            elif cafe == True:
+                $ changeableWord = "cafe"
+            else:
+                $ changeableWord = "chinese restaurant"
+
+                n "You are lying on the sidewalk, waiting until the moment is right."
+                n "Then suddenly, your moment comes. You hear someone right in front of you talking to someone on the phone about a date in the [changeableWord]."
+                n "You decide to exert all your psychic energy to move a full 5 centimeters to the right."
+                n "You perfectly align yourself with the shoe stomping down right on you, using this opportunity to nudge yourself inbetween it."
+                n "You can't see anything, but you do feel the sensation of every step."
+                n "Suddenly you feel something soft brush against you, and then something plastic that gets pushed in and out."
+                n "These sensations feel quite familiar, even if a bit different than how you might experience them normally."
+                n "And then it dawns on you, the person you are lifting with is in their car."
+                n "After that it doesn't take long at all for you to feel the pavement brush against you with each step once more."
+            if burger == True:
+                "You make it to the restaurant again. (Filler)"
+                n "Suddenly you feel a presence in your mind."
+                jump burger_arrived
+                
+            
+            elif cafe == True:
+               
+                n "Eventually you make contact with a wooden floor, and a little bit later the walking stops. You use this opportunity to dislodge yourself from between the shoe."
+                n "Suddenly you feel a presence in your mind."
+                l "Heya [persistent.name]. Glad you could make it!"
+                l "And look, it seems we got really lucky, the person I lifted with is here to see your person."
+                l "That saves us a lot of rolling around."
+                l "This place has a really nice atmosphere, those mahogany tables and the aquariums are real eye catchers don't you think?"
+                l "It's a shame it's pretty hard to notice from down here, but atleast the food will be free."
+                l "My person already went to grab the food. It should be two beef sandwiches."
+                n "Right as she says that a tiny piece of beef falls right next to you."
+                l "Does it smell good?"
+            
+                jump cafe_foodReplyChoice
+            else:
+                "You make it to the restaurant again. (Filler)"
+                n "Suddenly you feel a presence in your mind."
+                jump chinese_arrived
+                
+        menu cafe_foodReplyChoice:
             "I don't have a nose, so I can't smell it.":
                 n "That's very correct. But then, how are you able to look around with no eyes? To think with no mind?"
                 n "None of this makes sense. This script is giving me a headache."
                 n "Perhaps His vision is elevated far above what either of us could comprehend."
                 n "{size=*0.5}Or maybe He is just a hack. You are very lucky I'm paid per word I read, otherwise I would not be doing this.{/size}"
                 n "Either way, I think it is best to not think too much about it. Ignorance is bliss afterall, isn't it?"
+                l "I know silly, but what do you think it smells like?"
+                l "Our imagination is one hell of a tool, isn't it? Then we better put it to good use."
             
             "It does, it's just a shame I can't eat it.":
                 l "Eat it? Why would we do that? We are rocks, we don't need to eat."
                 l "Just watching it is it's own experience, isn't it?"
-                l "Sure, it might be different than what you are used to, but it's an entirely different perspective."
+                l "Sure, it might be a little... different, but it's an experience nontheless, right?"
         #TODO: Have this lead to a better segway that then moves to the next part.
         jump cafe_dice_stop
 
@@ -330,7 +355,10 @@ label cafe_rateCafe_great:
     jump cafe_rateCafe_result
 
 label cafe_rateCafe_okayish:
-    n "[persistent.date] flashes you an understanding smile."
+    if persistent.rockMode == False:
+        n "[persistent.date] flashes you an understanding smile."
+    else:
+        n "You feel a gentle wave of understanding wash over you, it feels strange for only a second, then it feels almost comfortable."
     l "Ah, sorry to hear that, but I am really loving this place if that's worth something.
     Maybe we can go to a place you like next time?"
     l "I've never seen so many colors at the same time, thank you for taking me here [persistent.name].
@@ -357,6 +385,7 @@ label cafe_rateCafe_bad:
 label cafe_rateCafe_result:
     menu:
         "Sorry to ask you this, but did you have bad experiences in love?":
+        
             l "That's quite an unusual question to ask [persistent.name], why do you think I did?"
             #Maybe rephrase it slightly, comes of as a bit defensive.
             menu:
@@ -393,7 +422,11 @@ label cafe_joke_bad:
     n "[persistent.date] looks saddened by your remark."
 
     l "Really? ..."
-    l "I thought it was funny when [persistent.date_sis] told me..."
+    if persistent.rockMode == False:
+        l "I thought it was funny when [persistent.date_sis] told me..."
+    else:
+        l "I find that joke a pretty funny one. Although... I'm unsure of who I learned it from."
+        l "It kind of feels like I always knew it, as if I was born with it if that makes sense."
     menu:
         "Quick, come stand next to me!" if persistent.cafe_death_1 and not persistent.rockMode:
             jump restaurant_death_1_prevented
@@ -403,13 +436,22 @@ label cafe_joke_bad:
 
 label cafe_joke_good:
     n "[persistent.date] explodes in laughter."
-    l "Exactly! The first time [persistent.date_sis], my sister, told me that joke I spent an entire hour laughing.
-    But then again, she always makes me laugh so much that I just might pass out one time."
-    l "I'm kidding, I'm kidding! About the passing out part that is, she really is funny though."
+    if persistent.rockMode == False:
+        l "Exactly! The first time [persistent.date_sis], my sister, told me that joke I spent an entire hour laughing.
+        But then again, she always makes me laugh so much that I just might pass out one time."
+        l "I'm kidding, I'm kidding! About the passing out part that is, she really is funny though."
+    else:
+        l "Exactly! The first time I heard that joke I just spent an entire hour laughing."
+        l "Although... it's strange, I do not remember where I heard that joke, just that I did."
+        l "..."
     menu:
         "Quick, come stand next to me!" if persistent.cafe_death_1 and not persistent.rockMode:
             jump restaurant_death_1_prevented
-        "She sounds nice.":
+
+        "She sounds nice." if not persistent.rockMode:
+            jump restaurant_death_1
+
+        "That indeed is strange." if persistent.rockMode:
             jump restaurant_death_1
 
 label cafe_joke_dontGet:
@@ -434,36 +476,67 @@ label cafe_badLove:
         l "Anyway, to answer your question..."
 
     elif cafe_badLove_justafeeling == True:
-        l "Ah I see, are you sure you are not a psychic?"
+        if persistent.rockMode == False:
+            l "Ah I see, are you sure you are not a psychic?"
+        else:
+            l "Are you sure you are not taking a peek at my thoughts?"
         n "[persistent.date] lets out a cute chuckle before becoming a bit more serious again."
         l "You came pretty close to the truth with that intuition, not entirely though."
+    if persistent.rockMode == False: 
+        l "I wouldn't say I had really bad experiences with love. It's just that I tend to grow connected with people before they even had the chance to grow fond of me."
+        l "I also do not need to be with someone every single moment, both as a friend or lover, once I'm connected I start to sort of withdraw a little bit."
+        if cafe_badLove_lowbar == True:
+            if persistent.lildeaths > 0:
+                l "But it's strange, I feel as if you already know me pretty well even though this is our first date. Not that I'm complaining though, I really like it if I'm being honest with you."
+        l "In the beginning I thought that I was weird for acting that way, I started trying to make sure that I didn't distance myself from anyone so I wouldn't hurt them."
+        l "Of course this only made things worse, soon I began having almost no confidence in myself and messed up quite a few relationships and friendships."
+        l "It took me a while before I managed to find the courage in myself to try and fix my problems."
+        l "It didn't happen instantly, even now I sometimes come of as too distant, but little by little I managed to tell myself that there is nothing wrong with not needing an overdose of affection every second."
+        l "So, did I have bad experiences in love?"
+        l "Maybe, but they were all quite necessary as without them I wouldn't be here with you today, I wouldn't even be myself if that makes sense."
+        l "Sorry for blabbering on by the way, I'm quite talkative when you get me going."
+        menu:
+            "No need to apologise for talking, I like listening to you.":
+                l "Oh you flatterer! "
+                n "[persistent.date] looks at you and gives you a big grin, you can clearly see she's blushing."
+                n "Suddenly the grin begins to make place for a slight frown."
+                l "Is it normal for me to be that happy because someone told me they don't mind me speaking?"
+                l "..."
+                l "I... kind of struggle with self-confidence."
+                l "Sometimes I think other people find it a burden to talk to me or be around me at all."
+                menu:
+                    "Quick, come stand next to me!" if persistent.cafe_death_1 and not persistent.rockMode:
+                        jump restaurant_death_1_prevented
 
-    l "I wouldn't say I had really bad experiences with love. It's just that I tend to grow connected with people before they even had the chance to grow fond of me."
-    l "I also do not need to be with someone every single moment, both as a friend or lover, once I'm connected I start to sort of withdraw a little bit."
-    if cafe_badLove_lowbar == True:
-        if persistent.lildeaths > 0:
-            l "But it's strange, I feel as if you already know me pretty well even though this is our first date. Not that I'm complaining though, I really like it if I'm being honest with you."
-    l "In the beginning I thought that I was weird for acting that way, I started trying to make sure that I didn't distance myself from anyone so I wouldn't hurt them."
-    l "Of course this only made things worse, soon I began having almost no confidence in myself and messed up quite a few relationships and friendships."
-    l "It took me a while before I managed to find the courage in myself to try and fix my problems."
-    l "It didn't happen instantly, even now I sometimes come of as too distant, but little by little I managed to tell myself that there is nothing wrong with not needing an overdose of affection every second."
-    l "So, did I have bad experiences in love?"
-    l "Maybe, but they were all quite necessary as without them I wouldn't be here with you today, I wouldn't even be myself if that makes sense."
-    l "Sorry for blabbering on by the way, I'm quite talkative when you get me going."
-    menu:
-        "No need to apologise for talking, I like listening to you.":
-            l "Oh you flatterer! "
-            n "[persistent.date] looks at you and gives you a big grin, you can clearly see she's blushing."
-            n "Suddenly the grin begins to make place for a slight frown."
-            l "Is it normal for me to be that happy because someone told me they don't mind me speaking?"
-            l "..."
-            l "I... kind of struggle with self-confidence."
-            l "Sometimes I think other people find it a burden to talk to me or be around me at all."
-            menu:
-                "Quick, come stand next to me!" if persistent.cafe_death_1 and not persistent.rockMode:
-                    jump restaurant_death_1_prevented
-
-                "Well, I really enjoy our time together!":
-                    l "Thank you [persistent.name], it really helps to hear someone say that from time to time."
-                    n "[persistent.date] gives give a thankfull smile."
-                    jump restaurant_death_1
+                    "Well, I really enjoy our time together!":
+                        l "Thank you [persistent.name], it really helps to hear someone say that from time to time."
+                        n "[persistent.date] gives give a thankfull smile."
+                        jump restaurant_death_1
+    else:
+        l "I'm not sure if I had much experiences at all with love, let alone bad ones."
+        l "I am trapped between two worlds I don't belong to, the human one and the rock one."
+        l "The first can't hear me psychically and the other one can't hear anything at all."
+        l "There are some who can, but psychic rocks like you and me are very very few and far between."
+        l "However, I guess I did have one experience with love, if I should call it that."
+        l "There was this one rock who called themself \"Flint\"."
+        #TODO: Write the story of meeting him and some shenigans inbetween here.
+        l "I felt seen by Flint. For the first time in my life there was someone with who I could do things together."
+        l "Eventually... I felt something else. I had been so starved of contact, of attention that I thought I felt love."
+        l "In a way it definetly was possible, but with a lot of reflection on my end I now know that I was more in love with the idea of it all than with him. With the idea of being in love."
+        l "That need for love, it blinded me to what I already had, a great friendship."
+        l "...Eventually I couldn't take it anymore. I tried to fight it for some time, but I ened up confessing my feelings to him."
+        l "He... did not reciprocate. At first we agreed to remain friends but things got more and more awkward between the both of us."
+        l "It didn't take long for us to grow apart. It's been forever since I last heard from him."
+        l "So for my very small exposure to experiences with love I guess my first one indeed wasn't a good one. Yet I did learn a lot from it, however cliché that might sound."
+        l "I learned to try to see and take things for what they are. There is no use trying to force something that is already good into perfection."
+        l "Because the truth is, there is no such thing as perfection, anything resembling it is an illusion."
+        l "Even if there was such a thing, we would quickly grow rather bored of it, wouldn't we?"
+        l "Once we have forced our perfection upon something, then what do we have to look forward to?"
+        l "I'm convinced we need obstacles, everyone does. Without obstacles reaching our goal becomes something that is already done before we started."
+        l "We need good enough, so we can grow along with it, watch it get better over time. We do not need the stagnant, forever unchanging perfection."
+        l "It's a saying I made for myself. \"Do not confuse the silver moon for the sun just because she reflects it's light.\""
+        l "To choose the sun is a pretty sight for a while. But you will find yourself blind to everything else if you stare into it too long."
+        l "That's why I am choosing the moon, she reflects the light of perfection, into something more manageable for our minds."
+        l "Afterall, we can also find perfection in good enough, just a version that is a lot more manageable. perhaps more fleeting, but that's what makes it beautiful, isn't it?"
+        l "For example, right now, I want to take things slow with you, to see where this date will bring us. To get to know you better, the real you."
+        l "So did I have a bad experience before? Maybe. But it did help me to hopefully make this a good one."

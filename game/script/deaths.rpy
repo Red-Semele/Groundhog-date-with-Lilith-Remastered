@@ -27,7 +27,6 @@ label restaurant_deaths:
                     $ persistent.burger_death_1 = True
                     jump gameOver
                 else:
-                    #TODO: Fill a short description in about her not dying, because well, she is a rock.
                     n "This time though, things will go different, since [persistent.date] and you are already safe and sound under the table."
                     if persistent.burger_death_2:
                         n "You do however know this is not the end, but you are hopeful that this time things will be different."
@@ -46,7 +45,6 @@ label restaurant_deaths:
                     $ persistent.cafe_death_1 = True
                     jump gameOver
                 else:
-                    #TODO: Fill a short description in about her not dying, because well, she is a rock.
                     jump restaurant_death_1_prevented
 
 
@@ -76,7 +74,6 @@ label restaurant_deaths:
                     $ persistent.chinese_death_1 = True
                     jump gameOver
                 else:
-                    #TODO: Fill a short description in about her not dying, because well, she is a rock.
                     jump restaurant_death_1_prevented
             else:
                 "This is an error, if you can see it the location scene for the first death is broken."
@@ -123,47 +120,49 @@ label restaurant_deaths:
                 jump restaurant_death_1_prevented_explanation
             else:
                 if burger == True:
-                    "Filler"
                     l "I would have been shot?..."
-                    l "That image in your mind... That's me as a human?"
-                    n "It seems as if your thoughts are not as well hidden as you might like."
-                    n "Yet hers are even harder to pick up on than ever. You can feel her thoughts racing all over the place."
-                    #TODO: Have her ask for an explanation, you tell her that in other worlds she is human but she kept on dying so you entered a universe where the both of you are rocks.
-                    l "What is going on [persistent.name]?"
-                    menu:
-                        "Me and you are both human in other worlds. But in those worlds you keep dying on our dates. That's why I entered this world.":
-                            "Filler"
-                            l "There are other worlds?... Where I am human and I keep dying?"
-                            l "This just hurts my head way too much."
-                            l "Although it does make me wonder about the logistics."
-                            l "You actively chose to enter this world? How did you do that? That hardly seems like something just anyone could do."
-                            menu:
-                                "This is a game and I am the one playing it. I accessed this world via a cheatcode.":
-                                    #TODO: This needs some rewriting
-                                    l "...I really shouldn't believe that. It is so outlandish."
-                                    l "Alternate worlds were something I could still believe slightly even if it was a lot of info to take in all at once."
-                                    l "But this, it's so far fetched, it couldn't possibly be true, right? And yet, I can sense it in your mind, you are telling the truth."
-                                    l "So all of this is fake? This world, this place, me?"
+                   
+                    label preventedRockDeath1:
+                        l "That image in your mind... That's me as a human?"
+                        n "It seems as if your thoughts are not as well hidden as you might like."
+                        n "Yet hers are even harder to pick up on than ever. You can feel her thoughts racing all over the place."
+                        l "What is going on [persistent.name]?"
+                        menu preventedRockDeath1_choice:
+                            "Me and you are both human in other worlds. But in those worlds you keep dying on our dates. That's why I entered this world.":
+                                l "There are other worlds?... Where I am human and I keep dying?"
+                                l "This just hurts my head way too much."
+                                l "Although it does make me wonder about the logistics."
+                                l "You actively chose to enter this world? How did you do that? That hardly seems like something just anyone could do."
+                                menu:
+                                    "This is a game and I am the one playing it. I accessed this world via a cheatcode.":
+                                        #TODO: This needs some rewriting
+                                        l "...I really shouldn't believe that. It is so outlandish."
+                                        l "Alternate worlds were something I could still believe slightly even if it was a lot of info to take in all at once."
+                                        l "But this, it's so far fetched, it couldn't possibly be true, right? And yet, I can sense it in your mind, you are telling the truth."
+                                        l "So all of this is fake? This world, this place, me?"
+                                        "Filler"
 
-                                "Believe me, telling you that right now would be way too much to handle when combined with the other info.":
-                                    l "It would? That only makes me more curious honestly. What is harder to handle than alternate worlds and a timeloop of death?"
-                                    l "I could read your mind to find out... But I suppose I'll take your word for it."
-                                    l "You did lift the veil a little bit so I'll just trust you that partial ignorance is bliss... for now atleast, when the time is right I do want to know the full story."
-                                    l "I do wonder though, I don't think the loop of death can get me in this form, can it? I'm not even sure if I can die at all."
-                                    l "So that means you did it, right? That means you saved me."
-                                    l "I guess you did in more ways than just one. With you here with me I don't have to feel so alone anymore."
-                                    l "It is quite a nice idea isn't it? That we always find eachother, no matter if we are humans, rocks or something else."
-                                    l "So thank you [persistent.name], for finding and saving me."
-                                    #TODO:"Have this lead to the second death, the two of you survive it and you tell her you never made it that farthen the two of you go on rock hyjinx only to witness the heat death of the universe and grow silent after you have nothing more to say.
-                                    jump restaurant_death_2
+                                    "Believe me, telling you that right now would be way too much to handle when combined with the other info.":
+                                        l "It would? That only makes me more curious honestly. What is harder to handle than alternate worlds and a timeloop of death?"
+                                        l "I could read your mind to find out... But I suppose I'll take your word for it."
+                                        l "You did lift the veil a little bit so I'll just trust you that partial ignorance is bliss... for now atleast, when the time is right I do want to know the full story."
+                                        l "I do wonder though, the loop of death can't get me in this form, can it? I'm not even sure if I can die at all."
+                                        l "So that means you did it, right? That means you saved me."
+                                        l "I guess you did in more ways than just one. With us here together I don't have to feel so alone anymore."
+                                        l "It is quite a nice idea isn't it? That we always find eachother, no matter if we are humans, rocks or something else."
+                                        l "So thank you [persistent.name], for finding and saving me."
+                                        jump restaurant_death_2
 
                                 
                                 
                         
                 elif cafe == True:
-                    "Filler"
+                    
+                    l "I would have drowned?..."
+                    jump preventedRockDeath1
                 elif chinese == True:
-                    "Filler"
+                    l "I would have suffocated?..."
+                    jump preventedRockDeath1
                 else:
                     "restaurant_death_1_prevented error."
                 jump restaurant_death_1_prevented_explanation
@@ -172,120 +171,15 @@ label restaurant_deaths:
         label restaurant_death_2:
             #Here the code of the second death will be.
             play music game_over
-           
-            if burger == True:
-                $ persistent.burger_death_2 = True
-                if not burger_explosion_outside == True:
-                    n "Suddenly a inmense sensation of pain overwhelms you, the only thing you can see is a glimpse of pure white and an eternity of black."
-                n "When you awaken you find yourself surrounded by doctors, they tell you that with the force of sheer luck the stray bullet that would've hit [persistent.date] managed to cause a gas leak."
-                n "The gas explosion that followed was quite severe, you were in a coma and had to have your wounds cleaned with some surgical procedures."
-                n "After a week you got out of your coma, [persistent.date] however didn't have such luck."
-                n "The doctors tell you that she atleast went out pretty quickly, almost like dying in your sleep... but with more explosions."
-                if death_narration != "":
-                    n "[death_narration]"
-
-                $ burger_explosion_outside = False
-                jump gameOver
-
-            elif cafe == True:
-                n "Suddenly you begin to hear the sound of shattering glass."
-                n "As you turn to look at the source of the sound you can see that the aquarium next to where [persistent.date] was sitting has shattered."
-                n "The water is gushing out rapidly and it does not seem to be planning to stop."
-                n "How could this happen?"
-                n "Did the merlin somehow made a crack form?"
-                n "Or was it something else?"
-                n "You think about the pure shenanigans that were needed to even make this exact thing happen but you are soon interrupted by the water flowing past your shoes with some fish coming along for the ride."
-                l "Quick [persistent.name], we need to do something!"
-                if persistent.cafe_death_2 == True:
-                    n "You give [persistent.date] a firm hug and tell her that there's nothing else you two can do except for waiting."
-                    if love_meter >= 3:
-                        l "If I have to go now I atleast get some comfort out of the fact that you are here for me."
-                        l "Goodbye [persistent.name], thank you for everything."
-                        
-                    else:
-                        n "And so the both of you wait, in eachothers arms, for certain death. And it comes as expected."
-                    
-                
-                else:
-                    $ persistent.cafe_death_2 = True
-                    n "You try to open the main exit of the restaurant but it doesn't seem to be giving in, almost as if something is blocking it."
-                    n "Quick! Maybe we can still go to the first floor, we need to go higher!"
-                    n "Pretty much without any other option you two decide to make a rush for the first floor of the restaurant."
-                    n "When you turn around the corner you see that the stairs are blocked of by an extremely large closet made out of lignum vitae, you can not carry that, all you can do is admire the craftmanship."
-                    n "You give [persistent.date] a firm hug and tell her that there's nothing else you two can do except for waiting."
-                    n "And so the both of you wait, in eachothers arms, for certain death.
-                    And it surely came."
-                if hugRequestedBeforeDeath == True:
-                    n "it seems [persistent.date] got the hug she asked for after all, just not in the way she thought she would."
-                else:
-                    if death_narration != "":
-                        n "[death_narration]"
-                jump gameOver
-
-            elif chinese == True:
-                n "Suddenly you hear the faint sound of quacking."
-                n "The sound of the quacking steadily grows louder and louder untill it's all you can hear."
-                n "A true quackophony if you will."
-                n "[persistent.date] looks over your shoulder with a frightend look in her eyes."
-                n "When you turn around you see a wave of angry geese breaking through the doors of the once cozy Chinese restaurant, the staff is running around in sheer panic."
-                n "Before you can make another sound everything turns to white, the white of pesky geese feathers."
-                n "The pain you are experiencing is too much and you fall unconscious."
-                n "When you wake up again all the cutomers and staff have dissapeared, including [persistent.date]."
-                n "The room is completely filled to the brim with geese feathers, you begin to sneeze just thinking about that."
-                n "While you are sneezing you notice that someone put a sticky note on your hand."
-                n "It reads as following: \"We took everyone and you won't be seeing them back, let this be a lesson on why you should not eat or serve geese or ducks, as those are also part of our family.
-                - Sincerely, the geese\""
-                $ persistent.chinese_death_2 = True
-                if death_narration != "":
-                    n "[death_narration]"
-                jump gameOver
-            else:
-                #TODO: Rewrite these below deaths to not affect you and Lilith. You then go on rock hyjinx eventually leading to the heat death of the universe, where you have said everything there is to say.
+            if persistent.rockMode == False:
                 if burger == True:
                     $ persistent.burger_death_2 = True
-                    n "Suddenly you are enveloped in a flash of pure white. That must be the explosion. The force of it is enough to send you flying, and yet you do not feel any pain."
-                    n "When the flash of white subsides you find yourself in the ruins of the burger restaurant. The wooden tables are flipped over, flames eating away at them."
-                    n "There is screaming and sobbing, but most of all there is death. Even with all the noise in the midst of the chaos the cold and looming silence of death is deafening."
-                    n "The burned and scarred survivors are fleeing, dragging their loved ones from underneath the flaming tables."
-                    n "They pretend they are still alive, but you have been around death enough times to know that it is merely that, pretending."
-                    n "You do hear one more thing. A voice, calling out to you. Hers."
-                    l "[persistent.name], are you... alright?"
-                    n "However loud the haunting silence of death is, this time it's not hers."
-                    n "But that does not mean it isn't yours to carry."
-                    menu:
-                        "I'm fine, but what about you?":
-                            "Filler"
-
-                        "I'm fine, but what about these other people?":
-                            n "Curious. I do wonder what makes you now care for these people."
-                            n "You didn't think the restaurant was empty all those other times, did you?"
-                            n "So what makes now any different from those [persistent.burgerwent] other times?"
-                            n "I suppose our problems only become problems when we become aware of them."
-                            n "Otherwise it's just a blur right outside of the corner our eye."
-                            n "Now it will be even harder to pretend that you are doing this for selfless reasons, won't it?"
-                            n "I suppose ignorance truly is bliss to you, isn't it player?"
-                            n "Because to not know is to believe what you want. But to know is to define, to confine."
-                            n "Now the truth can't be conveniently altered, can it? From now on, these people will suffer, they will die, each time you come here."
-                            n "I do wonder if that matters to you though, and if it does I wonder how long that will last."
-                            n "Because at the end of the day, they are just words and images to you, aren't they player?"
-                            n "I suppose I can't blame you for viewing them like that. Still, you do know [persistent.date] is the same, don't you?"
-                            n "Then what makes you go through all this trouble? Through all this death?"
-                            n "Are you doing this just to see everything this game has to offer? Or is this truly about saving her?"
-                            n "Don't bother answering, we've already been at this for too long and the result is the same either way."
-                            n "Now, let's move on."
-                            l "It's horrible isn't it? I'm glad we are fine, but the people, god- they once were people but now it's hard to see them as such while they are covered in debris and ash."
-                            l "Is it always like this? I just hope this time no-one... died."
-                            l "We are fine, well, as fine as one can be after something like this, but when I see all of them suffering I wish I could do something, anything, to help."
-                            l "But they can't hear us, nor can we reach our hands to them to try to comfort them. Even then, I don't think that would work, not at a time like this."
-                            l "They will need time, although they might never be the same again. That explosion blasted them away from their lives trajectory."
-                            l "Seeing this... Is all of that worth it just to save me?"
-                            l "In that other world you were talking about, the one where we are both human, couldn't we have warned them?"
-                            l "Couldn't we have prevented this? And yet you abandoned that world for this one where they cannot hear us?"
-                            #TODO: Make this an option? (Think about it beforehand wheter or not it is meaningful.)
-                            l "...I- I need some time to think about this [persistent.name]. I think it's better if we take some time apart from eachother."
-                            #TODO: Continue writing this, she does indeed take some time away, to later contact you and to tell you she understands. You were trying your best to save her. She might not agree entirely but is willing to give it a shot if you try to go back to another world and save those people. What is done is done, it can't be undone. But ammends can be made.
-                            
-                            "Filler"
+                    if not burger_explosion_outside == True:
+                        n "Suddenly a inmense sensation of pain overwhelms you, the only thing you can see is a glimpse of pure white and an eternity of black."
+                    n "When you awaken you find yourself surrounded by doctors, they tell you that with the force of sheer luck the stray bullet that would've hit [persistent.date] managed to cause a gas leak."
+                    n "The gas explosion that followed was quite severe, you were in a coma and had to have your wounds cleaned with some surgical procedures."
+                    n "After a week you got out of your coma, [persistent.date] however didn't have such luck."
+                    n "The doctors tell you that she atleast went out pretty quickly, almost like dying in your sleep... but with more explosions."
                     if death_narration != "":
                         n "[death_narration]"
 
@@ -335,7 +229,7 @@ label restaurant_deaths:
                     n "When you turn around you see a wave of angry geese breaking through the doors of the once cozy Chinese restaurant, the staff is running around in sheer panic."
                     n "Before you can make another sound everything turns to white, the white of pesky geese feathers."
                     n "The pain you are experiencing is too much and you fall unconscious."
-                    n "When you wake up again all the cutomers and staff have dissapeared, including [persistent.date]."
+                    n "When you wake up again all the customers and staff have dissapeared, including [persistent.date]."
                     n "The room is completely filled to the brim with geese feathers, you begin to sneeze just thinking about that."
                     n "While you are sneezing you notice that someone put a sticky note on your hand."
                     n "It reads as following: \"We took everyone and you won't be seeing them back, let this be a lesson on why you should not eat or serve geese or ducks, as those are also part of our family.
@@ -344,10 +238,185 @@ label restaurant_deaths:
                     if death_narration != "":
                         n "[death_narration]"
                     jump gameOver
+            else:
+                if burger == True:
+                    $ persistent.burger_death_2 = True
+                    n "Suddenly you are enveloped in a flash of pure white. That must be the explosion. The force of it is enough to send you flying, and yet you do not feel any pain."
+                    n "When the flash of white subsides you find yourself in the ruins of the burger restaurant. The wooden tables are flipped over, flames eating away at them."
+                    n "There is screaming and sobbing, but most of all there is death. Even with all the noise in the midst of the chaos the cold and looming silence of death is deafening."
+                    n "The burned and scarred survivors are fleeing, dragging their loved ones from underneath the flaming tables."
+                    n "They pretend they are still alive, but you have been around death enough times to know that it is merely that, pretending."
+                    n "You do hear one more thing. A voice, calling out to you. Hers."
+                    l "[persistent.name], are you... alright?"
+                    n "However loud the haunting silence of death is, this time it's not hers."
+                    n "But that does not mean it isn't yours to carry."
+                    menu restaurant_death_2_preventedRockChoice:
+                        "I'm fine, but what about you?":
+                            l "That's a relief, I was so worried that I would have lost you too."
+                            if burger:
+                                "Filler"
+                            elif cafe:
+                                "Filler"
+                            elif chinese:
+                                l "I'm mostly fine I think, just burried underneath all these... feathers?"
+                                l "This might be one of the few times I'm glad I don't have a nose."
+                            jump preventedRockChoice_casualties
+
+                        "I'm fine, but what about these other people?":
+                            n "Curious. I do wonder what makes you now care for these people."
+                            n "You didn't think the restaurant was empty all those other times, did you?"
+                            n "So what makes now any different from those [persistent.burgerwent] other times?"
+                            n "I suppose our problems only become problems when we become aware of them."
+                            n "Otherwise it's just a blur right outside of the corner our eye."
+                            n "Now it will be even harder to pretend that you are doing this for selfless reasons, won't it?"
+                            n "I suppose ignorance truly is bliss to you, isn't it player?"
+                            n "Because to not know is to believe what you want. But to know is to define, to confine."
+                            n "Now the truth can't be conveniently altered, can it? From now on, these people will suffer, they will die, each time you come here."
+                            n "I do wonder if that matters to you though, and if it does I wonder how long that will last."
+                            n "Because at the end of the day, they are just words and images to you, aren't they player?"
+                            n "I suppose I can't blame you for viewing them like that. Still, you do know [persistent.date] is the same, don't you?"
+                            n "Then what makes you go through all this trouble? Through all this death?"
+                            n "Are you doing this just to see everything this game has to offer? Or is this truly about saving her?"
+                            n "Don't bother answering, we've already been at this for too long and the result is the same either way."
+                            n "Now, let's move on."
+                            l "It's horrible isn't it?"
+                            label preventedRockChoice_casualties:
+                                if burger:
+                                    l "I'm glad we are fine, but the people, god- they once were people but now it's hard to see them as such while they are covered in debris and ash."
+                                    l "Is it always like this? I just hope this time no-one... died."
+                                    l "We are fine, well, as fine as one can be after something like this, but when I see all of them suffering I wish I could do something, anything, to help."
+                                    l "But they can't hear us, nor can we reach our hands to them to try to comfort them. Even then, I don't think that would work, not at a time like this."
+                                    l "They will need time, although they might never be the same again. That explosion blasted them away from their lives trajectory."
+                                    l "Seeing this... Is all of that worth it just to save me?"
+                                elif cafe:
+                                    l "I'm glad we are fine, but these people, god- it's hard to see them as such. Mere moments ago they were still people, but now they are just corpses."
+                                    l "The life in their lungs having been replaced by fishwater."
+                                    l "And the fishes that needed that water also passed. I found them so beautiful as they swam around and now it's hard to even imagine they ever did so."
+                                    l "We are fine, well, as fine as one can be after something like this, but an aura of death has unmistakably marked this place. There is no pretending otherwise."
+                                    l "Seeing this... Is all of that worth it just to save me?"
+                                elif chinese:
+                                    l "I'm glad we are fine, but those people, god- their screams were too much to bear."
+                                    l "What did those geese do to them? Are they dea- Are they fine?"
+                                    l "On one hand maybe it's for the better we can't see what happened to them."
+                                    l "But not seeing also makes your mind just think up so many worse scenarios."
+                                    l "Somehow I get the feeling that if they are alive they might wish they weren't."
+                                    l "It's this distant pain coming from my liver... which is strange since I'm fairly certain we don't have livers."
+                                    l "I have to ask... Is all of this worth it just to save me?"
+
+                                
+                                l "In that other world you were talking about, the one where we are both human, couldn't we have warned them?"
+                                l "Couldn't we have prevented this? And yet you abandoned that world for this one where they cannot hear us?"
+                                #TODO: Make this an option in the restuarants itself? (Think about it beforehand wheter or not it is meaningful.)
+                                l "...I- I need some time to think about this [persistent.name]. I think it's better if we take some time apart from eachother."
+                                l "I'm sorry for dissappearing for so long."
+                                l "Knowing what happened to all those people, that we could have maybe prevented it..."
+                                l "...that was just too much to bear."
+                                l "Still, we can't undo what has been done."
+                                l "We can however try to make sure it never happens again."
+                                l "Please promise me you'll try to save as many people at each attempt."
+                                menu:
+                                    "I promise.":
+                                        l "Thank you [persistent.name], that means a lot."
+                                        l "Besides, if I am being honest I did miss talking to you."
+                                        l "It's strange, I've been on my own for so long. You'd think I got used to it, but it's hard to go back."
+                                        l "So you've never seen past this point before, right? Does that mean the timeloop is broken?"
+                                        l "If so we better make the best out of it, right?"
+                                        label rockMode_neverEnding:
+                                            n "And so [persistent.date] and you did exactly that, living each new unseen day as if it were your first and last."
+                                            n "The death and destruction that the loop brought along did not seem to cease. Through all your travels and time spent together disaster always was the third travelpartner in your duo."
+                                            if rockMode_rockBand:
+                                                #Changeableword here is the rockband name
+                                                n "Together you started dreaming up songs based on the things you saw for [changeableWord]. These songs were intimate, projects only ever heard in your minds. There was always some hope that someone else might hear, but if they did they never made it known to you."
+                                            n "Your adventures grew more and more isolated from other people as to not have them accidentally be involved in that destruction."
+                                            n "You could say that it is a deeply lonely existence. Luckily you had her as she had you."
+                                            n "Together you'd watch the world you knew slowly but undeniably replace bits and pieces of itself until there's nothing left of the world you remembered."
+                                            n "At around this time you find it harder and harder to come up with topics to talk about with [persistent.date]. And based on the silence between the two of you that sometimes goes on for weeks you can only guess she feels the same."
+                                            if rockMode_rockBand:
+                                                n "Even the music the two of you once constantly made has been slowly dwindling down in it's rapid creation."
+                                            n "It's not that you don't want to desperately break that silence but you have already spoken every possible sentence you could think of a hundred times before. Every unique moment has already been relived countless times."
+                                            n "The two of you have delved deeper into eachother than anyone ever had or would, and you have reached the bottom."
+                                            n "Luckily the new world brought some distraction from that truth. It brought something to delve into other than eachother." 
+                                            n "The two of you explored the new world, every piece your unwanted tag-along permitted you to. That new world gave you new things to discuss once more."
+                                            n "But this is only a temporary solution, the new things of that world run out more rapidly than one would think."
+                                            n "And then you do so again with the next new world, and the one after that. Afterall, you got nothing but time."
+                                            n "This goes on and on until you even begin seeing familiar things in these worlds that should be fresh and exciting."
+                                            n "At first you don't mind, as it's merely some aspects you begin to recognise here and there, others are still plenty exciting to discover."
+                                            n "But sooner than later you begin to recognise more things than you don't."
+                                            n "Eventually things begin to grow stale, boring. The few things the two of you could still talk about have grown as repetive as the rest."
+                                            n "The two of you stop talking, not just for weeks, but for months, years. Possibly decades, at this point it is very hard to tell the flow of time."
+                                            n "Most of the time you just find yourself tuning all of reality out, sleeping without needing to sleep. Letting it all wash over you without ever even being conscious of what it exactly was that did."
+                                            n "One of the only things that wakes you up out of your daze are disasters, those are harder to predict than humanity afterall."
+                                            n "Floods, supervolcanic eruptions, gigantic earthquakes, the evaporation of the oceans. The end of all complex life."
+                                            n "And yet you keep existing, so does she. The two of you are only woken during these horrible disasters, and after a while the smaller ones don't even manage to do so anymore."
+                                            n "During these moments of waking you are confused, dazed. You are not sure of who, or what you are anymore. Even then the pain in your mind deters you from trying to figure that out for too long."
+                                            n "The only thing you are sure of is you were once human, then you were a rock and now you are merely atoms that once were a rock that once was a human."
+                                            n "The flow of time combined with these disasters did not kill you, but they did slowly erode you into many different pieces. Each piece being sentient, enough to be aware of the pain of being so."
+                                            n "Those pieces don't float, or fly, or anything like that. They just are, sometimes in different places than where they were."
+                                            n "Sometimes one of those pieces, out of sheer coincidence happens to be somewhere where a part of [persistent.date] is."
+                                            n "They know each piece of her better than themselves. And that piece knows them better than herself."
+                                            n "So they just silently float by. Reacting no different than if either party weren't part of this meeting of pure chance."
+                                            n "But one day this meeting goes differently. One of your pieces suddenly feels something bubble up inside of them."
+                                            n "A sense of recognition. A deep loneliness it tried sleeping through."
+                                            n "But most importantly, a promise it had made. In this lifetime, or in another? It was hard to say."
+                                            n "Even the promise itself was hard to think of, except that it was just that, a promise. The concept was almost too big to grasp but this tiny piece of sentient rock found itself thinking one word."
+                                            menu:
+                                                "Retry.":
+                                                    $ persistent.rockMode = False
+                                                    jump game_start
+
+
+                            
+                            "Filler"
+                    if death_narration != "":
+                        n "[death_narration]"
+
+                    $ burger_explosion_outside = False
+                    jump gameOver
+
+                elif cafe == True:
+                    n "Suddenly you hear the sound of shattering glass."
+                    n "For a brief moment everyone still remains in blissful ignorance, the conversations of the other people obscuring the noise."
+                    n "The water begins to stream rapidly, flooding the ground centimeter after centimeter in seconds."
+                    n "It does not take long for the sound of conversations to die down as people feel their shoes soak up water."
+                    n "Most of them are still just mostly annoyed. If they are worried at all, it is merely about the fact their shoes are ruined."
+                    n "They all get up from their seats and walk to the exit. However, when the first person in line tries to open the door it doesn't budge at all."
+                    n "Another man pushes the man to the side, annoyed that this is going on for longer than it has to. When he too tries to open the door to find it unmoving he audibly gulps."
+                    n "The barista barely manages to utter the words \"Don't panic.\" through his stutters."
+                    n "Hearing the sheer stress in his voice only further drives the people into blind panic."
+                    n "Some people start frantically looking for an escape. One group attempts to smash through the double glazed windows with the heaviest thing they can find."
+                    n "Another group is trying to move away the closet blocking the stairs so they can escape to higher grounds."
+                    n "Sadly both groups make close to zero progress when the water already is up to their chests."
+                    n "For some this motivates them to try even harder and yet others seem to lose all will to fight at this realisation."
+                    n "They seek their friends, partners, or just about anyone who gives them some semblance of comfort in this hell and embrace eachother, exchancing their final goodbye."
+                    n "The water now has fully swallowed every person, reaching up unto the ceiling. You can see the people slowly extend their last breaths as they then lay motionless on the floor."
+                    n "Where merely moments ago the cafe was filled with screams of pure panic, now merely rests a haunting silence."
+                    n "Then you hear it, her. Her voice echoing in your mind."
+                    l "Are you alright [persistent.name]?"
+                    jump restaurant_death_2_preventedRockChoice
+
+
+                elif chinese == True:
+                    n "Suddenly you hear the faint sound of quacking."
+                    n "The sound of the quacking steadily grows louder and louder untill it's all you can hear."
+                    n "A true quackophony if you will."
+                    n "[persistent.date] mind races with pure panic."
+                    n "Yet you stay relatively calm, as you already know what will happen. When the staff begins running around in sheer panic you know {b}they{/b} have arrived."
+                    n "Before you can think another thought everything turns to white, the white of pesky geese feathers."
+                    n "You get flung far away from the sheer force of an army of geese. This time however, you don't feel any pain and stay fully conscious. However, the others are not so lucky."
+                    n "Enveloped in the pure whiteness you hear the bloodcurdling screams of all the people overpower the loud quacking, if only for a brief moment."
+                    n "You are not sure wheter the screams quieted because the people fell unconscious or because they died. Somehow you know that the first option might be the worst fate."
+
+                    n "When the feathers finally clear you once again find the entire restaurant empty."
+                    n "Empty of people that is, because the room is filled to the brim with feathers."
+                    n "This time, the geese did not leave a note in your hand. This time you also do not have any hands for them to do so."
+                    n "Then you hear it, her. Her voice echoing in your mind."
+                    l "Are you alright [persistent.name]?"
+                    jump restaurant_death_2_preventedRockChoice
+
     label car_death:
         $ persistent.runAwayLilith_counter += 1
         if angryLilith == True:
-            l "[persistent.date] stands up from her seat and shoves it back with a frightening speed."
+            n "[persistent.date] stands up from her seat and shoves it back with a frightening speed."
             if noTalkAngryLilith == False:
                 l "I really didn't want it to come this far but you left me no other choice [persistent.name]."
                 if major_love_offence >= 1:
@@ -364,7 +433,9 @@ label restaurant_deaths:
                 l "Goodbye [persistent.name], and a tip for the future: if you ever go another date, try to develop manners beforehand. "
                 if persistent.lildeaths >= 1:
                     n "I guess we will see very soon wheter or not it is possible for you to do that, right player?"
-        
+        else:
+            n "[persistent.date] stands up from her seat and begins heading for the exit without paying."
+            l "Goodbye [persistent.date]."
         play music game_over
         if burger == True:
             $ resname = "burger restaurant"

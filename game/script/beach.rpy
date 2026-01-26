@@ -45,6 +45,16 @@ label beach_start:
                 jump gameOver
             elif beachturn > 3:
                 n "Shelves have fallen over due to earthquake."
+            else:
+                menu:
+                    "Read a random passage from a random book.":
+                        #TODO: LAter add some random passages for different stories.
+                        "...As she stared right through the sky with her left bloodshot eye she saw the face of her God."
+                        "That glimpse at a higher reality was not the thing that frightened her though, it was the mundanity of it that did."
+                        "She could have made piece with her God being a 5 dimensional being, something more. But she knew this illusion of equality was so much worse."
+                        "This higher reality was merely how she had dreamt hers to be, but now that she was awoken she saw that was all it was, a dream."
+                        "However, can a dream dreaming itself real truly ever wake? Or is it merely dreaming it is?"
+                        
             
             $ beachturn += 1
             if persistent.bookpreference_knowledge == True:

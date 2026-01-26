@@ -16,43 +16,50 @@ label burger_start:
                         $ burger_nightmare = True
                     else: 
                         $ burger_nightmare = False
+    
     l "Burgers sure sound good, see you there!"
+    if persistent.rockMode:
+        jump rockTransport
     n "You arrive a tad late, [persistent.date] already has grabbed herself a seat and waves at you when she sees you."
-    l "Heya! Almost was scared you wouldn't show up."
+    label burger_arrived:
+        l "Heya! Almost was scared you wouldn't show up."
 
-    if persistent.burgerstart == False:
-        $ persistent.burgerstart = True
-    else: 
-        $ persistent.burgerwent += 1
+        if persistent.burgerstart == False:
+            $ persistent.burgerstart = True
+        else: 
+            $ persistent.burgerwent += 1
 
 
-    menu:
-        "I can't say no to burgers!":
-            jump burger_start_choice1
+        menu:
+            "I can't say no to burgers!":
+                jump burger_start_choice1
 
-        "I wouldn't want to miss this for the world!":
-            jump burger_start_choice2
+            "I wouldn't want to miss this for the world!":
+                jump burger_start_choice2
 
-        "Sorry, traffic was quite bad.":
-            jump burger_start_choice3
+            "Sorry, traffic was quite bad." if not persistent.rockMode:
+                jump burger_start_choice3
 
-        "Hey glad to be here. Could we sit somewhere else though?" if persistent.burger_death_1:
-            $ burger_alt = True
-            n "[persistent.date] gives you a smile and a thumbs up."
-            l "Sure, where would you like to sit?"
-            n "You quickly point to a table, it doesn't really matter which one, as long as she isn't sitting where she got shot before."
-            l "Alright, that table it is then!"
-            n "[persistent.date] takes her handbag and follows you as you wander to the table."
-            n "You feel relieved, knowing what horrors you just escaped from."
-            n "The image of her laying there, on the brink of life and death, is burned into your mind."
-            n "You shudder."
-            n "It's probably best to try and focus on the present, not the past."
-            l "Are you alright [persistent.name]?"
-            l "You look like you have just seen a ghost."
-            n "She's not far off, isn't she?"
-            menu:
-                "Oh yeah, I am fine, I was just thinking about the traffic jam I was stuck in.":
-                    jump burger_start_choice3
+            "Sorry, I think traffic was quite bad? It was pretty hard to tell underneath a shoe." if persistent.rockMode:
+                jump burger_start_choice3
+
+            "Hey glad to be here. Could we sit somewhere else though?" if persistent.burger_death_1 and not persistent.rockMode:
+                $ burger_alt = True
+                n "[persistent.date] gives you a smile and a thumbs up."
+                l "Sure, where would you like to sit?"
+                n "You quickly point to a table, it doesn't really matter which one, as long as she isn't sitting where she got shot before."
+                l "Alright, that table it is then!"
+                n "[persistent.date] takes her handbag and follows you as you wander to the table."
+                n "You feel relieved, knowing what horrors you just escaped from."
+                n "The image of her laying there, on the brink of life and death, is burned into your mind."
+                n "You shudder."
+                n "It's probably best to try and focus on the present, not the past."
+                l "Are you alright [persistent.name]?"
+                l "You look like you have just seen a ghost."
+                n "She's not far off, isn't she?"
+                menu:
+                    "Oh yeah, I am fine, I was just thinking about the traffic jam I was stuck in.":
+                        jump burger_start_choice3
 
 
 
@@ -61,7 +68,12 @@ label burger_start_choice1:
     n "[persistent.date] chuckles."
     l "Ah, another burger fan!"
     l "We are at the right place I'd say, the burgers here are delicious."
-    l "Did you already know that or is this the first time you've eaten here?"
+    if persistent.rockMode:
+        l "Altleast that's what I think. Something about them just... {i}feels{/i} that way?"
+        l "To the point that even I know must be fantastic somehow."
+        l "Have you been here before? If so you probably also can feel just how amazing they would taste."
+    else:
+        l "Did you already know that or is this the first time you've eaten here?"
 
     menu:
 
@@ -78,16 +90,22 @@ label burger_start_choice1:
             jump burger_beenBeforeXTimes
 
 
-        "I'm well aware, I've been here exactly [persistent.burgerwent] times." if persistent.burgerwent > 1:
+        "I'm well aware, I've been here exactly [persistent.burgerwent] times." if persistent.burgerwent > 1 and not persistent.rockMode:
             n "It sounds a bit weird if you phrase it like that, doesn't it?"
             jump burger_beenBeforeXTimes
 
         "I did know that actually, I've been here a couple of times." if persistent.burgerwent > 1:
             $ burgerBeenBefore = True
-            l "Oh you have? That makes sense, these burgers are the best of this state, scratch that, of the world!"
-            n "While she is enthusiastically exclaiming this her arms kind of seem to have a life of their own, making all kinds of gestures to get the point across even more. "
-            n "When she catches her arms in the act she blushes slightly, quiets for a moment and places her hands back down on the table."
-            l "So, what are you going to pick? I think I'll go for the juicy cheeseburger myself."
+            l "Oh you have? That makes sense, these burgers are the best of the state, scratch that, of the world!"
+            if not persistent.rockMode:
+                n "While she is enthusiastically exclaiming this her arms kind of seem to have a life of their own, making all kinds of gestures to get the point across even more. "
+                n "When she catches her arms in the act she blushes slightly, quiets for a moment and places her hands back down on the table."
+                l "So, what are you going to pick? I think I'll go for the juicy cheeseburger myself."
+            else:
+                l "They are so great that even though we cannot taste them, we sure can imagine."
+                l "Although I wonder. Imagine you could eat one thing here, what would you pick?"
+                l "I think I would go for the juicy cheeseburger, something about that choice just feels... right."
+                $ hypotheticalBurger = True
             jump burger_start_menu
 
 label burger_beenBeforeXTimes:
@@ -128,8 +146,11 @@ label burger_beenBeforeXTimes:
             l "It probably is but I'm quite impressed by the expertise you must have when it comes to the burgers here."
 
 
-
-    l "So, which burger do you want to pick? I think I'll go for the juicy cheeseburger myself."
+    if not persistent.rockMode:
+        l "So, which burger do you want to pick? I think I'll go for the juicy cheeseburger myself."
+    else:
+        l "Imagine, you could eat one thing here. What would you pick? I think I'd like to taste the juicy cheeseburger."
+        $ hypotheticalBurger = True
     jump burger_start_menu
 
 
@@ -139,39 +160,79 @@ label burger_start_choice2:
     l "Awwe, I'm flattered you are so happy to see me. Or is it the burgers you don't want to miss?"
     l "[persistent.date] chuckles slightly."
     l "Sorry, I'm just messing with you."
-    l "So, what do you want to order of the menu?  I think I am going to go with a juicy cheesburger."
+    if not persistent.rockMode:
+        l "So, what do you want to order of the menu?  I think I am going to go with a juicy cheesburger."
+    else:
+        l "Let me make it up to you. You can order anything of the menu and I'll pay for it. How does that sound?"
+        n "You hear her soft chuckles echo in your mind once again."
+        l "What would you like to pick?"
+        $ fakeBurger = True
     jump burger_start_menu
 
 
 label burger_start_choice3:
-    l "Now that you mention it, I think I heard something about it on the radio, they said some ghostrider caused  the traffic jam."
-    l "If I'm not mistaken I think it was a Sedan or something like that?"
-    l "Anyway, what do you want to order of the menu?  I think I am going to go with a juicy cheesburger."
+   
+    if not persistent.rockMode:
+        l "Now that you mention it, I think I heard something about it on the radio, they said some ghostrider caused  the traffic jam."
+        l "If I'm not mistaken I think it was a Sedan or something like that?"
+    else:
+        n "She lets out a hearthy telepathic laugh."
+        l "No worries at all [persistent.name]"
+        l "I heard something about that on the radio, I think they mentioned there was a traffic jam caused by a ghostrider."
+        l "I did not manage to catch the rest of that though, it sounded so muffled from underneath my lift's shoe."
+        n "She lets out a small chuckle, you feel it ring a little in your mind."
+    if not persistent.rockMode:
+        l "Anyway, what do you want to order of the menu?  I think I am going to go with a juicy cheesburger."
+    else:
+        l "Times like these make you wish for some lovely food, don't they? Even make you wish that we could eat at all."
+        l "...Actually, that gives me an interesting idea. If you could pick anything to eat here, what would you choose?"
+        $ hypotheticalBurger = True
     jump burger_start_menu
 
 label burger_start_menu:
+    
+    if not hypotheticalBurger:
+        menu:
+            "I could go for a veggie burger!":
+                $ burger_choice = "veggie burger"
+                jump burger_ordering
 
-    menu:
-        "I could go for a veggie burger!":
-            $ burger_choice = "veggie burger"
-            jump burger_ordering
+            "Hmm, that juicy cheeseburger sounds good!":
+                $ burger_choice = "juicy cheeseburger"
+                jump burger_ordering
 
-        "Hmm, that juicy cheeseburger sounds good!":
-            $ burger_choice = "juicy cheeseburger"
-            jump burger_ordering
+            "I think I'll pick the fish burger.":
+                $ burger_choice = "fish burger"
+                jump burger_ordering
 
-        "I think I'll pick the fish burger.":
-            $ burger_choice = "fish burger"
-            jump burger_ordering
+            "A beef burger sounds good.":
+                $ burger_choice = "beef burger"
+                jump burger_ordering
+            
+            "I think I will go for some chicken tenders." if persistent.chickenTendiesUnlock:
+                $ burger_choice = "chicken tenders"
+                jump burger_ordering
+    else:
+        menu:
+            "I would pick a veggie burger!":
+                $ burger_choice = "veggie burger"
+                jump burger_ordering
 
-        "A beef burger sounds good.":
-            $ burger_choice = "beef burger"
-            jump burger_ordering
-        
-        "I think I will go for some chicken tenders." if persistent.chickenTendiesUnlock:
-            $ burger_choice = "chicken tenders"
-            jump burger_ordering
+            "That cheeseburger does sound good, I'd probably pick the same.":
+                $ burger_choice = "juicy cheeseburger"
+                jump burger_ordering
 
+            "I think I would pick the fish burger.":
+                $ burger_choice = "fish burger"
+                jump burger_ordering
+
+            "A beef burger would be lovely.":
+                $ burger_choice = "beef burger"
+                jump burger_ordering
+            
+            "I definetly would pick the chicken tenders." if persistent.chickenTendiesUnlock:
+                $ burger_choice = "chicken tenders"
+                jump burger_ordering
 
 
 
@@ -180,11 +241,17 @@ label burger_start_menu:
 
 label burger_ordering:
     if persistent.rockMode == False:
-        n "[persistent.date] and you go to order the burgers."
+        if burger_choice == "juicy cheeseburger":
+            l "Great minds think alike I suppose!"
+        else:
+            l "That's a great choice [persistent.name]!"
+        l "Let's go order, alright?"
         if persistent.burgerwent == 0:
             n "You were expecting having to order them from a screen like most fastfood places tend to have but as you looked around you couldn't spot any."
             n "Instead [persistent.date] walks to a counter.
             You decide to follow her."
+        else: 
+            n "You walk towards the counter, [persistent.date] is walking right next to you, shooting you a subtle glance every now and then."
         if persistent.rosename_knowledge == True:
             $ roseName = "Rose"
             n "An old lady, who you remember is called Rose, smiles at the both of you."
@@ -495,7 +562,21 @@ label burger_ordering:
             $ burger_nightmare = False
             jump game_start
     else:
-        l "I'm really glad we could meet here. The burgers here should be really good from what I heard."
+        if fakeBurger == True:
+            l "Sounds good! Let me just telepathically call my rock to human translator."
+            n "She bursts out in laughter once again."
+            l "I'm sorry [persistent.name], I couldn't resist. I promise I will play nice from now on out."
+        else:
+            if burger_choice == "juicy cheeseburger":
+                l "My my, I suppose great minds think alike, don't they [persistent.name]?"
+                l "She lets out another chuckle."
+            elif burger_choice == "chicken tenders":
+                l "They serve those here? I would say they probably won't live up to the reputation of the burgers here."
+                l "Although, I suppose if one place could pull it off it might just be this one!"
+            else:
+                l "Ah, that sounds like a lovely choice [persistent.name]!"
+        n "Things grow quiet for a moment."
+        l "You know... I'm really glad we could meet here. The burgers here should be really good from what I heard."
         l "But to tell you the truth, I'm even more glad to meet {b}you{/b} here."
         l "I have been so alone for a long time."
         l "It has been years since I last found someone who could understand me."
@@ -558,6 +639,7 @@ label burger_joke_Abigail:
     else:
         n "She really loses herself in the laughter, it seems to go on for quite a while."
         l "That is one of the best jokes I have ever heard [persistent.name]! I haven't laughed like that in a long time."
+        l "It feels weirdly familiar, it's a... distant feeling but a warm one all the same."
     l "Thank you for cracking me up [persistent.name]!"
     n "[persistent.date] flashes you a cute smile, she seems pretty much completely composed once again."
     jump burger_living
@@ -565,11 +647,15 @@ label burger_joke_Abigail:
 
 
 label burger_joke_response:
-    n "A slight smile forms on [persistent.date]'s face.
-    She doesn't seem to find your joke that funny but from the gratitude in her eyes you can tell she is thankful for your effort.
-    She seems to have become slightly more composed."
+    if not persistent.rockMode:
+        n "A slight smile forms on [persistent.date]'s face.
+        She doesn't seem to find your joke that funny but from the gratitude in her eyes you can tell she is thankful for your effort.
+        She seems to have become slightly more composed."
+    else:
+        n "You feel her mind calm down, not fully, but enough to not get swept away in her thoughts."
+        n "It was not necesarilly the joke doing this, you feel. Moreso the gesture behind it."
     #Typewriter:
-    l "Thank you."
+    l "Thank you [persistent.name], I mean it."
     n "[persistent.date] continues as if nothing happened."
     jump burger_living
 
@@ -650,7 +736,9 @@ label burger_living_rockResponse:
                         l "I'm not a good singer at all though, but I suppose I could come up with our lyrics."  
                         l "Besides, not like I have much better things to do."
                         l "And this sounds like a fun way to spend some time."
-                        #TODO: (Potentially add a menu here where she asks if you have an idea for the band name?)
+                        $ rockMode_rockBand = True
+                        l "What should we call our band?"
+                        $ changeableWord = renpy.input("Maybe...")
                     "Does art need someone to witness it? Isn't making it for creation's sake enough?":
                         l "I can see where you are coming from [persistent.name]."
                         l "Creating art is really fulfilling on it's own."
@@ -663,7 +751,6 @@ label burger_living_rockResponse:
                 
 
     elif changeableWord == "stories":
-        #TODO: Leads to her saying she also thinks up stories, but mostly poems. She writes them in her head, never being able to give them form, never having them be seen by another. She cries them out to the earth, but it has never answered... She cannot give her art the shape she wants them to have, namely written down.
         l "You do? That's a wonderful way to spend some time if you ask me."
         l "Sculpting new worlds from our ideas and experiences, creation on a whole is a lovely pursuit."
         l "I like to create aswell, but for me it's mostly poems. I have been dreaming them up for as long as I can remember."
@@ -762,7 +849,6 @@ label burger_living_rockResponse:
                                         l "How would that be? Where would we go?"
                                         menu:
                                             "I gave being human a shot before, it was pretty lousy.":
-                                                "Filler"
                                                 l "You were a human before?... As in, you reincarnated?"
                                                 l "If that is true, would I have been a human before aswell?"
                                                 l "Then why are we rocks now? Is this some sort of punishment for something we did?"
@@ -790,7 +876,7 @@ label burger_living_rockResponse:
                                                                 n "It's just such a relief to go back to something actually good instead of {i}this{/i}."
                                                                 n "Now, just hold on for a second."
                                                                 #TODO: Have a little bit of extra dialogue for when it returns to normal, and also have a line if you try to make the narrator say thank you again where he says "Are you trying to make me say those words again? I said I would never say it again."
-                                                                jump game_start2
+                                                                jump Game_start2
                                                             "No way! This is really {b}gneiss{/b}.":
                                                                 n "Another rock pun? Fine. But don't think for a second I'm enjoying this."
                                                                 n "I just hope you'll grow bored of this soon."
@@ -1020,7 +1106,10 @@ menu:
 
 label burger_deathBuildup_choice1:
     if burger_alt == False:
-        l "You're probably right, it's probably not even a big deal anywa-"
+        if persistent.rockMode == False:
+            l "You're probably right, it's probably not even a big deal anywa-"
+        else:
+            l "You're probably right, it's probably not even a big deal anyway."
         jump restaurant_death_1
     else: 
         l "You're probably right, it's probably not even a big deal anyway."
