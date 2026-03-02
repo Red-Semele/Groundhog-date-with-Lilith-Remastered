@@ -38,6 +38,8 @@ init python:
             pass
         finally:
             _update_checked = True
+            # Force the screen to redraw now that results are available.
+            renpy.restart_interaction()
 
     def _trigger_update_check():
         """Called once when the main menu is first shown."""
@@ -51,8 +53,9 @@ init python:
 
 screen update_notification():
 
-    ## Kick off the background check the first time this screen appears.
-    on "show" action Function(_trigger_update_check)
+    ## Kick off the background check once, 1 second after the screen appears.
+    ## (on "show" doesn't fire for screens included via `use`.)
+    timer 1.0 action Function(_trigger_update_check) once True
 
     if _update_checked and _update_available:
         frame:
