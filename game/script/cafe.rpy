@@ -102,6 +102,8 @@ label cafe_food_choice2:
 label cafe_food_choiceSame:
     l "You know what they say [persistent.name], great minds think alike. I guess that also counts for hungry stomachs."
     n"[persistent.date] lets out a small chuckle."
+    jump cafe_food_result
+
 label cafe_food_result:
     b "Alright, coming right up."
     n "[persistent.date] and you walk back to your table and take a seat."
@@ -292,7 +294,7 @@ label cafe_dice_result:
 
 label cafe_dice_stop:
     if not persistent.rockMode:
-        #This could be a good place to add something else, instead of just segwaying she offers another game of sorts.
+        #TODO: This could be a good place to add something else, instead of just segwaying she offers another game of sorts.
         l "Oh no worries [persistent.name]!
         I might have made this a bit too daunting so I completely understand."
     else: 
@@ -494,24 +496,7 @@ label cafe_badLove:
         l "It didn't happen instantly, even now I sometimes come of as too distant, but little by little I managed to tell myself that there is nothing wrong with not needing an overdose of affection every second."
         l "So, did I have bad experiences in love?"
         l "Maybe, but they were all quite necessary as without them I wouldn't be here with you today, I wouldn't even be myself if that makes sense."
-        l "Sorry for blabbering on by the way, I'm quite talkative when you get me going."
-        menu:
-            "No need to apologise for talking, I like listening to you.":
-                l "Oh you flatterer! "
-                n "[persistent.date] looks at you and gives you a big grin, you can clearly see she's blushing."
-                n "Suddenly the grin begins to make place for a slight frown."
-                l "Is it normal for me to be that happy because someone told me they don't mind me speaking?"
-                l "..."
-                l "I... kind of struggle with self-confidence."
-                l "Sometimes I think other people find it a burden to talk to me or be around me at all."
-                menu:
-                    "Quick, come stand next to me!" if persistent.cafe_death_1 and not persistent.rockMode:
-                        jump restaurant_death_1_prevented
-
-                    "Well, I really enjoy our time together!":
-                        l "Thank you [persistent.name], it really helps to hear someone say that from time to time."
-                        n "[persistent.date] gives give a thankfull smile."
-                        jump restaurant_death_1
+       
     else:
         l "I'm not sure if I had much experiences at all with love, let alone bad ones."
         l "I am trapped between two worlds I don't belong to, the human one and the rock one."
@@ -540,3 +525,21 @@ label cafe_badLove:
         l "Afterall, we can also find perfection in good enough, just a version that is a lot more manageable. perhaps more fleeting, but that's what makes it beautiful, isn't it?"
         l "For example, right now, I want to take things slow with you, to see where this date will bring us. To get to know you better, the real you."
         l "So did I have a bad experience before? Maybe. But it did help me to hopefully make this a good one."
+    l "Sorry for blabbering on by the way, I'm quite talkative when you get me going."
+    menu:
+        "No need to apologise for talking, I like listening to you.":
+            l "Oh you flatterer! "
+            n "[persistent.date] looks at you and gives you a big grin, you can clearly see she's blushing."
+            n "Suddenly the grin begins to make place for a slight frown."
+            l "Is it normal for me to be that happy because someone told me they don't mind me speaking?"
+            l "..."
+            l "I... kind of struggle with self-confidence."
+            l "Sometimes I think other people find it a burden to talk to me or be around me at all."
+            menu:
+                "Quick, come stand next to me!" if persistent.cafe_death_1 and not persistent.rockMode:
+                    jump restaurant_death_1_prevented
+
+                "Well, I really enjoy our time together!":
+                    l "Thank you [persistent.name], it really helps to hear someone say that from time to time."
+                    n "[persistent.date] gives give a thankfull smile."
+                    jump restaurant_death_1

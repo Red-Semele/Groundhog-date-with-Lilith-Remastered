@@ -135,12 +135,19 @@ label restaurant_deaths:
                                 l "You actively chose to enter this world? How did you do that? That hardly seems like something just anyone could do."
                                 menu:
                                     "This is a game and I am the one playing it. I accessed this world via a cheatcode.":
-                                        #TODO: This needs some rewriting
                                         l "...I really shouldn't believe that. It is so outlandish."
                                         l "Alternate worlds were something I could still believe slightly even if it was a lot of info to take in all at once."
                                         l "But this, it's so far fetched, it couldn't possibly be true, right? And yet, I can sense it in your mind, you are telling the truth."
                                         l "So all of this is fake? This world, this place, me?"
-                                        "Filler"
+                                        l "This- this is a lot to process. First the alternate worlds where I'm human and a timeloop, now this?..."
+                                        l "Everything I believed turns out to be false."
+                                        l "I suppose you did save me by turning me into a rock, since death can't reach me in this form."
+                                        l "But is this worth it? I have felt so alone for so long. Wheter or not you meant to, you caused that. Because you wanted to save me."
+                                        l "And now even the people I so desperately wanted to reach out to turn out to be nothing but drawings and words on a screen?"
+                                        l "Maybe it wouldn't matter so much to me if I already had a connection with them, maybe I would have been able to look past it. But now I can't help but see past the illusion."
+                                        l "I wish I could just forget all of this. Ignorance really is bliss."
+                                        #TODO: Have an ending here where she decides it is not worth it and never speaks with you, since a lot of fake people in a fake world die. She thinks your relationship together just seems to be doomed to bring forth suffering, either for her or for others.
+                                        jump restaurant_death_2
 
                                     "Believe me, telling you that right now would be way too much to handle when combined with the other info.":
                                         l "It would? That only makes me more curious honestly. What is harder to handle than alternate worlds and a timeloop of death?"
@@ -306,7 +313,7 @@ label restaurant_deaths:
                                 
                                 l "In that other world you were talking about, the one where we are both human, couldn't we have warned them?"
                                 l "Couldn't we have prevented this? And yet you abandoned that world for this one where they cannot hear us?"
-                                #TODO: Make this an option in the restuarants itself? (Think about it beforehand wheter or not it is meaningful.)
+                                #TODO: Make this an option in the restuarants itself? (Think about it beforehand whether or not it is meaningful.)
                                 l "...I- I need some time to think about this [persistent.name]. I think it's better if we take some time apart from eachother."
                                 l "I'm sorry for dissappearing for so long."
                                 l "Knowing what happened to all those people, that we could have maybe prevented it..."
@@ -404,7 +411,7 @@ label restaurant_deaths:
                     n "Before you can think another thought everything turns to white, the white of pesky geese feathers."
                     n "You get flung far away from the sheer force of an army of geese. This time however, you don't feel any pain and stay fully conscious. However, the others are not so lucky."
                     n "Enveloped in the pure whiteness you hear the bloodcurdling screams of all the people overpower the loud quacking, if only for a brief moment."
-                    n "You are not sure wheter the screams quieted because the people fell unconscious or because they died. Somehow you know that the first option might be the worst fate."
+                    n "You are not sure whether the screams quieted because the people fell unconscious or because they died. Somehow you know that the first option might be the worst fate."
 
                     n "When the feathers finally clear you once again find the entire restaurant empty."
                     n "Empty of people that is, because the room is filled to the brim with feathers."
@@ -432,7 +439,7 @@ label restaurant_deaths:
                     l "But now I know better. I will ruin this date if I stay here. Atleast when I walk out on you I can still feel some pride for myself afterwards."
                 l "Goodbye [persistent.name], and a tip for the future: if you ever go another date, try to develop manners beforehand. "
                 if persistent.lildeaths >= 1:
-                    n "I guess we will see very soon wheter or not it is possible for you to do that, right player?"
+                    n "I guess we will see very soon whether or not it is possible for you to do that, right player?"
         else:
             n "[persistent.date] stands up from her seat and begins heading for the exit without paying."
             l "Goodbye [persistent.date]."
@@ -618,7 +625,7 @@ label kokiri_deaths:
                     n "That's right, her corpse. You already know that it is too late for her."
                     n "And yet you still hope that you are proven wrong, that she might show any signs of life."
                     n "But no matter how long you wait the only thing that you can hear is pure silence."
-                    if kokiri_call_death_1_check == True: #Check wheter or not she was calling someone at the time of her death.
+                    if kokiri_call_death_1_check == True: #Check whether or not she was calling someone at the time of her death.
                         if kokiri_chatchar_abigail_called == True:
                             n "You can vaguely sense Abigial's screaming but somehow it gets almost drown out by the silence of the forest."
                         elif kokiri_chatchar_lila_called == True:
@@ -630,7 +637,7 @@ label kokiri_deaths:
                 else:
                     $ persistent.kokiri_death_1 = True
                     n "As you worriedly look down you can see her head cracked open and a puddle of blood is begining to form around it. Everything around you turns silent."
-                    if kokiri_call_death_1_check == True: #Check wheter or not she was calling someone at the time of her death.
+                    if kokiri_call_death_1_check == True: #Check whether or not she was calling someone at the time of her death.
                         if kokiri_chatchar_abigail_called == True:
                             n "Even [persistent.date_sis] who is currently screaming her lungs out has become unbearingly silent."
                             n "You would also like to scream but all that manages to come out is the same silence that seems to have taken over the forest."
@@ -1114,8 +1121,6 @@ label kokiri_showpicture:
                 jump kokiri_death_4_hill_dieTogether
 
             else:
-                #TODO: Add the angry [persistent.date] flag and part. #angryLilith #Make her not ask you for help but just accept her death.
-                #The part below is not that part.
                 l "What is happening [persistent.name]?"
                 if kokiri_fullControlAndStillDying == True:
                     l "Is this how you're telling the story now?"
@@ -1130,7 +1135,7 @@ label kokiri_showpicture:
                                 l "Even if it was, why go through with all of this? Couldn't you just have let me walk off this hill?"
 
                         "...I might have lied slightly, I am not in control of the story. We are still in the game.":
-                            l "You what?"
+                            l "You... what?"
                             l "So that means I'm still going to die?"
                 else:
                     n "The fear in her voice is palpable."

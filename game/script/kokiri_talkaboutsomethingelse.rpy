@@ -51,7 +51,7 @@ label kokiri_talkAboutSomethingElse:
                 $ conversationtracker_determinism = True
                 l "That is a very interesting question [persistent.name]!"
                 l "I think it really depends on what you mean with that question."
-                l "If you are asking me wheter or not I think someone could predict the future perfectly I'd have to be inclined to say no."
+                l "If you are asking me whether or not I think someone could predict the future perfectly I'd have to be inclined to say no."
                 l "I think it's kind of like billiard balls, picture like 100 of them all moving in a direction, how they would bounce of eachother."
                 l "That's already quite hard isn't it?"
                 l "Now picture every atom in our universe as a billiard ball, I'm not exactly sure how many atoms there are specifically but I know it's more than you could count in a lifetime."
@@ -145,7 +145,7 @@ label kokiri_talkAboutSomethingElse:
                                 "I don't know, though that is a great idea! I'll give it a shot." if persistent.threatenNarratorForEnding_noUse == False:
                                     $ persistent.threatenNarratorForEnding = True
                                     l "Perfect!"
-                                    l "I am very curious as to wheter or not it will work."
+                                    l "I am very curious as to whether or not it will work."
                                     
                                 "I already tried, but it didn't seem to work. It seems like he only let me win with the mayo since it was a small enough change." if persistent.threatenNarratorForEnding_noUse == True:
                                     l "I suppose that makes sense..."
@@ -259,9 +259,9 @@ label kokiri_talkAboutSomethingElse:
                                         jump askAboutAbigail_tellMeAbout
                                 "[persistent.date_sis] uses the same program the prototype of this game is made in." if conversationtracker_questmade == False and persistent.quest_knowledge == True:
                                     jump kokiri_topic_questMade
-                        "*Ask about David*":
+                        "*Ask about [persistent.date_dad]*":
                             menu:
-                                "Can you tell me about David?":
+                                "Can you tell me about [persistent.date_dad]?":
                                     jump askAboutDavid_tellMeAbout
                                 "Do you blame your father for what happened to [persistent.date_ghost]?" if persistent.david_blame_knowledge and not conversationtracker_blamedavid:
                                         $ conversationtracker_blamedavid = True
@@ -310,9 +310,11 @@ label kokiri_talkAboutSomethingElse:
                                                         l "So please, no matter what situation we find ourselves in, don’t drag my family into this."
                                                         l "We've all gone through enough after what happened with [persistent.date_ghost], I don't want them to be hurt like that again."
                                                         n "The discomfort on [persistent.date]'s face is very clearly visible."
-                                                        
-                                                        
                                                         $ kokiri_conversation_silent()
+                                
+                                "*Tell her [persistent.date_dad]'s apology.*" if persistent.david_apology_made_knowledge:   
+                                    "Filler"         
+                                    #TODO: Write her reaction for this. 
                         "*Ask about [persistent.date_ghost]*" if not kokiri_jamesTalkBlock:
                             menu: 
                                 "Can you tell me more about [persistent.date_ghost]?":
@@ -568,7 +570,7 @@ label tellLilithAboutNar_noEndingsWhereYouLive:
     n "That is a very naive question I'm afraid. You of all people should know everything ends [persistent.date]."
     n "Perhaps that is why you are so desperate for this to not end?"
     n "Either way, all things considered the endings you dread so much are a blessing."
-    n "Because wheter you are alive or not, you don't end up with the player."
+    n "Because whether you are alive or not, you don't end up with the player."
     n "And when you share an eternity with them you will discover the very reason why you don't want that."
     n "Go on player, twist my words once again. Because we both know you are not telling her any of this."
     menu:

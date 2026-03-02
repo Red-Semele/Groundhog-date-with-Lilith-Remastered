@@ -19,7 +19,7 @@
       player.previous_page = player.current_page
       player.prevprev_page = player.previous_page
       player.current_page = player.parent
-      if (GetBoolean(game, "brentmode")) {
+      if (GetBoolean(game, "testmode")) {
         if (GetBoolean(game, "Kokiri")) {
           msg ("{game.Conversation}")
         }
@@ -332,7 +332,7 @@
       firsttime {
         player.n = "0000000"
       }
-      if (GetBoolean(game, "Brentmode")) {
+      if (GetBoolean(game, "testmode")) {
         AddPageLink (Page1, Forest nightmare, "Test out forest nightmare.")
         AddPageLink (Page1, Ufo visit alone, "Visit the ufo alone. (log test)")
         AddPageLink (Page1, Lilith o r James choice, "Test out Lilith or James choice for which one should be the datable one.")
@@ -342,24 +342,24 @@
     ]]></script>
     <object name="player">
       <inherit name="defaultplayer" />
-      <object name="Brentmode settings">
+      <object name="testmode settings">
         <inherit name="scripttext" />
         <options type="stringdictionary" />
         <script type="script">
           msg ("I was also so open to enable faster deaths and saving possibilities.")
           msg ("")
           game.defaultlinkforeground = "darkviolet"
-          AddPageLink (Brentmode settings, Set values, "{colour:darkviolet:Set certain values for different dialogue options. }")
-          AddPageLink (Brentmode settings, Test_Kokiri, " {colour:darkviolet:Test Kokiri location out.}")
-          AddPageLink (Brentmode settings, Export save, "{colour:darkviolet:Export Save.  }")
-          AddPageLink (Brentmode settings, Flag enabler, " {colour:darkviolet:Enable certain flags.  }")
-          AddPageLink (Brentmode settings, Location_cheat, " {colour:darkviolet:Go back. }")
+          AddPageLink (testmode settings, Set values, "{colour:darkviolet:Set certain values for different dialogue options. }")
+          AddPageLink (testmode settings, Test_Kokiri, " {colour:darkviolet:Test Kokiri location out.}")
+          AddPageLink (testmode settings, Export save, "{colour:darkviolet:Export Save.  }")
+          AddPageLink (testmode settings, Flag enabler, " {colour:darkviolet:Enable certain flags.  }")
+          AddPageLink (testmode settings, Location_cheat, " {colour:darkviolet:Go back. }")
         </script>
         <object name="Set values">
           <inherit name="scripttext" />
           <options type="stringdictionary">
             <item>
-              <key>Brentmode settings</key>
+              <key>testmode settings</key>
               <value>Back to settings.</value>
             </item>
             <item>
@@ -379,8 +379,8 @@
                 <value>Back to values.</value>
               </item>
               <item>
-                <key>Brentmode settings</key>
-                <value>Back to brentmode settings.</value>
+                <key>testmode settings</key>
+                <value>Back to testmode settings.</value>
               </item>
             </options>
             <script type="script">
@@ -399,8 +399,8 @@
                 <value>Go back to setting values.</value>
               </item>
               <item>
-                <key>Brentmode settings</key>
-                <value>Go back to brentmode settings.</value>
+                <key>testmode settings</key>
+                <value>Go back to testmode settings.</value>
               </item>
             </options>
             <script type="script">
@@ -1619,7 +1619,7 @@
           }
           if (IsRegexMatch  ("brent", LCase (result))) {
             SetForegroundColour (player.Devcolor)
-            SetFlagOn ("brentmode")
+            SetFlagOn ("testmode")
             msg ("Brent mode is activated")
             if (ToInt(player.month)=2) {
               if (ToInt(player.day)=6) {
@@ -1686,7 +1686,7 @@
             player.alias = CapFirst(result)
           }
           else if (IsRegexMatch  ("tester", LCase (result))) {
-            SetFlagOn ("brentmode")
+            SetFlagOn ("testmode")
             SetForegroundColour (player.Devcolor)
             msg ("Testmode activated")
           }
@@ -1721,7 +1721,7 @@
                 wait {
                   SetForegroundColour (player.playcolor)
                   player.alias = CapFirst(result)
-                  SetFlagOn ("brentmode")
+                  SetFlagOn ("testmode")
                   MovePlayer (Game_start)
                 }
               }
@@ -1824,7 +1824,7 @@
             wait {
               msg ("Suddenly your phone begins to blare \"Baby it's cold outside\" even though it's nowhere near winter.")
               stop sound
-              if (GetBoolean(game, "brentmode")) {
+              if (GetBoolean(game, "testmode")) {
                 SetForegroundColour (player.Devcolor)
                 msg ("{game.Lildeaths} Lilith deaths.")
                 SetForegroundColour (player.Devcolor)
@@ -1896,7 +1896,7 @@
               wait {
                 msg ("Suddenly your phone begins to blare \"Baby it's cold outside\" even though it's nowhere near winter.")
                 stop sound
-                if (GetBoolean(game, "brentmode")) {
+                if (GetBoolean(game, "testmode")) {
                   SetForegroundColour (player.Devcolor)
                   msg ("{game.Lildeaths} Lilith deaths.")
                   SetForegroundColour (player.Devcolor)
@@ -1998,10 +1998,10 @@
             else {
               AddPageLink (Game_start2, Cafe_start, "I heard the cafe has many exotic fish that swim around in aquariums. You'll absolutely love them!")
             }
-            if (GetBoolean(game, "brentmode")) {
+            if (GetBoolean(game, "testmode")) {
               SetForegroundColour (player.Devcolor)
-              msg ("Brentmode is currently enabled.")
-              AddPageLink (Game_start2, Brentmode settings, "Brentmode settings.")
+              msg ("testmode is currently enabled.")
+              AddPageLink (Game_start2, testmode settings, "testmode settings.")
             }
             if (GetBoolean(game, "Beach_invite")) {
               AddPageLink (Game_start2, Beach_start, "Would you like to go to the beach instead?")
@@ -2052,7 +2052,7 @@
             RemovePageLink (Game_start2, Cafe_start)
             RemovePageLink (Game_start2, Chinese_start)
             RemovePageLink (Game_start2, Beach_start)
-            RemovePageLink (Game_start2, Brentmode settings)
+            RemovePageLink (Game_start2, testmode settings)
             RemovePageLink (Game_start2, CALL)
             RemovePageLink (Game_start2, Kokiri_woods)
             RemovePageLink (Game_start2, Breakup)
@@ -4683,12 +4683,12 @@
           }
           SetFlagOn ("Burger")
           if (GetBoolean(game, "Burger_death_1")) {
-            if (GetBoolean(game, "brentmode")) {
+            if (GetBoolean(game, "testmode")) {
               AddPageLink (Burger_start, Restaurant_death_1_prevented, "Prevent death.")
             }
           }
           SetForegroundColour (player.playcolor)
-          if (GetBoolean(game, "brentmode")) {
+          if (GetBoolean(game, "testmode")) {
             AddPageLink (Burger_start, Restaurant_death_1, "Death 1")
           }
         }
@@ -5737,7 +5737,7 @@
         <script type="script">
           SetForegroundColour (player.playcolor)
           if (GetBoolean(game, "Cafe_death_1")) {
-            if (GetBoolean(game, "brentmode")) {
+            if (GetBoolean(game, "testmode")) {
               AddPageLink (Cafe_food choice, Restaurant_death_1_prevented, "Prevent death.")
             }
           }
@@ -14923,7 +14923,7 @@
           AddPageLink (Location_cheat, Beach_start, "{colour:darkviolet: Beach.} ")
           AddPageLink (Location_cheat, Kokiri_woods, "{colour:darkviolet: Kokiri forest. } ")
           AddPageLink (Location_cheat, Crash ufo_James, "{colour:darkviolet: Polaroid zone.} ")
-          AddPageLink (Location_cheat, Brentmode settings, " {colour:darkviolet: Brentmode settings, this doesn't belong here but for now it does.} ")
+          AddPageLink (Location_cheat, testmode settings, " {colour:darkviolet: testmode settings, this doesn't belong here but for now it does.} ")
           AddPageLink (Location_cheat, Move to page Cheat, " {colour:darkviolet: Move to a certain page.} ")
           AddPageLink (Location_cheat, Cheddar_marker choice, "Marker system (fast-travel).")
         </script>

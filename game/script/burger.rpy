@@ -383,7 +383,9 @@ label burger_ordering:
                                         l "Wouldn't that be wonderful? To be able to go back in time as you please, maybe even change a few things?"
                                         if persistent.lildeaths > 9:
                                             n "That's the tricky part isn't it? To create any meaningful change at al. You've noticed it firsthand many times now."
-                                        l "I'm sure we wouldn't have to limit ourselves to just going back in time to eat burgers sooner, we could do so many great things."
+                                        l "I'm sure we wouldn't have to limit ourselves to just going back in time to just eating burgers earlier, we could do so many great things."
+                                        
+
                                     "I never went here with you before, it's the lovely company that makes it taste better.":
                                         l "You really are a charmer aren't you [persistent.name]?"
                                         if love_meter > 2:
@@ -391,6 +393,7 @@ label burger_ordering:
                                             l "It could also be that it's been such a long time since I've been here that the burgers taste even better but I think you have something to do with it aswell."
                                             l "It just feels... more special?"
                                             l "So I'm really happy to hear that you think the same thing [persistent.name]!"
+                                            
                         
                         "It's pretty good.":
                             $ persistent.burger_nothingIsPerfect = True
@@ -417,6 +420,7 @@ label burger_ordering:
                                     l "Rose makes all her burgers with as much love as is feasibly possible but maybe her [burger_choice] isn't really your thing?"
                                     n "You can tell she was hoping you would enjoy it more."
                                     l "If you'd like, we can come back and try something different next time. There's so much more on the menu here that might be more your style."
+                                
                                 else:
                                     l "Although I am slightly confused, to be honest with you."
                                     l "You have been here before, right?"
@@ -433,7 +437,7 @@ label burger_ordering:
                                             l "But now that we are here, would you like to order something else?"
                                             l "Maybe some chicken tenders?"
                                             n "You shake your head. Even if you don't like the burger, you have to admit it fills you quite well."
-
+                    
 
                                         "Oh, I usually don't pick a burger, I tend to always pick chicken tenders.":
                                             n "[persistent.date] can't help but chuckle slightly at your accidental joke."
@@ -445,12 +449,13 @@ label burger_ordering:
                                                     l "That can truly be a breath of fresh air."
                                                     l "Of course, sometimes it can be a bit of a dissapointment."
                                                     l "But good of you for trying something new, you never know what great things might come from that."
+                                                    
 
                                                 "You were really enthusiastic about the burgers here and I didn't want you to think less of me because I picked chicken tenders.":
                                                     l "Oh [persistent.name], I'm very sorry you felt that way."
                                                     l "I would never judge you for what you order here."
                                                     l "If anything I'm just happy to share your company here today."
-                                                    l "So next time"
+                                                    l "So next time feel free to pick whatever you want, alright?"
 
                                                 "Because the game only let me pick burgers." if persistent.kokiri_death_1 == True and persistent.burgerGameJoke == False:
                                                     l "... What?"
@@ -496,6 +501,7 @@ label burger_ordering:
                                 l "I guess taste is pretty subjective. But hey, at least now we know, right?"
                                 n "She tries to force a smile, but it's clear your words stung more than she expected."
                                 l "Maybe next time we could go somewhere else?"
+                                l "Hopefully the chinese restaurant or the cafe will be more to your liking."
                             else:
                                 l "Really?..."
                                 l "But you've been here before, right?"
@@ -517,6 +523,7 @@ label burger_ordering:
                                         l "Either way, it's very rare for Rose to mess up a burger."
                                         l "Of course mistakes can always happen."
                                         l "Would you like to see if she can make you another one of those burgers? I'm sure she wouldn't mind if you ask her nicely."
+                                    
                                     "I think the true problem here is the company.":
                                         
                                         l "Okay, I do not know what makes you think that you can talk to me like that [persistent.date]."
@@ -529,10 +536,11 @@ label burger_ordering:
                                             n "Even if it could hypothetically save her, would it be worth it?"
                                         l "You weren't like this at all when we talked before, is this how you really are?"
                                         l "Either way, I won't stick around to find out."
-                                        l "Goodbye [persistent.date]."
+                                        l "Goodbye [persistent.name]."
                                         $ angryLilith = True
                                         $ noTalkAngryLilith = True
                                         $ love_meter_updater(True) 
+                
                     jump burger_deathBuildup
         else:
             r "Hey [persistent.date] and [persistent.name], welcome back!"  
@@ -718,6 +726,21 @@ label burger_living_rockResponse:
                 l "Like I was always meant to or something. I wanted to play that for as long as I can remember."
                 l "But as you might see I lack the hands, mouth, lungs and a whole lot of extra parts I would need."
                 l "Although, if I one day manifested those parts I don't think I'd ever bore from playing the trombone."
+                l "But I have a feeling that if we would have an audience at all they would run away in terror seeing a rock with hands and a mouth."
+                n "You hear her chuckle again in your mind, but you also pick up on a hint of sadness. Even if she could grow those parts, it wouldn't be enough."
+                menu:
+                    
+                    "We don't need them, to try to be part of their world is to not belong in neither theirs nor ours fully.":
+                        l "I see what you are saying, but I've been craving to be part of their world for so long."
+                        l "The idea of managing that but even then feeling as an outcast is so scary to me."
+                        menu:
+                            "Anyone that does not let you into their world is not worthy of sharing it with you. You are a beautiful soul, and if they can't see that then they are blind.":
+                                l "You really think so?... Thank you [persistent.name], that means more to me than I can properly convey to you."
+                            
+                            "There are always going to be people that do not like you, but that also implies there are always going to be people that do like you.":
+                                l "That's a good point, if by being myself some people won't like me that also means there is a chance for people to like me."
+                                l "It's a bit like drinks, most people are indifferent to water but some people really like coffee and others don't. If I had to choose I suppose I'd rather be coffee, as long as I found those people that enjoyed me."
+
 
             "What's stopping you from doing so?":
                 l "Oh, we aren't joking? I thought we were."
@@ -739,6 +762,8 @@ label burger_living_rockResponse:
                         $ rockMode_rockBand = True
                         l "What should we call our band?"
                         $ changeableWord = renpy.input("Maybe...")
+                        l "\"[changeableWord]\" huh? I like it!"
+
                     "Does art need someone to witness it? Isn't making it for creation's sake enough?":
                         l "I can see where you are coming from [persistent.name]."
                         l "Creating art is really fulfilling on it's own."
@@ -786,15 +811,16 @@ label burger_living_rockResponse:
 
                     "They use their strengths to make up for their weaknesses.":
                         "filler"
+                        #TODO: Fill this in
 
                     "They repurpose their \"weaknesses\" as their strengths, creating something truly unique.":
-                        #Reference the guy who draws arts with his shaking hands and a pen. (Phil Hansen)
                         l "I never really thought about it like that [persistent.name], but you do make quite a lot of sense."
                         l "I suppose if everyone had nothing but strengths plenty of works would blend together in style."
                         l "But what truly makes a style is the many little imperfections that it contains."
                         l "In a way I suppose you could say they are signs that the work was made by a human and not by an algoritm fulfilling it's idea of perfection."
                         l "And that's all that matters isn't it? That the art was created with soul, with time spent on it. That a person made it to reach others."
-                        l "So in a way I could see how reframing your weaknesses could empower you and maybe make something more unique than the idea you had."
+                        l "So in a way I could see how reframing your weaknesses could empower you to make something more unique than the idea you had."
+                        l "Besides, it's also a great way to practice, isn't it? If you never challenge your weaknesses you'll never be able to get better at them."
 
                     "They work together with other artists to realise their vision.":
                         l "Interesting, so each artist can focus on a puzzle-piece of the vision, to then assemble it all together?"
@@ -821,6 +847,7 @@ label burger_living_rockResponse:
                                         l "But I suppose we do have quite a lot of time to figure that out, don't we [persistent.name]?"
                                         l "For now I'd rather focus on this date instead of a fictious one though. We can always brainstorm later, but this moment will only happen once."
                                         l "Still, I am looking forward very much to our work together."
+                                        
                                     
                                     "A story where nothing goes wrong.":
                                         l "I see... but wouldn't that go against the point of stories?"
@@ -861,6 +888,29 @@ label burger_living_rockResponse:
                                                         l "I see. I guess that is the trade-off. You get to truly live, but by doing so you also open yourself up to a lot more pain along the way."
                                                         l "Still, I would kill to be able to remember how life was as a human. Is not feeling that pain really worth this?"
                                                         l "Even if you won't feel the many great things that life brought with it? Maybe ignorance is bliss, but I can't imagine what possibly makes you prefer this."
+                                                        menu:
+                                                            "It wasn't just my own hurt. I caused so many pain for others. No matter what I tried.":
+                                                                l "Ah, I think I understand [persistent.name]. Believe it or not, but even as a rock I did the same."
+                                                                l "Even the few relations I had caused hurt to those around me."
+                                                                l "I think that's something inherent to being alive, isn't it?"
+                                                                l "We try our best not to cause pain to those dear to us, but sometimes through unintended consequences we still do."
+                                                                l "However, I don't think that means you should isolate yourself from others."
+                                                                l "What you aren't telling me right now is all the joy you made others feel, the good moments you shared with them and the bad moments where you were there for them."
+                                                                l "I simply can't believe that you are a monster only causing pain to others."
+                                                                l "Even just the fact you are worried about that shows me the truth [persistent.name]."
+                                                                l "So can you promise me that next time you get the choice between being human or rock, you'll pick human?"
+                                                                l "That you'll live your life to the fullest, trying to enjoy what you can mean to others instead of isolating yourself away from them?"
+                                                                l "If not for yourself, then for me, since I doubt I will be given that choice."
+                                                                menu:
+                                                                    "I promise.":
+                                                                        l "Great! But no use thinking too hard about the next life when we have to enjoy this one right now, right?"
+                                                                        l "Still, I thought it was important to talk about it."
+
+                                                                    "I can't. I'm scared of hurting others again.":
+                                                                        l "I understand [persistent.name]. Try to atleast think about it next time you get the choice, alright?"
+                                                                        l "Surely as long as your intentions are pure the connections you make with others will outnumber the hurt."
+                                                                        l "By clinging onto this fear of hurting someone you also rob yourself from the chance of delighting them."
+                                                                        l "Either way, for now we let's focus on the delight we can bring eachother right now."
 
                                                     "There were also a whole lot less rock puns.":
                                                         l "Really? But those {b}rock{/b}."
@@ -871,22 +921,33 @@ label burger_living_rockResponse:
                                                         menu:
                                                             "You're right, let's go back.":
                                                                 $ persistent.rockMode = False
-                                                                n "Thank you player."
-                                                                n "I'm never saying those words again, so savor them."
-                                                                n "It's just such a relief to go back to something actually good instead of {i}this{/i}."
+                                                                if persistent.noRockPunsForNar == False:
+                                                                    n "Thank you player."
+                                                                    n "I'm never saying those words again, so savor them."
+                                                                    n "It's just such a relief to go back to something actually good instead of {i}this{/i}."
+                                                                else:
+                                                                    n "Were you trying to make me say it again?"
+                                                                    n "Well, nice try but you won't hear those words ever again player."
+                                                                    n "But I suppose it's nice to be able to go back to the regular story once again. So I won't be too hard on you for now."
+                                                                
                                                                 n "Now, just hold on for a second."
-                                                                #TODO: Have a little bit of extra dialogue for when it returns to normal, and also have a line if you try to make the narrator say thank you again where he says "Are you trying to make me say those words again? I said I would never say it again."
+                                                                $ persistent.noRockPunsForNar = True
+                                                                $ rockModeBackToStart = True
                                                                 jump Game_start2
                                                             "No way! This is really {b}gneiss{/b}.":
                                                                 n "Another rock pun? Fine. But don't think for a second I'm enjoying this."
                                                                 n "I just hope you'll grow bored of this soon."
+                                                                #TODO: Continue this? And get it back on track.
 
                                             "We could go to the beach.":
+                                                $ love_points = -1
+                                                $ love_meter_updater(True)
                                                 l "What?... Why would you say that [persistent.name]?"
                                                 l "You do know what sand is, right?... The broken down bodies of rocks like us."
                                                 l "There is not a trace of a single other sentient rock left there."
-                                                l "It's not entirely clear wheter that is because every sentient rock stays away from beaches, or wheter they died there."
+                                                l "It's not entirely clear whether that is because every sentient rock stays away from beaches, or whether they died there."
                                                 l "Still, even if we were suddenly transformed into humans, I could not bare to walk over the corpses of other rocks, sentient or not."
+                                                l "...I'd rather not think about this anymore. Can we talk about something else?"
 
                                             "We could go to the Kokiri forest.":
                                                 l "The what? That doesn't really ring a bell with me."
@@ -897,6 +958,10 @@ label burger_living_rockResponse:
                                                         l "Either way, that could indeed be a nice place to visit one day."
                                                         l "I heard there's a hill there with a gorgeous view over the town, if we were human we could watch the sunrise together from there."
                                                         l "Now we'd just roll off if we'd attempt to climb it."
+                                                        l "That would be a silly sight, wouldn't it? The two of us just rolling down over and over again, trying to reach something unreachable."
+                                                        if persistent.lildeaths > 25:
+                                                            n "At this point you are very well aware of trying to reach something you never can, aren't you player?"
+                                                            n "Her joke is moreso a gutpunch to you, or the rock equivalent of it I suppose."
 
                                             "I like us just the way we are actually. It might not be perfect but it's nice.":
                                                 l "Do you mean that? ...That means a lot actually."
@@ -910,9 +975,10 @@ label burger_living_rockResponse:
                                                 l "...You are right, I like the way things are too. Perhaps different circumstances would lead to us just passing by eachother, never meeting, or only fleetingly."
                                                 l "But now we have the opportunity to get to know eachother on a deeper level. Afterall, we have nothing but time, don't we?"
                                                 l "For now though, instead of thinking of stories, let's continue writing ours, starting with this date"
-
+                    
                                             " Do you have another idea for a story?":
                                                 "Filler"
+                                                #TODO: Fill this in. And get it back on track.
        
         
     jump burger_deathBuildup   

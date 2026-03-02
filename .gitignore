@@ -28,6 +28,22 @@ share/python-wheels/
 .installed.cfg
 *.egg
 git rm --cached *.save
+
+## Line review – credentials file contains Discord bot token and webhook URL.
+## Never commit this. Copy review_credentials.rpy.example → review_credentials.rpy.
+game/review_credentials.rpy
+
+## Ren'Py runtime files – saves, logs, debug output
+game/saves/
+game/cache/
+*.save
+*.bak
+log.txt
+errors.txt
+traceback.txt
+token_debug.txt
+pull_debug*.txt
+line_reviews.json
 git commit -m
 MANIFEST
 

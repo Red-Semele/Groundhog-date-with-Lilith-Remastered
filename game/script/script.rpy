@@ -1,4 +1,4 @@
-﻿# The script of the game goes in this file.
+# The script of the game goes in this file.
 
 
 # Declare characters used by this game. The color argument colorizes the
@@ -318,6 +318,8 @@ label start:
           default persistent.lilaCallNeedsAbbyProof_knowledge = False
           default persistent.lilaCallRecievedAbbyProof = False
           default persistent.rockMode = False
+          default persistent.noRockPunsForNar = False
+          default persistent.testmode = False
 
           #Non-persistent
           default from_menu = False
@@ -487,6 +489,7 @@ label start:
           default davidCalled = False
           default policeCalled = False
           default rockMode_rockBand = False
+          default rockModeBackToStart = False
 
           #Beach
           default beachStart_doneBook = False
@@ -585,7 +588,12 @@ label after_setup:
                     $ allProgress()
                     $ persistent.canSave = True
                     jump nameSelect
-               
+
+               if persistent.name == "Tester" or persistent.name == "T3st3r":
+                    $ persistent.name = None
+                    dev "Tester mode activated. Please enter your name."
+                    $ persistent.testmode = True
+                    jump nameSelect
 
                if persistent.name == "Moonlight":
                     $ easterName = "Moonlight"
@@ -635,11 +643,18 @@ label game_start:
      else:
 
           if not nightmare:
-               n "It is a beautiful day like the previous one, exactly like the previous one."
-               n "Actually it's just the same day."
-               n "Maybe you can make it just a tiny bit different."
+               if rockModeBackToStart == True:
+                    n "It's a beautiful day, because it is not like the last one."
+                    n "No more annoying rock puns."
+                    n "I've never been more glad to get to narrate this part of the story."
+               else:
+                    n "It is a beautiful day like the previous one, exactly like the previous one."
+                    n "Actually it's just the same day."
+                    n "Maybe you can make it just a tiny bit different."
                n "Your phone once again blares \"Baby it's cold outside\" even though it is anything but cold outside."
                n "It's her, again."
+               if persistent.testmode:
+                    dev "[persistent.lildeaths] Lilith deaths."
                if persistent.rockMode == True:
                     n "Actually... I'm not sure, something feels different."
                     n "Hang on, are you... are you a rock?"
@@ -1044,6 +1059,9 @@ label Game_start2:
 
 
 label phone_start_choices:
+
+     if persistent.testmode:
+          dev "Tester mode is currently enabled."
 
      menu:
  
@@ -1789,14 +1807,16 @@ label phone_call_david:
                          d "That every day I am beating myself up for the decision that I made."
                          d "I was a coward, I still am by not facing her directly."
                          d "I wanted to return back to their lives every single day, I still do."
-                         d "And yet, there's something inside me that thinks they are better off without me."
+                         d "And yet, there's something inside me that thought they were better off without me."
                          d "In a way it was selfish to listen to that voice, I should have talked about it with my family."
                          d "They would have understood better than anyone else, as they also lost James that day."
-                         d "Instead, I isolated myself from them, I dealt with it all on my own. And I fored them to do the same."
+                         d "Instead, I isolated myself from them, I dealt with it all on my own. And I forced them to do the same."
                          d "I would like to tell her that I'm deeply that she had to feel like her own father abandoned her."
                          d "No child deserves to go through such pain. My family lost two people when James died and it was hard enough just losing one."
                          d "I can't undo the wounds I have caused, but I do hope I could, if my family accepts it, try mending them."
-                         #TODO:Give the player the ability to tell [persistent.date] this. Also attempt to finish this path of the reunited ending.
+                         $ persistent.david_apology_made_knowledge = True
+                         d "Thank you [persistent.name], I won't take any more time away from you as this is already more than I deserve. Goodbye."
+                         n "And with that he hung up the phone."
                          jump phone_callMenu
 
 
@@ -2717,7 +2737,7 @@ label escapeFate_myFault_butILoveYou:
      if love_meter >= 2:
           l "Well, I also like spending time with you..."
           l "It would be a shame if we had to sacrifice it all."
-          l "Besides, wheter you would or not do that, I would never know about it or this conversation."
+          l "Besides, whether you would or not do that, I would never know about it or this conversation."
           n "[persistent.date] lets out a little laugh."
           l "Funny how those things work right?"
           n "[persistent.date] scratches her head."
@@ -2937,7 +2957,7 @@ label restaurant_death_2_preventionAttempt:
                               n "When every customer is helped with he looks around one last time to see if no one else, anyone else, needs him."
                               n "He even waits for a few seconds in the hope that someone might want to order something extra and delay him from talking to you, even if just for a minute or so."
                               n "When no one comes by the barista lets out a heavy sigh and tries to put on a fake smile."
-                              n "It fails miserably. For a second you can see he is thinking about wheter or not to attempt it again but he just shakes his head ever so slightly and drops his fake smile instantly."
+                              n "It fails miserably. For a second you can see he is thinking about whether or not to attempt it again but he just shakes his head ever so slightly and drops his fake smile instantly."
                               b "Look, while I understand that the both of you want to take a look, that is far from an emergency in my eyes."
                               b "If you really want to take a look I would recommend to come back after tomorow, by that time the closet will be removed."
                               n "But you don't have until then, in fact every word the barista says makes you realise you don't have much more time left at all."
@@ -2993,7 +3013,7 @@ label restaurant_death_2_preventionAttempt:
           n "Suddenly you hear it again. The sound of screaming, slowly being overpowered by quacking."
           l "So that is how I died?..."
           l "It's hellish."
-          n "For a moment you consider telling her that you are not sure wheter she died to the geese or not, because you never saw her corpse, but that you know that if she hadn't died, she would wish she had. "
+          n "For a moment you consider telling her that you are not sure whether she died to the geese or not, because you never saw her corpse, but that you know that if she hadn't died, she would wish she had. "
           n "You refrain from telling her that, probably for the best."
           n "Lilith’s hands tremble as she grips the edge of the sink. Her breathing is shallow and uneven, her eyes darting around the small restroom as though expecting the walls themselves to collapse inward. Tears well up but don’t fall, her face frozen in a mixture of fear and desperation."
           l "This isn’t real, right? I mean... it can’t be real. It’s just geese. Just stupid birds..."
@@ -3564,7 +3584,7 @@ label ufo_crash_polaroids_James:
                                         j "The truth is, that this very promise was broken many times by others like you."
                                         n "James waves with his hand in the direction of the bubbles that seem to contain other worls inside of them, hundreds of them flash for a second."
                                         j "In all of those worlds, that promise I was hoping for was made. And in all of those, that very same promise was broken."
-                                        j "So wheter or not you promise it, the truth is it doesn't really matter."
+                                        j "So whether or not you promise it, the truth is it doesn't really matter."
                                         j "I just hope that you are different."
                                         j "That you'll know when to let go."
    
@@ -3996,7 +4016,7 @@ label jamesConversationMenu:
                     j "I know there is more out there."
                     j "Ways for her to live."
                     j "Though I think you might not like how you reach them or even what they are in general."
-                    j "I even think with some of them, you might not even know wheter or not you found them."
+                    j "I even think with some of them, you might not even know whether or not you found them."
                     menu:
                          "But that's ridiculous! Of course I would know if I found an ending like that.":
                               j "Well, do you recall finding an ending like that?"
@@ -4026,7 +4046,7 @@ label jamesConversationMenu:
 
                                    "Are you talking about the narrator?":
                                         j "A good guess!"
-                                        j "But no, he does not care that much wheter I reveal any secrets to you."
+                                        j "But no, he does not care that much whether I reveal any secrets to you."
                                         j "He can not care in fact. For as much as he pretends to read the script, he is the script."
                                         j "Now his boss? That's a different story, he wrote the script. And he very much cares that certain things aren't spoiled too soon."
                                         j "To not lose their... meaning."
@@ -4094,7 +4114,7 @@ label ufoVisitAlone:
                ship "We would tell you where you would find both of them but due to how the anomaly works it isn't always set to be in the same place, rather a few possible places.<br/>If they go to any of the three restaurants they will visit you do not need to intervene, the universe will take care of it in a acceptable way with a small amount of death.<br/>However, if they go to either the forest or the beach you need to keep a close eye on them, if she hasn't died by (hour here) then you will need to intervene, otherwise our fates will look quite gruesome, let me asure you."
                      
 label reunionEnding:
-     #TODO: This has nothing jumping to it. Fix that, so that this is actually attainable. (For that I first need to make all the parts that act as setup for this ending)
+     #TODO: PRIORITY: This has nothing jumping to it. Fix that, so that this is actually attainable. (For that I first need to make all the parts that act as setup for this ending)
   
      li "This seems a really weird place for your Teacher to meet us Abigail."
      a "I agree, this doesn't seem like him."
@@ -4447,13 +4467,14 @@ label ghostReunion_transferUniverse:
      l "In a way, this seems like it might be our second chance, we are finally reunited once again."
      n "[persistent.date] gives James a big hug."
      j "I missed this Lilly."
-     l "So did I Jay, so did I.<br/>We could be so happy living here together, but I need to be sure my reality's family is alright."
+     l "So did I Jay, so did I. We could be so happy living here together, but I need to be sure my reality's family is alright."
      j "I understand, I also need to do the same for my reality's family."
                     
      menu:
           "Show them the reunited endings of their realities.":
-               #TODO:  msg ("There should be a description of both of these endings here, done by Nar.")
-
+               n "You show them both the ending where their family gets reunited, carrying them with them deep in their hearts."
+               n "You can see the tears pooring down their faces as they watch the endings."
+               n "After the endings fade away once more, they look at eachother and smile."
                j "This... this is beautiful, [persistent.name]."
                l "I agree Jay, this fills me with something I haven't felt in quite a while."
                j "Yes, I can feel it aswell Lilly, it's... hope. For too long we have been stuck in this cycle of watching every world where things went wrong, of trying to fight against the odds to make things better."
@@ -4487,7 +4508,7 @@ label ghostReunion_transferUniverse:
                               "So it's a bit like reincarnation in a way? Do you get to keep your memory after the Void altered you?":
                                    j "I suppose you could call it a form of reincarnation yes, although from what we've heard you become multiple different beings all at once instead of just one other form."
                                    l "And we are unsure if the Void allows you to keep your memories. Some have claimed they still have theirs."
-                                   l "But wheter or not that is a lie is far from certain. Even more so wheter or not some people keeping it is an oversight or by design."
+                                   l "But whether or not that is a lie is far from certain. Even more so whether or not some people keeping it is an oversight or by design."
                                    j "I guess we'll have to see, won't we?"
                                    j "So [persistent.name], would you like to come with us?"
                                    menu:
@@ -4747,7 +4768,7 @@ label polaroidZone_narratorSlipping1:
           n "I felt pretty insecure about that if I'm being honest. So I am glad to hear that you didn't mind too much."
 
           n "I did however really enjoy [persistent.date]'s dice game in there."
-          #Have some varying dialogue based on wheter or not you never played it, played it and won without cheating or if you had to cheat.
+          #Have some varying dialogue based on whether or not you never played it, played it and won without cheating or if you had to cheat.
      elif changeableWord == "chinese":
           n "I love that place aswell."
           n "I really like the section where [persistent.date] asks you a riddle or you can ask her one instead."
@@ -4781,7 +4802,37 @@ label polaroidZone_endOfEverything_darknessLore:
                jump polaroidZone_endOfEverything_goWiththem
                                                  
    
-#TODO: AddPageLink (Test functions menu, Bad reunion ending transfer universe, " {colour:darkviolet:Test out bad reunion ending where another universe's James gets transported to the reunion ending.}")
+
+label badReunionTransferUniverse:
+     n "You focus all your energy into tapping in to another world. A world where [persistent.date_ghost] is standing in this exact place."
+     n "Slowly but surely you open a rift big enough to pull something, someone from that world into this one."
+     n "Almost instantaniously a figure appears in front of you."
+     n "Everyone's faces turn white. They look like they just saw a ghost."
+     n "No, worse, a ghost turned alive."
+     l "J- [persistent.date_ghost_nickname], is that you?"
+     n "Now [persistent.date_ghost]'s face follows suit."
+     j "[persistent.date_nickname]?... But that's not possible."
+     li "This can't be real, I watched them burry you."
+     d "We were healing our wounds but oh god, looking at you just takes me back to that day..."
+     j "What are you talking about? We were right here having this reunion, and suddenly {i}she{/i} is here with us again? Why are you acting like I am the one that... died?"
+     l "That's- we were having this reunion, and you suddenly showed up out of nowhere."
+     j "Wait [persistent.name], what are you doing here?"
+     l "...You know [persistent.name]?"
+     j "...Yes? We were supposed to go on a date, before this reunion ha- How do you know [persistent.name]?"
+     l "We also were supposed to go on a date..."
+     l "What's going on here [persistent.name]?"
+     menu:
+          "I put the James of another world where he doesn't die but you do into yours where the opposite happens.":
+               l "So there are worlds where he lives and I die?"
+               l "But still, why did you take it upon yourself to make everything so much more difficult?"
+               l "I'm sure it wasn't your intention but didn't you see how mom and... dad reacted?"
+               l "You can't just pluck another [persistent.date_ghost_nickname] from an alternate world or timeline or whatever and expect things to move along smoothly."
+               j "You ripped me away from the reunion of my own? Everyone must be so worried. And for what? To reopen a wound that was finally healing?"
+               j "For a family that has to look at a living ghost?"
+               l "From what I hear we both had a good thing going until it was meddled with."
+               l "Don't get me wrong [persistent.name], a part of me is glad to know a version of [persistent.date_ghost] survived, to see him again."
+               l "But this is just unnatural. We have to keep moving forward, we can't cling onto the past."
+               #TODO: Continue writing this, james should be brought back to his reality, and lilith leaves you. Also, make the parents run away and abby following her so I don't need to write dialogue for 5 people
 
 
 

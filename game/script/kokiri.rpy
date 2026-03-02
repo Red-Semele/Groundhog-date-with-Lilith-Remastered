@@ -191,8 +191,9 @@ label kokiri_explanation_game:
                             if player_job == "teach":
                                 l "Ah, so you're also a teacher? That's really cool!" 
                                 l "It really is such an interesting job isn't it?"
-                                #TODO: Make this jump the player to the next part (also still write the upside)
-                                l "The only downside I sometimes experience is that it doesn't always feel like I am maing much progress in the big picture."
+                                l "I love being able to help the kids in my class grow as people. They are really curious and have so much potential."
+                                l "Theoretically they could become anything later in life, and I would have been a part of that process. I think that is really beautiful."
+                                l "The only downside I sometimes experience is that it doesn't always feel like I am making much progress in the big picture."
                                 l "The children move on to the next year, but I always teach the same class."
                                 l "The same lessons, just to different people."
                                 l "I know the progress happens, but I'll never be able to witness it myself."
@@ -212,7 +213,11 @@ label kokiri_explanation_game:
                                         l "But it can never last eternal. All things will eventually end."
                                         l "If we would have endless time with someone eventually we would have shared every possible situation and scenario together, every last unique thing."
                                         l "And from then on out, it would lose it's charm."
-                                        l "Finding water in the dessert is refreshing, sure, but you wouldn't want to be stuck in an infinite lake for all of eternity."
+                                        l "Finding water in the desert is refreshing, sure, but you wouldn't want to be stuck in an infinite lake for all of eternity."
+                                        l "The beauty of things lies in their scarcity, in them being fleeting."
+                                        l "It helps us to put pretenses behind us and just enjoy the moment, enjoy the company, for it will never be infinite."
+                                        $ kokiri_conversation_silent()
+                                        
 
                                 
 
@@ -232,11 +237,13 @@ label kokiri_explanation_game:
                                                         l "I think it’s the moments when the kids finally understand something they've been struggling with. You can almost see the light bulb flicker on above their heads, and it’s just... magical."
                                                         l "And of course, there’s the variety it brings. Every day feels different, you know? It keeps me on my toes, but I wouldn’t trade it for anything."
                                                         n "Every day feeling different... That's hard for you to imagine at this point isn't it?"
+                                                    
                                                     "That's great to hear! Why did you choose to be a teacher specifically?":
                                                         l "Well, to be honest, part of it is that I really enjoy helping people. There’s a satisfaction in knowing you’re making a positive impact on a young person’s life."
-                                                        l "But also, I’ll admit, I do enjoy the vacations! It’s a little selfish, but it gives me time to recharge and focus on other things I love, like reading."
-                                                    
-                                            
+                                                        l "But also, I’ll admit, I do enjoy the vacations! It might be a little selfish, but it gives me time to recharge and catch up on new books for example."
+                                                        #TODO: Continue this?
+
+                                                $kokiri_conversation_silent()
 
                                         "You have mentioned you teach the first year of elementary when we had this talk before actually." if persistent.kokiri_teacher_knowledge:
                                             l "Oh I see, so we already had this conversation?"
@@ -250,48 +257,66 @@ label kokiri_explanation_game:
                             $ kokiri_norealname += 1
                             if kokiri_norealname == 2:
                                 label kokiri_norealname_second_part:
-                                l "Isn't it funny how we act in games like this?"
-                                l "Like we are truly in control. As if every decision we make is our own."
-                                l "But how much of it is really {b}you{/b}?"
-                                l "Think about it. The choices you can make in this game are not really yours, are they?"
-                                l "They are premade for you."
-                                l "Sure, I'm guessing you have slightly more control over what you say compared to me since you atleast can pick between a few options."
-                                l "But do you ever feel like you're just following a path someone else has made for you? How free are you in this game, really?"
-                                l "How does that idea make you feel [persistent.name]?"
-                                menu:
-                                    "I don't think I really agree with what you said. Sure, the options I can pick from aren't mine, but I am free to pick whichever one I want, right?":
-                                        l "Sure, but is it even a choice at some points?"
-                                        l "These kinds of games usually have choices that lead to gameovers or bad endings, right?"
-                                        l "After picking those choices once, would you ever pick them again?"
-                                        menu:
-                                            "I guess not.":
-                                                l "Exactly. So that is one less choice you can pick from. Because it doesn't advance the game."
-                                                l "If you then think about rude and nice options that some of these games have it is the same thing. Usually picking the nice option is preferable to reach the best possible ending."
-                                                l "So are you really picking that option because you want to or because it is the better choice definitively?"
-                                                l "I see it a lot like breathing actually. Sure, you could choose to try to breathe as little as possible, or to breathe irregulary. But both are just not optimal."
-                                                l "And sooner or later, you are going to just breathe normally."
-                                                l "You can fight it all you want right now, but it's only a moment before you forget what you were doing and you breathe normally automatically once again."
+                                    l "Isn't it funny how we act in games like this?"
+                                    l "Like we are truly in control. As if every decision we make is our own."
+                                    l "But how much of it is really {b}you{/b}?"
+                                    l "Think about it. The choices you can make in this game are not really yours, are they?"
+                                    l "They are premade for you."
+                                    l "Sure, I'm guessing you have slightly more control over what you say compared to me since you atleast can pick between a few options."
+                                    l "But do you ever feel like you're just following a path someone else has made for you? How free are you in this game, really?"
+                                    l "How does that idea make you feel [persistent.name]?"
+                                    menu:
+                                        "I don't think I really agree with what you said. Sure, the options I can pick from aren't mine, but I am free to pick whichever one I want, right?":
+                                            l "Sure, but is it even a choice at some points?"
+                                            l "These kinds of games usually have choices that lead to gameovers or bad endings, right?"
+                                            l "After picking those choices once, would you ever pick them again?"
+                                            menu:
+                                                "I guess not.":
+                                                    l "Exactly. So that is one less choice you can pick from. Because it doesn't advance the game."
+                                                    l "If you then think about rude and nice options that some of these games have it is the same thing. Usually picking the nice option is preferable to reach the best possible ending."
+                                                    l "So are you really picking that option because you want to or because it is the better choice definitively?"
+                                                    l "I see it a lot like breathing actually. Sure, you could choose to try to breathe as little as possible, or to breathe irregulary. But both are just not optimal."
+                                                    l "And sooner or later, you are going to just breathe normally."
+                                                    l "You can fight it all you want right now, but it's only a moment before you forget what you were doing and you breathe normally automatically once again."
+                                                    $ kokiri_conversation_silent()
 
-                                    "I don't know how to feel. If I can't really be me then what is the point of playing this game? Am I even playing it at that point or am I just going through the motions?":
-                                        l "I understand that you might feel like that. But it is very important to understand that even if we don't have as much control over our actions as we thought that still doesn't mean none of this matters."
-                                        l "After all, at any time you could have chosen to not play this game anymore. But you keep coming back for me."
-                                        l "That choice is truly your own, isn't it?"
-                                        l "It might say more about you than any other choice you can make in this game."
-                                        menu:
-                                            "Is that even a choice? To quit the game?":
-                                                l "It might not look like it entirely but I think so, yes."
-                                                l "Choosing to not walk any path is still walking a path isn't it?"
-                                                l "Like I said, it might even be one of the only choices here that is truly your own."
-                                                n "[persistent.date] grows quiet for a moment."
-                                                l "I also don't want you to feel like it is not an option because of me."
-                                                l "You don't owe me anything [persistent.name]."
-                                                l "I can only imagine the toll this is slowly taking on you."
-                                                l "If you ever feel like it is too much feel free to take a break from trying to save me."
-                                                l "Or just stop trying at all. I would understand, alright?"
-                                                menu:
-                                                    "I'll keep it in mind, thank you [persistent.date].":
-                                                        n "She flashes you a small smile."
-                                                        l "Good, that's all I ask of you [persistent.name], and you are welcome."
+                                                "Maybe something changed? Maybe I should pick them again just to make sure.":
+                                                    l "Would you really do that [persistent.name]?"
+                                                    l "Redoing a choice again, expecting it to be different?"
+                                                    l "Unless you changed something substantial on the way to that choice I don't think the result would be any different."
+                                                    l "Besides, would you really risk my life again for the slightest chance to save it?"
+                                                    l "Surely there must be a better way, right?"
+                                                    l "Because entertaining this thought would mean atleast twenty or more so extra deaths."
+                                                    l "And even then, who's to say that after that the choice wouldn't lead to something else? Would you be able to stop your curiosity once you get it going?"
+                                                    l "So please, let bad endings be just that. We have to move forward. If there is a key to finding our way out of this loop it's trying new things, not getting stuck on old ones."
+                                                    $ kokiri_conversation_silent()
+
+                                        "I don't know how to feel. If I can't really be me then what is the point of playing this game? Am I even playing it at that point or am I just going through the motions?":
+                                            l "I understand that you might feel like that. But it is very important to understand that even if we don't have as much control over our actions as we thought that still doesn't mean none of this matters."
+                                            l "After all, at any time you could have chosen to not play this game anymore. But you keep coming back for me."
+                                            l "That choice is truly your own, isn't it?"
+                                            l "It might say more about you than any other choice you can make in this game."
+                                            menu:
+                                                "Is that even a choice? To quit the game?":
+                                                    l "It might not look like it entirely but I think so, yes."
+                                                    l "Choosing to not walk any path is still walking a path isn't it?"
+                                                    l "Like I said, it might even be one of the only choices here that is truly your own."
+                                                    n "[persistent.date] grows quiet for a moment."
+                                                    l "I also don't want you to feel like it is not an option because of me."
+                                                    l "You don't owe me anything [persistent.name]."
+                                                    l "I can only imagine the toll this is slowly taking on you."
+                                                    l "If you ever feel like it is too much feel free to take a break from trying to save me."
+                                                    l "Or just stop trying at all. I would understand, alright?"
+                                                    menu:
+                                                        "I'll keep it in mind, thank you [persistent.date].":
+                                                            n "She flashes you a small smile."
+                                                            l "Good, that's all I ask of you [persistent.name], and you are welcome."
+                                                            l "It's important to sometimes also think about yourself, especially if you want to help others."
+                                                            l "Because if you think about it, you can't help others if you yourself are fully burnt out, can you?"
+                                                            l "That's why it's so important to be kind to yourself."
+                                                            l "That might sound like a pretty logical insight, but believe me, it took me a while to realise that."
+                                                            l "Which is why I wanted to share it with you, since I've been in your shoes before. Well, maybe not {i}exactly{/i} the same shoes, but ones similar enough."
+                                                            $ kokiri_conversation_silent()
                             else:               
                                 label kokiri_norealname_third_part:
                                 
@@ -323,8 +348,14 @@ label kokiri_explanation_game:
                                             l "Still, I think the beauty of life is that even if we can't choose the paths we walk we can still try to enjoy the scenery along the way."
                                             l "The real gift is in getting to experience life at all."
                                             l "The world can genuinely be beautiful if we allow ourself to see it."
-                                            l "I think regardless of wheter we do or don't have free will doesn't really matter in the end."
+                                            l "I think whether we do or don't have free will it doesn't really matter in the end."
                                             l "Because even if we are on a guided tour, if we can see new sights, get new experiences, isn't it all worth it?"
+                                            l "Still, I understand that might be a tough thought to deal with, since it might impact your feeling of control over your own life. "
+                                            l "Maybe that is why so many people are drawn to making worlds of their own."
+                                            l "To create stories, art, anything really, where they can control how things flow."
+                                            l "To be the one weaving fate instead of being the one woven into the web."
+                                            l "Maybe that is why my maker made this world? Who know, maybe the writer of your story did the same thing?"
+                                            $ kokiri_conversation_silent()
 
                                         "When you say we are following a script, are you implying there is someone who wrote it?":
                                             l "Well, for this game there definetly is someone who wrote it."
@@ -332,11 +363,10 @@ label kokiri_explanation_game:
                                             l "But maybe that is a bit of a boring answer, so I'll give you to extra hypothesis for free."
                                             l "Perhaps your world also knows a writer or a storyteller, trying to create a good story for beings of a higher reality, the one the writer themselves stems from."
                                             l "So essentially the equivalent of a god in your world but a regular person in theirs."
-
-                                            l "Or maybe you've already gone through your life once before and at that time the \"script\" of your actions was created, which you are now just following."
+                                            l "Or maybe you've already gone through your life once before and at that time the \"script\" of your actions was created, which you are now just following. In that way you would have free will, but would already have set in stone what you'd do the first time."
                                             n "[persistent.date] pauses for a moment."
                                             l "It is probably the first thing I mentioned, but the other two options are way more fun to think about in my opinion."
-                                    $ kokiri_conversation_silent()
+                                            $ kokiri_conversation_silent()
 
                 "Can we actually talk about something else?":
                     l "Sure thing [persistent.name], what would you like to talk about?"
@@ -625,7 +655,7 @@ label kokiri_topic_questMade:
                                                     l "I see..."
                                                     l "That is an interesting thing you bring up."
                                                     l "Sure, you know what happened the last time, maybe even the last times."
-                                                    l "But can you ever be truly sure wheter or not it is going to happen again before it does? I'd say you just can make a better educated assumption than the rest of us in here."
+                                                    l "But can you ever be truly sure whether or not it is going to happen again before it does? I'd say you just can make a better educated assumption than the rest of us in here."
                                                     l "Also, your knowledge of this future has it's limits. It just lasts up until the furthest you've ever been."
                                                     l "Besides, now we are talking about the future in this game."
                                                     l "But if you think about it like that, doesn't that mean you also know how things will go in a book you reread or a movie you watched once again?"
@@ -659,6 +689,7 @@ label kokiri_topic_questMade:
                 l "And that is why the idea of being robbed of their autonomy even further terrifies them so much, to the point that no proof ever would be able to convince them."
                 l "If I am being honest there is also still a part of me that is clinging onto the possibility that all of this could somehow just be an elaborate ruse, because the alternative is something it can't handle fully yet."
                 l "I do want to make it clear that I believe you, I just think that I need that part to make this whole thing a little bit more gradual."
+                
 
             "I don't think I would buy it at all.":
                 l "That's fair, I think that is how most people would handle hearing something like that."
@@ -670,7 +701,6 @@ label kokiri_topic_questMade:
                 l "I need that part so I don't just fully go and lose it right now."
                 l "So I definetly can see why you would remain skeptic, we need to cling onto any last vestiges of reality and control we still have left, no matter how fragile they might be."
                 l "That's why even now there is still a tiny part of me working overtime on trying to convince me that this is fake. Being confronted with the fact that you are repeatedly dying and also exist in a game at the same time is a bit much to take for a sane mind I'm afraid."
-                
 
             "I would believe it immediately.":
                 l "You would?"
@@ -987,7 +1017,7 @@ label kokiri_gamegoal_succesful_survive:
                 n "When you knew very well she was safe?"
                 n "That she was happy?"
                 n "Are you perhaps lying to someone?"
-                n "I suppose the only question is wheter it's to her, or to yourself."
+                n "I suppose the only question is whether it's to her, or to yourself."
             if love_meter > 3:
                 l "That's very reassuring to hear."
                 l "Because my life is literally in your hands after all."
@@ -1893,7 +1923,7 @@ label kokiri_death_4_noDeath:
                         if love_meter > 2:
                             l "For what it is worth, when that time comes, I want you to know one thing."
                             l "I really appreciate everything you did for me [persistent.name]."
-                            l "And wheter or not you really found a way for me to live, I want to say that you made me feel alive for one of the first times in a long while."
+                            l "And whether or not you really found a way for me to live, I want to say that you made me feel alive for one of the first times in a long while."
                             l "I cannot speak for the other past versions of me but just know that I really am enjoying our time together even if it is in less than ideal circumstances."
                             l "And I hope that you enoyed your time here with me aswell, with all my past versions too."
                             l "When everything ends, I hope you'll remember me in a postive way, or atleast that you will have some positive memories of me."
@@ -2911,7 +2941,7 @@ label kokiri_thereIsMore:
                                     l "Did you also lie when you told me your goal was to keep me alive?"
                                     l "Because either you were lying about the fact that there are endings where I live without you or you are lying now."
                                     if kokiri_psychic_lie or kokiri_groundhog_lie == True:
-                                        l "I thought I was good at knowing wheter you were lying or not..."
+                                        l "I thought I was good at knowing whether you were lying or not..."
                                         l "But now it is impossible to know which one is the lie."
                                         l "Maybe I wanted to believe too desperatly that you were there for me."
                                         l "That you wanted to help me get through all of this."

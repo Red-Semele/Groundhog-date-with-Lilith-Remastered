@@ -1,0 +1,68 @@
+name: Release
+
+# Trigger: push a tag like "v1.1" or "v2.0.1"
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write   # needed to push version.json and create releases
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      # ── 1. Checkout the main branch (not the tag) so we can push back ──────
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      # ── 2. Extract the version number (strips the leading "v") ──────────────
+      - name: Get version
+        id: ver
+        run: |
+          RAW="${GITHUB_REF_NAME}"          # e.g. v1.1
+          VERSION="${RAW#v}"               # strip leading "v" → 1.1
+          echo "VERSION=$VERSION" >> "$GITHUB_OUTPUT"
+
+      # ── 3. Write version.json ───────────────────────────────────────────────
+      - name: Update version.json
+        run: |
+          printf '{\n    "version": "%s"\n}\n' "${{ steps.ver.outputs.VERSION }}" \
+            > version.json
+
+      # ── 4. Commit & push version.json to main ──────────────────────────────
+      - name: Commit version.json
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add version.json
+          git commit -m "chore: bump version to ${{ steps.ver.outputs.VERSION }}"
+          git push origin main
+
+      # ── 5. Create the GitHub Release ────────────────────────────────────────
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "GdwL4 Remastered v${{ steps.ver.outputs.VERSION }}"
+          generate_release_notes: true
+          body: |
+            ## GdwL4 Remastered v${{ steps.ver.outputs.VERSION }}
+
+            Download the file for your platform below.
+
+            > **For existing players:** the in-game update notification will
+            > appear automatically on the main menu. Click **Update Now** and
+            > the game will patch itself and restart — no full re-download needed.
+
+            ---
+
+            **After creating this release, to enable in-game auto-update:**
+            1. Build the update package in the Ren'Py launcher: **Distribute → select "Update"**
+            2. Upload `updates.json` and `GdwL4R-*.update.bz2` to this release as assets
+            3. Go to **Actions → Deploy Update Packages** and run it with tag `v${{ steps.ver.outputs.VERSION }}`

@@ -463,6 +463,7 @@ label gdwl_functions:
                 "davidCalled", 
                 "policeCalled", 
                 "rockMode_rockBand",
+                "rockModeBackToStart",
 
                 #Beach
                 "beachStart_doneBook", 

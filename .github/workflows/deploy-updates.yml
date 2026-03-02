@@ -1,0 +1,84 @@
+name: Deploy Update Packages to GitHub Pages
+
+# Run this manually AFTER you have:
+#   1. Built the update package with Ren'Py's launcher (Distribute → update)
+#   2. Uploaded updates.json and GdwL4R-*.update.bz2 to the GitHub Release
+#
+# This workflow downloads those release assets and publishes them to GitHub
+# Pages so the in-game updater can find them at:
+#   https://red-semele.github.io/Groundhog-date-with-Lilith-Remastered/updates/
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: "Release tag to deploy (e.g. v1.1)"
+        required: true
+        type: string
+
+permissions:
+  contents: write   # needed to push to gh-pages
+  pages: write
+  id-token: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # ── 1. Check out the gh-pages branch (or create it) ────────────────────
+      - name: Checkout gh-pages
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true   # branch may not exist yet
+
+      - name: Init gh-pages branch if missing
+        run: |
+          if [ ! -f index.html ]; then
+            echo "Initialising gh-pages branch"
+            git config user.name  "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            echo "<html><body>GdwL4R update server</body></html>" > index.html
+            mkdir -p updates
+            git add index.html updates
+            git commit -m "chore: init gh-pages" || true
+          fi
+
+      # ── 2. Download update assets from the GitHub Release ──────────────────
+      - name: Download release assets
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mkdir -p _dl
+          gh release download "${{ inputs.release_tag }}" \
+            --repo "${{ github.repository }}" \
+            --pattern "updates.json" \
+            --pattern "*.update.bz2" \
+            --dir _dl
+
+          echo "Downloaded files:"
+          ls -lh _dl/
+
+      # ── 3. Copy files into the updates/ folder ──────────────────────────────
+      - name: Stage update files
+        run: |
+          mkdir -p updates
+          cp _dl/* updates/
+          rm -rf _dl
+
+      # ── 4. Commit and push to gh-pages ─────────────────────────────────────
+      - name: Push to gh-pages
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add updates/
+          git commit -m "deploy: update packages for ${{ inputs.release_tag }}"
+          git push origin gh-pages
+
+      - name: Summary
+        run: |
+          echo "✅ Update packages deployed to:"
+          echo "   https://red-semele.github.io/Groundhog-date-with-Lilith-Remastered/updates/"

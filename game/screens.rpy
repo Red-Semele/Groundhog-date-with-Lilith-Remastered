@@ -415,6 +415,9 @@ screen main_menu():
     ## contents of the main menu are in the navigation screen.
     use navigation
 
+    ## Show an update notification banner if a newer version is available.
+    use update_notification
+
     if gui.show_name:
 
         vbox:

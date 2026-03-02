@@ -101,6 +101,7 @@ label chinese_menu:
                         l "That change might be more startling, more uncomfortable than bearing the cold reality all of the time."
                         l "But isn't the comfortable dream what keeps us going? If we live in a world where we deny our dreams, is it worth it to be awake?"
                         l "I fear that sting might be a necessary evil."
+                        #TODO: Continue this? And get it back on track.
 
 
         
@@ -181,7 +182,7 @@ label chinese_riddle_accept:
             l "That's right!"
             l "Lets try out the next riddle."
             jump chinese_riddle_second
-        #For some reason it triggers the demetrius text every time you give yourself a wrong name.
+        #For some reason it triggers the demetrius text every time you give yourself a wrong name. TODO: This code will have to be tested and made better
         elif r1 == "demetrius":
             if name == "Demetrius":
                 $ demetrius = True
@@ -448,6 +449,7 @@ label chinese_riddle_railroad:
                 l "That is what gives life meaning, sadly it is also what was lacking from mine."
                 l "The truth is however nice this place is, you are what makes it special [persistent.name]."
                 l "The reason I would like to go to those other places on our next dates is not for them, but for you, to get to know you better."
+                l "But speaking about that, there is always a next time to go discover those together, but there's only one present. Maybe we should focus on this date before we start thinking of new ones?"
 
             "What do you mean it feels nostalgic?":
                 l "It's hard to explain, it almost feels like it's a memory of someone else yet mine at the same time."
@@ -464,7 +466,9 @@ label chinese_riddle_railroad:
                                 l "Although... it is strange, but your explanation doesn't feel... wrong."
                                 l "So hypothetically that means both you and I came here before, as humans?"
                                 l "Did we do so together? Perhaps in a version of this date?"
-                                #TODO: Write this out more
+                                l "I'm trying to make sense out of this but honestly I can't no matter how I twist or turn it."
+                                l "Maybe it's better to just not lose ourselves in whatever is going on and just enjoy our date."
+                                l "Our past lives don't matter, do they? What matters is this one, right here and now."
 
 
                             "Maybe a memory we picked up from those humans?":
@@ -472,12 +476,14 @@ label chinese_riddle_railroad:
                                 l "As far as I'm aware it's impossible to interface with humans. Believe me, I tried..."
                                 l "Besides, this memory feels as if it were my own, it's not the same feeling I get as reading someone else's."
                                 l "... I will need some time to think this through, but for now we should probably go back to enjoying our date."
-                                l "It's been so long, so better enjoy it for all it's worth."
+                                l "It's been so long, so we better enjoy it for all it's worth, right?"
+                                
 
                     "Not really, it just confuses me more.":
                         l "Oh, I'm sorry about that [persistent.name]."
                         l "I wish I could explain it better, but it's just too hard to grasp, even for myself."
                         l "Either way, it's probably nothing, right? I think we should just focus on this date."
+                        
         
         #TODO: For now this is a way to keep the game moving in the right direction, might add more content inbetween here.
         jump chinese_phoneScene           
@@ -502,6 +508,8 @@ label chinese_riddle_railroad:
                         "What does she like to do?":
                             jump chinese_riddle_talk_abbyHobbies
         else:
+            n "[persistent.date] is really quiet, she is just scrolling on her phone now, barely paying you any attention."
+            n "It does not seem like she is having a good time at all."
             jump chinese_phoneScene
 
 label chinese_riddle_talk_abbyMemory:
@@ -639,7 +647,7 @@ label chinese_riddle_talk_abbyHobbies:
                     l "All of those characters discourage you from climbing the mountain, all of them except for the most important character of them all from what I could understand.
                     They are a saphire being that hugs the raven and tells them they are forgiven."
                     l "Upon being told that they black out and awaken at the foot of the mountain as if their entire climb didn't really happen."
-                    l "I must have \"completed\" that game atleast ten times, every time was exactly the same no matter wheter I picked different choices or not."
+                    l "I must have \"completed\" that game atleast ten times, every time was exactly the same no matter whether I picked different choices or not."
                     l "You know, I'm not sure what those games actually mean.
                     What do you think?"
                     label chinese_abby_game_theme:
