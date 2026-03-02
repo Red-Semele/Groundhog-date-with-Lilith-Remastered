@@ -33,8 +33,15 @@ jobs:
       - name: Download release assets
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          mkdir -p site/updates
+          echo "Looking for release: ${{ inputs.release_tag }}"
+          echo "Repo: ${{ github.repository }}"
+
+          echo "=== Available releases ==="
+          gh release list --repo "${{ github.repository }}" || echo "(gh release list failed)"
+
+          mkdir -p site/updates _dl
           gh release download "${{ inputs.release_tag }}" \
             --repo "${{ github.repository }}" \
             --pattern "updates.zip" \
@@ -43,7 +50,7 @@ jobs:
           echo "Downloaded files:"
           ls -lh _dl/
 
-          # Extract into site/updates/ preserving the rpu/ subfolder
+          # Extract zip preserving the rpu/ subfolder
           unzip -o _dl/updates.zip -d site/updates/
           rm -rf _dl
 
