@@ -38,11 +38,17 @@ jobs:
           echo "Looking for release: ${{ inputs.release_tag }}"
           echo "Repo: ${{ github.repository }}"
 
+          # Normalise: ensure the tag always has a leading "v"
+          RAW="${{ inputs.release_tag }}"
+          TAG="${RAW#v}"   # strip any existing v
+          TAG="v${TAG}"   # always add v
+          echo "Normalised tag: $TAG"
+
           echo "=== Available releases ==="
           gh release list --repo "${{ github.repository }}" || echo "(gh release list failed)"
 
           mkdir -p site/updates _dl
-          gh release download "${{ inputs.release_tag }}" \
+          gh release download "$TAG" \
             --repo "${{ github.repository }}" \
             --pattern "updates.zip" \
             --dir _dl
