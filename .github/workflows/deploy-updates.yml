@@ -57,7 +57,9 @@ jobs:
           ls -lh _dl/
 
           # Extract zip preserving the rpu/ subfolder
-          unzip -o _dl/updates.zip -d site/updates/
+          # The || true absorbs the exit-code 1 warning unzip emits when paths
+          # use backslashes (zip created on Windows).
+          unzip -o _dl/updates.zip -d site/updates/ || true
           rm -rf _dl
 
           echo "Staged update files:"
