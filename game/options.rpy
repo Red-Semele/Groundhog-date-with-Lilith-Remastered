@@ -210,6 +210,11 @@ init python:
     build.documentation('*.html')
     build.documentation('*.txt')
 
+    ## Generate an update package alongside normal distributions.
+    ## This enables the "Update" checkbox in the Ren'Py launcher and produces
+    ## the updates.json + *.update.bz2 files needed for in-game auto-update.
+    build.include_update = True
+
 
 ## A Google Play license key is required to perform in-app purchases. It can be
 ## found in the Google Play developer console, under "Monetize" > "Monetization
