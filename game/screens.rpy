@@ -365,14 +365,7 @@ screen navigation():
             ## Help isn't necessary or relevant to mobile devices.
             textbutton _("Help") action ShowMenu("help")
         
-        textbutton _("Start Over") action Confirm(
-            "This will erase all progress and restart the game. Continue?",
-            yes=[
-                Function(lambda: setattr(persistent, "firstboot", None)),
-                Call("start")
-            ],
-            no=None
-        )
+        textbutton _("Start Over") action Show("start_over_confirm")
 
 
 
@@ -1249,6 +1242,41 @@ style help_label_text:
 ## question.
 ##
 ## https://www.renpy.org/doc/html/screen_special.html#confirm
+
+## Start Over confirmation — right-click and escape are intentionally disabled
+## so the player cannot accidentally back out of a destructive action.
+screen start_over_confirm():
+
+    modal True
+    zorder 200
+    style_prefix "confirm"
+
+    add "gui/overlay/confirm.png"
+
+    frame:
+        vbox:
+            xalign .5
+            yalign .5
+            spacing 45
+
+            label _("This will erase all progress and restart the game. Continue?"):
+                style "confirm_prompt"
+                xalign 0.5
+
+            hbox:
+                xalign 0.5
+                spacing 150
+
+                textbutton _("Yes") action [
+                    Hide("start_over_confirm"),
+                    Function(lambda: setattr(persistent, "firstboot", None)),
+                    Function(renpy.full_restart)
+                ]
+
+                textbutton _("No") action Hide("start_over_confirm")
+
+    ## No key binding here — right-click and escape cannot dismiss this screen.
+
 
 screen confirm(message, yes_action, no_action):
 

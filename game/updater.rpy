@@ -1,10 +1,11 @@
 ## Auto-Update Checker ########################################################
 ##
-## Fetches version.json from GitHub in a background thread and shows a
-## notification bar on the main menu when a newer version is available.
+## Fetches version.json from GitHub in a background thread at startup.
+## Results stored in persistent so the screen can read them at any time.
 
 init python:
     import json
+    import ssl
     import urllib.request
 
     _UPDATE_VERSION_URL = (
@@ -12,52 +13,52 @@ init python:
         "Red-Semele/Groundhog-date-with-Lilith-Remastered/"
         "main/version.json"
     )
-    ## Base URL for Ren'Py update packages hosted on GitHub Pages.
-    ## The workflow publishes updates.json and *.update.bz2 here.
     _UPDATE_URL = (
         "https://red-semele.github.io/"
         "Groundhog-date-with-Lilith-Remastered/updates/"
     )
 
-    _update_available      = False
-    _update_latest_version = None
-    _update_checked        = False
-    _update_check_started  = False
+    ## Unverified SSL context — needed because Ren'Py's bundled Python
+    ## doesn't ship with system CA certificates.
+    _ssl_ctx = ssl._create_unverified_context()
 
     def _run_update_check():
-        global _update_available, _update_latest_version, _update_checked
         try:
-            req = urllib.request.urlopen(_UPDATE_VERSION_URL, timeout=8)
+            req = urllib.request.urlopen(_UPDATE_VERSION_URL, timeout=8, context=_ssl_ctx)
             data = req.read().decode("utf-8")
             info = json.loads(data)
             latest = info.get("version", "").strip()
+            persistent._update_latest_version = latest
             if latest and latest != config.version:
-                _update_latest_version = latest
-                _update_available = True
-        except Exception:
-            pass
+                persistent._update_available = True
+            else:
+                persistent._update_available = False
+        except Exception as e:
+            persistent._update_error = str(e)
+            persistent._update_available = False
         finally:
-            _update_checked = True
-            # Force the screen to redraw now that results are available.
-            renpy.restart_interaction()
+            persistent._update_checked = True
 
-    def _trigger_update_check():
-        """Called once when the main menu is first shown."""
-        global _update_check_started
-        if not _update_check_started:
-            _update_check_started = True
-            renpy.invoke_in_thread(_run_update_check)
+    def _start_update_check():
+        ## Reset each session so the check always runs fresh.
+        persistent._update_available = False
+        persistent._update_checked   = False
+        persistent._update_latest_version = None
+        persistent._update_error = None
+        renpy.invoke_in_thread(_run_update_check)
+
+    ## Register the check to run automatically when Ren'Py finishes loading.
+    config.start_callbacks.append(_start_update_check)
 
 
 ## Notification bar shown at the top of the main menu when an update is ready.
 
 screen update_notification():
 
-    ## Kick off the background check once, 1 second after the screen appears.
-    ## (on "show" doesn't fire for screens included via `use`.)
-    timer 1.0 action Function(_trigger_update_check) once True
+    ## Poll persistent every second so the bar appears as soon as thread finishes.
+    timer 1.0 repeat True action NullAction()
 
-    if _update_checked and _update_available:
+    if persistent._update_checked and persistent._update_available:
         frame:
             background "#1a1a2ecc"
             xfill True
@@ -71,17 +72,15 @@ screen update_notification():
                 yalign 0.5
                 spacing 16
 
-                text "Update available — v[_update_latest_version]":
+                text "Update available — v[persistent._update_latest_version]":
                     color "#e0e0ff"
                     yalign 0.5
                     xmaximum 9999
 
                 textbutton "Update Now":
                     yalign 0.5
-                    ## Uses Ren'Py's built-in updater: downloads only changed
-                    ## files, applies the patch, then restarts the game.
                     action updater.Update(_UPDATE_URL, restart=True)
 
                 textbutton "✕":
                     yalign 0.5
-                    action SetVariable("_update_available", False)
+                    action [SetField(persistent, "_update_available", False), NullAction()]
