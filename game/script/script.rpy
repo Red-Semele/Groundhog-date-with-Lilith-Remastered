@@ -941,7 +941,7 @@ label Game_start2:
                          n "Anyway, change your name."
                          jump nameSelect
                     else:
-                         if not rockMode:
+                         if not persistent.rockMode:
                               l "Hey [persistent.name]!"
                               l "It's me, [persistent.date]."
                               l "I'm just calling you to see where you'd like to go to for our date."

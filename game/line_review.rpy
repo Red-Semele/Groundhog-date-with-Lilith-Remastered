@@ -248,14 +248,6 @@ init -1 python:
 
     def _review_pull_thread():
         try:
-            ## Dump the live token prefix to a file so we can verify it
-            _dbg = os.path.join(config.basedir, "token_debug.txt")
-            with open(_dbg, "w", encoding="utf-8") as _f:
-                _f.write(u"token_prefix={}\nwebhook_prefix={}\n".format(
-                    repr(_REVIEW_BOT_TOKEN[:30]),
-                    repr(_REVIEW_WEBHOOK_URL[:50]),
-                ))
-
             ## Guard against placeholder bot token
             if "YOUR_BOT_TOKEN" in _REVIEW_BOT_TOKEN:
                 renpy.invoke_in_main_thread(

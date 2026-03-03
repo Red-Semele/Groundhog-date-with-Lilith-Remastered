@@ -199,6 +199,9 @@ init python:
     build.classify('**/#**', None)
     build.classify('**/thumbs.db', None)
 
+    ## Exclude saves so players don't start with the developer's save data.
+    build.classify('game/saves/**', None)
+
     ## To archive files, classify them as 'archive'.
 
     # build.classify('game/**.png', 'archive')
