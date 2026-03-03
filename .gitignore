@@ -44,6 +44,7 @@ traceback.txt
 token_debug.txt
 pull_debug*.txt
 update_debug.txt
+release.ps1
 line_reviews.json
 git commit -m
 MANIFEST
