@@ -320,10 +320,9 @@ label start:
           default persistent.rockMode = False
           default persistent.noRockPunsForNar = False
           default persistent.testmode = False
+          default persistent.david_apology_made_knowledge = False
 
           #Non-persistent
-          default from_menu = False
-          default called_phone = False
           default love_meter = 3
           default nightmare = False
           default kokiri_cherishAllDates = False
