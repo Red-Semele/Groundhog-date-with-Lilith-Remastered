@@ -42,8 +42,8 @@ jobs:
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add version.json
-          git commit -m "chore: bump version to ${{ steps.ver.outputs.VERSION }}"
-          git push origin main
+          git commit -m "chore: bump version to ${{ steps.ver.outputs.VERSION }}" || true
+          git push origin main || true
 
       # ── 5. Create the GitHub Release ────────────────────────────────────────
       - name: Create Release
