@@ -43,6 +43,7 @@ errors.txt
 traceback.txt
 token_debug.txt
 pull_debug*.txt
+update_debug.txt
 line_reviews.json
 git commit -m
 MANIFEST
