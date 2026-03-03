@@ -17,7 +17,7 @@ init python:
     )
     _UPDATE_URL = (
         "https://red-semele.github.io/"
-        "Groundhog-date-with-Lilith-Remastered/updates/"
+        "Groundhog-date-with-Lilith-Remastered/updates/updates.json"
     )
 
     ## Unverified SSL context — needed because Ren'Py's bundled Python
@@ -71,13 +71,53 @@ init python:
     ## Register the check to run automatically when Ren'Py finishes loading.
     config.start_callbacks.append(_start_update_check)
 
+    ## ------------------------------------------------------------------
+    ## Helpers for logging the actual update attempt
+    ## ------------------------------------------------------------------
+
+    _update_last_state = [None]  ## mutable container so timer can track changes
+
+    def _log_update_pem():
+        """Log the SHA-256 of update.pem so we can compare it to the deployed key."""
+        import hashlib
+        pem_path = os.path.join(config.basedir, "update.pem")
+        if os.path.exists(pem_path):
+            with open(pem_path, "rb") as f:
+                h = hashlib.sha256(f.read()).hexdigest()
+            _update_log(u"update.pem SHA256: {}".format(h))
+        else:
+            _update_log(u"update.pem NOT FOUND at {}".format(pem_path))
+
+    def _log_update_click():
+        """Called when the player clicks Update Now."""
+        _update_log(u"=== UPDATE NOW CLICKED ===")
+        _update_log(u"Connecting to update URL: {}".format(_UPDATE_URL))
+        _log_update_pem()
+
+    def _log_updater_state():
+        """
+        Called every second by the screen timer.
+        Logs whenever the updater's state string changes.
+        """
+        try:
+            state = updater.state
+            if state != _update_last_state[0]:
+                _update_log(u"Updater state: {} -> {}".format(_update_last_state[0], state))
+                if updater.message:
+                    _update_log(u"Updater message: {}".format(updater.message))
+                if updater.progress is not None:
+                    _update_log(u"Updater progress: {}".format(updater.progress))
+                _update_last_state[0] = state
+        except Exception as e:
+            _update_log(u"State polling error: {}".format(e))
+
 
 ## Notification bar shown at the top of the main menu when an update is ready.
 
 screen update_notification():
 
-    ## Poll persistent every second so the bar appears as soon as thread finishes.
-    timer 1.0 repeat True action NullAction()
+    ## Poll persistent every second — refreshes the bar and logs updater state.
+    timer 1.0 repeat True action [Function(_log_updater_state), NullAction()]
 
     if persistent._update_checked and persistent._update_available:
         frame:
@@ -100,7 +140,7 @@ screen update_notification():
 
                 textbutton "Update Now":
                     yalign 0.5
-                    action updater.Update(_UPDATE_URL, restart=True)
+                    action [Function(_log_update_click), updater.Update(_UPDATE_URL, restart=True)]
 
                 textbutton "✕":
                     yalign 0.5
