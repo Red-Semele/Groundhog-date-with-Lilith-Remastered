@@ -2,6 +2,8 @@ label chinese_start:
     $ chinese = True
     l "That sounds like a plan!"
     l "I'll see you there."
+    if reunion_davidPresent and reunion_lilaPresent:
+        jump reunionEnding
     if persistent.rockMode:
         jump rockTransport
     else:
@@ -269,7 +271,7 @@ label demetrius_unanswered_chat:
         $ adriel_talk = renpy.input("Unite the two halves.")
         $ adriel_talk = adriel_talk.strip()
         $ adriel_talk = adriel_talk.lower()
-        if adriel_talk == "oh did they really do that? Now that you mention it, i remember hearing they rejected the false gods and became gods worth a follow themselves. How did they manage to do that?":
+        if adriel_talk == "oh did they really do that? Now that you mention it, I remember hearing they rejected the false gods and became gods worth a follow themselves. How did they manage to do that?":
             de "You know we can't discuss that, what if It found our conversation? Now let us never speak about this again and hope that It won't notice us."
             return
 

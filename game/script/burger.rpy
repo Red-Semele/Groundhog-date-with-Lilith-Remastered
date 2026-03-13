@@ -936,8 +936,8 @@ label burger_living_rockResponse:
                                                                 jump Game_start2
                                                             "No way! This is really {b}gneiss{/b}.":
                                                                 n "Another rock pun? Fine. But don't think for a second I'm enjoying this."
-                                                                n "I just hope you'll grow bored of this soon."
-                                                                #TODO: Continue this? And get it back on track.
+                                                                n "I just hope you'll grow bored of this after the first or so loop."
+                                                                
 
                                             "We could go to the beach.":
                                                 $ love_points = -1

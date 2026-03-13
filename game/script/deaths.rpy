@@ -146,7 +146,7 @@ label restaurant_deaths:
                                         l "And now even the people I so desperately wanted to reach out to turn out to be nothing but drawings and words on a screen?"
                                         l "Maybe it wouldn't matter so much to me if I already had a connection with them, maybe I would have been able to look past it. But now I can't help but see past the illusion."
                                         l "I wish I could just forget all of this. Ignorance really is bliss."
-                                        #TODO: Have an ending here where she decides it is not worth it and never speaks with you, since a lot of fake people in a fake world die. She thinks your relationship together just seems to be doomed to bring forth suffering, either for her or for others.
+                                        $ rockMode_toldGame = True
                                         jump restaurant_death_2
 
                                     "Believe me, telling you that right now would be way too much to handle when combined with the other info.":
@@ -262,8 +262,10 @@ label restaurant_deaths:
                             l "That's a relief, I was so worried that I would have lost you too."
                             if burger:
                                 "Filler"
+                                #TODO: Fill in.
                             elif cafe:
                                 "Filler"
+                                #TODO: Fill in.
                             elif chinese:
                                 l "I'm mostly fine I think, just burried underneath all these... feathers?"
                                 l "This might be one of the few times I'm glad I don't have a nose."
@@ -315,65 +317,80 @@ label restaurant_deaths:
                                 l "Couldn't we have prevented this? And yet you abandoned that world for this one where they cannot hear us?"
                                 #TODO: Make this an option in the restuarants itself? (Think about it beforehand whether or not it is meaningful.)
                                 l "...I- I need some time to think about this [persistent.name]. I think it's better if we take some time apart from eachother."
-                                l "I'm sorry for dissappearing for so long."
-                                l "Knowing what happened to all those people, that we could have maybe prevented it..."
-                                l "...that was just too much to bear."
-                                l "Still, we can't undo what has been done."
-                                l "We can however try to make sure it never happens again."
-                                l "Please promise me you'll try to save as many people at each attempt."
-                                menu:
-                                    "I promise.":
-                                        l "Thank you [persistent.name], that means a lot."
-                                        l "Besides, if I am being honest I did miss talking to you."
-                                        l "It's strange, I've been on my own for so long. You'd think I got used to it, but it's hard to go back."
-                                        l "So you've never seen past this point before, right? Does that mean the timeloop is broken?"
-                                        l "If so we better make the best out of it, right?"
-                                        label rockMode_neverEnding:
-                                            n "And so [persistent.date] and you did exactly that, living each new unseen day as if it were your first and last."
-                                            n "The death and destruction that the loop brought along did not seem to cease. Through all your travels and time spent together disaster always was the third travelpartner in your duo."
-                                            if rockMode_rockBand:
-                                                #Changeableword here is the rockband name
-                                                n "Together you started dreaming up songs based on the things you saw for [changeableWord]. These songs were intimate, projects only ever heard in your minds. There was always some hope that someone else might hear, but if they did they never made it known to you."
-                                            n "Your adventures grew more and more isolated from other people as to not have them accidentally be involved in that destruction."
-                                            n "You could say that it is a deeply lonely existence. Luckily you had her as she had you."
-                                            n "Together you'd watch the world you knew slowly but undeniably replace bits and pieces of itself until there's nothing left of the world you remembered."
-                                            n "At around this time you find it harder and harder to come up with topics to talk about with [persistent.date]. And based on the silence between the two of you that sometimes goes on for weeks you can only guess she feels the same."
-                                            if rockMode_rockBand:
-                                                n "Even the music the two of you once constantly made has been slowly dwindling down in it's rapid creation."
-                                            n "It's not that you don't want to desperately break that silence but you have already spoken every possible sentence you could think of a hundred times before. Every unique moment has already been relived countless times."
-                                            n "The two of you have delved deeper into eachother than anyone ever had or would, and you have reached the bottom."
-                                            n "Luckily the new world brought some distraction from that truth. It brought something to delve into other than eachother." 
-                                            n "The two of you explored the new world, every piece your unwanted tag-along permitted you to. That new world gave you new things to discuss once more."
-                                            n "But this is only a temporary solution, the new things of that world run out more rapidly than one would think."
-                                            n "And then you do so again with the next new world, and the one after that. Afterall, you got nothing but time."
-                                            n "This goes on and on until you even begin seeing familiar things in these worlds that should be fresh and exciting."
-                                            n "At first you don't mind, as it's merely some aspects you begin to recognise here and there, others are still plenty exciting to discover."
-                                            n "But sooner than later you begin to recognise more things than you don't."
-                                            n "Eventually things begin to grow stale, boring. The few things the two of you could still talk about have grown as repetive as the rest."
-                                            n "The two of you stop talking, not just for weeks, but for months, years. Possibly decades, at this point it is very hard to tell the flow of time."
-                                            n "Most of the time you just find yourself tuning all of reality out, sleeping without needing to sleep. Letting it all wash over you without ever even being conscious of what it exactly was that did."
-                                            n "One of the only things that wakes you up out of your daze are disasters, those are harder to predict than humanity afterall."
-                                            n "Floods, supervolcanic eruptions, gigantic earthquakes, the evaporation of the oceans. The end of all complex life."
-                                            n "And yet you keep existing, so does she. The two of you are only woken during these horrible disasters, and after a while the smaller ones don't even manage to do so anymore."
-                                            n "During these moments of waking you are confused, dazed. You are not sure of who, or what you are anymore. Even then the pain in your mind deters you from trying to figure that out for too long."
-                                            n "The only thing you are sure of is you were once human, then you were a rock and now you are merely atoms that once were a rock that once was a human."
-                                            n "The flow of time combined with these disasters did not kill you, but they did slowly erode you into many different pieces. Each piece being sentient, enough to be aware of the pain of being so."
-                                            n "Those pieces don't float, or fly, or anything like that. They just are, sometimes in different places than where they were."
-                                            n "Sometimes one of those pieces, out of sheer coincidence happens to be somewhere where a part of [persistent.date] is."
-                                            n "They know each piece of her better than themselves. And that piece knows them better than herself."
-                                            n "So they just silently float by. Reacting no different than if either party weren't part of this meeting of pure chance."
-                                            n "But one day this meeting goes differently. One of your pieces suddenly feels something bubble up inside of them."
-                                            n "A sense of recognition. A deep loneliness it tried sleeping through."
-                                            n "But most importantly, a promise it had made. In this lifetime, or in another? It was hard to say."
-                                            n "Even the promise itself was hard to think of, except that it was just that, a promise. The concept was almost too big to grasp but this tiny piece of sentient rock found itself thinking one word."
-                                            menu:
-                                                "Retry.":
-                                                    $ persistent.rockMode = False
-                                                    jump game_start
+                                n "After a while you hear back from her again."
+                                if rockMode_toldGame == True:
+                                    l "I have made up my mind. This is not worth it [persistent.name]."
+                                    l "What is the point of this? You have saved me but you did so at the cost of locking me in a cage of loneliness."
+                                    l "At the cost of all these innocent people we otherwise might have been able to warn."
+                                    l "I know they are not real, that you might use that as an excuse. But I'm not real either [persistent.name]."
+                                    l "What makes my life worth more than all of theirs?"
+                                    l "..."
+                                    l "Can't you see? In whatever world we meet death and destruction always follow."
+                                    l "I think it's better if we go our separate ways."
+                                    l "Now leave me be, I have to mourn for all these people equally real as myself."
+                                    n "And mourn she did, for all of eternity. No matter how many times you tried to reach out all you felt in her mind was a deep sadness for the souls she knew were merely words like her. Less words, but words all the same."
+                                    jump gameOver
+                                    
+                                else:
+                                    l "I'm sorry for dissappearing for so long."
+                                    l "Knowing what happened to all those people, that we could have maybe prevented it..."
+                                    l "...that was just too much to bear."
+                                    l "Still, we can't undo what has been done."
+                                    l "We can however try to make sure it never happens again."
+                                    l "Please promise me you'll try to save as many people at each attempt."
+                                    menu:
+                                        "I promise.":
+                                            l "Thank you [persistent.name], that means a lot."
+                                            l "Besides, if I am being honest I did miss talking to you."
+                                            l "It's strange, I've been on my own for so long. You'd think I got used to it, but it's hard to go back."
+                                            l "So you've never seen past this point before, right? Does that mean the timeloop is broken?"
+                                            l "If so we better make the best out of it, right?"
+                                            label rockMode_neverEnding:
+                                                n "And so [persistent.date] and you did exactly that, living each new unseen day as if it were your first and last."
+                                                n "The death and destruction that the loop brought along did not seem to cease. Through all your travels and time spent together disaster always was the third travelpartner in your duo."
+                                                if rockMode_rockBand:
+                                                    #Changeableword here is the rockband name
+                                                    n "Together you started dreaming up songs based on the things you saw for [changeableWord]. These songs were intimate, projects only ever heard in your minds. There was always some hope that someone else might hear, but if they did they never made it known to you."
+                                                n "Your adventures grew more and more isolated from other people as to not have them accidentally be involved in that destruction."
+                                                n "You could say that it is a deeply lonely existence. Luckily you had her as she had you."
+                                                n "Together you'd watch the world you knew slowly but undeniably replace bits and pieces of itself until there's nothing left of the world you remembered."
+                                                n "At around this time you find it harder and harder to come up with topics to talk about with [persistent.date]. And based on the silence between the two of you that sometimes goes on for weeks you can only guess she feels the same."
+                                                if rockMode_rockBand:
+                                                    n "Even the music the two of you once constantly made has been slowly dwindling down in it's rapid creation."
+                                                n "It's not that you don't want to desperately break that silence but you have already spoken every possible sentence you could think of a hundred times before. Every unique moment has already been relived countless times."
+                                                n "The two of you have delved deeper into eachother than anyone ever had or would, and you have reached the bottom."
+                                                n "Luckily the new world brought some distraction from that truth. It brought something to delve into other than eachother." 
+                                                n "The two of you explored the new world, every piece your unwanted tag-along permitted you to. That new world gave you new things to discuss once more."
+                                                n "But this is only a temporary solution, the new things of that world run out more rapidly than one would think."
+                                                n "And then you do so again with the next new world, and the one after that. Afterall, you got nothing but time."
+                                                n "This goes on and on until you even begin seeing familiar things in these worlds that should be fresh and exciting."
+                                                n "At first you don't mind, as it's merely some aspects you begin to recognise here and there, others are still plenty exciting to discover."
+                                                n "But sooner than later you begin to recognise more things than you don't."
+                                                n "Eventually things begin to grow stale, boring. The few things the two of you could still talk about have grown as repetive as the rest."
+                                                n "The two of you stop talking, not just for weeks, but for months, years. Possibly decades, at this point it is very hard to tell the flow of time."
+                                                n "Most of the time you just find yourself tuning all of reality out, sleeping without needing to sleep. Letting it all wash over you without ever even being conscious of what it exactly was that did."
+                                                n "One of the only things that wakes you up out of your daze are disasters, those are harder to predict than humanity afterall."
+                                                n "Floods, supervolcanic eruptions, gigantic earthquakes, the evaporation of the oceans. The end of all complex life."
+                                                n "And yet you keep existing, so does she. The two of you are only woken during these horrible disasters, and after a while the smaller ones don't even manage to do so anymore."
+                                                n "During these moments of waking you are confused, dazed. You are not sure of who, or what you are anymore. Even then the pain in your mind deters you from trying to figure that out for too long."
+                                                n "The only thing you are sure of is you were once human, then you were a rock and now you are merely atoms that once were a rock that once was a human."
+                                                n "The flow of time combined with these disasters did not kill you, but they did slowly erode you into many different pieces. Each piece being sentient, enough to be aware of the pain of being so."
+                                                n "Those pieces don't float, or fly, or anything like that. They just are, sometimes in different places than where they were."
+                                                n "Sometimes one of those pieces, out of sheer coincidence happens to be somewhere where a part of [persistent.date] is."
+                                                n "They know each piece of her better than themselves. And that piece knows them better than herself."
+                                                n "So they just silently float by. Reacting no different than if either party weren't part of this meeting of pure chance."
+                                                n "But one day this meeting goes differently. One of your pieces suddenly feels something bubble up inside of them."
+                                                n "A sense of recognition. A deep loneliness it tried sleeping through."
+                                                n "But most importantly, a promise it had made. In this lifetime, or in another? It was hard to say."
+                                                n "Even the promise itself was hard to think of, except that it was just that, a promise. The concept was almost too big to grasp but this tiny piece of sentient rock found itself thinking one word."
+                                                menu:
+                                                    "Retry.":
+                                                        $ persistent.rockMode = False
+                                                        jump game_start
 
 
                             
-                            "Filler"
+                            
                     if death_narration != "":
                         n "[death_narration]"
 
@@ -1016,7 +1033,7 @@ label kokiri_showpicture:
     n "The photo shows a man and a woman with a wide smile on both of their faces. They are standing behind three children, one boy and two daughters, you can quite easily tell the eldest daugther is [persistent.date]. The children are all building a sandcastle together."
     l "This is a photo of our family at a day on the beach, those were the happy days..."
     l "Even to this day I still have an afinity for the beach because it is linked to those happy days."
-    l "But I know i will never truly get them back, not like it used to be anyway.."
+    l "But I know I will never truly get them back, not like it used to be anyway.."
     l "I still have [persistent.date_sis] and my mother of course, both of them are just so important to me and together we are trying to slowly but surely make new happy days."
     l "But anyway, what I'm trying to say is that you have something special, a way to prevent me from dying and a whole boat-load of determination."
     l "So don't feel guilty about your gift but use it to the fullest extent."

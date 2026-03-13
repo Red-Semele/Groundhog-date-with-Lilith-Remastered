@@ -1,11 +1,12 @@
 label kokiri_talkAboutSomethingElse:
 
-    $ kokiri_conversation += 1
+    
     #$ kokiri_meteoritewarn()
 
     if poem_conversation == True:
         $ poem_conversation = False
     if kokiri_conversation < 4:
+        $ kokiri_conversation += 1
         menu:
 
             
@@ -313,9 +314,62 @@ label kokiri_talkAboutSomethingElse:
                                                         $ kokiri_conversation_silent()
                                 
                                 "*Tell her [persistent.date_dad]'s apology.*" if persistent.david_apology_made_knowledge:   
-                                    "Filler"         
-                                    #TODO: Write her reaction for this. 
-                        "*Ask about [persistent.date_ghost]*" if not kokiri_jamesTalkBlock:
+                                    l "..."
+                                    l "So you talked to him?"
+                                    l "Why would you do that?"
+                                    l "I'm sure I must have brought up that I didn't want that, right? Unless you went behind my back to do it."
+                                    menu:
+                                        "I wanted to reunite all of you. I thought that might be the way to break out of this loop.":
+                                            l "Look. He had his chance. We waited so long for him to return."
+                                            l "...I don't need him anymore."
+                                            n "The pain in her voice is subtle, almost completely overshadowed by the anger."
+                                            l "And if this is how you help then I don't need you anymore either."
+                                            $ angryLilith = True
+                                            jump angryLilith
+                                        
+                                        "Just now I saw so much pain in you. I don't think you hate him. But it hurts so much more loving him while he is gone." if kokiri_positiveDavidStory == True:
+                                            l "..."
+                                            menu:
+                                                "He wants the same thing as you do deep inside, to come back.":
+                                                    l "..."
+                                                    menu:
+                                                        "Abby was only seven, she barely remembers him and would love to have him back in her life." if persistent.david_love_knowledge:
+                                                            l "..."
+                                                            menu:
+                                                                "Lila didn't take the money David sent, because the only thing she wants is for him to return." if persistent.davidPayedMoney_knowledge:
+                                                                    l "..."
+                                                                    menu:
+                                                                        "I caused so much death and destruction. But maybe this is something I can mend. Can you please try? You can always change your mind afterwards.":
+                                                                            if love_meter >= 5:
+                                                                                l "Fine. ...I suppose it might be worth a shot."
+                                                                                l "But don't think that means I'm okay with what you did [persistent.name]."
+                                                                                $ love_points -= 2
+                                                                                $ love_meter_updater (False)
+                                                                                $ persistent.lilithOpenToReunion_knowledge = True
+                                                                                $ kokiri_conversation_silent()
+                                                                            else:
+                                                                                l "...This is not about you [persistent.name]. It is my life you are meddling with."
+                                                                                l "I think it's just better if I leave before you do so even more. Goodbye [persistent.name]."
+                                                                                $ angryLilith = True
+                                                                                $ noTalkAngryLilith = True
+                                                                                jump angryLilith
+
+                                                                "*Stay quiet.*" if not persistent.davidPayedMoney_knowledge:
+                                                                    label kokiri_toldDavidApology_failedConvince:
+                                                                        if love_meter >= 5:
+                                                                            l "Look, I understand where you are coming from. I know you want to help, but this is not the way to do it."
+                                                                            l "I'm still just not convinced that this is worth it. He has hurt us so much already, and I don't want us to go through that again."
+                                                                        else:
+                                                                            l "I don't know... I'm not entirely convinced that this is worth it. We were hurt by him so much already and I don't want us to go through that again."
+                                                                            l "Besides, why do you have such a big stake in this? It just feels odd. I thought you were here for me, not for [persistent.date_dad]."
+                                                                        l "I think it's just better if I leave. Goodbye [persistent.name]."
+                                                                        $ angryLilith = True
+                                                                        $ noTalkAngryLilith = True
+                                                                        jump angryLilith
+
+                                                        "*Stay quiet.*" if not persistent.david_love_knowledge:
+                                                            jump kokiri_toldDavidApology_failedConvince
+                        "*Ask about [persistent.date_ghost].*" if not kokiri_jamesTalkBlock:
                             menu: 
                                 "Can you tell me more about [persistent.date_ghost]?":
                                     jump askAboutJames_tellMeAbout
@@ -1055,14 +1109,17 @@ label askAboutDavid_tellMeAbout_2:
                             l "I just... need a moment to compose myself."
                             n "[persistent.date] plants her head on top of her knees and stays like that for a long while."
                             n "You can still hear her sobbing but it seems to grow more quiet over time."
-                            l "There, I'm feeling a bit better already!"
-                            l "Honestly, crying like that might be exactly what I needed."
-                            l "Thank you for comforting me [persistent.name]! I really appreciate it."
+                            l "...I'm feeling a bit better already."
+                            n "She spoke it half sniffling."
+                            l "It's weird but crying like that might be exactly what I needed."
+                            l "Thank you for comforting me [persistent.name], I really appreciate it."
                             l "Knowing that we don't have unlimited time makes me really thankful that you chose to spend that time to make sure I was okay."
                             $ kokiri_conversation += 1
                             $ love_points += 2 #This gains you 2 love points but as a sacrifice you lose an additional topic to talk about.
+                            $ kokiri_postiveDavidStory = True
                             $ love_meter_updater(False)
-                            $ kokiri_conversation_silent()
+                            $ kokiri_conversation_silent(kokiri_conversation - 1) # Pass -1 to correct for the extra +1 above that simulates elapsed time
+                            
 
 
 label askAboutDavid_tellMeAbout_3:

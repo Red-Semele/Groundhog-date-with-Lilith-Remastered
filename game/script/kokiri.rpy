@@ -1087,7 +1087,7 @@ label kokiri_gamegoal_succesful_survive:
                                     l "I know that what I am asking of you is hard, but I genuinely believe it might be our best option."
                                     $ kokiri_notReadyToLetGo = True
                                     jump kokiri_canNotLetGoYet
-                                "You were happy, you had a family. The game just sent me back like none of it mattered.":
+                                "You were happy, you had a family. The game just sent me back like none of it mattered." if persistent.ending_breakup:
                                     l "..."
                                     l "I'm sorry [persistent.name], I... I am just not sure what to say to that."
                                     l "I had a family?"
@@ -1769,8 +1769,8 @@ label kokiri_poems_askOrRate:
                             l "That was actually one of the first poems I \"seriously\" wrote. With that I mean it was one of the first poems I wrote to be read by others."
                             l "I actually wrote it for a sort of poem competition when I was still in high-school."
                             l "If you liked this one it's quality is kind of hard to top with my older poems."
-                            l "To tell you the truth sometimes it feels as if I reached the peak of my ability with that poem. Like i'll never be able to achieve something like it ever again."
-                            l "I do have some more recent poems than the one I showed you that i think get close though, they are really the same at all but I think that is what makes them stand out."
+                            l "To tell you the truth sometimes it feels as if I reached the peak of my ability with that poem. Like I'll never be able to achieve something like it ever again."
+                            l "I do have some more recent poems than the one I showed you that I think get close though, they are really the same at all but I think that is what makes them stand out."
                             l "But be warned though, they are a lot less accesible because they contain quite a few references to Greek and Roman mythology and they, like usual, are kind of long."
                             l "At the very least, if you liked this poem I think they might be an interesting read for you."
                             $ persistent.kokiri_newerPoems_knowledge = True 

@@ -340,7 +340,7 @@ label beach_start:
                                                 n "And how are you going to punch a disembodied voice? Good luck with that."
                                                 n "We both know that you can't hurt me no matter what you try player. But you know? Just for trying to threaten me you get no food and especially no mayo."
                                                 jump beach_start
-                                            "Fine, not like i have any say on the matter.":
+                                            "Fine, not like I have any say on the matter.":
                                                 n "Indeed, do you know why that is? Because I am the narrator and you are not."
                                                 jump beach_start
       

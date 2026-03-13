@@ -188,10 +188,15 @@ label gdwl_functions:
             elif kokiri_chatchar_lila_recent == True:
                 renpy.jump("askAboutLila_tellMeAbout_" + str(kokiri_chatchar_lila_counter))
 
-        def kokiri_conversation_silent():
+        def kokiri_conversation_silent(check_count=None):
+            # check_count lets a caller override which conversation count is used
+            # for the meteorite trigger. Pass kokiri_conversation - 1 when an
+            # extra +1 was added purely to simulate elapsed time (e.g. the
+            # comfort-Lilith branch) so the == 2 meteorite check still fires.
             kokiri_silentMoment = True
-            kokiri_meteoritewarn()
-            if kokiri_conversation == 2:
+            effective_count = check_count if check_count is not None else kokiri_conversation
+            kokiri_meteoritewarn(effective_count)
+            if effective_count == 2:
                 if kokiri_meteorite_alert or kokiri_alternateplace == True: #The meteorite doesn't hit [persistent.date].
                     renpy.jump("kokiri_death_1_prevented")
                 else:
@@ -243,23 +248,20 @@ label gdwl_functions:
                     renpy.jump("kokiri_death_1")
 
 
-        def kokiri_meteoritewarn():
+        def kokiri_meteoritewarn(check_count=None):
             #Put this function at the front of the continue talking
             global met_check
             global kokiri_meteorite_alert
             global kokiri_meteorite_no_alert
             global kokiri_conversation
 
-            if kokiri_conversation == 2:
+            effective_count = check_count if check_count is not None else kokiri_conversation
+            if effective_count == 2:
                 if persistent.kokiri_death_1 == True:
                     if kokiri_alternateplace == False:
                         renpy.say(n, "Suddenly you are plagued with a vision of the meteorite that killed [persistent.date]. You should probably try to warn her this time.", interact=False)
                         met_check = renpy.display_menu([("You might want to sit on my right instead of my left first. Something's coming soon.","meteorite_warn"),("*Don't warn her.*","no_meteorite_warn")])
                         if met_check == "meteorite_warn":
-                            renpy.say (n, "[persistent.date] gives you a nod as she moves to the other side of the blanket, to your left.")
-                            renpy.say (l, "That's a bit of an odd request but I guess I will see why I needed to do that soon enough, right?")
-
-
                             kokiri_meteorite_alert = True
                         else:
                             kokiri_meteorite_no_alert = True
@@ -464,6 +466,8 @@ label gdwl_functions:
                 "policeCalled", 
                 "rockMode_rockBand",
                 "rockModeBackToStart",
+                "reunion_davidPresent",
+                "reunion_lilaPresent",
 
                 #Beach
                 "beachStart_doneBook", 
@@ -511,6 +515,32 @@ label gdwl_functions:
             persistent.groundhog_answer_right_knowledge = True
             persistent.kokiri_knowledge = True
 
+        def callKnowledge():
+            
+            persistent.abigail_call_knowledge = True
+            persistent.drownRaven_knowledge = True             
+            persistent.lilaCallRecievedAbbyProof_knowledge = True  
+            persistent.david_love_knowledge = True            
+
+            
+            persistent.david_call_knowledge = True
+            persistent.david_nolove_knowledge = True         
+            persistent.david_blame_knowledge = True           
+            persistent.davidPayedMoney_knowledge = True       
+            persistent.david_apology_made_knowledge = True    
+
+            
+            persistent.james_call_knowledge = True
+            persistent.jamesFakoutNumber_knowledge = True    
+            persistent.lilithKeepsCalling_knowledge = True    
+            persistent.keptJamesNumber_knowledge = True       
+            persistent.james_story_knowledge = True           
+
+            # Knowledge unlocked from calling Lila
+            persistent.lila_call_knowledge = True
+            persistent.lilaCallNeedsAbbyProof_knowledge = True     
+            persistent.lilaToldAbbyOpportunity_knowledge = True    
+
         def allProgress():
             progressUpToWoods()
             persistent.kokiri_death_1 = True
@@ -527,6 +557,10 @@ label gdwl_functions:
             persistent.james_call_knowledge = True
             persistent.beachroute_visited_knowledge = True
             persistent.beach_knowledge = True
+            persistent.david_apology_knowledge = True
+            persistent.david_apology_made_knowledge = True
+            persistent.lilithOpenToReunion_knowledge = True
+            callKnowledge()
 
             
             
