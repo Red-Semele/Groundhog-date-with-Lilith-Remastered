@@ -105,20 +105,20 @@ label gdwl_functions:
                 elif abigail_obsession == True:
                     fam_obsession = persistent.date_sis
                     only_one_asked = True
-                    fam_pronoun = "her"
+                    fam_pronoun = "[sis_obj]"
 
                 elif lila_interest == True:
-                    fam_obsession = "mom"
+                    fam_obsession = "[mom_parShort]"
                 elif lila_obsession == True:
-                    fam_obsession = "mom"
+                    fam_obsession = "[mom_parShort]"
                     only_one_asked = True
-                    fam_pronoun = "her"
+                    fam_pronoun = "[mom_obj]"
 
                 if only_one_asked == True:
 
                     renpy.say(l, "You know, you seem to have quite an interest in [fam_obsession].")
                     if fam_obsession == "[persistent.date_ghost]":
-                        renpy.say(l, "You haven't been using info about him to try to \"win\" the game, right?")
+                        renpy.say(l, "You haven't been using info about [ghost_obj] to try to \"win\" the game, right?")
 
                     else:
                         renpy.say(l, "You haven't involved [fam_pronoun] in all of this yet, right?")
@@ -128,7 +128,7 @@ label gdwl_functions:
                     if fam_obsession == True:
                         renpy.say (l, "You know, you seem to have quite an interest in my family, [fam_obsession] in particular.")
                         if fam_obsession == "[persistent.date_ghost]":
-                            renpy.say (l, "You haven't been using info about him and my family to try to \"win\" the game, right?")
+                            renpy.say (l, "You haven't been using info about [ghost_obj] and my family to try to \"win\" the game, right?")
                         else:
                             renpy.say (l, "You haven't involved [fam_pronoun] or anyone else in all of this yet, right?")
 
@@ -138,34 +138,34 @@ label gdwl_functions:
                         no_fam_obsession = True
 
                 if fam_obsession == "David":
-                    renpy.say(l, "I don't want to have anything to do with him ever again or I atleast don't want to have him involved in any of this.")
+                    renpy.say(l, "I don't want to have anything to do with [dad_obj] ever again or I atleast don't want to have [dad_obj] involved in any of this.")
                 elif fam_obsession == "[persistent.date_mom]":
-                    renpy.say (l, "I don't want to involve her in any of this. She has looked out for me for my entire life [persistent.name]")
+                    renpy.say (l, "I don't want to involve [mom_obj] in any of this. [mom_sub!c] [conj('has', 'have')] looked out for me for my entire life [persistent.name]")
                     renpy.say (l, "She doesn't deserve to be dragged into this mess.")
                 elif fam_obsession == "[persistent.date_sis]":
-                    renpy.say(l, "I don't want to involve her [persistent.name]. She means too much to me and I would hate to make her go through the same situation we are currently in.")
+                    renpy.say(l, "I don't want to involve [sis_obj] [persistent.name]. [sis_sub!c] means too much to me and I would hate to make [sis_obj] go through the same situation we are currently in.")
                 else:
                     renpy.say(l, "It doesn't really impact them directly, I am the only one that keeps dying so I think it's better to leave them out of this mess.")
 
                 if no_fam_obsession == True:
-                    renpy.say (l, "[persistent.date] studies your face, seemingly in an attempt to gauge your reaction to her next question.")
+                    renpy.say (l, "[persistent.date] studies your face, seemingly in an attempt to gauge your reaction to [date_pos] next question.")
                     renpy.say (l, "You haven't involved them yet.... have you?")
                 else:
                     if james_involved:
                         if fam_obsession == "[persistent.date_ghost]":
-                            renpy.say(l, "Although I am fine with sharing stories about [persistent.date_ghost] I don't want you to use any memories of him to further benefit you.")
+                            renpy.say(l, "Although I am fine with sharing stories about [persistent.date_ghost] I don't want you to use any memories of [ghost_obj] to further benefit you.")
                             renpy.say (l, "It already hurts enough just to have to live with these memories.")
                             if only_one_asked == True:
-                                renpy.say(l, "[persistent.date] studies your face, seemingly in an attempt to gauge your reaction to her next question.")
+                                renpy.say(l, "[persistent.date] studies your face, seemingly in an attempt to gauge your reaction to [date_pos] next question.")
                                 renpy.say (l, "You haven't used anything [persistent.date_ghost]-related to your befit yet... have you?")
                                 persistent.abusedJamesInfo_knowledge = True
 
                             else:
                                 renpy.say (l, "I would also prefer it if you didn't involve anyone of my family into this.")
-                                renpy.say(l, "[persistent.date] studies your face, seemingly in an attempt to gauge your reaction to her next question.")
+                                renpy.say(l, "[persistent.date] studies your face, seemingly in an attempt to gauge your reaction to [date_pos] next question.")
                                 renpy.say (l, "You haven't involved anyone yet.... have you?")
                         else:
-                            renpy.say (l, "And although I am fine with sharing stories about [persistent.date_ghost] I don't want you to use any memories of him to further benefit you. It already hurts enough just to have to live with these memories.")
+                            renpy.say (l, "And although I am fine with sharing stories about [persistent.date_ghost] I don't want you to use any memories of [ghost_obj] to further benefit you. It already hurts enough just to have to live with these memories.")
 
                 renpy.jump("didYouInvolveFamily")
 
@@ -189,10 +189,6 @@ label gdwl_functions:
                 renpy.jump("askAboutLila_tellMeAbout_" + str(kokiri_chatchar_lila_counter))
 
         def kokiri_conversation_silent(check_count=None):
-            # check_count lets a caller override which conversation count is used
-            # for the meteorite trigger. Pass kokiri_conversation - 1 when an
-            # extra +1 was added purely to simulate elapsed time (e.g. the
-            # comfort-Lilith branch) so the == 2 meteorite check still fires.
             kokiri_silentMoment = True
             effective_count = check_count if check_count is not None else kokiri_conversation
             kokiri_meteoritewarn(effective_count)
@@ -203,7 +199,7 @@ label gdwl_functions:
                     renpy.jump("kokiri_death_1")
 
             else:
-                renpy.say (n, "[persistent.date] grows quiet for a moment. She gives you an expecting look, as if she's waiting for you to say something.")
+                renpy.say (n, "[persistent.date] grows quiet for a moment. [date_sub!c] [conj('date', 'gives', 'give')] you an expecting look, as if [date_sub] [conj('date', 'is', 'are')] waiting for you to say something.")
                 renpy.jump("silentconversationsbackontrack")
 
         def kokiri_call_potentialdeathcheck():
@@ -214,31 +210,31 @@ label gdwl_functions:
                 #The meteorite death check is not needed here, it is very far from her.
                 #The car one does happen though.
 
-                renpy.say (n, "The same meteorite that had previously ended up cutting your date with [persistent.date] short now passes by her, un-noticed as it breaks into several smaller pieces." )
-                renpy.say (n, "They spreads across the entire forest, none of them landing even near her.")
+                renpy.say (n, "The same meteorite that had previously ended up cutting your date with [persistent.date] short now passes by [date_obj], unnoticed as it breaks into several smaller pieces." )
+                renpy.say (n, "They spreads across the entire forest, none of them landing even near [date_obj].")
                 renpy.say (n, "You can't help but smile at the thought.")
-                renpy.say (n, "[persistent.date] is so focussed on her conversation that she can't even suspect her past death.")
+                renpy.say (n, "[persistent.date] is so focussed on [date_pos] conversation that [date_sub] can't even suspect [date_pos] past death.")
                 renpy.say (n, "You think it's better that way, ignorance is bliss.")
                 if car_caught == True:
-                    renpy.say (n, "While [persistent.date] is engrossed in her conversation you notice the Red-Sedan isn't showing up. Looks like your call to the police worked wonderfully.")
+                    renpy.say (n, "While [persistent.date] is engrossed in [date_pos] conversation you notice the Red-Sedan isn't showing up. Looks like your call to the police worked wonderfully.")
                 else:
                     kokiri_call_death_2_check = True
                     renpy.jump("kokiri_death_2")
             else:
                 if kokiri_meteorite_alert == True:
                     renpy.say (n, "The meteorite breaks into many different parts that spread all around the forest. One of them lands right where [persistent.date] was sitting.")
-                    renpy.say (n, "For a brief moment you are reminded of the horible state she was in when it hit her head.")
+                    renpy.say (n, "For a brief moment you are reminded of the horible state [date_sub] [conj('date', 'was', 'were')] in when it hit [date_pos] head.")
                     renpy.say (n, "You try to shake the feeling it gives you away and you half-succeed.")
-                    renpy.say (n, "[persistent.date] looks at you with visible shock in her eyes, knowing that she doesn't have much time left you point at the phone and motion her to continue calling.")
-                    renpy.say (n, "She nods and frowns slightly, she understands very well what you are not saying directly but thinking nonetheless.")
+                    renpy.say (n, "[persistent.date] [conj('date', 'looks', 'look')] at you with visible shock in [date_pos] eyes, knowing that [date_sub] [conj('date', 'does', 'do')]n't have much time left you point at the phone and motion [date_obj] to continue calling.")
+                    renpy.say (n, "[date_sub] nods and frowns slightly, [date_sub] understands very well what you are not saying directly but thinking nonetheless.")
                     renpy.say (n, "The end is near.")
-                    renpy.say (n, "Her end is near.")
+                    renpy.say (n, "[date_pos!c] end is near.")
                     renpy.say (n, "It might not be the meteorite.")
                     renpy.say (n, "It might not be right now.")
                     renpy.say (n, "But it will be something else.")
                     renpy.say (n, "It will happen soon.")
                     if car_caught == True:
-                        renpy.say (n, "While [persistent.date] is engrossed in her conversation you notice the Red-Sedan isn't showing up. Looks like your call to the police worked wonderfully.")
+                        renpy.say (n, "While [persistent.date] is engrossed in [date_pos] conversation you notice the Red-Sedan isn't showing up. Looks like your call to the police worked wonderfully.")
 
                     else:
                         kokiri_call_death_2_check = True
@@ -259,8 +255,8 @@ label gdwl_functions:
             if effective_count == 2:
                 if persistent.kokiri_death_1 == True:
                     if kokiri_alternateplace == False:
-                        renpy.say(n, "Suddenly you are plagued with a vision of the meteorite that killed [persistent.date]. You should probably try to warn her this time.", interact=False)
-                        met_check = renpy.display_menu([("You might want to sit on my right instead of my left first. Something's coming soon.","meteorite_warn"),("*Don't warn her.*","no_meteorite_warn")])
+                        renpy.say(n, "Suddenly you are plagued with a vision of the meteorite that killed [persistent.date]. You should probably try to warn [date_obj] this time.", interact=False)
+                        met_check = renpy.display_menu([("You might want to sit on my right instead of my left first. Something's coming soon.","meteorite_warn"),("*Don't warn [date_obj].*","no_meteorite_warn")])
                         if met_check == "meteorite_warn":
                             kokiri_meteorite_alert = True
                         else:
@@ -536,7 +532,7 @@ label gdwl_functions:
             persistent.keptJamesNumber_knowledge = True       
             persistent.james_story_knowledge = True           
 
-            # Knowledge unlocked from calling Lila
+            # Knowledge unlocked from calling [persistent.date_mom]
             persistent.lila_call_knowledge = True
             persistent.lilaCallNeedsAbbyProof_knowledge = True     
             persistent.lilaToldAbbyOpportunity_knowledge = True    

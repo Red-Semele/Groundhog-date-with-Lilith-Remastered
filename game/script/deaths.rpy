@@ -11,18 +11,18 @@ label restaurant_deaths:
                 #Burgerscene here
                 n "Now the screaming is also paired with hellish sounds, just great."
                 if not persistent.rockMode:
-                    n "You look at [persistent.date] and tell her to hide under the table."
+                    n "You look at [persistent.date] and tell [date_obj] to hide under the table."
                     l "I..."
                     play music game_over
-                    n "[persistent.date] seems to be frozen, on her face you can clearly see a mixture of fear and confusion. It takes you a moment to notice the steadily increasing red stains on [persistent.date]'s clothes."
+                    n "[persistent.date] seems to be frozen, on [date_pos] face you can clearly see a mixture of fear and confusion. It takes you a moment to notice the steadily increasing red stains on [persistent.date]'s clothes."
                     l "I've been shot?"
-                    n "She falls of her chair, you crawl towards her and try to call an ambulance."
+                    n "[date_sub!c] [conj('date', 'falls', 'fall')] of [date_pos] chair, you crawl towards [date_obj] and try to call an ambulance."
                     n "With trembling hands you type the emergency number and beg for help."
                     n "Everything seems to fade away, even the continuous  barage of gunshots, all you can hear is the sound of [persistent.date]'s breathing as it grows weaker and weaker."
                     n "You've been here for what feels like aeons but in all reality was closer to a minute or five when an ambulance finally arrives."
                     n "A young man, with eyes that have grown old from all the things they saw, places [persistent.date]'s still body on a stretcher and rushes off with it to the ambulance."
-                    n "The kind man throws some words at you, he tells you that everything will be just fine but you both know that he is lying. You have seen her suffering for what seemed like an eternity and a second at the same time."
-                    n "You have no clue what caused all those gunshots that inadvertently killed her. Some robbery in a neighbouring store, or a gang war, or something else."
+                    n "The kind man throws some words at you, he tells you that everything will be just fine but you both know that he is lying. You have seen [date_obj] suffering for what seemed like an eternity and a second at the same time."
+                    n "You have no clue what caused all those gunshots that inadvertently killed [date_obj]. Some robbery in a neighbouring store, or a gang war, or something else."
                     n "But sadly you do know what the aftermath of it all is."
                     $ persistent.burger_death_1 = True
                     jump gameOver
@@ -39,8 +39,8 @@ label restaurant_deaths:
                     n "The plate flies in the air, with it the ham sandwich that was put on top of it."
                     n "You are apparently not the only one who has noticed, as you can see a beautiful blue merlin jump from an opening in the aquarium."
                     n "The merlin has a long and pointy bill, it pierces the sandwich in a feat of pure dexterity. "
-                    n "Sadly it's traject leads right to [persistent.date]'s chest as it's sword-like bill pierces it, somehow you know it has pierced her heart aswell."
-                    n "She gives you one last look of utter shock before she falls dead on the floor."
+                    n "Sadly it's traject leads right to [persistent.date]'s chest as it's sword-like bill pierces it, somehow you know it has pierced [date_pos] heart aswell."
+                    n "[date_sub!c] [conj('date', 'gives', 'give')] you one last look of utter shock before [date_sub] [conj('date', 'falls', 'fall')] dead on the floor."
                     play music game_over
                     $ persistent.cafe_death_1 = True
                     jump gameOver
@@ -54,23 +54,23 @@ label restaurant_deaths:
                 #Chinesescene here
                 if not persistent.rockMode:
                     n "For a moment you get lost in your thoughts."
-                    n "When you refocus you notice [persistent.date] walking back to her chair."
+                    n "When you refocus you notice [persistent.date] walking back to [date_pos] chair."
                     l "Heya [persistent.name], I hope you didn't have to wait too long."
                     l "I hope our food will be ready soon, I'm kind of starving."
-                    n "Just as she said those words, almost by magic you can see a waitress heading your way."
+                    n "Just as [date_sub] [conj('date', 'says', 'say')] those words, almost by magic you can see a waitress heading your way."
                     if peking == True:
                         n "When the waitress arrives with your double plates of Peking duck [persistent.date] and you immediately dig in."
                     else:
                         n "When the waitress arrives with your orange chicken and [persistent.date]'s peking duck the two of you immediately dig in."
 
-                    n "She takes a break from her food and looks at you for a moment."
+                    n "[date_sub!c] [conj('date', 'takes', 'take')] a break from [date_pos] food and looks at you for a moment."
                     l "You know, I'm actually glad we could meet here, I wanted to tell you something."
-                    n "Before [persistent.date] can finish her sentence her face starts to swell."
+                    n "Before [persistent.date] can finish [date_pos] sentence [date_pos] face starts to swell."
                     play music game_over
                     l "Call an ambulance, now!"
                     n "You grab your phone as you frantically start calling an ambulance."
                     n "A woman with a warm voice listens to your incoherent ramblings and tries her best to get the details, she sends an ambulance your way."
-                    n "The ambulance arrives quite fast but not fast enough. The doctors conclude that it must have been some sort of severe allergic reaction that made her face swell untill she couldn't breathe anymore."
+                    n "The ambulance arrives quite fast but not fast enough. The doctors conclude that it must have been some sort of severe allergic reaction that made [date_pos] face swell untill [date_sub] couldn't breathe anymore."
                     $ persistent.chinese_death_1 = True
                     jump gameOver
                 else:
@@ -81,16 +81,16 @@ label restaurant_deaths:
         label restaurant_death_1_prevented:
             if persistent.rockMode == False:
                 if burger == True:
-                    n "[persistent.date] gives you a sceptical look but decides to follow your instructions, right as she does so a cacophony of hellish sounds begins to seep through the restaurant's entrance."
-                    n " Knowing what is to come you try to pay attention to a specific sound, a gunshot is heard and a bullet flies where she would have been if you didn't warn her."
+                    n "[persistent.date] gives you a sceptical look but decides to follow your instructions, right as [date_sub] [conj('date', 'does', 'do')] so a cacophony of hellish sounds begins to seep through the restaurant's entrance."
+                    n " Knowing what is to come you try to pay attention to a specific sound, a gunshot is heard and a bullet flies where [date_sub] would have been if you didn't warn [date_obj]."
                     n "Alright that is crazy, how did you know that bullet would hit me?"
                 elif cafe == True:
-                    n "[persistent.date] gives you a questioning look, as if she's trying to estimate if you are joking or not."
-                    l "Eventually she decides to not take any chances.
-                    She stands up and moves to your side of the table."
+                    n "[persistent.date] gives you a questioning look, as if [date_sub] [conj('date', 'is', 'are')] trying to estimate if you are joking or not."
+                    l "Eventually [date_sub] [conj('date', 'decides', 'decide')] to not take any chances.
+                    [date_sub!c] [conj('date', 'stands', 'stand')] up and moves to your side of the table."
                     l "So..."
                     l "What is this all about [persistent.name]?"
-                    n "Before you can answer her question you hear someone scream again, that's the sign.
+                    n "Before you can answer [date_pos] question you hear someone scream again, that's the sign.
                     You turn your head just quickly enough to see someone fall with a plate in their hands."
                     n "The plate flies in the air, with it the ham sandwich that was put on top of it."
                     n "You are not the only one who has noticed, as you can see a beautiful blue merlin jump from an opening in the aquarium."
@@ -98,7 +98,7 @@ label restaurant_deaths:
                     n "It's current trajectory leads it to pierce through the chair where [persistent.date] was sitting just mere moments ago."
                     n "The staff quickly rush towards your table to take the merlin away and to see if it hasn't been hurt, they offer [persistent.date] and you a short apology before disappearing."
                     l "..."
-                    n "[persistent.date] looks as if she has seen a ghost, if you hadn't intervened she may have seen her own."
+                    n "[persistent.date] looks as if [date_sub] [conj('date', 'has', 'have')] seen a ghost, if you hadn't intervened [date_sub] may have seen [date_pos] own."
                     l "Alright, I'm trying my best to remain calm but how did you know that would even happen?"
                 elif chinese == True:
                     $ persistent.dumbo_knowledge = True
@@ -107,9 +107,9 @@ label restaurant_deaths:
                     l "I ran to my parents and said:\"Look mommy, look daddy! I can fly!\" and then I started using my hands to flap my ears around like Dumbo."
                     l "At that point I was pretty swollen so it was a good thing my parents saw me, we went to the hospital as fast as we could and the kind doctors really helped me out."
                     l "When I finally was allowed to go home from the hospital my parents gave me a Dumbo plushie to always remember the story."
-                    l "And I can say that I still remember it like it was yesterday,  the same counts  for my mom, she keeps joking about it to this day."
-                    n "[persistent.date]  lets out a huge laugh as she looks at you."
-                    n "Suddenly she stops, you see a look of worry in her eyes."
+                    l "And I can say that I still remember it like it was yesterday, the same counts for my [mom_parShort], she keeps joking about it to this day."
+                    n "[persistent.date]  lets out a huge laugh as [date_sub] [conj('date', 'looks', 'look')] at you."
+                    n "Suddenly [date_sub] [conj('date', 'stops', 'stop')], you see a look of worry in [date_pos] eyes."
                     l "Oh sorry, I'm ranting again aren't I?"
                     l "I'm sorry, it's just that when I start talking it's pretty hard for me to stop, what were we talking about again?"
                     l "Oh yeah, the supposed allergy I would have if I ate that Peking duck."
@@ -125,7 +125,7 @@ label restaurant_deaths:
                     label preventedRockDeath1:
                         l "That image in your mind... That's me as a human?"
                         n "It seems as if your thoughts are not as well hidden as you might like."
-                        n "Yet hers are even harder to pick up on than ever. You can feel her thoughts racing all over the place."
+                        n "Yet [date_pred] are even harder to pick up on than ever. You can feel [date_pos] thoughts racing all over the place."
                         l "What is going on [persistent.name]?"
                         menu preventedRockDeath1_choice:
                             "Me and you are both human in other worlds. But in those worlds you keep dying on our dates. That's why I entered this world.":
@@ -186,7 +186,7 @@ label restaurant_deaths:
                     n "When you awaken you find yourself surrounded by doctors, they tell you that with the force of sheer luck the stray bullet that would've hit [persistent.date] managed to cause a gas leak."
                     n "The gas explosion that followed was quite severe, you were in a coma and had to have your wounds cleaned with some surgical procedures."
                     n "After a week you got out of your coma, [persistent.date] however didn't have such luck."
-                    n "The doctors tell you that she atleast went out pretty quickly, almost like dying in your sleep... but with more explosions."
+                    n "The doctors tell you that [date_sub] atleast went out pretty quickly, almost like dying in your sleep... but with more explosions."
                     if death_narration != "":
                         n "[death_narration]"
 
@@ -203,7 +203,7 @@ label restaurant_deaths:
                     n "You think about the pure shenanigans that were needed to even make this exact thing happen but you are soon interrupted by the water flowing past your shoes with some fish coming along for the ride."
                     l "Quick [persistent.name], we need to do something!"
                     if persistent.cafe_death_2 == True:
-                        n "You give [persistent.date] a firm hug and tell her that there's nothing else you two can do except for waiting."
+                        n "You give [persistent.date] a firm hug and tell [date_obj] that there's nothing else you two can do except for waiting."
                         if love_meter >= 3:
                             l "If I have to go now I atleast get some comfort out of the fact that you are here for me."
                             l "Goodbye [persistent.name], thank you for everything."
@@ -218,11 +218,11 @@ label restaurant_deaths:
                         n "Quick! Maybe we can still go to the first floor, we need to go higher!"
                         n "Pretty much without any other option you two decide to make a rush for the first floor of the restaurant."
                         n "When you turn around the corner you see that the stairs are blocked of by an extremely large closet made out of lignum vitae, you can not carry that, all you can do is admire the craftmanship."
-                        n "You give [persistent.date] a firm hug and tell her that there's nothing else you two can do except for waiting."
+                        n "You give [persistent.date] a firm hug and tell [date_obj] that there's nothing else you two can do except for waiting."
                         n "And so the both of you wait, in eachothers arms, for certain death.
                         And it surely came."
                     if hugRequestedBeforeDeath == True:
-                        n "it seems [persistent.date] got the hug she asked for after all, just not in the way she thought she would."
+                        n "it seems [persistent.date] got the hug [date_sub] asked for after all, just not in the way [date_sub] thought [date_sub] would."
                     else:
                         if death_narration != "":
                             n "[death_narration]"
@@ -232,7 +232,7 @@ label restaurant_deaths:
                     n "Suddenly you hear the faint sound of quacking."
                     n "The sound of the quacking steadily grows louder and louder untill it's all you can hear."
                     n "A true quackophony if you will."
-                    n "[persistent.date] looks over your shoulder with a frightend look in her eyes."
+                    n "[persistent.date] looks over your shoulder with a frightend look in [date_pos] eyes."
                     n "When you turn around you see a wave of angry geese breaking through the doors of the once cozy Chinese restaurant, the staff is running around in sheer panic."
                     n "Before you can make another sound everything turns to white, the white of pesky geese feathers."
                     n "The pain you are experiencing is too much and you fall unconscious."
@@ -253,9 +253,9 @@ label restaurant_deaths:
                     n "There is screaming and sobbing, but most of all there is death. Even with all the noise in the midst of the chaos the cold and looming silence of death is deafening."
                     n "The burned and scarred survivors are fleeing, dragging their loved ones from underneath the flaming tables."
                     n "They pretend they are still alive, but you have been around death enough times to know that it is merely that, pretending."
-                    n "You do hear one more thing. A voice, calling out to you. Hers."
+                    n "You do hear one more thing. A voice, calling out to you. [date_pred!c]."
                     l "[persistent.name], are you... alright?"
-                    n "However loud the haunting silence of death is, this time it's not hers."
+                    n "However loud the haunting silence of death is, this time it's not [date_pred]."
                     n "But that does not mean it isn't yours to carry."
                     menu restaurant_death_2_preventedRockChoice:
                         "I'm fine, but what about you?":
@@ -285,7 +285,7 @@ label restaurant_deaths:
                             n "Because at the end of the day, they are just words and images to you, aren't they player?"
                             n "I suppose I can't blame you for viewing them like that. Still, you do know [persistent.date] is the same, don't you?"
                             n "Then what makes you go through all this trouble? Through all this death?"
-                            n "Are you doing this just to see everything this game has to offer? Or is this truly about saving her?"
+                            n "Are you doing this just to see everything this game has to offer? Or is this truly about saving [date_obj]?"
                             n "Don't bother answering, we've already been at this for too long and the result is the same either way."
                             n "Now, let's move on."
                             l "It's horrible isn't it?"
@@ -317,7 +317,7 @@ label restaurant_deaths:
                                 l "Couldn't we have prevented this? And yet you abandoned that world for this one where they cannot hear us?"
                                 #TODO: Make this an option in the restuarants itself? (Think about it beforehand whether or not it is meaningful.)
                                 l "...I- I need some time to think about this [persistent.name]. I think it's better if we take some time apart from eachother."
-                                n "After a while you hear back from her again."
+                                n "After a while you hear back from [date_obj] again."
                                 if rockMode_toldGame == True:
                                     l "I have made up my mind. This is not worth it [persistent.name]."
                                     l "What is the point of this? You have saved me but you did so at the cost of locking me in a cage of loneliness."
@@ -328,7 +328,7 @@ label restaurant_deaths:
                                     l "Can't you see? In whatever world we meet death and destruction always follow."
                                     l "I think it's better if we go our separate ways."
                                     l "Now leave me be, I have to mourn for all these people equally real as myself."
-                                    n "And mourn she did, for all of eternity. No matter how many times you tried to reach out all you felt in her mind was a deep sadness for the souls she knew were merely words like her. Less words, but words all the same."
+                                    n "And mourn [date_sub] did, for all of eternity. No matter how many times you tried to reach out all you felt in [date_pos] mind was a deep sadness for the souls [date_sub] knew were merely words like [date_obj]. Less words, but words all the same."
                                     jump gameOver
                                     
                                 else:
@@ -352,9 +352,9 @@ label restaurant_deaths:
                                                     #Changeableword here is the rockband name
                                                     n "Together you started dreaming up songs based on the things you saw for [changeableWord]. These songs were intimate, projects only ever heard in your minds. There was always some hope that someone else might hear, but if they did they never made it known to you."
                                                 n "Your adventures grew more and more isolated from other people as to not have them accidentally be involved in that destruction."
-                                                n "You could say that it is a deeply lonely existence. Luckily you had her as she had you."
+                                                n "You could say that it is a deeply lonely existence. Luckily you had [date_obj] as [date_sub] had you."
                                                 n "Together you'd watch the world you knew slowly but undeniably replace bits and pieces of itself until there's nothing left of the world you remembered."
-                                                n "At around this time you find it harder and harder to come up with topics to talk about with [persistent.date]. And based on the silence between the two of you that sometimes goes on for weeks you can only guess she feels the same."
+                                                n "At around this time you find it harder and harder to come up with topics to talk about with [persistent.date]. And based on the silence between the two of you that sometimes goes on for weeks you can only guess [date_sub] [conj('date', 'feels', 'feel')] the same."
                                                 if rockMode_rockBand:
                                                     n "Even the music the two of you once constantly made has been slowly dwindling down in it's rapid creation."
                                                 n "It's not that you don't want to desperately break that silence but you have already spoken every possible sentence you could think of a hundred times before. Every unique moment has already been relived countless times."
@@ -371,13 +371,13 @@ label restaurant_deaths:
                                                 n "Most of the time you just find yourself tuning all of reality out, sleeping without needing to sleep. Letting it all wash over you without ever even being conscious of what it exactly was that did."
                                                 n "One of the only things that wakes you up out of your daze are disasters, those are harder to predict than humanity afterall."
                                                 n "Floods, supervolcanic eruptions, gigantic earthquakes, the evaporation of the oceans. The end of all complex life."
-                                                n "And yet you keep existing, so does she. The two of you are only woken during these horrible disasters, and after a while the smaller ones don't even manage to do so anymore."
+                                                n "And yet you keep existing, so [conj('date', 'does', 'do')] [date_sub]. The two of you are only woken during these horrible disasters, and after a while the smaller ones don't even manage to do so anymore."
                                                 n "During these moments of waking you are confused, dazed. You are not sure of who, or what you are anymore. Even then the pain in your mind deters you from trying to figure that out for too long."
                                                 n "The only thing you are sure of is you were once human, then you were a rock and now you are merely atoms that once were a rock that once was a human."
                                                 n "The flow of time combined with these disasters did not kill you, but they did slowly erode you into many different pieces. Each piece being sentient, enough to be aware of the pain of being so."
                                                 n "Those pieces don't float, or fly, or anything like that. They just are, sometimes in different places than where they were."
                                                 n "Sometimes one of those pieces, out of sheer coincidence happens to be somewhere where a part of [persistent.date] is."
-                                                n "They know each piece of her better than themselves. And that piece knows them better than herself."
+                                                n "They know each piece of [date_obj] better than themselves. And that piece knows them better than [date_pred]."
                                                 n "So they just silently float by. Reacting no different than if either party weren't part of this meeting of pure chance."
                                                 n "But one day this meeting goes differently. One of your pieces suddenly feels something bubble up inside of them."
                                                 n "A sense of recognition. A deep loneliness it tried sleeping through."
@@ -414,7 +414,7 @@ label restaurant_deaths:
                     n "They seek their friends, partners, or just about anyone who gives them some semblance of comfort in this hell and embrace eachother, exchancing their final goodbye."
                     n "The water now has fully swallowed every person, reaching up unto the ceiling. You can see the people slowly extend their last breaths as they then lay motionless on the floor."
                     n "Where merely moments ago the cafe was filled with screams of pure panic, now merely rests a haunting silence."
-                    n "Then you hear it, her. Her voice echoing in your mind."
+                    n "Then you hear it, [date_obj]. [date_pos!c] voice echoing in your mind."
                     l "Are you alright [persistent.name]?"
                     jump restaurant_death_2_preventedRockChoice
 
@@ -433,14 +433,14 @@ label restaurant_deaths:
                     n "When the feathers finally clear you once again find the entire restaurant empty."
                     n "Empty of people that is, because the room is filled to the brim with feathers."
                     n "This time, the geese did not leave a note in your hand. This time you also do not have any hands for them to do so."
-                    n "Then you hear it, her. Her voice echoing in your mind."
+                    n "Then you hear it, [date_obj]. [date_pos!c] voice echoing in your mind."
                     l "Are you alright [persistent.name]?"
                     jump restaurant_death_2_preventedRockChoice
 
     label car_death:
         $ persistent.runAwayLilith_counter += 1
         if angryLilith == True:
-            n "[persistent.date] stands up from her seat and shoves it back with a frightening speed."
+            n "[persistent.date] stands up from [date_pos] seat and shoves it back with a frightening speed."
             if noTalkAngryLilith == False:
                 l "I really didn't want it to come this far but you left me no other choice [persistent.name]."
                 if major_love_offence >= 1:
@@ -458,7 +458,7 @@ label restaurant_deaths:
                 if persistent.lildeaths >= 1:
                     n "I guess we will see very soon whether or not it is possible for you to do that, right player?"
         else:
-            n "[persistent.date] stands up from her seat and begins heading for the exit without paying."
+            n "[persistent.date] stands up from [date_pos] seat and begins heading for the exit without paying."
             l "Goodbye [persistent.date]."
         play music game_over
         if burger == True:
@@ -473,7 +473,7 @@ label restaurant_deaths:
             $ resname2 = "chinese"
         if car_caught == True:
             if burger == True:
-                n "[persistent.date] leaves the burger restaurant, you rush after her in an effort to calm her down.
+                n "[persistent.date] leaves the burger restaurant, you rush after [date_obj] in an effort to calm [date_obj] down.
                 This time there is no red Sedan in sight, it seems as if the cops handled it well."
                 n "However, just as you're processing that your mind wanders to the gas explosion that always appears arround this time."
                 n "It was probably not a good idea to come here."
@@ -482,10 +482,10 @@ label restaurant_deaths:
                 jump restaurant_death_2
 
             elif cafe == True:
-                n "[persistent.date] leaves the cafe restaurant, you rush after her in an effort to calm her down. "
+                n "[persistent.date] leaves the cafe restaurant, you rush after [date_obj] in an effort to calm [date_obj] down. "
                 n "When you set one foot outside of the doorframe the red Sedan that always thwarts your plans drives head first into the both of you."
                 n "Luckily you managed to get flung to the side somehow. [persistent.date] however was not so lucky."
-                n "She died on impact when the speeding car hit her."
+                n "[date_sub!c] died on impact when the speeding car hit [date_obj]."
                 n "Atleast the police showed up due to your call and locked the drunkard up."
                 n "If only they managed to come a tiny bit earlier.
                 It was probably not the best idea to go here with [persistent.date] when the car is still on the loose."
@@ -493,20 +493,20 @@ label restaurant_deaths:
 
 
             elif chinese == True:
-                n "[persistent.date] leaves the chinese restaurant, you rush after her in an effort to calm her down."
+                n "[persistent.date] leaves the chinese restaurant, you rush after [date_obj] in an effort to calm [date_obj] down."
                 if persistent.chinese_car_death == True:
                     "This time there is no red Sedan in sight, it seems as if the cops handled it well."
                 if angryLilith == True:
                     l "Leave me alone [persistent.name]! I don't want to see you ever again!"
                 else:
                     l "Why are you following me [persistent.name]? I want to be alone." 
-                n "And with that [persistent.date] leaves, you never saw her again. Not this time anyway."
-                n "Atleast she didn't seem to get killed by anything on her way back home since you still heard people talk about her from time to time."
+                n "And with that [persistent.date] leaves, you never saw [date_obj] again. Not this time anyway."
+                n "Atleast [date_sub] didn't seem to get killed by anything on [date_pos] way back home since you still heard people talk about [date_obj] from time to time."
                 if persistent.lildeaths > 15:
-                    n "You are unsure of how to feel. As horrible as that date went, she is still alive."
+                    n "You are unsure of how to feel. As horrible as that date went, [date_sub] [conj('date', 'is', 'are')] still alive."
                     if persistent.lilithAliveAndRetriedCounter == 0:
                         n "Does this mean that you won?"
-                        n "That you can stop trying to save her?"
+                        n "That you can stop trying to save [date_obj]?"
 
                 $ lilithAliveEnding = True
                 $ persistent.ending_badDate = True
@@ -514,21 +514,21 @@ label restaurant_deaths:
                 $ persistent.lildeaths -= 1
 
                 if angryLilith == True:
-                    n "You probably shouldn't have angered her so much."
+                    n "You probably shouldn't have angered [date_obj] so much."
                 else:
                     if explanationAsked:
                         if groundhog == False and psychic == False:
-                            n "Maybe you should give her a different explanation?"
+                            n "Maybe you should give [date_obj] a different explanation?"
                         else: 
                             if groundhog == True:
                                 if persistent.groundhog_answer_right_knowledge == True:
-                                    n "Now next time you can give her the number she was thinking of."
+                                    n "Now next time you can give [date_obj] the number [date_sub] [conj('date', 'was', 'were')] thinking of."
                                 else: 
                                     n "Maybe you need to give some proper proof."
 
                             elif psychic == True:
                                 if persistent.psychic_answer_right_knowledge == True:
-                                    n "Now next time you can tell her the word she was thinking of."
+                                    n "Now next time you can tell [date_obj] the word [date_sub] [conj('date', 'was', 'were')] thinking of."
                                 else: 
                                     n "Maybe you need to give some proper proof."
                     else:
@@ -541,7 +541,7 @@ label restaurant_deaths:
         else:
             if currentcar == True:
                 n "[persistent.date] leaves the [resname], you can not bare seeing what happens next so you decide to stay inside.
-                Even from inside you can still hear the car crash into her."
+                Even from inside you can still hear the car crash into [date_obj]."
             else:
                 $ currentcar = True
                 if persistent.redSedan_knowledge == True:
@@ -549,14 +549,14 @@ label restaurant_deaths:
                 else:
                     $ carDescription = "a red Sedan"
                 if angryLilith == True:
-                    n "[persistent.date] leaves the [resname], you rush after her in an effort to calm her down."
+                    n "[persistent.date] leaves the [resname], you rush after [date_obj] in an effort to calm [date_obj] down."
                     
                 else:
                     n "[persistent.date] follows you to the exit of the [resname]."
                 n "When you set one foot outside of the doorframe [carDescription] drives head first into the both of you."
                 label car_death_result:
                     n "Luckily you managed to get flung to the side somehow. [persistent.date] however was not so lucky."
-                    n "She died on impact when the speeding car hit her."
+                    n "[date_sub!c] died on impact when the speeding car hit [date_obj]."
                     if persistent.redSedan_knowledge == False:
                         $ persistent.redSedan_knowledge = True
         jump gameOver
@@ -566,15 +566,15 @@ label kokiri_deaths:
         if angryLilith:
             $ persistent.runAwayLilith_counter += 1
             if major_love_offence >= 1:
-                n "[persistent.date] jumps up from where she was lying mere moments ago, on her face is a visible layer of anger or is it... disappointment?"
+                n "[persistent.date] jumps up from where [date_sub] [conj('date', 'was', 'were')] lying mere moments ago, on [date_pos] face is a visible layer of anger or is it... disappointment?"
                 n "You're not sure which one would sting more, probably a combination of the two."
-                n "She wipes the crumbs on her clothes away with a frightening speed and angrily storms down the hill."
+                n "[date_sub!c] [conj('date', 'wipes', 'wipe')] the crumbs on [date_pos] clothes away with a frightening speed and angrily [conj('date', 'storms', 'storm')] down the hill."
                 if noTalkAngryLilith == False:
                     l "Goodbye [persistent.name], we are done here."
                     l "Do not come back for extra attempts if you have even the slightest slither of respect for me."
                 $ persistent.kokiri_angry_noretry = True
             elif minor_love_offence > 1:
-                n "[persistent.date] stands up from where she was lying mere moments ago. You can clearly see a disappointed look on her face."
+                n "[persistent.date] stands up from where [date_sub] [conj('date', 'was', 'were')] lying mere moments ago. You can clearly see a disappointed look on [date_pos] face."
                 if noTalkAngryLilith == False:
                     l "This might all be a game for you [persistent.name], but for me this is very real."
                     l "So I'd like to be treated with the respect you would give to a real person."
@@ -584,24 +584,24 @@ label kokiri_deaths:
                     l "I'd prefer if you didn't, but I know I can't stop you."
                     l "Let's just hope that when I meet you here once again during the next attempt you will have learnt your lesson."
                     l "Goodbye [persistent.name]."
-        n "[persistent.date] turns away from you and walks down the hill cool and collected, it seems she has made up her mind about this."
-        n "She doesn't get far from the hill, maybe a metre or fifteen before she seemingly trips over a tree root."
-        n "She does not get up."
+        n "[persistent.date] turns away from you and walks down the hill cool and collected, it seems [date_sub] [conj('date', 'has', 'have')] made up [date_pos] mind about this."
+        n "[date_sub!c] [conj('date', 'does', 'do')]n't get far from the hill, maybe a metre or fifteen before [date_sub] seemingly [conj('date', 'trips', 'trip')] over a tree root."
+        n "[date_sub!c] [conj('date', 'does', 'do')] not get up."
         play music game_over
         if persistent.kokiri_angryLilithDeath == False:
-            n "When you rush to her you notice why."
-            n "[persistent.date] hit her head pretty badly on a small rock."
+            n "When you rush to [date_obj] you notice why."
+            n "[persistent.date] hit [date_pos] head pretty badly on a small rock."
             n "The end result looks horifying."
             n "You call an ambulance but when they arrive they tell you what you already knew deep down."
-            n "She didn't make it."
+            n "[date_sub!c] didn't make it."
             $ persistent.kokiri_angryLilithDeath = True
         else:
             n "Deep down you already know it is too late."
             n "But you can't help yourself, you call an ambulance hoping that this time is somehow slightly different."
-            n "That this time she is still alive by the time they arive."
+            n "That this time [date_sub] [conj('date', 'is', 'are')] still alive by the time they arive."
             n "After what feels like waiting for years the ambulance finally arrives."
             n "Sadly they tell you the same news they've already told you before."
-            n "She didn't make it."
+            n "[date_sub!c] didn't make it."
         jump gameOver
 
     label kokiri_1:
@@ -609,11 +609,11 @@ label kokiri_deaths:
             if met_check != "meteorite_warn":
                 if kokiri_call_death_1_check == False: #If she wasn"t calling her mom/sis during this death:
                     if kokiri_silentMoment == False:
-                        n "[persistent.date] stops talking for a moment as she begins staring at the star-filled night, it seems like something has drawn her attention away from you."
+                        n "[persistent.date] stops talking for a moment as [date_sub] [conj('date', 'begins', 'begin')] staring at the star-filled night, it seems like something has drawn [date_pos] attention away from you."
                     else:
                     
-                        n "[persistent.date] diverts her look from your eyes from a moment and continues watching the star-filled night."
-                    n "A gasp of amazement escapes her mouth."
+                        n "[persistent.date] diverts [date_pos] look from your eyes from a moment and continues watching the star-filled night."
+                    n "A gasp of amazement escapes [date_pos] mouth."
                     l "You really need to see this, it's absolutely stunning!"
                     n "The sky now is completly filled with falling stars, you've never seen so many in your entire life, let alone all together."
                     n "What does catch you eye however is one point that seems to be getting bigger and bigger."
@@ -627,7 +627,7 @@ label kokiri_deaths:
                             n "Eventually due to the energy exerted on the meteorite it breaks into many different chunks that spread all around the forest."
                             n "None of the pieces manage to hit [persistent.date] this time."
                             n "For a brief flash you are reminded of how things ended before."    
-                            n "But then you realise something, now that she is safe this is actually a lovely sight."
+                            n "But then you realise something, now that [date_sub] [conj('date', 'is', 'are')] safe this is actually a lovely sight."
                             n "Something you would only experience once in a lifetime."
                             n "But you will experience it a lot more than that, won't you?"      
                             jump kokiri_death_1_prevented
@@ -635,12 +635,12 @@ label kokiri_deaths:
                 play music game_over
                 n "Eventually, due to the energy exerted on the meteorite it breaks into many different chunks that spread all around the forest."
                 n "One of them crashes straight against [persistent.date]'s head with a frightening impact."
-                n "She immediately goes limp and her body falls down on the picnic blanket."
+                n "[date_sub!c] immediately [conj('date', 'goes', 'go')] limp and [date_pos] body falls down on the picnic blanket."
                 if persistent.kokiri_death_1 == True:
                     n "You close your eyes in an effort not to be subjected to the absolutely horifying state [persistent.date] is in right now."
-                    n "It's a very futile effort as her corpse is still engraved in your eyelids from the previous time."
-                    n "That's right, her corpse. You already know that it is too late for her."
-                    n "And yet you still hope that you are proven wrong, that she might show any signs of life."
+                    n "It's a very futile effort as [date_pos] corpse is still engraved in your eyelids from the previous time."
+                    n "That's right, [date_pos] corpse. You already know that it is too late for [date_obj]."
+                    n "And yet you still hope that you are proven wrong, that [date_sub] might show any signs of life."
                     n "But no matter how long you wait the only thing that you can hear is pure silence."
                     if kokiri_call_death_1_check == True: #Check whether or not she was calling someone at the time of her death.
                         if kokiri_chatchar_abigail_called == True:
@@ -653,20 +653,20 @@ label kokiri_deaths:
 
                 else:
                     $ persistent.kokiri_death_1 = True
-                    n "As you worriedly look down you can see her head cracked open and a puddle of blood is begining to form around it. Everything around you turns silent."
+                    n "As you worriedly look down you can see [date_pos] head cracked open and a puddle of blood is begining to form around it. Everything around you turns silent."
                     if kokiri_call_death_1_check == True: #Check whether or not she was calling someone at the time of her death.
                         if kokiri_chatchar_abigail_called == True:
-                            n "Even [persistent.date_sis] who is currently screaming her lungs out has become unbearingly silent."
+                            n "Even [persistent.date_sis] who is currently screaming [date_pos] lungs out has become unbearingly silent."
                             n "You would also like to scream but all that manages to come out is the same silence that seems to have taken over the forest."
                         elif kokiri_chatchar_lila_called == True:
-                            n "Even [persistent.date_mom] who is currently screaming her lungs out has become unbearingly silent."
+                            n "Even [persistent.date_mom] who is currently screaming [date_pos] lungs out has become unbearingly silent."
                             n "You would also like to scream but all that manages to come out is the same silence that seems to have taken over the forest."
                     else:
                         n "You would like to scream but all that manages to come out is the same silence that seems to have taken over the forest."
-                    n "It's almost as if the forest itself is mourning her death."
+                    n "It's almost as if the forest itself is mourning [date_pos] death."
                     n "Some dark clouds move in front of the moon as if to stop it from revealing the state of [persistent.date]'s corpse."
                     n "They are rather unsuccessful."
-                    n "Even if they had been succesful you are sure you still could see her body engraved in your eyelids."
+                    n "Even if they had been succesful you are sure you still could see [date_pos] body engraved in your eyelids."
                 jump gameOver
             else:
                 jump kokiri_death_1_prevented
@@ -677,26 +677,26 @@ label kokiri_deaths:
         label kokiri_death_1_prevented:
             #if kokiri_prevented == 1: This is code that would have made it so that it triggers based on 1-4 and the deaths.
             if not kokiri_alternateplace:
-                n "[persistent.date] gives you a nod as she moves to the other side of the blanket, to your left."
+                n "[persistent.date] gives you a nod as [date_sub] [conj('date', 'moves', 'move')] to the other side of the blanket, to your left."
                 l "That's a bit of an odd request but I guess I will see why I needed to do that soon enough, right?"
-                n "As she moves to the other side of the blanket, to your left, something catches her eye."
+                n "As [date_sub] [conj('date', 'moves', 'move')] to the other side of the blanket, to your left, something catches [date_pos] eye."
                 n "The sky once again is filled with bright falling stars."
                 l "Look, I never saw that many falling stars in my life!"
-                n "Soon she'll get to see one from really close, let's hope that this time it doesn't kill her."
+                n "Soon [date_sub] 'll get to see one from really close, let's hope that this time it doesn't kill [date_obj]."
                 n "It does not take long at all before you notice a familiar point in the sky that seems to be getting bigger and bigger at a frightening speed."
-                n "[persistent.date] watches in absolute terror as she now can clearly make out a decently sized meteorite heading straight to the hill the two of you are sitting on."
+                n "[persistent.date] watches in absolute terror as [date_sub] now can clearly make out a decently sized meteorite heading straight to the hill the two of you are sitting on."
                 n "Meanwhile all you can do is hope that things are going to be different this time. They should, but you still find yourself fearing the worst."
-                n "Eventually due to the energy exerted on the meteorite it breaks into many different chunks that spread all around the forest. One of those very pieces would have gotten launched straight against [persistent.date]'s head if she hadn't moved, instead it now fell into the lake next to the hill."
-                n "[persistent.date] gives you a startled look. Even only lit by the moon and the stars it is not hard to tell she has become very pale."
+                n "Eventually due to the energy exerted on the meteorite it breaks into many different chunks that spread all around the forest. One of those very pieces would have gotten launched straight against [persistent.date]'s head if [date_sub] hadn't moved, instead it now fell into the lake next to the hill."
+                n "[persistent.date] gives you a startled look. Even only lit by the moon and the stars it is not hard to tell [date_sub] [conj('date', 'has', 'have')] become very pale."
                 l "...A meteorite? That was what was going to kill me now?"
-                n "She goes quiet for a moment."
+                n "[date_sub!c] [conj('date', 'goes', 'go')] quiet for a moment."
             else:
                 l "That was beautiful..."
                 l "I've never seen anything like that."
-                n "She has many many times, and will many many times more. But each time will be her first. I suppose ignorance is bliss isn't it?"
+                n "[date_sub!c] [conj('date', 'has', 'have')] many many times, and will many many times more. But each time will be [date_pos] first. I suppose ignorance is bliss isn't it?"
                 l "But is that the reason we sat here instead of on the hill?"
                 l "Was that meteorite going to kill me?"
-                n "She looks you straight into your eyes, seemingly having found the answer to her question in them."
+                n "[date_sub!c] [conj('date', 'looks', 'look')] you straight into your eyes, seemingly having found the answer to [date_pos] question in them."
 
             l "So you spoke the truth... I keep on dying over and over on this date?"
             l "Seems like I woke up with some major bad luck today."
@@ -713,7 +713,7 @@ label kokiri_deaths:
             l "..."
             l "I just need a moment to gather my thoughts [persistent.name], after that we can continue our conversation if you'd like."
             n "You give a slight nod, the corners of [persistent.date]'s mouth subtly move up, you almost didn't quite catch it."
-            n "You're not quite sure how long the moment lasts, but after a while she shifts her position and gives you a nod."
+            n "You're not quite sure how long the moment lasts, but after a while [date_sub] [conj('date', 'shifts', 'shift')] [date_pos] position and [conj('date', 'gives', 'give')] you a nod."
             l "I think I am ready now, this is still a lot but I might be able to see it through now."
             l "Thank you for staying here with me, it helped me calm down a little while I was thinking. Well, as much as someone that is in a situation like this can calm down."
             if car_caught == False:
@@ -725,7 +725,7 @@ label kokiri_deaths:
             play music game_over
             if kokiri_alternateplace == True:
                 if kokiri_call_death_2_check == True:
-                    n "While [persistent.date] is engrossed in her call you notice the red Sedan that rode up the hill and hit [persistent.date] riding up the hill once again."
+                    n "While [persistent.date] is engrossed in [date_pos] call you notice the red Sedan that rode up the hill and hit [persistent.date] riding up the hill once again."
                 else:
                     n "As [persistent.date] and you are talking you suddenly glimpse the red Sedan that hit [persistent.date] on the hill driving up the hill once again."
                 if persistent.kokiri_death_2_alternate == False:
@@ -740,10 +740,10 @@ label kokiri_deaths:
             else:
                 n "Suddenly you notice a strange sound."
                 n "A red sedan speeds towards the both of you with a frightening speed. Fight, flight or freeze. You have three options."
-                n "You would like to think you would pick fight and push [persistent.date] out of the way, sacrificing yourself for her."
+                n "You would like to think you would pick fight and push [persistent.date] out of the way, sacrificing yourself for [date_obj]."
                 n "And yet you instinctively pick flight as you jump away from the car."
-                n "Sadly it seems [persistent.date] did not do the same, she instead froze."
-                n "And now she is forever frozen as she lays there on the floor, unmoving."
+                n "Sadly it seems [persistent.date] did not do the same, [date_sub] instead froze."
+                n "And now [date_sub] [conj('date', 'is', 'are')] forever frozen as [date_sub] [conj('date', 'lays', 'lay')] there on the floor, unmoving."
             if kokiri_call_death_2_check == True:
                 if kokiri_chatchar_abigail_called == True:
                     n "You call an ambulance with shaking hands as you hear [persistent.date_sis]'s neverending screaming coming from [persistent.date]'s phone."
@@ -751,7 +751,7 @@ label kokiri_deaths:
                     n "You call an ambulance with shaking hands as you hear [persistent.date_mom]'s neverending screaming coming from [persistent.date]'s phone."
             else:
                 n "You call an ambulance with shaking hands."
-            n "Your suspicion was proven true by the paramedics, she was dead as soon as that car hit her."
+            n "Your suspicion was proven true by the paramedics, [date_sub] [conj('date', 'was', 'were')] dead as soon as that car hit [date_obj]."
             if car_free == True:
                 n "It appears calling the cops didn't accomplish much this time. Maybe you need to send them to another location?"
             
@@ -765,7 +765,7 @@ label kokiri_deaths:
             jump gameOver
 
         label kokiri_death_2_prevented:
-            n "You tell [persistent.date] about how the red Sedan would've hit her if you wouldn't have called the police."
+            n "You tell [persistent.date] about how the red Sedan would've hit [date_obj] if you wouldn't have called the police."
             if kokiri_alternateplace == False:
                 if kokiriSceneryWatched == True:
                     $ carDescription = "that car we just watched"
@@ -773,7 +773,7 @@ label kokiri_deaths:
                     $ carDescriptiion = "a car"
                 l "I see... first a meteorite and now [carDescription]?... It almost seems like the universe has it out for me today..."
                 l "Thank you for going through such efforts to help me [persistent.name]."
-                n "[persistent.date] gives you a big smile, a look of gratitude is plastered across her face."
+                n "[persistent.date] gives you a big smile, a look of gratitude is plastered across [date_pos] face."
             else:
                 l "A car?..."
                 if love_meter <= 2:
@@ -804,7 +804,7 @@ label kokiri_deaths:
                     l "But still, you being here helps me calm down just that extra bit I need to not start absolutely freaking out right now."
                     l "You know, the idea that you are here to help protect me I suppose."
                     l "It might sound silly, but it's nice to know that there is someone repeatedly coming back for me."
-                    l "I had to deal with both my father and my brother leaving, albeit in very different ways."
+                    l "I had to deal with both my [dad_par] and my [ghost_sib] leaving, albeit in very different ways."
                     l "I guess this feels refreshing?"
                     l "Deep down I guess I always blamed myself for what happened, for them leaving."
                     l "As if there some curse cast on me that would make all my loved ones leave me."
@@ -835,7 +835,7 @@ label kokiri_death_2_prevented_triedEverything:
     p "I just want to share a nice, enjoyable date with you."
     n "[persistent.date] points at the village, illuminated by the moon and the stars."
     l "With such a marvelous view I would surely call this a nice, enjoyable date."
-    n "She snuggles up to you."
+    n "[date_sub!c] [conj('date', 'snuggles', 'snuggle')] up to you."
     l "Thanks for going on this date with me! I'm having a really good time so far!"
     l "You know, I've been thinking..."
     l "If I'm going to die soon then what's stopping you from quitting this game? Or would I just lose consciousnes, like I'm dying?"
@@ -847,12 +847,12 @@ label kokiri_death_2_prevented_triedEverything:
             l "Since we're in a video game there's only so much dialogue I can tell you and only as many places we can go to as are programmed into it."
             l "But if you could break the boundaries through whatever creative outlet you have then there would essentially be thousands upon thousands of stories about us that you could give life. "
             l "The best part would be that you decide how they play out."
-            l "She pauses for a moment and then continues."
+            l "[date_sub!c] [conj('date', 'pauses', 'pause')] for a moment and then [conj('date', 'continues', 'continue')]."
             l "We tend to create these new worlds all the time, sometimes even without realising it."
             l "When you are thinking about what the next season of your favourite show will be about then you're technically creating an entire new world where the show's characters go through your story."
             l "And who's to say which version is the superior one? After all, they're both telling a story, personally I think that's absolutely beautiful."
             l "So let's try to do just that!"
-            n "[persistent.date] hugs you for a long period of time, you feel her warmth as it reaches your cold body."
+            n "[persistent.date] hugs you for a long period of time, you feel [date_pos] warmth as it reaches your cold body."
             n "And yet, it's not really your body, right?"
             n "More so the body you channel yourself through."
             n "Your avatar's body."
@@ -863,7 +863,7 @@ label kokiri_death_2_prevented_triedEverything:
             label kokiri_makingOwnStory:
                 menu:
                     "No, we're still in the game.":
-                        n "[persistent.date] looks at you with a puzzled look on her face."
+                        n "[persistent.date] looks at you with a puzzled look on [date_pos] face."
                         l "Oh... I thought you had already started. Why are you still playing this game instead of making your own story?"
                         menu:
                             "I just want to see what happens when I choose this path.":
@@ -881,11 +881,11 @@ label kokiri_death_2_prevented_triedEverything:
                                     l "Really? I think that settles it then. This really all is a game to you."
                                     l "You kept me in this loop for your own wants. Even when I'm offering you a potential way out of it."
                                     if persistent.lilithAliveAndRetriedCounter > 0:
-                                        n "She is more correct than she might know in this moment, isn't she player?"
+                                        n "[date_sub!c] [conj('date', 'is', 'are')] more correct than [date_sub] might know in this moment, isn't [date_obj] player?"
                                         if persistent.lilithAliveAndRetriedCounter == 1:
-                                            n "Or are you going to pretend like that time you came back even when she survived was for her sake?"
+                                            n "Or are you going to pretend like that time you came back even when [date_sub] survived was for [date_pos] sake?"
                                         else:
-                                            n "Or are you going to pretend like the times you came back even when she survived were for her sake?"
+                                            n "Or are you going to pretend like the times you came back even when [date_sub] survived were for [date_pos] sake?"
                                         n "...Or even worse, perhaps you aren't pretending. Maybe some part of you genuinely believes that?"
                                         n "Either way, it doesn't matter in the end. The result still is the same."
                                     l "Look, if you don't atleast attempt to try this potential escape from the loop, then I might aswell try to escape on my own."
@@ -901,20 +901,20 @@ label kokiri_death_2_prevented_triedEverything:
 
 
                     "Yes, I'm now in full control of it.":
-                        n "[persistent.date] gives you a warm embrace and jumps up in the air after she stops hugging you."
+                        n "[persistent.date] gives you a warm embrace and jumps up in the air after [date_sub] [conj('date', 'stops', 'stop')] hugging you."
                         l "Perfect! So now we can just do whatever we want without having to fear being killed right?"
                         menu:
                             "Absolutely!":
                                 n "You do know that is not the case, right?"
                                 n "That I'm still the one telling this story, that you are not in control."
-                                n "Are you lying to yourself, or to her?"
+                                n "Are you lying to yourself, or to [date_obj]?"
                                 n "Maybe both?"
                                 
                                 if persistent.kokiri_tellnolies_knowledge:
-                                    n "I'm not sure if she would like that."
-                                    n "Actually I'm very sure she wouldn't like that, and so are you."
+                                    n "I'm not sure if [date_sub] would like that."
+                                    n "Actually I'm very sure [date_sub] wouldn't like that, and so are you."
                                     n "And yet you did."
-                                    n "I wonder why, did you try to alleviate some of her fear?"
+                                    n "I wonder why, did you try to alleviate some of [date_pos] fear?"
                                     n "Or did you want to fool yourself for a second into believing your own lies?"
                                     n "Or perhaps you wanted to just see what dialogue that choice would give you?"
                                     n "Either way, what's done is done."
@@ -939,7 +939,7 @@ label kokiri_death_2_prevented_triedEverything:
 
                                 else:
                                     n "I do suppose ignorance is bliss."
-                                    n "Maybe it's better for her to still believe that things are going to start looking up for her."
+                                    n "Maybe it's better for [date_obj] to still believe that things are going to start looking up for [date_obj]."
                                     n "Maybe it's better for you to believe that just for a little bit longer."
                                     n "But nothing can last player, each line from the script ends at some point, making way for the next."
                                     if persistent.kokiri_death_4_hill_holdHand or persistent.kokiri_death_4_hill or persistent.kokiri_death_4_noHill == True:
@@ -951,10 +951,10 @@ label kokiri_death_2_prevented_triedEverything:
 label kokiri_death_2_prevented_youWereHappyWithRon:
 
     l "Well, I am spending this moment with you, not with this \"Ron\"."
-    n "[persistent.date] places her hand on your arm and rubs it softly."
+    n "[persistent.date] places [date_pos] hand on your arm and rubs it softly."
     l "It is sweet that you care about me enough to worry about those sorts of things but I would rather not have you worry about them."
     l "Besides, you made that version of me happy with Ron and now you've made this version of me very happy with you."
-    n "She flashes you a knowing smile."
+    n "[date_sub!c] [conj('date', 'flashes', 'flash')] you a knowing smile."
     l "If you ask me you have succeeded."
     l "You know what? I want to show you something..."
     jump kokiri_pictureChoice
@@ -1007,34 +1007,34 @@ label kokiri_death_2_prevented_youDiedATon:
             l "I think I might have an idea of how to give you some more hope, it always helps me out when I need some."
             jump kokiri_pictureChoice
 label kokiri_pictureChoice:
-    n "[persistent.date] stands up from the blanket, some shards of the meteorite still laying on it and extends her hand to you."
+    n "[persistent.date] stands up from the blanket, some shards of the meteorite still laying on it and extends [date_pos] hand to you."
     menu:
-        "*Take her hand*":
+        "*Take [date_pos] hand*":
             jump kokiri_showpicture
         "You actually already showed me the beach picture hidden in the big tree. It fell over right on top of you..." if persistent.kokiri_death_3:
             jump kokiri_death_3_prevented
 label kokiri_showpicture:
     $ persistent.beach_knowledge = True
-    n "You grab her hand and get up."
+    n "You grab [date_pos] hand and get up."
     l "But close your eyes, alright?"
     l "I don't want to reveal where we are going."
     n "You let your eyelids fall shut."
-    n "With your hand in hers she leads you down the hill and takes you to the left. You feel a bush brush against your legs."
-    n "She brings you deeper and deeper into the forest. You take a few more turns along the way, one left and two right."
-    n "Suddenly she stops."
+    n "With your hand in [date_pos] [date_sub] [conj('date', 'leads', 'lead')] you down the hill and [conj('date', 'takes', 'take')] you to the left. You feel a bush brush against your legs."
+    n "[date_sub!c] [conj('date', 'brings', 'bring')] you deeper and deeper into the forest. You take a few more turns along the way, one left and two right."
+    n "Suddenly [date_sub] [conj('date', 'stops', 'stop')]."
     l "Alright, you can open your eyes now [persistent.name]!" 
     n "As you do you find yourself in front of a very high tree surrounded by a bunch of smaller trees."
     l "You are probably thinking why I am taking you here."
     l "Well, I hid something... precious here."
-    n "She looks at the big tree and the trees surrounding it, a smile growing on her face."
-    n "She moves to the back of the big tree, and comes back with a small wooden box, decorated with red details."
-    n "Then she takes off her necklace you somehow never noticed before, a key is dangling on it."
-    n "She uses the key to unlock the box and takes out a polaroid."
+    n "[date_sub!c] [conj('date', 'looks', 'look')] at the big tree and the trees surrounding it, a smile growing on [date_pos] face."
+    n "[date_sub] [conj('date', 'moves', 'move')] to the back of the big tree, and [conj('date', 'comes', 'come')] back with a small wooden box, decorated with red details."
+    n "Then [date_sub] takes off [date_pos] necklace you somehow never noticed before, a key is dangling on it."
+    n "[date_sub!c] uses the key to unlock the box and takes out a polaroid."
     n "The photo shows a man and a woman with a wide smile on both of their faces. They are standing behind three children, one boy and two daughters, you can quite easily tell the eldest daugther is [persistent.date]. The children are all building a sandcastle together."
     l "This is a photo of our family at a day on the beach, those were the happy days..."
     l "Even to this day I still have an afinity for the beach because it is linked to those happy days."
     l "But I know I will never truly get them back, not like it used to be anyway.."
-    l "I still have [persistent.date_sis] and my mother of course, both of them are just so important to me and together we are trying to slowly but surely make new happy days."
+    l "I still have [persistent.date_sis] and my [mom_par] of course, both of them are just so important to me and together we are trying to slowly but surely make new happy days."
     l "But anyway, what I'm trying to say is that you have something special, a way to prevent me from dying and a whole boat-load of determination."
     l "So don't feel guilty about your gift but use it to the fullest extent."
     $ persistent.useGiftToFullExtent_knowledge = True
@@ -1044,7 +1044,7 @@ label kokiri_showpicture:
             l "Give it your best shot"
             jump kokiri_death_3
         "This might sound weird, but when you say to the fullest extent, do you mean I can also contact your family to gain more potential leads?" if persistent.useGiftToFullExtentLimit_knowledge:
-            n "[persistent.date] grows quiet for a moment, she seems shocked by what you just asked."
+            n "[persistent.date] grows quiet for a moment, [date_sub] [conj('date', 'seems', 'seem')] shocked by what you just asked."
             l "Well... I'm not sure how you would even contact them unless I give you their number."
             if persistent.peeked_phone == True:
                 n "That's not a problem for you, you have their number, but it wasn't exactly {b}given{/b} to you, was it?"
@@ -1102,9 +1102,9 @@ label kokiri_showpicture:
 
 
 
-                n "Suddenly the earth begins to shake. The roots of the big tree [persistent.date] is standing next to begin unearthing. Before you can do anything the tree falls over right on top of her."
+                n "Suddenly the earth begins to shake. The roots of the big tree [persistent.date] is standing next to begin unearthing. Before you can do anything the tree falls over right on top of [date_obj]."
                 play music game_over
-                n "You push the tree off with all your might but it seems like it was to no avail, the force of the tree killed her instantly."
+                n "You push the tree off with all your might but it seems like it was to no avail, the force of the tree killed [date_obj] instantly."
                 n "Your screams pierce through the woods, it answers with pure silence, mourning the loss of [persistent.date] once more."
                 $ persistent.kokiri_death_3 = True
                 jump gameOver
@@ -1128,7 +1128,7 @@ label kokiri_showpicture:
             $ persistent.kokiri_death_4 = True
             if kokiri_death_4_playerResponse == True:
 
-                n "You want to answer her when suddenly the ground begins to shake once again, this time it even shakes more than when [persistent.date] showed you the picture."
+                n "You want to answer [date_obj] when suddenly the ground begins to shake once again, this time it even shakes more than when [persistent.date] showed you the picture."
 
             else:
 
@@ -1155,30 +1155,30 @@ label kokiri_showpicture:
                             l "You... what?"
                             l "So that means I'm still going to die?"
                 else:
-                    n "The fear in her voice is palpable."
+                    n "The fear in [date_pos] voice is palpable."
                 n "Suddenly you feel the hill shooting upwards."
                 n "The increased force of the gravity is pinning you against the hill but not for long, you begin to roll off the hill and fall down in the middle of a lake close to where it used to sit. "
                 p "[persistent.date], it's safe in here, jump down!"
                 l "I.... I can't... it's already too high..."
-                n "She's right, you can barely hear her words anymore from that height, jumping down in the water now would be a terrible idea."
+                n "[date_sub!c] [conj('date', 'is', 'are')] right, you can barely hear [date_pos] words anymore from that height, jumping down in the water now would be a terrible idea."
                 n "All you can do is float there, powerless, while you watch the hill and [persistent.date] getting swallowed by the ink-black sky."
                 n "As you do you notice that there are some sort of thrusters sticking out from the bottom of it."
                 if damoclesAsked == True:
-                    n "It seems unlike Damocles, her thread always snaps."
-                    n "Aren't you happy that you asked her Damocles now? Now you get this reference."
+                    n "It seems unlike Damocles, [date_pos] thread always snaps."
+                    n "Aren't you happy that you asked [date_obj] Damocles now? Now you get this reference."
                 elif death_narration != "":
                     n "[death_narration]"
                 jump gameOver
 
         label kokiri_death_4_hill_dieTogether:
             l "Is this it, [persistent.name]?"
-            n "You give a silent nod, as you do so you can feel her squeeze your hand even more as her's begins to tremble."
+            n "You give a silent nod, as you do so you can feel [date_obj] squeeze your hand even more as hers begins to tremble."
             n "Suddenly you feel the hill shooting upwards."
             n "The increased force of the gravity is pinning you against the hill but not for long, you begin start to slide off the hill."
-            n "You would probably have fallen if [persistent.date] wasn't holding your hand with all of her strength. She pulls you up slowly, while she does so she has to look down at the rapidly shrinking forest and you can see the fear in her eyes."
+            n "You would probably have fallen if [persistent.date] wasn't holding your hand with all of [date_pos] strength. [date_sub!c] [conj('date', 'pulls', 'pull')] you up slowly, while [date_sub] [conj('date', 'does', 'do')] so [date_sub] [conj('date', 'has', 'have')] to look down at the rapidly shrinking forest and you can see the fear in [date_pos] eyes."
             l "Hold on [persistent.name], I got you and I'm not letting you go."
             l "{size=*0.5}Phew, we 're really high... I'm getting dizzy but I must keep going... just a little bit longer...{/size}"
-            n "She has managed to pull you up but it costed a lot of her strength."
+            n "[date_sub!c] [conj('date', 'has', 'have')] managed to pull you up but it costed a lot of [date_pos] strength."
             n "The both of you flop down on the hill like a few moments ago, the only difference being that the hill is now soaring in the sky, oh and also that two of you are still holding hands."
             l "You know what's funny [persistent.name]?
             I felt more scared when I thought you were going to fall than I am now thinking about how I'm going to die.
@@ -1188,12 +1188,12 @@ label kokiri_showpicture:
                     jump kokiri_death_4_hill_imWithYou
         label kokiri_death_4_hill_imWithYou:
             l "{size=*0.5}Thank you.{/size}"
-            n "She said it quitely, but you feel the sincerity dripping off those two simple words."
+            n "[date_sub!c] said it quietly, but you feel the sincerity dripping off those two simple words."
             n "For a moment everything becomes quiet."
-            n "You grow aware of her hand, held in yours. It feels cold to the touch, and yet it emanates a gentle warmth somewhere deep inside you."
-            n "[persistent.date] shifts around slightly, it seems she wants to say something to break the quiet, but doesn't know what exactly."
+            n "You grow aware of [date_pos] hand, held in yours. It feels cold to the touch, and yet it emanates a gentle warmth somewhere deep inside you."
+            n "[date_sub!c] shifts around slightly, it seems [date_sub] [conj('date', 'wants', 'want')] to say something to break the quiet, but [date_sub] [conj('date', 'does', 'do')]n't know what exactly."
             l "You know, the stars are absolutely beautiful from here. I have a feeling we'll be able to see them even closer soon."
-            n "[persistent.date] shudders as she speaks those words but when you look at her she tries her best to give you a smile."
+            n "[persistent.date] shudders as [date_sub] [conj('date', 'speaks', 'speak')] those words but when you look at [date_obj] [date_sub] [conj('date', 'tries', 'try')] [date_pos] best to give you a smile."
             play music game_over
             
             n "[persistent.date] was right, the hill flew up into space itself, probably to some far-off stars, not that the two of you would know as after fifteen seconds everything went black.
@@ -1205,7 +1205,7 @@ label kokiri_showpicture:
             $ persistent.kokiri_death_4_noHill = True
             n "The earth begins shaking once again. The mechanical mound begins to ascend slowly, until it hovers above [persistent.date] and you."
             n "A green pillar of light shoots out from inbetween the four thrusters at the bottom of the ufo."
-            n "The beam envelops the both of you and before you can do anything [persistent.date] gets rapidly sucked into an opening of the hill that closes the moment she's inside. It begins ascending again, only this time much faster."
+            n "The beam envelops the both of you and before you can do anything [persistent.date] gets rapidly sucked into an opening of the hill that closes the moment [date_sub] [conj('date', 'is', 'are')] inside. It begins ascending again, only this time much faster."
             n "All you can do is stand there, powerless, while you watch the ufo and [persistent.date] getting swallowed by the ink-black sky."
             jump gameOver 
 
@@ -1254,38 +1254,38 @@ label other_deaths:
     label phone_untoldstory_planeDeath:
 
         
-        n "Just as she says that you hear a deafening noise come from your phone."
+        n "Just as [date_sub] [conj('date', 'says', 'say')] that you hear a deafening noise come from your phone."
         n "It sounds like a sharp whisteling"
         n "The sound grows louder and louder."
         n "It increases exponentially until it becomes almost earpiercing."
         n "And then you hear a gigantic impact of something and the sound of collapsing walls."
         if persistent.plane_knowledge == False:
-            n "Unsure of whatever you just heard you call an ambulance to her house in the hope that she is still somehow alive..."
+            n "Unsure of whatever you just heard you call an ambulance to [date_pos] house in the hope that [date_sub][conj('date', 'is', 'are')] still somehow alive..."
         else: 
-            n "You call an ambulance to go to her house in the hope that this time she might just survive... "
+            n "You call an ambulance to go to [date_pos] house in the hope that this time [date_sub] might just survive... "
 
         play music game_over
         
         n "When the ambulance arrived there isn't much they could do, apparently a plane crashed on [persistent.date]'s house."
 
-        n "[persistent.date] has been living alone for a year or two now and she had no real neighbours, not any that weren't a few kilometres away from her atleast. Which means only her house got ruined by the plane."
+        n "[persistent.date] has been living alone for a year or two now and [date_sub] had no real neighbours, not any that weren't a few kilometres away from [date_obj] atleast. Which means only [date_pos] house got ruined by the plane."
         n "Sadly the same can't be said for both [persistent.date] and most of the passengers of the plane..."
 
         n "There were luckily survivors of the plane crash, of the 139 people on board  86 people survived, most of them had minor injuries but where otherwise physically fine, if not mentally scarred."
         n "The event was all plastered over the news as soon as it happened, they followed it live as it unfolded."
-        n "[persistent.date] did not survive though, they had to remove the plane to even get to her body, the sight was horifying."
-        n "They never mentioned what she looked like but you could hear it in their reaction that the phone, which was still on, had picked up."
+        n "[persistent.date] did not survive though, they had to remove the plane to even get to [date_pos] body, the sight was horifying."
+        n "They never mentioned what [date_sub] looked like but you could hear it in their reaction that the phone, which was still on, had picked up."
         $ persistent.plane_knowledge = True
         jump gameOver
 
     label phone_planeDeath:
         $ persistent.plane_knowledge = True
-        n "As [persistent.date] hangs up her phone you turn on the tv in frustration."
+        n "As [persistent.date] hangs up [date_pos] phone you turn on the tv in frustration."
         n "The news is on apparently, it's talking about a plane that had lost height just a moment ago"
         play music game_over
         n "The plane crashed right in the living room of a nice looking house, the house doesn't look unfamilliar to you at all."
         n "Then it hits you."
-        n "It's her house."
+        n "It's [date_pos] house."
         jump gameOver
 
 
@@ -1307,7 +1307,7 @@ label gameOver:
     menu :
         "Retry." if not lilithAliveEnding:
             if  persistent.kokiri_angry_noretry == True or persistent.chinese_phone_noretry == True:
-                n "So you are going back even when she asked you not to?"
+                n "So you are going back even when [date_sub] [conj('date', 'asked', 'ask')] you not to?"
                 n "In that case I hope you at the very least don't make the same mistake you did last time."
             jump game_start
         "Retry?" if lilithAliveEnding:

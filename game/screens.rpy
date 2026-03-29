@@ -1,4 +1,161 @@
-﻿################################################################################
+﻿screen show_name_input_screen(npc_var, npc_default):
+    frame:
+        style_prefix "menu"
+        xalign 0.5
+        yalign 0.5
+        vbox:
+            spacing 10
+            text f"Enter Name:" size 28
+            input:
+                default getattr(persistent, npc_var, npc_default)
+                changed (lambda v, nv=npc_var: setattr(persistent, nv, v))
+            hbox:
+                spacing 10
+                textbutton "Save" action Hide('show_name_input_screen')
+                textbutton "Cancel" action Hide('show_name_input_screen')
+init python:
+    def reset_all_character_defaults():
+        for npc_var, name_d, nick_d in _NPC_DEFAULTS:
+            setattr(persistent, npc_var, name_d)
+            setattr(persistent, npc_var + "_nickname", nick_d)
+            setattr(persistent, npc_var + "_pronouns", dict(_PRONOUN_DEFAULTS.get(npc_var, {})))
+            setattr(persistent, npc_var + "_family_terms", dict(_FAMILY_DEFAULTS.get(npc_var, {})))
+        updatePronouns()
+        updateFamilyTerms()
+
+    # --- FAMILY TERM SYSTEM ---
+    _FAMILY_DEFAULTS = {
+        "date":       {"sibling (short)": "sis", "sibling": "sister", "child": "daughter"},
+        "date_sis":   {"sibling (short)": "sis", "sibling": "sister", "child": "daughter"},
+        "date_dad":   {"parent (short)": "dad", "parent": "father"},
+        "date_mom":   {"parent (short)": "mom", "parent": "mother"},
+        "date_ghost": {"sibling (short)": "bro", "sibling": "brother", "child": "son"},
+    }
+
+    def set_family_term(npc_var, term_key, value):
+        d = _get_family_dict(npc_var)
+        d[term_key] = value
+        setattr(persistent, npc_var + "_family_terms", d)
+
+    def _get_family_dict(npc_var):
+        stored = getattr(persistent, npc_var + "_family_terms", None)
+        defaults = dict(_FAMILY_DEFAULTS.get(npc_var, {}))
+        if isinstance(stored, dict):
+            merged = dict(defaults)
+            merged.update(stored)
+            return merged
+        setattr(persistent, npc_var + "_family_terms", defaults)
+        return defaults
+
+    def reset_to_default_family_terms():
+        for npc_var, name_d, nick_d in _NPC_DEFAULTS:
+            setattr(persistent, npc_var, name_d)
+            setattr(persistent, npc_var + "_nickname", nick_d)
+            setattr(persistent, npc_var + "_family_terms", dict(_FAMILY_DEFAULTS.get(npc_var, {})))
+            setattr(persistent, npc_var + "_pronouns", dict(_PRONOUN_DEFAULTS.get(npc_var, {})))
+        updateFamilyTerms()
+        updatePronouns()
+
+    def updateFamilyTerms():
+        _prefix_map = [
+            ("date",       "date"),
+            ("date_sis",   "sis"),
+            ("date_dad",   "dad"),
+            ("date_mom",   "mom"),
+            ("date_ghost", "ghost"),
+        ]
+        for npc_var, prefix in _prefix_map:
+            defaults = _FAMILY_DEFAULTS.get(npc_var, {})
+            f = _get_family_dict(npc_var)
+            for form in defaults.keys():
+                setattr(store, prefix + "_" + form, f.get(form, defaults.get(form, "")))
+            # Also update names and nicknames in store for UI
+            name = getattr(persistent, npc_var, "")
+            nickname = getattr(persistent, npc_var + "_nickname", "")
+            setattr(store, prefix + "_name", name)
+            setattr(store, prefix + "_nickname", nickname)
+        sync_family_term_shorthands()
+
+    def sync_family_term_shorthands():
+        # Safely assign all family term shorthands with fallback defaults
+        # Date
+        store.date_sibShort = persistent.date_family_terms.get("sibShort", "sis")
+        store.date_sib = persistent.date_family_terms.get("sib", "sister")
+        store.date_child = persistent.date_family_terms.get("child", "daughter")
+        # Sis
+        store.sis_sibShort = persistent.date_sis_family_terms.get("sibShort", "sis")
+        store.sis_sib = persistent.date_sis_family_terms.get("sib", "sister")
+        store.sis_child = persistent.date_sis_family_terms.get("child", "daughter")
+        # Dad
+        store.dad_parShort = persistent.date_dad_family_terms.get("parShort", "dad")
+        store.dad_par = persistent.date_dad_family_terms.get("par", "father")
+        # Mom
+        store.mom_parShort = persistent.date_mom_family_terms.get("parShort", "mom")
+        store.mom_par = persistent.date_mom_family_terms.get("par", "mother")
+        # Ghost
+        store.ghost_sibShort = persistent.date_ghost_family_terms.get("sibShort", "bro")
+        store.ghost_sib = persistent.date_ghost_family_terms.get("sib", "brother")
+        store.ghost_child = persistent.date_ghost_family_terms.get("child", "son")
+
+screen show_family_input_screen(npc_var, term_key, term_label, term_default):
+    frame:
+        style_prefix "menu"
+        xalign 0.5
+        yalign 0.5
+        vbox:
+            spacing 10
+            text f"Enter {term_label}:" size 28
+            input:
+                default _get_family_dict(npc_var).get(term_key, term_default)
+                changed (lambda v, nv=npc_var, tk=term_key: set_family_term(nv, tk, v))
+            hbox:
+                spacing 10
+                textbutton "Save" action [Function(updateFamilyTerms), Hide('show_family_input_screen')]
+                textbutton "Cancel" action Hide('show_family_input_screen')
+
+screen change_family_terms_menu():
+    tag menu
+    frame:
+        style_prefix "menu"
+        xalign 0.5
+        yalign 0.5
+        xsize 1150
+        ysize 720
+        vbox:
+            spacing 8
+            text "Change Family Terms" size 26 xalign 0.5
+            viewport:
+                scrollbars "vertical"
+                mousewheel True
+                draggable True
+                xsize 1110
+                ysize 620
+                vbox:
+                    spacing 10
+                    xsize 1090
+                    for npc_var, npc_default, _ in _NPC_DEFAULTS:
+                        $ _f = _get_family_dict(npc_var)
+                        $ _defs = _FAMILY_DEFAULTS.get(npc_var, {})
+                        frame:
+                            background "#CCCCCC"
+                            padding (12, 10)
+                            margin (4, 4)
+                            xfill True
+                            vbox:
+                                spacing 6
+                                text npc_default size 20
+                                for term_key, term_label in _defs.items():
+                                    hbox:
+                                        spacing 8
+                                        yalign 0.5
+                                        text f"{term_key}: {_f.get(term_key, term_label)}" yalign 0.5 size 18
+                                        textbutton "Edit" yalign 0.5 action Show("show_family_input_screen", npc_var=npc_var, term_key=term_key, term_label=term_key, term_default=term_label)
+            hbox:
+                spacing 16
+                xalign 0.5
+                textbutton "Reset to Defaults" action [Function(reset_all_character_defaults), Function(renpy.restart_interaction)] style "menu_button"
+                textbutton "Return" action Return() style "menu_button"
+################################################################################
 ## Initialization
 ################################################################################
 
@@ -104,16 +261,15 @@ screen say(who, what):
 
     window:
         id "window"
-
-        if who is not None:
-
-            window:
-                id "namebox"
-                style "namebox"
-                text who id "who"
-
         text what id "what"
 
+    ## Namebox — rendered outside the main textbox window so it can sit
+    ## as its own floating rectangle above it, connected by a slight overlap.
+    if who is not None:
+        window:
+            id "namebox"
+            style "namebox"
+            text who id "who"
 
     ## If there's a side image, display it above the text. Do not display on the
     ## phone variant - there's no room.
@@ -140,22 +296,28 @@ style window:
     yalign gui.textbox_yalign
     ysize gui.textbox_height
 
-    background Image("gui/textbox.png", xalign=0.5, yalign=1.0)
+    background At(Image("gui/textbox.png", xalign=0.5, yalign=1.0), Transform(alpha=gui.textbox_alpha))
 
 style namebox:
-    xpos gui.name_xpos
-    xanchor gui.name_xalign
-    xsize gui.namebox_width
-    ypos gui.name_ypos
-    ysize gui.namebox_height
+    ## Flush to the left edge of the screen.
+    xpos 0
+    xanchor 0.0
+    xminimum 180
+    ## yanchor 1.0 + yalign 1.0 + yoffset = -gui.textbox_height puts the
+    ## bottom of the namebox exactly at the top of the textbox — touching, not overlapping.
+    yanchor 1.0
+    yalign 1.0
+    yoffset -(gui.textbox_height)
 
-    background Frame("gui/namebox.png", gui.namebox_borders, tile=gui.namebox_tile, xalign=gui.name_xalign)
-    padding gui.namebox_borders.padding
+    background Frame(Solid(gui.accent_color), Borders(0, 0, 0, 0))
+    padding (20, 10, 20, 10)
 
 style say_label:
     properties gui.text_properties("name", accent=True)
-    xalign gui.name_xalign
+    xalign 0.5
+    text_align 0.5
     yalign 0.5
+    color "#ffffff"
 
 style say_dialogue:
     properties gui.text_properties("dialogue")
@@ -215,8 +377,19 @@ screen choice(items):
 
     default max_visible = 5
 
-    if len(items) > max_visible:
-        # Scrollable version inside a centered window
+    ## Tooltip captured reactively every interaction so the notecard updates live.
+    $ tt = GetTooltip()
+
+    ## Count only items with a live action — insensitive/disabled items
+    ## (passed when config.menu_include_disabled is True) are excluded so
+    ## a menu that looks like 2 choices isn't mis-classified as 3+.
+    $ _active = [i for i in items if i.action]
+
+    ## Scroll threshold: grid mode caps at 4 items (5+ scroll); default uses max_visible.
+    $ _scroll_at = 4 if persistent.grid_choices else max_visible
+
+    if len(_active) > _scroll_at:
+        # ── Scrollable version — UNTOUCHED ─────────────────────────────
         window:
             background None
             xalign 0.5
@@ -240,15 +413,69 @@ screen choice(items):
                     for i in items:
                         textbutton i.caption action [i.action, Function(narrator.add_history, kind="adv", who=("{color=#7BCF7D}%s" % persistent.name), what=__(i.caption))]
 
-
-    else:
-        # Normal centered choices without any frame or viewport
+    elif len(_active) == 2 or not persistent.grid_choices:
+        # ── Default stacked layout (2 choices, or compact grid turned off) ─
         vbox:
-            spacing 10
-            xalign 0.5
-            yalign 0.5
+            style "grid_choice_vbox"
             for i in items:
                 textbutton i.caption action [i.action, Function(narrator.add_history, kind="adv", who=("{color=#7BCF7D}%s" % persistent.name), what=__(i.caption))]
+
+    else:
+        ## ── Compact grid layout (3–4 items, grid mode on) ──────────────
+        vbox:
+            style "grid_choice_vbox"
+            if len(_active) == 3:
+                # Row 1: first 2 side by side
+                hbox:
+                    spacing 30
+                    xalign 0.5
+                    for i in _active[:2]:
+                        $ _short = truncate_choice(i.caption)
+                        textbutton _short:
+                            style "grid_choice_button"
+                            tooltip (i.caption if _short != i.caption else "")
+                            action [i.action, Function(narrator.add_history, kind="adv", who=("{color=#7BCF7D}%s" % persistent.name), what=__(i.caption))]
+                # Row 2: last choice centered
+                hbox:
+                    spacing 30
+                    xalign 0.5
+                    for i in _active[2:]:
+                        $ _short = truncate_choice(i.caption)
+                        textbutton _short:
+                            style "grid_choice_button"
+                            tooltip (i.caption if _short != i.caption else "")
+                            action [i.action, Function(narrator.add_history, kind="adv", who=("{color=#7BCF7D}%s" % persistent.name), what=__(i.caption))]
+
+            else:
+                # 4 items: 2×2 grid
+                hbox:
+                    spacing 30
+                    xalign 0.5
+                    for i in _active[:2]:
+                        $ _short = truncate_choice(i.caption)
+                        textbutton _short:
+                            style "grid_choice_button"
+                            tooltip (i.caption if _short != i.caption else "")
+                            action [i.action, Function(narrator.add_history, kind="adv", who=("{color=#7BCF7D}%s" % persistent.name), what=__(i.caption))]
+                hbox:
+                    spacing 30
+                    xalign 0.5
+                    for i in _active[2:]:
+                        $ _short = truncate_choice(i.caption)
+                        textbutton _short:
+                            style "grid_choice_button"
+                            tooltip (i.caption if _short != i.caption else "")
+                            action [i.action, Function(narrator.add_history, kind="adv", who=("{color=#7BCF7D}%s" % persistent.name), what=__(i.caption))]
+
+    ## ── Tooltip notecard — yellow card with full text on hover ─────────────
+    if tt and persistent.grid_choices and 2 < len(_active) <= 4:
+        frame:
+            style "notecard_frame"
+            xalign 0.5
+            yalign 0.90 # Slightly lower to ensure 30px gap
+            xmaximum 820
+            text tt:
+                style "notecard_text"
 
 
 
@@ -258,9 +485,8 @@ style choice_button_text is button_text
 
 style choice_vbox:
     xalign 0.5
-    ypos 405
-    yanchor 0.5
-
+    ypos 650 # Lowered even further for more space above notecard
+    yanchor 0.0 # Anchor to the top
     spacing gui.choice_spacing
 
 style choice_button is default:
@@ -268,6 +494,26 @@ style choice_button is default:
 
 style choice_button_text is default:
     properties gui.button_text_properties("choice_button")
+
+## Grid choice button — narrower for side-by-side layout
+style grid_choice_button is choice_button:
+    xsize 560
+    yminimum 90
+
+style grid_choice_button_text is choice_button_text:
+    text_align 0.5
+    xalign 0.5
+
+## Tooltip notecard — yellow card showing full choice text on hover
+style notecard_frame is frame:
+    background Frame(Solid("#f5e179"), Borders(12, 10, 12, 10))
+    padding (20, 14, 20, 14)
+    xalign 0.5
+
+style notecard_text:
+    color "#1a1000"
+    text_align 0.5
+    size gui.text_size
 
 
 ## Quick Menu screen ###########################################################
@@ -809,6 +1055,10 @@ style slot_button_text:
 screen preferences():
 
     tag menu
+    ## Apply the saved text size once when leaving preferences so gui.rebuild()
+    ## only fires once, keeping the slider drag smooth while open.
+    on "hide" action Function(apply_text_size_current)
+    on "replaced" action Function(apply_text_size_current)
     use game_menu(_("Preferences"), scroll="viewport"):
 
         vbox:
@@ -831,6 +1081,11 @@ screen preferences():
                     textbutton _("After Choices") action Preference("after choices", "toggle")
                     textbutton _("Transitions") action InvertSelected(Preference("transitions", "toggle"))
 
+                vbox:
+                    style_prefix "check"
+                    label _("Choices")
+                    textbutton _("Compact Grid") action ToggleField(persistent, "grid_choices")
+
                 ## Additional vboxes of type "radio_pref" or "check_pref" can be
                 ## added here, to add additional creator-defined preferences.
 
@@ -845,6 +1100,12 @@ screen preferences():
                     label _("Text Speed")
 
                     bar value Preference("text speed")
+
+                    ## Show the exact characters-per-second rate next to the bar.
+                    if preferences.text_cps == 0:
+                        text _("Instant") size (gui.label_text_size - 8) color gui.idle_color
+                    else:
+                        text "[int(preferences.text_cps)] chars/sec" size (gui.label_text_size - 8) color gui.idle_color
 
                     label _("Auto-Forward Time")
 
@@ -887,7 +1148,8 @@ screen preferences():
 
             ## Add the new button here
             null height gui.pref_spacing
-            textbutton _("Change NPC Names") action Show("change_names_menu")
+            textbutton _("Text Appearance...") action ShowMenu("text_settings")
+            textbutton _("Change Character Info") action Show("change_names_menu")
             textbutton _("Change Your Name") action [SetVariable("from_menu", True), Start("nameSelect")]
             
 
@@ -961,6 +1223,148 @@ style slider_button_text:
 
 style slider_vbox:
     xsize 675
+
+
+## Text Appearance screen ######################################################
+##
+## A dedicated sub-menu for all text customisation: font, outline, text size,
+## letter spacing, textbox opacity, and a live preview.
+
+screen text_settings():
+
+    tag menu
+
+    ## Screen-local state for which dropdown is open.
+    default font_open        = False
+    default outline_open     = False
+    default customfont_open  = False
+
+    ## Rebuild styles once when the player navigates away so gui.rebuild()
+    ## never fires mid-drag (which would kill the drag gesture).
+    on "hide"     action Function(apply_text_size_current)
+    on "replaced" action Function(apply_text_size_current)
+
+    use game_menu(_("Text Appearance"), scroll="viewport"):
+
+        vbox:
+
+            ## ── Dropdowns row ────────────────────────────────────────────────
+            hbox:
+                box_wrap True
+                spacing 40
+                xoffset 60
+
+                ## Font dropdown
+                vbox:
+                    spacing 4
+
+                    label _("Font"):
+                        style "pref_label"
+
+                    ## Header button showing the active font name + arrow.
+                    textbutton ("[current_font().replace('-Regular','').replace('-',' ').replace('.ttf','').replace('.otf','')]  [u'▲' if font_open else u'▼']"):
+                        action ToggleLocalVariable("font_open")
+                        style "pref_label_text"
+                        ypadding 6
+
+                    ## Options — only shown when open.
+                    if font_open:
+                        frame:
+                            padding (8, 6, 8, 6)
+                            vbox:
+                                style_prefix "radio"
+                                textbutton _("Default (DejaVu)"):
+                                    action [SetFont("DejaVuSans.ttf"), SetLocalVariable("font_open", False)]
+                                    text_font "DejaVuSans.ttf"
+                                textbutton _("Pacifico"):
+                                    action [SetFont("Pacifico-Regular.ttf"), SetLocalVariable("font_open", False)]
+                                    text_font "Pacifico-Regular.ttf"
+                                textbutton _("Indie Flower"):
+                                    action [SetFont("IndieFlower-Regular.ttf"), SetLocalVariable("font_open", False)]
+                                    text_font "IndieFlower-Regular.ttf"
+                                textbutton _("Shadows Into Light"):
+                                    action [SetFont("ShadowsIntoLight-Regular.ttf"), SetLocalVariable("font_open", False)]
+                                    text_font "ShadowsIntoLight-Regular.ttf"
+
+                ## Custom Font dropdown — only shown when custom fonts are present.
+                if CUSTOM_FONTS:
+                    vbox:
+                        spacing 4
+
+                        label _("Custom Font"):
+                            style "pref_label"
+
+                        textbutton ("[current_font().replace('-Regular','').replace('-',' ').replace('.ttf','').replace('.otf','').split('/')[-1] if current_font().startswith('custom_fonts/') else 'None selected']  [u'▲' if customfont_open else u'▼']"):
+                            action ToggleLocalVariable("customfont_open")
+                            style "pref_label_text"
+                            ypadding 6
+
+                        if customfont_open:
+                            frame:
+                                padding (8, 6, 8, 6)
+                                vbox:
+                                    style_prefix "radio"
+                                    for _cname, _cfile in CUSTOM_FONTS:
+                                        textbutton _(_cname):
+                                            action [SetFont(_cfile), SetLocalVariable("customfont_open", False)]
+                                            text_font _cfile
+
+                ## Text Outline dropdown
+                vbox:
+                    spacing 4
+
+                    label _("Text Outline"):
+                        style "pref_label"
+
+                    textbutton ("[persistent.text_outline.capitalize()]  [u'▲' if outline_open else u'▼']"):
+                        action ToggleLocalVariable("outline_open")
+                        style "pref_label_text"
+                        ypadding 6
+
+                    if outline_open:
+                        frame:
+                            padding (8, 6, 8, 6)
+                            vbox:
+                                style_prefix "radio"
+                                textbutton _("None"):
+                                    action [SetTextOutline("none"),    SetLocalVariable("outline_open", False)]
+                                textbutton _("Outline"):
+                                    action [SetTextOutline("outline"), SetLocalVariable("outline_open", False)]
+                                textbutton _("Shadow"):
+                                    action [SetTextOutline("shadow"),  SetLocalVariable("outline_open", False)]
+
+            null height (4 * gui.pref_spacing)
+
+            ## ── Sliders + live preview side by side ──────────────────────────
+            hbox:
+                style_prefix "slider"
+                spacing 40
+
+                vbox:
+
+                    label _("Text Size")
+                    bar value TextSizeValue()
+
+                    label _("Letter Spacing")
+                    bar value LetterSpacingValue()
+
+                    label _("Textbox Opacity")
+                    bar value TextboxOpacityValue()
+
+                vbox:
+                    label _("Preview")
+                    frame:
+                        xsize 580
+                        xanchor 0.0
+                        padding (20, 16, 20, 16)
+                        background At(Frame("gui/frame.png", gui.frame_borders, tile=gui.frame_tile), Transform(alpha=(persistent.textbox_opacity * 0.01 if persistent.textbox_opacity is not None else 1.0)))
+                        text _("The quick brown fox jumps over the lazy dog.\nPack my box with five dozen liquor jugs."):
+                            font current_font()
+                            size (33 + (persistent.text_size_offset if persistent.text_size_offset else 0))
+                            kerning (persistent.letter_spacing if persistent.letter_spacing else 0)
+                            outlines ([(2, "#000000c0", 0, 0)] if persistent.text_outline == "outline" else ([(2, "#00000080", 2, 2)] if persistent.text_outline == "shadow" else []))
+                            color gui.text_color
+                            line_spacing 6
 
 
 ## History screen ##############################################################
@@ -1251,6 +1655,7 @@ screen start_over_confirm():
     zorder 200
     style_prefix "confirm"
 
+    add "#000000"
     add "gui/overlay/confirm.png"
 
     frame:
@@ -1748,46 +2153,101 @@ style slider_slider:
 
 
 init python:
+
+    _PRONOUN_DEFAULTS = {
+        "date":       {"sub": "she",  "obj": "her",  "pos": "her",   "ref": "herself",   "pred": "hers", "vs": "s"},
+        "date_sis":   {"sub": "she",  "obj": "her",  "pos": "her",   "ref": "herself",   "pred": "hers", "vs": "s"},
+        "date_dad":   {"sub": "he",   "obj": "him",  "pos": "his",   "ref": "himself",   "pred": "his",  "vs": "s"},
+        "date_mom":   {"sub": "she",  "obj": "her",  "pos": "her",   "ref": "herself",   "pred": "hers", "vs": "s"},
+        "date_ghost": {"sub": "he",   "obj": "him",  "pos": "his",   "ref": "himself",   "pred": "his",  "vs": "s"},
+    }
+
+    _NPC_DEFAULTS = [
+        ("date",       "Lilith",  "Lilly"),
+        ("date_sis",   "Abigail", "Abby"),
+        ("date_dad",   "David",   "Dave"),
+        ("date_mom",   "Lila",    "Mom"),
+        ("date_ghost", "James",   "Jay"),
+    ]
+
+    def set_pronoun_form(npc_var, form_key, value):
+        """Write a single pronoun form into the character's pronoun dict."""
+        d = _get_pronoun_dict(npc_var)
+        d[form_key] = value
+        setattr(persistent, npc_var + "_pronouns", d)
+
+    def _get_pronoun_dict(npc_var):
+        """Safely retrieve the pronoun dict for a character, handling legacy string values.
+        If the stored value is not a dict (None or old string from pre-dict saves),
+        the default is written back to persistent so future swaps work correctly.
+        If it is a dict but is missing keys (e.g. verb keys added in a later update),
+        the missing keys are filled in from defaults so previews always show correctly."""
+        stored = getattr(persistent, npc_var + "_pronouns", None)
+        defaults = dict(_PRONOUN_DEFAULTS.get(npc_var, {}))
+        if isinstance(stored, dict):
+            # Merge: defaults first, then stored on top so custom values win.
+            # Any keys that exist in defaults but not in stored (e.g. new verb keys)
+            # are filled in automatically.
+            merged = dict(defaults)
+            merged.update(stored)
+            return merged
+        setattr(persistent, npc_var + "_pronouns", defaults)
+        return defaults
+
     def reset_to_default_names():
-        # Define the default values for the variables
-        default_values = [
-            ("date", "Lilith", "Lilly"),
-            ("date_sis", "Abigail", "Abby"),
-            ("date_dad", "David", "Dave"),
-            ("date_mom", "Lila", "Mom"),
-            ("date_ghost", "James", "Jay"),
+        for npc_var, name_d, nick_d in _NPC_DEFAULTS:
+            if not getattr(persistent, npc_var, "") or str(getattr(persistent, npc_var, "")).strip() == "":
+                setattr(persistent, npc_var, name_d)
+            if not getattr(persistent, npc_var + "_nickname", "") or str(getattr(persistent, npc_var + "_nickname", "")).strip() == "":
+                setattr(persistent, npc_var + "_nickname", nick_d)
+            setattr(persistent, npc_var + "_pronouns", dict(_PRONOUN_DEFAULTS[npc_var]))
+
+    def conj(npc_prefix, singular, plural):
+        """Return singular or plural verb form based on the character's grammatical number.
+        Uses the stored 'vs' key: 's' = singular (she/he), '' = plural (they).
+        Example: conj('date', 'tries', 'try')  →  'tries' or 'try'
+        conj('date', 'is',    'are')  →  'is'    or 'are'"""
+        vs = getattr(store, npc_prefix + "_vs", "s")
+        return singular if vs == "s" else plural
+
+    def updatePronouns():
+        """Copy persistent pronoun dicts into shorthand store variables for use in dialogue."""
+        # Ensure every pronoun dict is a valid dict before reading
+        # (handles saves from before the pronoun system was added, and post-swap None values)
+        for npc_var, defaults in _PRONOUN_DEFAULTS.items():
+            stored = getattr(persistent, npc_var + "_pronouns", None)
+            if not isinstance(stored, dict):
+                setattr(persistent, npc_var + "_pronouns", dict(defaults))
+
+        _prefix_map = [
+            ("date",       "date"),
+            ("date_sis",   "sis"),
+            ("date_dad",   "dad"),
+            ("date_mom",   "mom"),
+            ("date_ghost", "ghost"),
         ]
-        # Reset each variable to its default value
-        for npc_var, npc_default, nickname_default in default_values:
-            value = getattr(persistent, npc_var, None)
-            if not value or str(value).strip() == "":
-                setattr(persistent, npc_var, npc_default)
-
-            nickname_attr = f"{npc_var}_nickname"
-            nickname_value = getattr(persistent, nickname_attr, None)
-            if not nickname_value or str(nickname_value).strip() == "":
-                setattr(persistent, nickname_attr, nickname_default)
+        for npc_var, prefix in _prefix_map:
+            defaults = _PRONOUN_DEFAULTS.get(npc_var, {})
+            p = _get_pronoun_dict(npc_var)
+            for form in ("sub", "obj", "pos", "ref", "pred", "is", "was", "has", "does", "vs"):
+                setattr(store, prefix + "_" + form, p.get(form, defaults.get(form, "")))
 
 
-screen show_name_input_screen(npc_var, npc_default):
+screen show_pronoun_input_screen(npc_var, form_key, pronoun_label, pronoun_default):
     frame:
         style_prefix "menu"
         xalign 0.5
         yalign 0.5
-
         vbox:
             spacing 10
-            text "Enter the new name:" size 30
-
-            # Input field for name
+            text f"Enter {pronoun_label}:" size 28
             input:
-                default getattr(persistent, npc_var, npc_default)
-                changed (lambda value, npc_var=npc_var: setattr(persistent, npc_var, value))
-
+                default _get_pronoun_dict(npc_var).get(form_key, pronoun_default)
+                changed (lambda v, nv=npc_var, fk=form_key: set_pronoun_form(nv, fk, v))
             hbox:
                 spacing 10
-                textbutton "Save" action Return(True)
-                textbutton "Cancel" action Return(False)
+                textbutton "Save" action [Function(updatePronouns), Hide('show_pronoun_input_screen')]
+                textbutton "Cancel" action Hide('show_pronoun_input_screen')
 
 screen show_nickname_input_screen(nickname_var, nickname_default):
     frame:
@@ -1806,54 +2266,196 @@ screen show_nickname_input_screen(nickname_var, nickname_default):
 
             hbox:
                 spacing 10
-                textbutton "Save" action Return(True)
-                textbutton "Cancel" action Return(False)
+                textbutton "Save" action Hide('show_nickname_input_screen')
+                textbutton "Cancel" action Hide('show_nickname_input_screen')
 
 screen change_names_menu():
-   
+
     tag menu
 
     frame:
         style_prefix "menu"
         xalign 0.5
         yalign 0.5
+        xsize 1150
+        ysize 720
+
+        vbox:
+            spacing 8
+
+            text "Change Character info" size 26 xalign 0.5
+
+            viewport:
+                scrollbars "vertical"
+                mousewheel True
+                draggable True
+                xsize 1110
+                ysize 620
+
+                vbox:
+                    spacing 10
+                    xsize 1090
+
+
+                    for npc_var, npc_default, nickname_default in _NPC_DEFAULTS:
+                        $ _p = _get_pronoun_dict(npc_var)
+                        $ _f = _get_family_dict(npc_var)
+                        $ _family_defs = _FAMILY_DEFAULTS.get(npc_var, {})
+
+                        frame:
+                            background "#CCCCCC"
+                            padding (12, 10)
+                            margin (4, 4)
+                            xfill True
+
+                            vbox:
+                                spacing 6
+
+                                # Label for the character section
+                                $ _role_labels = {
+                                    'date': 'Date',
+                                    'date_sis': 'Younger Sibling',
+                                    'date_dad': 'Lost Parent',
+                                    'date_mom': 'Parent',
+                                    'date_ghost': 'Lost Sibling',
+                                }
+                                text _role_labels.get(npc_var, npc_var) size 20
+
+                                ## Name + Nickname on one row
+                                hbox:
+                                    spacing 30
+                                    xfill True
+
+                                    hbox:
+                                        spacing 8
+                                        yalign 0.5
+                                        text f"Name: {getattr(persistent, npc_var, npc_default)}" yalign 0.5 size 18
+                                        textbutton "Edit" yalign 0.5 action Show("show_name_input_screen", npc_var=npc_var, npc_default=npc_default)
+
+                                    hbox:
+                                        spacing 8
+                                        yalign 0.5
+                                        text f"Nickname: {getattr(persistent, npc_var + '_nickname', nickname_default)}" yalign 0.5 size 18
+                                        textbutton "Edit" yalign 0.5 action Show("show_nickname_input_screen", nickname_var=npc_var + "_nickname", nickname_default=nickname_default)
+
+                                ## Pronoun preview + button
+                                hbox:
+                                    spacing 16
+                                    yalign 0.5
+                                    text f"Pronouns: {_p.get('sub','')} / {_p.get('obj','')} / {_p.get('pos','')} / {_p.get('ref','')} / {_p.get('pred','')}" yalign 0.5 size 17
+                                    textbutton "Change Pronouns" yalign 0.5 action Show("change_pronouns_screen", npc_var=npc_var, npc_label=npc_default)
+
+                                ## Verb singular/plural toggle
+                                hbox:
+                                    spacing 16
+                                    yalign 0.5
+                                    $ _vs_label = "Singular (she/he)" if _p.get('vs', 's') == 's' else "Plural (they/them)"
+                                    text f"Verbs: {_vs_label}" yalign 0.5 size 17
+                                    textbutton "Change Verbs" yalign 0.5 action Show("change_verbs_screen", npc_var=npc_var, npc_label=npc_default)
+
+                                ## Family terms preview + edit buttons
+                                if _family_defs:
+                                    frame:
+                                        background "#EEEEEE"
+                                        padding (8, 6)
+                                        margin (4, 2)
+                                        vbox:
+                                            spacing 4
+                                            text "Family Terms:" size 16 color "#444"
+                                            for term_key, term_label in _family_defs.items():
+                                                hbox:
+                                                    spacing 8
+                                                    yalign 0.5
+                                                    text f"{term_key}: {_f.get(term_key, term_label)}" yalign 0.5 size 15
+                                                    textbutton "Edit" yalign 0.5 action Show("show_family_input_screen", npc_var=npc_var, term_key=term_key, term_label=term_key, term_default=term_label)
+
+            hbox:
+                spacing 16
+                xalign 0.5
+                textbutton "Reset to Defaults" action [Function(reset_all_character_defaults), Function(renpy.restart_interaction)] style "menu_button"
+                textbutton "Return" action Return() style "menu_button"
+
+
+screen change_verbs_screen(npc_var, npc_label):
+
+    tag menu
+
+    frame:
+        style_prefix "menu"
+        xalign 0.5
+        yalign 0.5
+        xsize 500
+        ysize 280
 
         vbox:
             spacing 20
-            text "Change NPC Names" size 30
 
-            # Add grouped frames for each NPC
-            for npc_var, npc_default, nickname_default in [
-                ("date", "Lilith", "Lilly"),
-                ("date_sis", "Abigail", "Abby"),
-                ("date_dad", "David", "Dave"),
-                ("date_mom", "Lila", "Mom"),
-                ("date_ghost", "James", "Jay"),
+            text f"Verbs — {npc_label}" size 26 xalign 0.5
+
+            text "Choose verb form:" size 20 xalign 0.5
+
+            hbox:
+                spacing 20
+                xalign 0.5
+
+                textbutton "Singular (she/he)" action [
+                    Function(set_pronoun_form, npc_var, "vs",   "s"),
+                    Function(updatePronouns),
+                    Return(),
+                ]
+
+                textbutton "Plural (they/them)" action [
+                    Function(set_pronoun_form, npc_var, "vs",   ""),
+                    Function(updatePronouns),
+                    Return(),
+                ]
+
+            textbutton "Return" action Return() style "menu_button" xalign 0.5
+
+
+screen change_pronouns_screen(npc_var, npc_label):
+
+    tag menu
+
+    frame:
+        style_prefix "menu"
+        xalign 0.5
+        yalign 0.5
+        xsize 700
+        ysize 500
+
+        vbox:
+            spacing 14
+
+            text f"Pronouns — {npc_label}" size 26 xalign 0.5
+
+            for form_key, form_label, form_hint in [
+                ("sub",  "Subject",   "e.g. she / he / they"),
+                ("obj",  "Object",    "e.g. her / him / them"),
+                ("pos",  "Possessive","e.g. her / his / their"),
+                ("ref",  "Reflexive", "e.g. herself / himself / themselves"),
+                ("pred", "Predicative","e.g. hers / his / theirs"),
             ]:
+                $ _p = _get_pronoun_dict(npc_var)
 
                 frame:
-                    background "#CCCCCC"  # Light grey background
-                    padding (10, 10)
-                    margin (5, 5)
+                    background "#CCCCCC"
+                    padding (10, 8)
+                    xfill True
 
-                    vbox:
-                        spacing 10
+                    hbox:
+                        spacing 16
+                        xfill True
+                        yalign 0.5
 
-                        # Name display and button
-                        hbox:
-                            spacing 10
-                            text f"Name: {getattr(persistent, npc_var, npc_default)}"
-                            textbutton "Change Name" action Show("show_name_input_screen", npc_var=npc_var, npc_default=npc_default)
+                        vbox:
+                            yalign 0.5
+                            text form_label size 18
+                            text form_hint size 14 color "#666666"
 
-                        # Nickname display and button
-                        hbox:
-                            spacing 10
-                            text f"Nickname: {getattr(persistent, f'{npc_var}_nickname', nickname_default)}"
-                            textbutton "Change Nickname" action Show("show_nickname_input_screen", nickname_var=f"{npc_var}_nickname", nickname_default=nickname_default)
+                        text f"{_p.get(form_key, '')}" size 20 yalign 0.5 xalign 0.5
 
-            # Add a button to reset all names and nicknames to their defaults
-            textbutton "Reset to Default Names" action Function(reset_to_default_names) style "menu_button"
+                        textbutton "Edit" yalign 0.5 xalign 1.0 action Show("show_pronoun_input_screen", npc_var=npc_var, form_key=form_key, pronoun_label=form_label, pronoun_default=_p.get(form_key, ""))
 
-            # Add a return button to go back
-            textbutton "Return" action Return() style "menu_button"
+            textbutton "Return" action Return() style "menu_button" xalign 0.5
 

@@ -32,6 +32,7 @@ label kokiri_hillSit:
     n "Quite a lot of trees portrude out from the hill, they have grown into strange shapes in an attempt to get as much light as they could find."
     n "You start slowly climbing the hill, carefully watching your step as it seems to be quite steep."
     n "Before too long you have reached the top."
+    show forestHill
     n "From where you now are standing you can see most of the village where all your past dates took place."
     if not persistent.kokiri_death_1:
         n "You hope that things will be better now, you feel strangely optimistic that they will indeed be."
@@ -41,7 +42,7 @@ label kokiri_hillSit:
         n "Instead you wait for [persistent.date] who will come now at any moment."
         n "In the meantime you find yourself just hoping that things will turn out differently here. Even if deep down you know that chance is slim based on what already happened."
     l "Oh hey, I see you already found this place, it has a really great view, right? Nice work scaling this hill [persistent.name], it's almost like a mountain!"
-    n "[persistent.date] gives you a playful pat on the back as she places her picknick blanket down on the ground with a small chuckle."
+    n "[persistent.date] gives you a playful pat on the back as [date_sub] [conj('date', 'places', 'place')] [date_pos] picknick blanket down on the ground with a small chuckle."
     n "The both of you start placing down all the food on the blanket, when you're both finished you sit down on it."
     l "You know, this is really a lovely place to meet up with you."
     l "But how did you know about this place? Especially that name you used..."
@@ -53,13 +54,13 @@ label kokiri_hillSit:
 label kokiri_altSit:
     $ kokiri_alternateplace = True
     n "Just as you stand there looking around for a decent alternate spot to sit at you notice [persistent.date]."
-    n "Since she practically grew up in these woods you decide it might be a good idea to ask her for a decent spot to have your picknick with her."
-    n "She first suggests the hill but you shake your head and tell her that she will soon understand why that might not be the best idea."
+    n "Since [date_sub] practically grew up in these woods you decide it might be a good idea to ask [date_obj] for a decent spot to have your picknick with [date_obj]."
+    n "[date_sub!c] first [conj('date', 'suggests', 'suggest')] the hill but you shake your head and tell [date_obj] that [date_sub] will soon understand why that might not be the best idea."
     l "Well, that one spot over there is also a good spot to sit, we just won't have a view overlooking the town as the hill kind of blocks it."
     l "But that doesn't mean we can't have a good time, right?"
-    n "She chuckles but it carries a slight nervosity underneath, which is very understandable giving the current situation."
-    n "[persistent.date] and you walk over to the spot she pointed at and place the picknick-blanket on the ground. The two of you begin placing the food down on it."
-    n "Then she begins to speak."
+    n "[date_sub!c] [conj('date', 'chuckles', 'chuckle')] but it carries a slight nervosity underneath, which is very understandable giving the current situation."
+    n "[persistent.date] and you walk over to the spot [date_sub] pointed at and place the picknick-blanket on the ground. The two of you begin placing the food down on it."
+    n "Then [date_sub!c] [conj('date', 'begins', 'begin')] to speak."
     l "You know, I'm really glad to be back here.."
     l "But how did you know about this place? I always gave it that name when I was a kid but I never told anyone."
     l "What's all of this about?"
@@ -89,7 +90,7 @@ label kokiri_explanation_groundhog:
     jump kokiri_explanation
 label kokiri_explanation_psychic:
     $ kokiri_psychic_lie = True
-    n "[persistent.date] watches you with a sceptic look in her eyes."
+    n "[persistent.date] watches you with a sceptic look in [date_pos] eyes."
     l "I guess it could be an explanation, even if it is really convoluted. And yet, that's not really what is happening, is it?"
     if kokiri_groundhog_lie == False:
         l "So what is this all really about?"
@@ -97,7 +98,7 @@ label kokiri_explanation_psychic:
         l "So I'll ask you again [persistent.name]. What is this all really about?"
     jump kokiri_explanation
 label kokiri_explanation_game:
-    n "[persistent.date] shifts her position for a moment."
+    n "[persistent.date] shifts [date_pos] position for a moment."
     l "A game...? And I am part of it? This is all part of it?"
     l "That is so absurd."
     if kokiri_psychic_lie or kokiri_groundhog_lie:
@@ -105,7 +106,7 @@ label kokiri_explanation_game:
     else:
         l "But then again, it is so absurd that there is no way you would lie about this, right? I feel like there are way more plausible explanations you could've used if you wanted me to buy into this."
     
-    n "For a moment she turns quiet, closes her eyes and seems to be lost deep in thought."
+    n "For a moment [date_sub] [conj('date', 'turns', 'turn')] quiet, closes [date_pos] eyes and [conj('date', 'seems', 'seem')] to be lost deep in thought."
     if love_meter > 2:
         l "Alright [persistent.name], I believe you."
         n "[persistent.date] flashes you a trusting smile."
@@ -123,7 +124,7 @@ label kokiri_explanation_game:
     
     menu:
         "I am, however I can't say whatever I want, I can only speak with you through these clickable links that have a preview of what I'm going to say. So in a sense I guess I'm not really playing this game, not the me you know anyway.":
-            n "[persistent.date] scratches her head as if she is trying to comprehend what you are saying."
+            n "[persistent.date] scratches [date_pos] head as if [date_sub] [conj('date', 'is', 'are')] trying to comprehend what you are saying."
             l "So, what you are saying is that the you I'm seeing in front of me isn't the real you but some sort of \"filtered\" version because of restrictions in what you can tell me?"
             l "So, for example, is [persistent.name] even your real name?"
             menu:
@@ -154,7 +155,7 @@ label kokiri_explanation_game:
                     l "Because to even reach this place you'd have to try to save me quite a few times, wouldn't you?"
                     l "And even then, it is very much possible that it is not your first time meeting me here aswell."
                     l "So thank you for not giving up on me [persistent.name]. That means more to me than I could possibly express."
-                    n "She gives you an appreciative look, then things quiet down for a moment."
+                    n "[date_sub!c] [conj('date', 'gives', 'give')] you an appreciative look, then things quiet down for a moment."
                     l "So, what would you like to talk about now? I'm sure this whole situation has left you with quite a few questions and topics, hasn't it?"
                     jump kokiri_talkAboutSomethingElse
                        
@@ -199,7 +200,7 @@ label kokiri_explanation_game:
                                 l "I know the progress happens, but I'll never be able to witness it myself."
                                 l "In a way it is almost like having to assemble one wheel, and passing it along, to in the end have made a car."
                                 l "But did you make the car? Or did you just assemble one specific wheel your entire life long?"
-                                n "She grows quiet for a moment, lost in thought."
+                                n "[date_sub!c] [conj('date', 'grows', 'grow')] quiet for a moment, lost in thought."
                                 l "Sometimes that's what we are, an important stepping stone for people but not their final destination."
                                 l "It's like that for many parts of our lives."
                                 l "So many things are fleeting, or atleast not forever."
@@ -309,7 +310,7 @@ label kokiri_explanation_game:
                                                     l "Or just stop trying at all. I would understand, alright?"
                                                     menu:
                                                         "I'll keep it in mind, thank you [persistent.date].":
-                                                            n "She flashes you a small smile."
+                                                            n "[date_sub!c] [conj('date', 'flashes', 'flash')] you a small smile."
                                                             l "Good, that's all I ask of you [persistent.name], and you are welcome."
                                                             l "It's important to sometimes also think about yourself, especially if you want to help others."
                                                             l "Because if you think about it, you can't help others if you yourself are fully burnt out, can you?"
@@ -369,6 +370,7 @@ label kokiri_explanation_game:
                                             $ kokiri_conversation_silent()
 
                 "Can we actually talk about something else?":
+                    $ kokiri_conversation = 0
                     l "Sure thing [persistent.name], what would you like to talk about?"
                     jump kokiri_talkAboutSomethingElse
 
@@ -391,7 +393,7 @@ label kokiri_explanation_game_playerIdentity:
         l "Although I'd like to ask you to not lie to me like you did when I asked what all of this was about, alright?"
         l "We are in this together, and together we will try to achieve our goal! But for that we need some honesty between the both of us, alright?"
         $ persistent.kokiri_tellnolies_knowledge = True
-    n "She pauses for a moment and then continues."
+    n "[date_sub!c] [conj('date', 'pauses', 'pause')] for a moment and then [conj('date', 'continues', 'continue')]."
     l "Now that I think about it, what is the goal of this game?"
     $ kokiri_path1 = True
     $ kokiri_conversation = 0
@@ -431,10 +433,10 @@ label kokiri_explanation_game_playerIdentity:
                                 $ kokiri_goalSurvive = True
                                 l "That’s sweet of you to say, [persistent.name]."
                                 l "I guess that makes me feel better about this whole thing... knowing that if we get to a place where I’m okay, where I’m safe, you’d move on."
-                                n "[persistent.date] pauses, fidgeting with her fingers."
+                                n "[persistent.date] pauses, fidgeting with [date_pos] fingers."
                                 l "But at the same time, it’s a little... sad, you know? The idea that once I’m okay, our time together would be over."
                                 l "It’s a strange feeling... wanting to be saved but also not wanting to lose the one person who’s been here for me the whole time."
-                                n "She gives you a soft, wistful smile."
+                                n "[date_sub!c] [conj('date', 'gives', 'give')] you a soft, wistful smile."
                                 l "Still, I think that’s the best goal we could have: to get me out of here safely. And if that means you’ll move on, well... I’d be okay with that."
                                 jump kokiri_gamegoal_succesful_live_end
 
@@ -442,13 +444,13 @@ label kokiri_explanation_game_playerIdentity:
                                 $ kokiri_goalSurvive_cannotStop
                                 if love_meter > 2:
                                         l "Really? You mean you’d stay with me even after everything? Even if I was safe?"
-                                        n "Lilith’s cheeks flush slightly, and she seems a bit taken aback by your response."
+                                        n "[persistent.date!c] [date_pos] cheeks flush slightly, and [date_sub] [conj('date', 'seems', 'seem')] a bit taken aback by your response."
                                         l "That’s... wow, [persistent.name], that’s really sweet."
                                         l "But, doesn’t that mean you’d never let go? Would you keep playing over and over, even if I was okay?"
                                         menu:
                                             "Maybe... I just like spending time with you.":
                                                 l "You’re such a charmer, you know that?"
-                                                n "[persistent.date] laughs softly, but there's a touch of sadness in her voice."
+                                                n "[persistent.date] laughs softly, but there's a touch of sadness in [date_pos] voice."
                                                 l "But if I were really safe, wouldn’t it be better for you to move on? To experience other things?"
                                                 l "I don’t want to hold you back. I wouldn’t want to be a burden on you, keeping you stuck in this loop."
                                                 l "Still, I’m glad you care so much... it’s a nice thought, that someone wouldn’t want to leave me."
@@ -456,11 +458,11 @@ label kokiri_explanation_game_playerIdentity:
 
                                             "I don't want to lose you, even if you're safe.":
                                                 l "I see... it’s hard, isn’t it? To let go of someone, even if they’re okay."
-                                                n "[persistent.date] sighs softly, her gaze distant for a moment."
+                                                n "[persistent.date] sighs softly, [date_pos] gaze distant for a moment."
                                                 l "It’s funny, isn’t it? We keep talking about endings, but maybe the hardest part isn’t reaching one. It’s accepting that the story is over."
                                                 l "I think I’d feel the same way... it would be hard for me to say goodbye to you."
                                                 l "But you know, part of me thinks that’s what makes these moments so special. The fact that they won’t last forever."
-                                                n "[persistent.date] smiles softly, but there’s a hint of sadness behind her eyes."
+                                                n "[persistent.date] smiles softly, but there’s a hint of sadness behind [date_pos] eyes."
                                                 l "If I get out of here, if we reach an ending where I live... maybe that’s when we’ll both have to say goodbye. And that’s okay, as long as we both know we did our best."
                                                 jump kokiri_gamegoal_succesful_live_end
                                 else:
@@ -500,7 +502,7 @@ label kokiri_explanation_game_playerIdentity:
                                 l "Yeah... I guess that’s the tricky part, huh?"
                                 l "We’re so focused on reaching an \"ending\", but who’s to say what that even looks like?"
                                 l "Maybe living doesn’t mean the game ends right away. Maybe it just means we’ve found one chapter in a bigger story."
-                                n "[persistent.date] smiles at you, her eyes reflecting a sense of curiosity and wonder."
+                                n "[persistent.date] smiles at you, [date_pos] eyes reflecting a sense of curiosity and wonder."
                                 l "Or maybe there are multiple endings, some where I live, some where I don’t... but if I survive, then maybe it’s just the beginning of something else."
                                 l "I’d like to believe that. That if I make it out, there’s still more to come. I can't help but just wonder about what exactly would come next."
                                 jump kokiri_gamegoal_succesful_live_end
@@ -509,7 +511,7 @@ label kokiri_explanation_game_playerIdentity:
                     "I think the goal is to make my own version of this game through a medium of my own somehow." if persistent.kokiri_makeYourOwnStory_knowledge: 
                         $ kokiri_conversation += 1
                         l "I see..."
-                        n "[persistent.date] scratches her chin, she seems to be deep in thought for a moment."
+                        n "[persistent.date] scratches [date_pos] chin, [date_sub] [conj('date', 'seems', 'seem')] to be deep in thought for a moment."
                         l "That actually is quite a good idea."
                         l "I've been thinking about something like this for quite a while."
                         l "If you read a book, close it halfway and make up your own story, is it any less valid than the original?"
@@ -522,14 +524,14 @@ label kokiri_explanation_game_playerIdentity:
                                         l "I'd love to see that!"
                                         l "I really enjoy playing games, lately I haven't had too much time since I'm constantly busy grading the tests of my students."
                                         l "I do try to take some time of for myself though, so don't worry about that. Otherwise I wouldn't be here, would I?"
-                                        l "I've been playtesting a lot of my sister's games though! They are fairly short and purely textbased."
+                                        l "I've been playtesting a lot of my [sis_sib]ib]'s games though! They are fairly short and purely textbased."
                                         l "Something like that would probably be pretty easy to make if you wanted to make your own game, atleast it would be easier than the other options."
                                         l "Although I can imagine the writing could be a bit hard, just thinking about how the game we are currently in is working is making my head hurt slightly."
                                         l "You would need to have so many differents kind of dialogue for different routes, just keeping track of it all might be a hassle."
                                         l "But then again, you don't need to have different routes necesarilly, you'd only need to add that if that's what you truly want to do."
                                         l "I think as long as you make something meaningful for yourself that's already truly beautiful on it's own. And who knows? Maybe you could even share the game with a few people and it would get one of them to create something of their own aswell."
                                         l "I'd like that, for this cycle of death and destruction to be broken by the art of creation."
-                                        n "[persistent.date] gives you a meaningful look as she smiles softly."
+                                        n "[persistent.date] gives you a meaningful look as [date_sub] [conj('date', 'smiles', 'smile')] softly."
                                         $ kokiri_scenery_headhurt = True
                                         jump kokiri_scenery_choice
 
@@ -540,10 +542,10 @@ label kokiri_explanation_game_playerIdentity:
                                         l "So, no explosions and stuff, alright?"
                                         l "Well, unless we'd use them in a sick action scene maybe."
                                         l "You know, like in one of those bombastic movies where they walk away from an explosion with their sunglasses on."
-                                        n "[persistent.date] tries to imitate the sound of an explosion as she fistbumps her own fist and moves her hands away from eachother."
+                                        n "[persistent.date] tries to imitate the sound of an explosion as [date_sub] [conj('date', 'fistbumps', 'fistbump')] [date_pos] own fist and [conj('date', 'moves', 'move')] [date_pos] hands away from eachother."
                                         l "In that case, I'm all for explosions."
                                         l "As long as you let {b}me{/b} wear the sunglasses."
-                                        n "She chuckles."
+                                        n "[date_sub] [conj('date', 'chuckles', 'chuckle')]."
                                         l "Although, I guess since you are writing the story you could give the both of us sunglasses."
                                         l "So that's a win-win, now we just have to have an explosion we can walk away from, right?"
                                         jump kokiri_scenery_choice
@@ -552,13 +554,13 @@ label kokiri_explanation_game_playerIdentity:
                                         l "That's a great idea! Sometimes the best stories are the ones we create just for ourselves."
                                         l "You can let your imagination run wild without worrying about whether it makes sense to anyone else."
                                         l "And honestly, daydreaming and storytelling in your own mind can be just as fulfilling as writing it down or sharing it."
-                                        n "[persistent.date] leans back slightly, her eyes soft with nostalgia."
+                                        n "[persistent.date] leans back slightly, [date_pos] eyes soft with nostalgia."
                                         l "When I was a kid, I used to make up so many stories in my head. Entire worlds, characters, adventures..."
                                         l "They were just for me, and they felt so real. I’d imagine myself exploring them, meeting all the people I’d created."
                                         l "Even now, when things get stressful, I sometimes find myself slipping back into those little worlds I built. It’s... comforting."
                                         l "So don’t think that keeping your story in your head makes it any less valid or meaningful."
                                         l "In fact, I think those personal stories can be the most special of all."
-                                        n "She smiles warmly, as if sharing a secret."
+                                        n "[date_sub!c] [conj('date', 'smiles', 'smile')] warmly, as if sharing a secret."
                                         l "But if you ever feel like sharing it, even just a little piece of it... I’d love to hear it."
                                         l "Although I will probably get to see it for myself, that world that you will create, right?"
                                         jump kokiri_scenery_choice
@@ -600,10 +602,10 @@ label kokiri_gamegoal_succesful_live_end:
     n "[persistent.date] takes a deep breath, as if the weight of the conversation has settled in."
     l "Thanks for talking about this with me. It’s a lot to think about, but it helps, you know?"
     l "I think no matter what happens, we’ll figure it out together. And if there is a way for me to live... well, I trust you to help me find it."
-    n "She gives you a warm smile, the heaviness of the moment lifting slightly."
+    n "[date_sub!c] [conj('date', 'gives', 'give')] you a warm smile, the heaviness of the moment lifting slightly."
     if persistent.lilithAliveAndRetriedCounter > 0:
-        n "She is quite right that you are capable of finding an ending where she lives, isn't she?"
-        n "But it doesn't seem like that matters as much to you as it does to her, since you still are coming back."
+        n "[date_sub!c] [conj('date', 'is', 'are')] quite right that you are capable of finding an ending where [date_sub] [conj('date', 'lives', 'live')], isn't [date_sub]?"
+        n "But it doesn't seem like that matters as much to you as it does to [date_obj], since you still are coming back."
     jump kokiri_scenery_choice
 
 label kokiri_topic_questMade:
@@ -613,7 +615,7 @@ label kokiri_topic_questMade:
         l "That's a strange thought isn't it?"
         l "The idea that a game that exists within this one is functionally as real as this game is."
         l "How many layers does this go down?"
-        l "Like if there was another tiny game in Abby's games for example."
+        l "Like if there was another tiny game in [persistent.date_sis_nickname]'s games for example."
         l "But maybe that is not the right question."
         l "How many layers does this go up?"
         l "Is there a game where you are the player-character and someone else plays as you?"
@@ -727,7 +729,7 @@ label kokiri_gamegoal_noGoal:
     l "Maybe we aren't the ones supposed to laugh?"
     l "We can only pretend that we got the joke and feign a smile."
     n "Wow, where did that suddenly come from?"
-    l "[persistent.date] notices you being absolutely flabergasted by her mini-monologue."
+    l "[persistent.date] notices you being absolutely flabergasted by [date_pos] mini-monologue."
     l "But that doesn't mean there is no hope at all [persistent.name]!"
     l "We can create our own subjective purpose to compensate the lack of an objective one."
     l "We exist to help our family, friends and loved ones.
@@ -743,7 +745,7 @@ label kokiri_gamegoal_noIdea:
     $ kokiri_conversation += 1
     if kokiri_conversation == 1:
         l "That's fine, we can figure your goal out together."
-        n "[persistent.date] scratches her chin and continues."
+        n "[persistent.date] scratches [date_pos] chin and continues."
         l "Let's see, first of, how does this game look to you?"
         menu:
             "I just see text on the screen and some graphics, everyone's text is slightly different. I also get a few clickable links to select what I want to say.":
@@ -788,7 +790,7 @@ label kokiri_gamegoal_noIdea:
                             l "If so, then why did you retry after I was perfectly safe?"
                             menu:
                                 "I couldn't let go, not yet.":
-                                    n "She gives you a sympathetic look."
+                                    n "[date_sub!c] [conj('date', 'gives', 'give')] you a sympathetic look."
                                     l "... Letting go is hard sometimes isn't it?"
                                     l "I mean, \"sometimes\" might be an understatement."
                                     l "It almost always is hard."
@@ -807,10 +809,10 @@ label kokiri_gamegoal_noIdea:
                                     menu kokiri_canNotLetGoYet:
                                         "You do, I'll try my best to let you go next time." if not kokiri_notReadyToLetGo:
                                             label kokiri_canNotLetGoYet_nextTime:
-                                                n "She gives you a gentle smile."
+                                                n "[date_sub!c] [conj('date', 'gives', 'give')] you a gentle smile."
                                                 l "Thank you [persistent.name], that's all I ask."
                                                 l "So..."
-                                                n "She grows quiet for a moment, before she continues."
+                                                n "[date_sub!c] [conj('date', 'grows', 'grow')] quiet for a moment, before [date_sub] [conj('date', 'continues', 'continue')]."
 
                                             jump kokiri_semiEnding
                                         
@@ -840,7 +842,7 @@ label kokiri_gamegoal_noIdea_howGameLooks:
                     
 label kokiri_gamegoal_noIdea_2:
   
-    n "[persistent.date] rubs her chin."
+    n "[persistent.date] rubs [date_pos] chin."
     
     l "That's interesting, so it's just like you're choosing what to say right? This entire game consists of you making choices, maybe not pressing the link is also a choice?"
     l "If it wasn't then why wouldn't you just automatically restart the day like I thought?"
@@ -870,7 +872,7 @@ label kokiri_gamegoal_noIdea_2:
                     l "I hope you will never forget that."
                     menu:
                         "I won't. Thank you [persistent.date].":
-                            n "She gives you a big smile."
+                            n "[date_sub!c] [conj('date', 'gives', 'give')] you a big smile."
                             l "That makes me very glad."
             "Yeah, I'm still kind of stumped.":
                     l "Alrighty, I think it's better if we try to get some info from the source itself now. That will greatly help with setting up our own interpretation."
@@ -897,7 +899,7 @@ label kokiri_gamegoal_noIdea_2:
                                                 l "I see, I might have a hypothesis, could you take a look at it once again for me?"
                                                 l "Just try to access it now, however you would do that."
                                                 l "I'll wait for a moment until you do that."
-                                                n "She grows quiet for a moment."
+                                                n "[date_sub!c] [conj('date', 'grows', 'grow')] quiet for a moment."
                                                 l "Did it work?"
                                                 l "Did it say something else?"
                                                 menu:
@@ -947,7 +949,7 @@ label kokiri_gamegoal_noIdea_2:
                                                 
                                                 l "You could be on to something there! Cheating the game and altering the way how you play because of it might be as rebellious."
                                                 
-                                                n "[persistent.date] scratches her chin."
+                                                n "[persistent.date] scratches [date_pos] chin."
                                             
                                                 l "But how would you accomplish something like that? "
                                                 l "And even if you did, would you feel any accomplishment? Wouldn't you just feel emptier because you didn't truly win and you just cheated your way into winning?"
@@ -969,7 +971,7 @@ label kokiri_gamegoal_noIdea_2:
         $ kokiri_conversation_silent()
 
     label kokiri_gamegoal_noIdea_2_makesNoSense:         
-        n "[persistent.date] shakes her head."
+        n "[persistent.date] shakes [date_pos] head."
         l "Then the choice wouldn't be as impactful as it is now. A \"Do not retry\" link would just give away the entire point."
         l "Not clicking a link forces the player, I suppose that's you, to think it over more than just clicking another link instead."
         menu:
@@ -1003,7 +1005,7 @@ label kokiri_gamegoal_succesful_survive:
     l "I suppose that might be a good definition for a succesful date but I think you might have put the bar pretty low [persistent.name]."
     l "For what it's worth, I think this date is really lovely! Although my head still hurts from trying to fully comprehend what's going on.
     Atleast it's a different kind of pain than the one I get from constantly having to grade my student's tests, so there's that."
-    n "[persistent.date] lets out a hearthy chuckle, not much later she seems to be lost in thought."
+    n "[persistent.date] lets out a hearthy chuckle, not much later [date_sub] [conj('date', 'seems', 'seem')] to be lost in thought."
     l "You know, what you just said is quite interesting."
     l "So a \"succesful\" date would be one where I don't end up dying, right?"
     l "And what if we never went on a date at all?"
@@ -1013,11 +1015,11 @@ label kokiri_gamegoal_succesful_survive:
         "I would, I just want to keep you safe.":
             $ kokiri_goalSurvive = True
             if persistent.ending_breakup:
-                n "Then why did you come back after you turned her down?"
-                n "When you knew very well she was safe?"
-                n "That she was happy?"
+                n "Then why did you come back after you turned [date_obj] down?"
+                n "When you knew very well [date_sub] [conj('date', 'was', 'were')] safe?"
+                n "That [date_sub] [conj('date', 'was', 'were')] happy?"
                 n "Are you perhaps lying to someone?"
-                n "I suppose the only question is whether it's to her, or to yourself."
+                n "I suppose the only question is whether it's to [date_obj], or to yourself."
             if love_meter > 3:
                 l "That's very reassuring to hear."
                 l "Because my life is literally in your hands after all."
@@ -1031,10 +1033,10 @@ label kokiri_gamegoal_succesful_survive:
                 l "Well then, why don't you just tell the past me that you don't want to go on this date anymore?"
                 l "Wouldn't that fix everything?"
                 if persistent.ending_breakup:
-                    n "Given that you came back after you did exactly that I doubt you agree with her on that end, do you player?"
+                    n "Given that you came back after you did exactly that I doubt you agree with [date_obj] on that end, do you player?"
                     $ persistent.CancelledBeforeBeingAsked = True
                 else:
-                    if lildeaths > 25:
+                    if persistent.lildeaths > 25:
                         n "Something tells me it might be a while before you even consider doing that."
                     else: 
                         n "That's not a bad idea actually, it might be worth keeping in mind."
@@ -1050,15 +1052,15 @@ label kokiri_gamegoal_succesful_survive:
                         l "So I appreciate you giving it a shot."
                         if persistent.kokiriBrokenPromiseCancelDateTurnCounter > 0:
                             n "It indeed is really hard to cancel the date isn't it player?"
-                            n "That must be why you haven't done it for [persistent.kokiriBrokenPromiseCancelDateTurnCounter] attempts now even after she asked you to."
-                            n "Or is it just because you like lying to her?"
-                            n "Either way, I'm not sure why you chose this exact same dialogue again if you still haven't done what she asked you to do."
+                            n "That must be why you haven't done it for [persistent.kokiriBrokenPromiseCancelDateTurnCounter] attempts now even after [date_sub] asked you to."
+                            n "Or is it just because you like lying to [date_obj]?"
+                            n "Either way, I'm not sure why you chose this exact same dialogue again if you still haven't done what [date_sub] asked you to do."
                         $ kokiri_promiseCancelDate = True
                         jump kokiri_scenery
                     "I actually already tried cancelling it before." if persistent.ending_breakup == True and persistent.kokiri_HonoredPromiseCancelDate == False or persistent.CancelledBeforeBeingAsked == True:
                         label kokiri_triedCancellingBefore:
                         
-                            n "[persistent.date] leans in slightly closer, her eyes growing slightly wider."
+                            n "[persistent.date] leans in slightly closer, [date_pos] eyes growing slightly wider."
                             if love_meter > 2:
                                 l "What happened when you tried that? You are back here so something must have happened, right?"
                             else:
@@ -1091,8 +1093,8 @@ label kokiri_gamegoal_succesful_survive:
                                     l "..."
                                     l "I'm sorry [persistent.name], I... I am just not sure what to say to that."
                                     l "I had a family?"
-                                    n "You tell her about Ron, about her kids. That they all seemed really happy together."
-                                    n "She stares out into the distance for a moment."
+                                    n "You tell [date_obj] about Ron, about [date_pos] kids. That they all seemed really happy together."
+                                    n "[date_sub!c] [conj('date', 'stares', 'stare')] out into the distance for a moment."
                                     l "So all of that got undone?"
                                     l "That is horrible, even when I, no, a version of me somehow survived we still end up back here."
                                     l "Was it because we never went on a date?"
@@ -1101,7 +1103,7 @@ label kokiri_gamegoal_succesful_survive:
                                     l "Although it is strange..."
                                     l "Why didn't it reset the moment you called off our date?"
                                     l "Why did it keep going for a while and only then reset?"
-                                    n "She quiets down for a moment."
+                                    n "[date_sub!c] [conj('date', 'quiets', 'quiet')] down for a moment."
                                     l "Maybe it's time for some more desperate measures?"
                                     l "I'd like you to try and hear me out, alright?"
                                     l "What if just any interaction between the two of us keeps the loop going?"
@@ -1150,13 +1152,13 @@ label kokiri_gamegoal_succesful_survive:
     jump kokiri_scenery_choice
 label kokiri_gamegoal_succesful_gameDecides:
     l "So you are going to take some game's word for it? Aren't you able to tell whether or not a date is succesful based on your own feelings?"
-    n "[persistent.date] grows quiet for a moment before she continues."
+    n "[persistent.date] grows quiet for a moment before [date_sub] [conj('date', 'continues', 'continue')]."
     l "You know, I don't need a game to tell me that this is a good date [persistent.name]."
     l "It might be far from what I expected but that makes it so much more unique."
     l "You took me away from my own mind, even if it's just for a short moment."
     l "I haven't been in the..."
     l "brightest place lately."
-    l "To tell you the truth, I have thought about joining my brother a few times..."
+    l "To tell you the truth, I have thought about joining my [ghost_sib] a few times..."
     l "But I don't want you to worry about me [persistent.name], I might have been in a dark place but I was working on myself.."
     l "I fought the thoughts with all I had, I gave myself reasons to keep existing."
     l "At first it was for the poems I would write, I didn't want to vanish and leave a poem in a half-written state."
@@ -1165,7 +1167,7 @@ label kokiri_gamegoal_succesful_gameDecides:
     l "[persistent.date] chuckles uncomfortably."
     l "I hated prolonging my poems like that just to have an excuse."
     l "I never truly got any work done, it made me feel terrible." 
-    l "But somehow one day something clicked inside me. I realised that I still had [persistent.date_sis_nickname] and my mom."
+    l "But somehow one day something clicked inside me. I realised that I still had [persistent.date_sis_nickname] and my [mom_parShort]."
     l "From then on out I started to live for them."
     l "They needed me, now more than ever and if I were to vanish they would be devasted."
     l "It's only recently that I started living for myself again. That I wanted to enjoy things again."
@@ -1201,8 +1203,8 @@ label kokiri_gamegoal_succesful_IdoNotKnow:
             l "My brain does not have to constantly doubt wether you like me or not because of the idea that we had multiple dates already."
             l "Sure, most of them end up with me dying but let's just hope that this one doesn't."
             l "But oh wel, I suppose this view is to die for."
-            l "[persistent.date] chuckles, but in her eyes you can catch a brief glimpse of fear in her eyes."
-            n "She looks you into the eyes you can see that fear slowly fade away. And yet, it never fully fades."
+            l "[persistent.date] chuckles, but you can catch a brief glimpse of fear in [date_pos] eyes."
+            n "[date_sub!c] [conj('date', 'looks', 'look')] you into the eyes you can see that fear slowly fade away. And yet, it never fully fades."
             l "..."
             l "All those dates... all those deaths..."
             l "Were they bad?"
@@ -1228,7 +1230,7 @@ label kokiri_gamegoal_succesful_IdoNotKnow:
 
                 "They were horrible, there was so much blood.":
                     n "[persistent.date] gives you a shocked look."
-                    n "Her eyes grow wide and her entire face turns pale."
+                    n "[date_pos!c] eyes grow wide and [date_pos!c] entire face turns pale."
                     l "..."
                     l "Why did you have to say that?"
                     l "I can almost certainly tell that you are lying but now that image is stuck in my head."
@@ -1254,7 +1256,7 @@ label kokiri_scenery:
         n "From the spot you picked on the hill you have a gorgeous view of the village where most of your dates with [persistent.date] took place."
         n "It's pretty calm in the village, here and there you might catch a rare glimpse of a car or a pedestrian but other than that the streets are completly empty."
         l "This view is absolutely fantastic isn't it?"
-        l "When my parents used to take walks with me and my brother in this forest I knew that I just had to keep coming back here."
+        l "When my parents used to take walks with me and my [ghost_sib] in this forest I knew that I just had to keep coming back here."
         l "And I did! Many times actually. I like to come here whenever I have some spare time or when I really need to get some time away from things."
         l "The sunrise here is absolutely beautiful, maybe we'll be able to share that moment today."
         l "I'd like that..."
@@ -1276,17 +1278,17 @@ label kokiri_scenery:
         n "As fast as they entered the restaurant they leave it with practically everyone in the restaurant being kidnapped by them."
         l "So... I was kidnapped by geese?... This is getting more and more unbelievable. And yet I'm seeing it happen with my own eyes."
         l "What's next? Aliens?"
-        n "She lets out a small chuckle, but you can sense there is some worry behind it."
+        n "[date_sub!c] [conj('date', 'lets', 'let')] out a small chuckle, but you can sense there is some worry behind it."
         if persistent.kokiri_death_4_hill or persistent.kokiri_death_4_noHill:
-            n "You know how unfortunately right she is. You wish it would sound as impossible to you as it does to her right now."
+            n "You know how unfortunately right [date_sub] [conj('date', 'is', 'are')]. You wish it would sound as impossible to you as it does to [date_obj] right now."
 
         n "Suddenly you can hear the sound of sirens, of police sirens."
         n "The police sirens are coming from the shopping street, where the burger restaurant is located."
         n "The same restaurant where [persistent.date] got shot..."
-        n "You point at it and tell her about the events that took place there."
-        n "She gasps for a moment."
+        n "You point at it and tell [date_obj] about the events that took place there."
+        n "[date_sub!c] [conj('date', 'gasps', 'gasp')] for a moment."
         l "Wow, it seems like we have gone through a lot together [persistent.name]. I'm not sure if it's a good or a bad thing that I can't remember."
-        n "You shudder for a moment, it's definetly a good thing that she can't remember the gruesome ways she died."
+        n "You shudder for a moment, it's definetly a good thing that [date_sub] can't remember the gruesome ways [date_sub] died."
         n "Ignorance is bliss after all."
         n "In it's final act of destruction the car races at full speed and smashes against the entrance of the burger restaurant."
         n "The gas explosion consumes the entire burger restaurant, taking a sizeable chunk of the shops around it."
@@ -1326,12 +1328,12 @@ label kokiri_scenery:
                         "No, why?" if not persistent.kokiri_perfectMomentStarGaze_knowledge:
                             jump kokiri_scenery_perfectMoment
                             label kokiri_scenery_perfectMoment:
-                                n "She sits closer to you and begins to lean against you." 
+                                n "[date_sub!c] [conj('date', 'sits', 'sit')] closer to you and [conj('date', 'begins', 'begin')] to lean against you." 
                                 n "You feel a rush of calm washing over you, you are fully content to live out the rest of life like this."
-                                n "She brushes her hand to the side of your ear and whispers."
+                                n "[date_sub!c] [conj('date', 'brushes', 'brush')] [date_pos] hand to the side of your ear and whispers."
                                 l "{size=*0.5}Because I don't need it, this moment is already as perfect as my poor little heart can bare.{/size}"
-                                n "She let's out a very quiet chuckle as she lets herself fall back down on the blanket with a content sigh."
-                                n "The only reason you could hear it is because she was sitting so close to you."
+                                n "[date_sub!c] [conj('date', 'lets', 'let')] out a very quiet chuckle as [date_sub] [conj('date', 'lets', 'let')] [sub_pred] fall back down on the blanket with a content sigh."
+                                n "The only reason you could hear it is because [date_sub] was sitting so close to you."
                                 $ persistent.kokiri_perfectMomentStarGaze_knowledge = True
                         "No, why? (Pretend to not know.)" if persistent.kokiri_perfectMomentStarGaze_knowledge:
                             jump kokiri_scenery_perfectMoment
@@ -1349,32 +1351,32 @@ label kokiri_scenery:
                                     l "It's just a bit of a shame that we have to meet in these circumstances, but atleast we can find some comfort in them."
                                     l "Atleast I can find comfort in you."
                                     n "[persistent.date] hugs you tight for a moment."
-                                    n "She keeps holding you, it feels like quite some time has gone by now."
+                                    n "[date_sub!c] [conj('date', 'keeps', 'keep')] holding you, it feels like quite some time has gone by now."
                                     l "I'm scared to let you go [persistent.name]."
                                     menu:
                                         "I'm scared too.":
                                             l "I know... and that makes it a little less lonely, I think."
                                             l "We really shouldn't have to go through this. I wouldn't wish this to anyone else."
-                                            n "Her voice trembles slightly, but she doesn't let go."
+                                            n "[date_pos!c] voice trembles slightly, but [date_sub] [conj('date', 'does', 'do')]n't let go."
                                             l "You know, sometimes I wonder if anyone else feels like this. Like they're caught in a place between holding on and letting go."
                                             l "But having you here... it makes me believe there's something worth holding on to."
                                             n "[persistent.date] pulls back slightly, just enough to look into your eyes."
                                             l "Promise me you'll stay, at least for a little while longer."
-                                            n "She smiles softly, her eyes glistening as if they're holding back tears."
+                                            n "[date_sub!c] [conj('date', 'smiles', 'smile')] softly, [date_pos] eyes glistening as if they're holding back tears."
                                             l "Even if we're scared, we can face it together, right?"
-                                            n "Her grip tightens just slightly before she finally releases you, though the warmth of her embrace lingers."
+                                            n "[date_pos!c] grip tightens just slightly before [date_sub] finally [conj('date', 'releases', 'release')] you, though the warmth of [date_pos] embrace lingers."
 
                                         "Then hold on to me for as long as you want.":
                                             l "Are you sure? Because I might never let go if you say that."
-                                            n "[persistent.date] chuckles softly, though her voice carries a hint of sadness."
+                                            n "[persistent.date] chuckles softly, though [date_pos] voice carries a hint of sadness."
                                             l "You have no idea how much that means to me, [persistent.name]."
-                                            n "She buries her face in your shoulder, and you can feel her taking a deep, shuddering breath."
+                                            n "[date_sub!c] [conj('date', 'buries', 'bury')] [date_pos] face in your shoulder, and you can feel [date_obj] taking a deep, shuddering breath."
                                             l "I didn’t think I needed anyone like this... but you’ve proven me wrong."
-                                            n "Her hold on you tightens slightly, as if she's afraid you'll disappear the moment she lets go."
+                                            n "[date_pos!c] hold on you tightens slightly, as if [date_sub] [conj('date', 'is', 'are')] afraid you'll disappear the moment [date_sub] [conj('date', 'lets', 'let')] go."
                                             l "Thank you. For being here. For staying. For... everything."
-                                            n "Eventually, after what feels like both an eternity and no time at all, she loosens her grip but still keeps her hands resting on your shoulders."
+                                            n "Eventually, after what feels like both an eternity and no time at all, [date_sub] [conj('date', 'loosens', 'loosen')] [date_pos] grip but still [conj('date', 'keeps', 'keep')] [date_pos] hands resting on your shoulders."
                                             l "If it’s okay with you, I might come back for another hug later."
-                                            n "Her smile is small but sincere, a quiet gratitude in her expression that words can't quite capture."
+                                            n "[date_pos!c] smile is small but sincere, a quiet gratitude in [date_pos] expression that words can't quite capture."
 
                                     
                                 "I think all our moments together are perfect, but I agree, this one has something magical to it.":
@@ -1385,8 +1387,8 @@ label kokiri_scenery:
                                     l "..."
                                     n "[persistent.date] seems to be frozen for a moment."
                                     l "Uhm... sorry about that [persistent.name], it's just that..."
-                                    n "She leaps up and envelops you in a tight hug."
-                                    n "Your arms wrap around her aswell instinctively."
+                                    n "[date_sub!c] [conj('date', 'leaps', 'leap')] up and envelops you in a tight hug."
+                                    n "Your arms wrap around [date_obj] aswell instinctively."
                                     l "Thank you..."
                                     l "That is probably the sweetest thing someone has ever said to me."
                                     l "I..."
@@ -1394,7 +1396,7 @@ label kokiri_scenery:
                                     menu:
                                         "That's all fine with me, take all the time you need [persistent.date].":
                                             l "Oh don't worry, I will!"
-                                            n "With her arms wrapped around you you feel as if you could melt into them. "
+                                            n "With [date_pos] arms wrapped around you you feel as if you could melt into them. "
                                             n "You feel that same rush of calmness wash over you, only this time to your surprise it's even stronger."
                                             n "Everything turns blank for a moment. Your focus is fully on this lovely moment."
                                             n "Your thoughts stop working every now and then, you blink in and out of consciousness."
@@ -1403,10 +1405,10 @@ label kokiri_scenery:
                 else:
                     #Have this be the dialogue for if your love meter is 2, love meter 1 shouldn't even be able to reach this in the first place and have slightly different dialogue.
                     l "{size=*0.5}Although I'm not sure if you really enjoy our time here...{/size}"
-                    n "She uttered it very carefully, silent enough that you might think she didn't want you to hear it."
-                    n "But make no mistake, she was counting on you hearing it."
+                    n "[date_sub!c] uttered it very carefully, silent enough that you might think [date_sub] didn't want you to hear it."
+                    n "But make no mistake, [date_sub] [conj('date', 'was', 'were')] counting on you hearing it."
                     n "There is some silence that at first might seem just awkward, but it is very deliberate."
-                    n "She is waiting for your answer."
+                    n "[date_sub] [conj('date', 'is', 'are')] waiting for your answer."
                     menu:
                         "Ofcourse I do enjoy our time here, why do you think I don't?":
                             l "You do? It's just... you seem to be going through the motions. You are a bit more blunt than you were before today."
@@ -1424,13 +1426,13 @@ label kokiri_scenery:
                             l "If you are, take a break from all of this, I understand."
                             menu:
                                 "I have not lost myself yet, but I will keep it in mind. Thank you [persistent.date].":
-                                    n "She gives you a cautious smile."
+                                    n "[date_sub!c] [conj('date', 'gives', 'give')] you a cautious smile."
                                     l "Good, I'm glad to hear that you will."
                                     l "That's all I ask, because after all, we are a team aren't we?"
                                     l "And that means we need to take care of eachother."
                                     jump kokiri_death_2
                                 "I could actually use a break for a while. I'll take one next loop.":
-                                    n "She gives you a sincere smile."
+                                    n "[date_sub!c] [conj('date', 'gives', 'give')] you a sincere smile."
                                     l "Good, you look like you indeed really could use one."
                                     l "I hope it will revitalise you nicely [persistent.name]."
                                     l "It's not like I'm going anywhere, is it? There will always be a next loop. Even if I'd prefer there wasn't."
@@ -1516,12 +1518,12 @@ label kokiri_scenery:
                 l "I'm glad we're on the same page."
                 l "Maybe we shouldn't try to make this moment more perfect and just enjoy it for how great it is right now."
                 l "Sometimes we spend so much time searching for flaws or thinking about what could be better that we forget to appreciate the beauty of what we already have."
-                n "[persistent.date] takes a deep breath, her expression softening as a quiet warmth spreads across her face."
+                n "[persistent.date] takes a deep breath, [date_pos] expression softening as a quiet warmth spreads across [date_pos] face."
                 l "But right now, with you here, I don't feel the need to change anything. This is all that I could ever ask for."
                 n "The two of you sit in silence for a moment, the world around you fading away. It's as if time itself has paused to honor this fleeting perfection."
                 menu:
                     "Smile and say nothing.":
-                        n "You smile, letting the silence speak for you. [persistent.date] seems to understand, and her smile grows in response."
+                        n "You smile, letting the silence speak for you. [persistent.date] seems to understand, and [date_pos] smile grows in response."
                         l "Thank you for being here for me, it means a lot to me. Especially with everything that is going on."
 
 
@@ -1529,11 +1531,11 @@ label kokiri_poems:
         if conversationtracker_poems == False:
             l "Oh, I showed you one of my poems? And you want {i}more{/i}?..."
             l "{size=*0.5}Now that I didn't see coming.{/size}"
-            n "She takes a notebook with a picture of a pug on it out of her handbag and hands it to you. You recognise the notebook from when you read her poem in the burger restaurant."
+            n "[date_sub!c] [conj('date', 'takes', 'take')] a notebook with a picture of a pug on it out of [date_pos] handbag and [conj('date', 'hands', 'hand')] it to you. You recognise the notebook from when you read [date_pos] poem in the burger restaurant."
             l "I think these ones will be like the one you read before, they are also pretty old."
             n "[persistent.date] points out a few poems that you can pick from."
         else:
-            n "She hands you the notebook once again and points out the poems you can read that you haven't yet."
+            n "[date_sub!c] [conj('date', 'hands', 'hand')] you the notebook once again and [conj('date', 'points', 'point')] out the poems you can read that you haven't yet."
             
 
         #Make it so that the normal poems are one menu and the harder ones are an additional menu, that way I can re-use the normal menu if I have to choose between normal and hard.
@@ -1555,13 +1557,13 @@ label kokiri_poems:
                     l "Oh wow, you've read them all? "
                     l "That is impressive in it's own right, especially for the more recent ones I wrote."
                     l "You might be one of the only people that managed to sit through all of those poems, I'd offer you a trophy for that but I fear I left my comically large trophy at home."
-                    n "[persistent.date] begins laughing quite hard, you can't help but laugh aswell as you picture her standing besides a trophy that is as big as her."
+                    n "[persistent.date] begins laughing quite hard, you can't help but laugh aswell as you picture [date_obj] standing besides a trophy that is as big as [date_obj]."
                     n "After a while the both of you settle down again."
                     l "..."
                     l "So you wanted to read some more poems, right?"
                     l  "Honestly I don't think I have any poems left that I can show you."
                     n "You take a quick glance at the notebook, it has many pages inbetween the poems you read."
-                    n "She continues."
+                    n "[date_sub!c] [conj('date', 'continues', 'continue')]."
                     l  "I don't mean that there aren't any poems left, just that they are a bit too personal. I'm not fully comfortable sharing those yet. I hope you understand [persistent.name]."
                     menu: 
                         "Of course I understand! It's completely fine if you don't want to share those poems right now.":
@@ -1666,8 +1668,8 @@ label kokiri_poems_oldPoems_lights:
     Leave me alone in this madness"
     l "Don’t let the darkness escape.
     Don’t let my thoughts take shape"
-    l "Let the ghost fight her ghosts.
-    Leave the host to her hosts."
+    l "Let the ghost fight [date_pos] ghosts.
+    Leave the host to [date_pos] hosts."
     l "Leave the echo with the voices
     Leave the silence with the noises."
     l "Leave my darkened mind in the dark.
@@ -1681,7 +1683,7 @@ label kokiri_poems_oldPoems_lights:
     l "Leave me alone in here.
     You can't fight my fear."
     l "Leave me alone.
-    Leave the sculptor with her stone."
+    Leave the sculptor with [date_pos] stone."
     jump kokiri_poems_askOrRate
 
 
@@ -1740,8 +1742,8 @@ label kokiri_poems_askOrRate:
         "*Rate the poem*" if not kokiri_poems_rateblock:
             if kokiri_poems_rated_once == True:
                 $ kokiri_poems_rateblock = True
-                n "Just rating her poems without giving more input is probably not the best idea.
-                Try asking her something about the poem."
+                n "Just rating [date_pos] poems without giving more input is probably not the best idea.
+                Try asking [date_obj] something about the poem."
                 jump kokiri_poems_askOrRate
             else:
                 $ kokiri_poems_rated_once = True
@@ -1807,7 +1809,7 @@ label kokiri_poems_askOrRate:
                             l "It's almost like a sort of archive of my mindset at a very specific moment in time."
                             menu: 
                                 "So did you wake up?":
-                                    n "[persistent.date] gives you a big smile and for a moment you could swear you saw something sparkle in her eyes."
+                                    n "[persistent.date] gives you a big smile and for a moment you could swear you saw something sparkle in [date_pos] eyes."
                                     l "I guess I did."
                                     l "It's funny, because at that moment you are not really focussed on the shift in what you are feeling."
                                     l "It sort of just... happens I suppose."
@@ -1859,7 +1861,7 @@ label kokiri_scenery_allOver:
     menu:
         "I don't think so, however this might be the lead-up to an ending.":
             l "I see... in that case, let's make the most of waiting on that ending by doing some stargazing."
-            n "You lay down to watch the stars with [persistent.date], she places her head on your lap and lays down aswell."
+            n "You lay down to watch the stars with [persistent.date], [date_sub] [conj('date', 'places', 'place')] [date_pos] head on your lap and [conj('date', 'lays', 'lay')] down aswell."
             n "For a while all you can hear is just the sound of the trees slowly letting their branches dance in the wind."
             n "Until [persistent.date] breaks the silence."
             l "That- That was quite the show back there wasn't it?"
@@ -1868,11 +1870,11 @@ label kokiri_scenery_allOver:
             l "I don't know how I'll ever be able to thank you enough [persistent.name]."
             l "It feels weird. From my perspective a day ago I didn't even know about the loop and now I am already free of it."
             l "But to you this took many, many days to even get to this point."
-            n "She grows quiet in contemplation once more. The two of you gaze up at the stars a little longer in pure silence. They are absolutely marvelous. "
+            n "[date_sub!c] [conj('date', 'grows', 'grow')] quiet in contemplation once more. The two of you gaze up at the stars a little longer in pure silence. They are absolutely marvelous. "
             n "After a while of just enjoying this precious moment you catch a glimpse of a falling star."
             l "Oh, did you see that falling star? Let's make a wish!"
-            n "[persistent.date] closes her eyes, a soft smile appears on her face."
-            n "A moment later she looks at you once again and places her hand on yours."
+            n "[persistent.date] closes [date_pos] eyes, a soft smile appears on [date_pos] face."
+            n "A moment later [date_sub] [conj('date', 'looks', 'look')] at you once again and [conj('date', 'places', 'place')] [date_pos] hand on yours."
             l "What did you wish for?"
             menu:
                 "I didn't make a wish, everything I could ever need is right here, in this moment here with you.":
@@ -1882,10 +1884,10 @@ label kokiri_scenery_allOver:
                     jump kokiri_death_1
 
                 "I can't tell you my wish right? Isn't that how falling star wishes work?":
-                    n "[persistent.date] shakes her head and begins to stare into your eyes."
+                    n "[persistent.date] shakes [date_pos] head and begins to stare into your eyes."
                     l "Oh, I'm sorry! I completely forgot about that rule for a moment."
                     l "Keep your secrets then magic-[persistent.name]."
-                    n "She giggles."
+                    n "[date_sub!c] [conj('date', 'giggles', 'giggle')]."
                     jump kokiri_death_1
 
                 "I wished that...":
@@ -1929,11 +1931,11 @@ label kokiri_death_4_noDeath:
                             l "When everything ends, I hope you'll remember me in a postive way, or atleast that you will have some positive memories of me."
                             l "Then you can keep a little piece of me wherever you go."
                             l "I certainly will keep a small piece of you with me wherever I go after the game ends [persistent.name]."
-                            n "She takes a deep breath."
+                            n "[date_sub!c] [conj('date', 'takes', 'take')] a deep breath."
                             l "Can you promise me you will remember these words when the game ends?"
                             menu:
                                 "I promise. Thank you very much [persistent.date].":
-                                    n "She gives you a tight embrace."
+                                    n "[date_sub!c] [conj('date', 'gives', 'give')] you a tight embrace."
                                     l "Very good. And thank {b}you{/b}."
 
 
@@ -1991,14 +1993,14 @@ label kokiri_death_3_prevented_talk_farthestWeHaveGone:
     l "Well let's see what's in store for us then."
     l "Let's just hope that it leads to me not dying anytime soon. I'd prefer if I could die of old age."
     n "[persistent.date] giggles."
-    n "She grows quiet for a moment, seemingly lost in thought."
+    n "[date_sub!c] [conj('date', 'grows', 'grow')] quiet for a moment, seemingly lost in thought."
     l "Is it just me or is the knowledge that this is the first time I share this very moment with you making it only more special?"
     menu:
         "It is.":
             n "[persistent.date] laughs slightly."
             l "I knew you would agree [persistent.name], I can imagine you might even be more excited than me to experience a new moment."
             l "Repeatedly doing all of this over and over again, it might make it lose it's charm for you, doesn't it?"
-            n "She gives you a knowing smile."
+            n "[date_sub!c] [conj('date', 'gives', 'give')] you a knowing smile."
             menu:
                 "You're right. Sometimes it can feel repetitive.":
                     l "Yeah, I thought so. It must be exhausting, going through the same events, the same words..."
@@ -2009,7 +2011,7 @@ label kokiri_death_3_prevented_talk_farthestWeHaveGone:
                 "Actually, it’s still very nice, even if I've experienced it multiple times.":
                     l "Really? That’s actually really sweet to hear."
                     l "I guess every time feels just a little bit different when you're doing it with someone who matters, huh?"
-                    n "Lilith’s expression softens."
+                    n "[persistent.date!c] [date_pos] expression softens."
                     l "Even though things repeat, you’re the one constant trying to change things. I think that's what makes every moment we share precious."
                     jump kokiri_death_4_hill
         "Every moment we share is beautiful to me." if kokiri_cherishAllDates == False: 
@@ -2027,24 +2029,24 @@ label kokiri_death_3_prevented_talk_farthestWeHaveGone:
                     menu:
                         "It's alright, take your time to think and in the meantime we can just lay here some more.":
                             l "I... I would like that very much."
-                            n "She gives you a soft, cute smile."
+                            n "[date_sub!c] [conj('date', 'gives', 'give')] you a soft, cute smile."
                             n "The two of you remain in peaceful silence for a while, the air filled with a quiet intimacy."
                             n "[persistent.date] seems content, resting beside you without the need for words."
-                            n "You can't help but smile as you feel her warmth wrap itself around you."
+                            n "You can't help but smile as you feel [date_pos] warmth wrap itself around you."
                             n "For a frozen second, for an eternity you feel like the luckiest person alive."
                             n "Sadly that eternity only lasts for a moment, a fleeting second."
                            
                             jump kokiri_death_4_hill
                         "Don't worry about it, I think it's incredibly cute how flustered you got.":
                             l "Are you trying to make me explode by blushing so much or something [persistent.name]?"
-                            n "[persistent.date] chuckles as she covers her face."
-                            n "After a short moment she sighs and lets go of her face, at this point her cheeks seem to have somehow become even more red."
+                            n "[persistent.date] chuckles as [date_sub] [conj('date', 'covers', 'cover')] [date_pos] face."
+                            n "After a short moment [date_sub] [conj('date', 'sighs', 'sigh')] and [conj('date', 'lets', 'let')] go of [date_pos] face, at this point [date_pos] cheeks seem to have somehow become even more red."
                             l "There's no stopping it at this point, if I really will explode then my blood will be on your hands [persistent.name]!"
                             n "You shudder slightly, [persistent.date] gets up from your lap, seemingly having felt your shudder."
                             l "Oh no, that wasn't really a good choice of words in this situation was it?"
                             l "I’m really sorry. I meant it as a joke, not as... well, you know."
                             if love_meter >= 2:
-                                n "Lilith’s smile falters slightly, but she quickly recovers it, or well, attempts to recover it."
+                                n "[persistent.date!c] [date_pos] smile falters slightly, but [date_sub] quickly [conj('date', 'recovers', 'recover')] it, or well, [conj('date', 'attempts', 'attempt')] to recover it."
                             else: 
                                 n "[persistent.date]'s smile fades away."
                             
@@ -2082,13 +2084,19 @@ label kokiri_death_3_death_dialogue:
         n "The sharp tunes of the wind break the silence, as if to remind the both of you of the limited time you still have left."
         l "So after that call I am still going to die, right?"
         l "Forgive me if I am slightly nihilistic but what was the point of that?"
-        l "After you retry everything of this is going to be undone and she won't even remember that I called her." 
         if kokiri_chatchar_abigail_called == True:
-            l "I really love that I still managed to help my sister in my last moments but if everything gets reset inevitably doesn't that make all of this pointless?"
+            $ changeableWord = [sis_obj]
+            $ fritfood = [sis_sub]
+        else:
+            $ changeableWord = [mom_obj]
+            $ fritfood = [mom_sub]
+        l "After you retry everything of this is going to be undone and [fritfood] won't even remember that I called [changeableWord]." 
+        if kokiri_chatchar_abigail_called == True:
+            l "I really love that I still managed to help my [sis_sib] in my last moments but if everything gets reset inevitably doesn't that make all of this pointless?"
         else: 
-            l "I really love that I still managed to help my mom in my last moments but if everything gets reset inevitably doesn't that make all of this pointless?"
+            l "I really love that I still managed to help my [mom_parShort] in my last moments but if everything gets reset inevitably doesn't that make all of this pointless?"
     else:
-        l "So after all those things that just happened I am still going to die?"
+        l "So after all those things that just happened I am still going to die?" #TODO: PRIORITY: This already triggers in the begining of the game if you do "talk about something else when she asks if the name is your real one, fix that."
     menu:
 
         "Well, it is better to die with a clear conscience and slightly less doubts. So that call was anything but pointless." if kokiri_call:
@@ -2097,7 +2105,7 @@ label kokiri_death_3_death_dialogue:
         "Unfortunately, yes." if not kokiri_call:
             jump kokiri_death_dialogue_stillDying
 
-        "Yes, but the world keeps going. It doesn't truly reset. So it makes it easier for her to come to terms with everything." if persistent_jamestalk_justgame_knowledge:
+        "Yes, but the world keeps going. It doesn't truly reset. So it makes it easier for [changeableWord] to come to terms with everything." if persistent_jamestalk_justgame_knowledge:
             l "..."
             l "It doesn't reset?..."
             l "So that means each time I-"
@@ -2109,7 +2117,7 @@ label kokiri_death_3_death_dialogue:
             l "Without you I also wouldn't be able to do it."
             n "[persistent.date] chuckles uncomfortably."
             l "Although I have to say, if there is anyone who hasn't yet fully come to terms with my death it might be me."
-            n "It might also be you, given that you keep trying to prevent her death."
+            n "It might also be you, given that you keep trying to prevent [date_pos] death."
             l "It's just... so unreal."
             l "It is lurking around every corner, getting closer and closer with every passing second. And yet it seems so far away."
             l "If I am being honest, a part of me still thinks- hopes that all of this is just an elaborate prank."
@@ -2117,7 +2125,7 @@ label kokiri_death_3_death_dialogue:
                 l "But it isn't, is it?"
                 l "I seemingly can pick up when you are lying and when you aren't."
                 l "But when you told me about me being inside of a game that kills me over and over, you were telling the truth, weren't you?"
-                n "She shudders."
+                n "[date_sub!c] [conj('date', 'shudders', 'shudder')]."
                 l "That realisation is even more scary than the thought that you were lying about that for some reason."
             else: 
                 l "But it can't be, right?"
@@ -2140,19 +2148,19 @@ label kokiri_death_dialogue_stillDying:
 
     label kokiri_stillDying_scared:
         l "To tell you the truth, I'm feeling really scared. I don't want to die just yet."
-        n "[persistent.date] shudders and looks at you with pleading eyes as if she's waiting for an anwer that will comfort her.
-        Well, comfort her as much as a person who knows they are going to die any moment from now can be comforted."
+        n "[persistent.date] shudders and looks at you with pleading eyes as if [date_sub] [conj('date', 'is', 'are')] waiting for an anwer that will comfort [date_obj].
+        Well, comfort [date_obj] as much as a person who knows they are going to die any moment from now can be comforted."
         l "I suppose this is how Damocles felt aswell."
         l "And yet he had the choice to just walk away from the sword dangling above his head, I don't think I'll have that choice."
         l "I'd just die another way. It's probably better to just watch this spectacle with you even if it is my last moment but that doesn't mean I'm not terrified."
         menu:
             "It's okay, grab my hand. We're going to do this together.":
-                n "[persistent.date] grabs your hand and squeezes it as if she's not going to let it go anytime soon."
-                n "A shy smile appears on her face."
+                n "[persistent.date] grabs your hand and squeezes it as if [date_sub] [conj('date', 'is', 'are')] not going to let it go anytime soon."
+                n "A shy smile appears on [date_pos] face."
                 l "Thank you [persistent.name], please don't let me go."
-                n "She gives you a hug with one arm, as the other's hand is busy clamping yours. The hug lingers on for quite a while, not that you are complaining though." 
-                n "In fact, you want her to never let you go again."
-                n "You want to never let her go again, since you've seen what happens if you do."
+                n "[date_sub!c] [conj('date', 'gives', 'give')] you a hug with one arm, as the other's hand is busy clamping yours. The hug lingers on for quite a while, not that you are complaining though." 
+                n "In fact, you want [date_obj] to never let you go again."
+                n "You want to never let [date_obj] go again, since you've seen what happens if you do."
                 $ kokiri_holdhand = True
                 menu:
                     "I am doing all of this to make sure I won't ever need to let you go.":
@@ -2216,7 +2224,7 @@ label kokiri_death_dialogue_stillDying:
                                             $ love_meter_updater(True)
 
                                         "I don't want to harm you but I have to find it.":
-                                            n "She sighs."
+                                            n "[date_sub!c] [conj('date', 'sighs', 'sigh')]"
                                             l "For who do you have to find it?"
                                             l "For us, for me... or for yourself?"
                                             menu:
@@ -2303,7 +2311,7 @@ label kokiri_death_dialogue_stillDying:
                                                                     l "What could be better?"
                                                                     l "...What does that ending you read look like?"
                                                                     $ renpy.input("...")
-                                                                    n "She sighs contentedly, shifting slightly on your lap."
+                                                                    n "[date_sub!c] [conj('date', 'sighs', 'sigh')] contentedly, shifting slightly on your lap."
                                                                     l "Wow... that sounds beautiful. Almost makes all the suffering worth it."
                                                                     l "Almost."
                                                                     l "At least now we don’t have to keep fighting for it."
@@ -2349,7 +2357,7 @@ label kokiri_death_dialogue_stillDying:
                                     jump kokiri_death_4_hill
 
                     "Don't worry, I won't.":
-                        n "Her smile grows even wider."
+                        n "[date_pos!c] smile grows even wider."
                         l "Thank you [persistent.name], that really helps comfort me a little."
                         l "Whatever happens next, we're facing it together."
                         l "Can we watch the stars some more?"
@@ -2367,7 +2375,7 @@ label kokiri_death_dialogue_stillDying:
                 I think it might be nice to have it as my final thought when..."
                 n "[persistent.date] shudders for a moment."
                 l "Let's not think about that too much, just give me more to remember instead."
-                n "She lays down and softly places her head on your lap."
+                n "[date_sub!c] [conj('date', 'lays', 'lay')] down and softly places [date_pos] head on your lap."
                 
                 if kokiriStarGazed == True:
                     l "I know we already watched the stars before, but they are so beautiful, aren't they?"
@@ -2400,7 +2408,7 @@ label kokiri_death_dialogue_stillDying:
                         l "The stars shine like silver lights in the inkblack sky, they seem to form patterns if you look closely enough."
                         l "You can see a pan with a bent handle, a bathtub, a playful dog and a snake."
                         l "Am I doing a good job narrating?"
-                        n "You give her a thumbs up and she gives you a smile in return."
+                        n "You give [date_obj] a thumbs up and [date_sub] [conj('date', 'gives', 'give')] you a smile in return."
                         l "Alright, I'll narrate some more then, this is pretty fun!"
                         l "You can see a few falling stars, their tails of light are a visible trace of the projection from the past that uses the star itself in the present to project itself to the future, to beyond the place the star currently resides in."
                         l "This constant and neverending process is happening multiple times every single second. Your head hurts trying to think of it too much so you just try to enjoy the falling stars for their beauty."
@@ -2408,7 +2416,7 @@ label kokiri_death_dialogue_stillDying:
                         l "Are we doomed to always make the same choices because our past steers us towards our future which inevitably becomes our past that steers us even more?"
                         l "Or are we more like billiard balls being pushed by our past in a predictable direction until we collide with other billiard balls that push us in a different direction?"
                         l "If we are like the billiard balls, can it be predicted which ones will push us where? Or is the number of balls so incomprehensible that it brings a form of chaos with it?"
-                        n "You try to calm [persistent.date] down a little by softly placing your hand on hers."
+                        n "You try to calm [persistent.date] down a little by softly placing your hand on [date_pred]."
                         l "Whoops, I think I might have went a little too far into my narration role there for a moment. "
                         n "As one narrator to another, I think it happens to the best of us. It's hard to keep a story on tracks sometimes."
                         n "But technically, that was still part of the story, and it was beautiful."
@@ -2420,14 +2428,14 @@ label kokiri_death_dialogue_stillDying:
                     "*Stay silent and watch the stars.*":
                         n "Honestly staying silent probably was the best call, I mean have you {b}seen{/b} some of the other options?"
                         n "It's probably not the best idea to constantly bring up something philosopical on your first date."
-                        n "Well... for her it's the first date. For you it's becoming hard to keep track of how many first dates you had with her isn't it?"
+                        n "Well... for [date_obj] it's the first date. For you it's becoming hard to keep track of how many first dates you had with [date_obj] isn't it?"
                         n "I'll help you out, it's somewhere around the [persistent.lildeaths]th date for you."
                         n "But anyway, I just wanted to say that I'm proud of you for not saying too much, that is my job after all."
                         n "Let me jump right back into the narration."
                         n "You're not sure how long you two have been staring at the stars, it might have been a minute or fifteen of them. All you're sure about is that you felt at peace for every second of it."
                         l "Thank you for making these memories with me [persistent.name] even if I won't remember them the next time, I'll remember them for as long as I possibly can."
                         l "I had a blast so far, even if the concept that I'm in a game still is a bit much to wrap my head around."
-                        l "I was always so focused on [persistent.date_sis_nickname], mom, my work, pretty much anything else that isn't me, that I forgot how good it feels to take some time to just relax."
+                        l "I was always so focused on [persistent.date_sis_nickname], [mom_parShort], my work, pretty much anything else that isn't me, that I forgot how good it feels to take some time to just relax."
                         jump kokiri_death_4_hill
 
             "You need to go through this, it's the only way I might be able to save you.":
@@ -2450,7 +2458,7 @@ label kokiri_death_dialogue_stillDying:
                             "It's true, I tried pretty much everything I could but nothing worked. I just wanted to spend some extra time with you.":
                                 l "We don't need to go through all of this, [persistent.name]. You know I'll always be with you as long as you can remember me, right?"
                                 l "You've met me countless times right?"
-                                n "For a second you consider telling her that you've met exactly [persistent.retry_counter] times but you just nod instead."
+                                n "For a second you consider telling [date_obj] that you've met exactly [persistent.retry_counter] times but you just nod instead."
                                 l "So that probably gives you a good grasp on how I am as a person, what I would do in certain situations, how I see the world. "
                                 l "Could you not use that to see me again? Use those memories you have of me as a mini-me you can carry in your heart and who you can take with you wherever you want?"
                                 l "Due to my nature I reckon the extra time you can spend with me now will soon lose it's charm once you have spent it. And what would happen then? What would happen once you've read all the things I can say?"
@@ -2484,7 +2492,7 @@ label kokiri_death_dialogue_stillDying:
                         n "[persistent.date] gives you a cute smile."
                         l "Happy to help!"
                         l "Also happy to not have to die too painful I suppose."
-                        n "She lets out a small chuckle, but make no mistake, it's an uncomfortable one."
+                        n "[date_sub!c] [conj('date', 'lets', 'let')] out a small chuckle, but make no mistake, it's an uncomfortable one."
                         $ kokiri_death_4_playerResponse = True
                         jump kokiri_death_4_hill
 
@@ -2553,7 +2561,7 @@ label kokiri_death_dialogue_stillDying:
                             l "I'll be honest, I don't think there is a worse thing you could have said."
                             l "I will stay here with you, but only because maybe it is somehow the breakthrough we need for the next loop."
                             l "Otherwise I probably would already be heading back to my car."
-                            n "After speaking those words she grows quiet. You don't think there is anything you could say or do to break this silence."
+                            n "After speaking those words [date_sub] [conj('date', 'grows', 'grow')] quiet. You don't think there is anything you could say or do to break this silence."
                             jump kokiri_death_4_hill
 
                         else:
@@ -2594,7 +2602,7 @@ label kokiri_deathNotPainFul_unsure:
                                 if persistent.kokiri_death_4_hill_holdHand and  persistent.kokiri_death_4_hill and  persistent.kokiri_death_4_noHill == False:
                                     l "Oh, we haven't yet reached this point of the game before?"
                                     l "So that means there might be a chance that there is no next death?"
-                                    n "You can clearly hear the hope in her voice. You are scared to have that same hope after everything that went down previously."
+                                    n "You can clearly hear the hope in [date_pos] voice. You are scared to have that same hope after everything that went down previously."
                                     menu:
                                         "I am not sure honestly.":
                                             l "I see... so it really could go either way?"
@@ -2680,7 +2688,7 @@ label kokiri_deathNotPainFul_unsure:
                                                                 l "In that case I'd like to believe that I would keep existing."
                                                                 l "That somehow even after you have finished this game that it would somehow keep going."
                                                                 l "That I can see my family once again, continue my life."
-                                                                n "She grows quiet for a moment."
+                                                                n "[date_sub!c] [conj('date', 'grows', 'grow')] quiet for a moment."
                                                                 l "Could you do me a favor [persistent.name]? When this game does truly end, could you imagine that it goes on even after you quit?"
                                                                 l "I might be making a weird request but it is my hope that somehow the both of us thinking it works like that is going to bring it into reality somehow."
 
@@ -2721,7 +2729,7 @@ label kokiri_deathNotPainFul_unsure:
 label kokiri_notTheSameYou:                                    
     n "[persistent.date] chuckles and gives you a confused look."
     l "I'm afraid I'm not really following you [persistent.name]."
-    l "If you were at the exact same place and time with a version of me and you told her the same things you are telling me up to this point, doesn't that make me essentially her?"
+    l "If you were at the exact same place and time with a version of me and you told [date_obj] the same things you are telling me up to this point, doesn't that make me essentially [date_obj]?"
     menu:
         "That might be true but you are forgetting one thing, my time isn't frozen, it keeps going and so do my memories. So my perception of you keeps shifting and with that you do aswell.":
             l "Ah I hadn't thought about it like that!"
@@ -2759,8 +2767,8 @@ label kokiri_notTheSameYou:
             l "I always found that a fascinating thing to ponder, if you had two universes that so far are identical in every way. Can they go in different directions?"
             l "Or is there such a thing as fate always steering them in the same direction?"
             l "I believe they would follow the same direction if every single little detail up to that point was the same but that's the fun part in this whole speculation, the idea that I could be wrong!"
-            n "You give [persistent.date] a questioning look and she burst out in laughter."
-            n "After a few moments she finds her calm once again."
+            n "You give [persistent.date] a questioning look and [date_sub] [conj('date', 'burst', 'bursts')] out in laughter."
+            n "After a few moments [date_sub] [conj('date', 'finds', 'find')] [date_pos] calm once again."
             l "Where would be the fun if I could just know how the universe itself worked? I think it is way more interesting to try to think of new interesting ways that can be explained with logic than to just cling to it being unknowable as an excuse to not think of explanations. Don't you think so aswell [persistent.name]?"
             jump kokiri_death_4_hill
 
@@ -2857,12 +2865,12 @@ label kokiri_thereIsMore:
                                 l "Do you want to give that a try [persistent.name]? For me? For us?"
                                 menu:
                                     "I do.":
-                                        n "She gives you a sincere smile."
+                                        n "[date_sub!c] [conj('date', 'gives', 'give')] you a sincere smile."
                                         l "Thank you [persistent.name], I really appreciate that."
                                         l "I know it is far from easy to let things end."
                                         jump kokiri_semiEnding
                                     "I need some more time to think this through.":
-                                        n "She gives you a slightly pained look."
+                                        n "[date_sub!c] [conj('date', 'gives', 'give')] you a slightly pained look."
                                         l "Well, we have nothing but time, right?"
                                         l "Although please try to handle this in as few loops as possible. I can't bare the thought of dying more."
                                     "I don't.":
@@ -2912,14 +2920,14 @@ label kokiri_thereIsMore:
                                             l "To me, this is essentially our first date, while you had many other first dates with me."
                                             l "And yet, both of us never had a second date, did we?"
                                             l "I wonder what we would do for that one. Something completely new for the both of us."
-                                            n "She turns quiet for a moment, a small smile appearing on her face."
+                                            n "[date_sub!c] [conj('date', 'turns', 'turn')] quiet for a moment, a small smile appearing on [date_pos] face."
                                             l "I'd like that."
 
                     "I just have a feeling that there is something else.":
                         l "You have... a feeling?"
                         l "How many more of my lives are you prepared to throw away for a feeling?"
                         l "Five? Ten? Twenty? One-hundred?"
-                        n "She lets out a big sigh."
+                        n "[date_sub!c] [conj('date', 'lets', 'let')] out a big sigh."
                         l "I get that this is a game to you [persistent.name], but please keep in mind that to me all of this is real."
                         l "So if you really have to go onwards with this it would really help me if it was based on something more substantial than a feeling."
                         l "Thank you for being honest with me at the very least, I do appreciate that."
@@ -3051,11 +3059,11 @@ label kokiri_scenery_choice:
             l "Hmm, let's try looking at the [changeableWord], maybe the game will give you a better description then. Does that sound like a good idea [persistent.name]?"
         elif kokiri_scenery_breakfrombreakingyourhead == True:
             l "Do you want to watch the [changeableWord] with me? That would be a great way to take a break from breaking your head."
-            n "[persistent.date] giggles at her joke."
+            n "[persistent.date] giggles at [date_pos] joke."
         elif kokiri_scenery_shutUpLackOfSelfEsteem == True:
             l "Would you like to shut up that part of me and watch the [changeableWord] with me?"
         else:
-            n "For a moment [persistent.date] grows silent. She's seemingly lost deep in thought."
+            n "For a moment [persistent.date] grows silent. [date_sub!c] [conj('date', 'seem', 'seems')] lost deep in thought."
             if kokiri_alternateplace == False:
                 l "The scenery from here is beautiful isn't it? Would you like to watch it with me?"
             else:
@@ -3089,7 +3097,7 @@ label kokiri_scenery_choice:
                     l "That's slightly messing with my head..."
                 else:
                     l "That's messing with my head even more, and I thought suggesting to watch the [changeableWord] would help with that."
-                    l "She lets out a small chuckle as she rubs her forehead gently."
+                    l "[date_sub!c] [conj('date', 'lets', 'let')] out a small chuckle as [date_sub] [conj('date', 'rubs', 'rub')] [date_pos] forehead gently."
                 l "But anyway, what would you like to do instead?"
                 jump kokiri_noScenery
                 
@@ -3136,7 +3144,7 @@ label kokiri_scenery_choice:
                         l "... you want to read one again? I didn't really think you liked them to be honest."
                         l "Chances are if you didn't like one of them you are not going to to like any of them."
                         l "Maybe it's better to talk about something else?"
-                        n "You give her a nod, deciding to spare her feelings and spare your eyes from reading yet another of her poems."
+                        n "You give [date_obj] a nod, deciding to spare [date_pos] feelings and spare your eyes from reading yet another of [date_pos] poems."
                         jump kokiri_talkAboutSomethingElse
                     
         
@@ -3210,27 +3218,27 @@ label didYouInvolveFamily:
                     n "Or doesn't it feel like that because this is all just a game to you?"
                     n "I'll have to admit, at the end of the day, this really is a game."
                     n "But your actions, they are still all yours, game or not."
-                    n "And you looked through [persistent.date]'s phone without her consent, started talking to her family members behind her back, and now you are lying about it."
+                    n "And you looked through [persistent.date]'s phone without [date_pos] consent, started talking to [date_pos] family members behind [date_pos] back, and now you are lying about it."
                     n "Do you really think the end justifies the means?"
-                    n "Or are you just doing this because you can? Because she won't remember even if she catches you in the lie?"
-                    n "Would you still have done it if she would remember you doing so? Or if all of this was real?"
+                    n "Or are you just doing this because you can? Because [date_sub] won't remember even if [date_sub] [conj('date', 'catches', 'catch')] you in the lie?"
+                    n "Would you still have done it if [date_sub] would remember you doing so? Or if all of this was real?"
 
 
                 l "You haven't?"
                 if persistent.familyContacted == True:
                     if love_meter > 2:
-                        n "You hear a slight hint of hestiation in her voice. It is subtle, but talking to her over and over has made you really good at picking up things like that."
-                        n "However, it seems she wants to give you the benefit of the doubt. That is probably why she hasn't called you out on your lie just yet."
+                        n "You hear a slight hint of hestiation in [date_pos] voice. It is subtle, but talking to [date_obj] over and over has made you really good at picking up things like that."
+                        n "However, it seems [date_sub] [conj('date', 'wants', 'want')] to give you the benefit of the doubt. That is probably why [date_sub] [conj('date', 'has', 'have')]n't called you out on your lie just yet."
                     else:
-                        n "You can pick up on the tiniest hint of hestitation in her voice, however she tries her best to hide it."
-                        n "She fails, on the account that you have talked to her for many loops and know the ins and outs of her voice quite well."
-                        n "Her eyes widen, subtly but you notice it ever so slightly."
-                        n "You catching wind of her hestitation seemingly scared her."
+                        n "You can pick up on the tiniest hint of hestitation in [date_pos] voice, however [date_sub] tries [date_pos] best to hide it."
+                        n "[date_sub!c] [conj('date', 'fails', 'fail')], on the account that you have talked to [date_obj] for many loops and know the ins and outs of [date_pos] voice quite well."
+                        n "[date_pos!c] eyes widen, subtly but you notice it ever so slightly."
+                        n "You catching wind of [date_pos] hestitation seemingly scared [date_obj]."
 
                 l "That's a relief to hear honestly."
                 if persistent.familyContacted == True and love_meter <= 2:
-                    n "The hestitation is gone, in her voice at the very least. Something tells you she still doesn't believe you but she doesn't confront you on it."
-                    n "Why? Is she scared for what might happen if she does? Or maybe she is trying to play along for now, hoping to eventually get through to you?"
+                    n "The hestitation is gone, in [date_pos] voice at the very least. Something tells you [date_sub] still [conj('date', 'does', 'do')]n't believe you but [date_sub] [conj('date', 'does', 'do')]n't confront you on it."
+                    n "Why? [conj('date', 'Is', 'Are')] [date_sub] scared for what might happen if [date_sub] [conj('date', 'does', 'do')]? Or maybe [date_sub] [conj('date', 'is', 'trying')] trying to play along for now, hoping to eventually get through to you?"
                 l "I know that you are trying your best to get me out of this loop of death and suffering, and I really appreciate that."
                 l "But I wouldn't want my family to carry such a heavy burden."
                 l "For all we know this loop could somehow spread over to them. I'll admit that seems very unlikely but it is yet another reason I do not want them involved."
@@ -3257,7 +3265,7 @@ label noContactFamilyPromise:
 
                 
                 if fam_obsession== "[persistent.date_ghost]" and only_one_asked == True:
-                    l "He means a lot to me, and doing something like that again would truly hurt me more than any death I could suffer."
+                    l "[ghost_sub!c] [conj('ghost', 'means', 'mean')] a lot to me, and doing something like that again would truly hurt me more than any death I could suffer."
                 else:
                     l "It's already bad enough that we have to go through this each and every loop."
                     l "I don't want to give anyone else that kind of burden too."
@@ -3272,8 +3280,8 @@ label noContactFamilyPromise:
 
         "You know I can't promise that.":
             label noContactFamilyPromise_no:
-                n "[persistent.date] gives you a strange look. A look you're not really used to from her. Is it... anger?"
-                n "You can't help but feel your heart break a little at the thought of making her feel angry."
+                n "[persistent.date] gives you a strange look. A look you're not really used to from [date_obj]. Is it... anger?"
+                n "You can't help but feel your heart break a little at the thought of making [date_obj] feel angry."
                 l "Actually I don't know that [persistent.name]! Why is it that you can't promise me that?"
                 
 
@@ -3288,7 +3296,7 @@ label noContactFamilyPromise_cannotPromise_confrontation_aliveFamily:
         
         
         l "All I ask of you is that you do not use the things I tell you about [persistent.date_ghost] to further your goal."
-        l "I don't want you to use him like that behind my back."
+        l "I don't want you to use [ghost_obj] like that behind my back."
         
             
     else:
@@ -3299,8 +3307,13 @@ label noContactFamilyPromise_cannotPromise_confrontation_aliveFamily:
                 l "None of my family should be involved at all."
                 
             elif fam_obsession == "[persistent.date_sis]" or fam_obsession == "[persistent.date_mom]":
+                if fam_obsession == "[persistent.date_sis]":
+                    $ changeableWord = [sis_sub]
+                else:
+                    $ changeableWord = [mom_sub]
+
         
-                l "She should be kept far away from all of this. Everyone in my family should."
+                l "[changeableWord!c] should be kept far away from all of this. Everyone in my family should."
             if kokiri_familyContacted == True:
                     l "So don't contact [fam_obsession] or anyone else from now on, alright?"
             else:
@@ -3352,7 +3365,7 @@ label noContactFamilyPromise_cannotPromise_confrontation_aliveFamily:
 
                 else:
                     $ persistent.restrainingorderfamily_knowledge = True
-                n "She lets out a deep sigh of relief."  
+                n "[date_sub!c] [conj('date', 'lets', 'let')] out a deep sigh of relief."  
                 l "I suppose it is alright now [persistent.name]"
                 l "I appreciate that you atleast heared me out, that means a lot to me."
                 l "Thank you [persistent.name]. I know it might be tempting to try anything you can to save me but there are limits I don't want you to cross."
@@ -3361,7 +3374,7 @@ label noContactFamilyPromise_cannotPromise_confrontation_aliveFamily:
                 l "But I'm glad we can move on from that now. We got to keep looking forwards, right?"
                 if persistent.restrainingorderfamily_violation_counter > 0:
                     #Karma
-                    n "I'm not sure what you are doing here once again, didn't you promise [persistent.date] you wouldn't contact her family already?"
+                    n "I'm not sure what you are doing here once again, didn't you promise [persistent.date] you wouldn't contact [date_pos] family already?"
                     n "Although I doubt that means anything to you does it?"
                     if persistent.restrainingorderfamily_violation_counter == 1:
                         n "After all you've broken your promise once already."
@@ -3399,10 +3412,10 @@ label noContactFamilyPromise_cannotPromise_confrontation_aliveFamily:
             menu: 
                 "When you showed me the beach-picture you hid in a tree.":
                     if love_meter >= 2:
-                        n "[persistent.date] thinks for a moment and nods, it seems she agrees that that might have happened in a previous time."
+                        n "[persistent.date] thinks for a moment and nods, it seems [date_sub] [conj('date', 'agrees', 'agree')] that that might have happened in a previous time."
                     else: 
                         l "I showed you that?"
-                        n "The disbelief in her voice is clea, she couldn't see her showing it to you this time."
+                        n "The disbelief in [date_pos] voice is clear, [date_sub] couldn't see [date_obj] showing it to you this time."
                         l "I suppose I did... because that's something way to specific to just guess correctly."
                     l "And what did I tell you then about using your powers?"
                     menu:
@@ -3413,29 +3426,29 @@ label noContactFamilyPromise_cannotPromise_confrontation_aliveFamily:
                                 l "I suppose that version of me was right... you do seem kind of determined."
                             l "But did I know that you were contacting my family at that time? Did that version of me know, I mean."
                             menu:
-                                "I- No, she didn't.":
-                                    l "If I'm being honest with you [persistent.name], I don't think she would have told you to use your powers to the fullest extent if she knew what that truly meant."
+                                "I- No, [date_sub] didn't.":
+                                    l "If I'm being honest with you [persistent.name], I don't think [date_sub] would have told you to use your powers to the fullest extent if [date_sub] knew what that truly meant."
                                     l "That's why it's good that we have this conversation right now."
                                     l "If you want to try to save me, perfect, go ahead!"
                                     l "Thanks to your efforts I might be able to get out of here alive, and I truly appreciate that [persistent.name]!"
                                     l "But please, I'm drawing a line here, don't use my own family to further your leads or anything like that."
                                     l "If another version about me opens up about them, I guess that's totally fine to talk about, it's not like you should just ignore it, but I would appreciate it if you didn't manipulate me with my own words."
                                     l "Is that clear? If you can respect my wishes that would mean a whole lot to me."
-                                    l "I suppose you could always ask another version of me if she is fine with you contacting her family when she mentions the whole \"fullest extent\" thing."
+                                    l "I suppose you could always ask another version of me if [date_sub] [conj('date', 'is', 'are')] fine with you contacting [date_pos] family when [date_sub] [conj('date', 'mentions', 'mention')] the whole \"fullest extent\" thing."
                                     l "That way you could see it's not just me, not just this version of me who thinks that."
                                     $ persistent_useGiftToFullExtentLimit_knowledge = True
                                     n "Everything quiets down for a while, including [persistent.date]."
-                                    n "She gives you a soft look, seemingly trying to gauge how well you are taking what she just told you."
+                                    n "[date_sub!c] [conj('date', 'gives', 'give')] you a soft look, seemingly trying to gauge how well you are taking what [date_sub] just told you."
                                     l "So... now that we had this talk, do you promise to not involve my family in your attempts to save me anymore?"
                                     menu:
                                         "I do.":
                                             jump noContactFamilyPromise_yes
 
                                         "I'd actually like to ask the version of you that mentions using my gifts to the fullest extent before I make my judgement on that.":
-                                            n "[persistent.date] gives you a peculiar look, she almost looks... kind of hurt?"
+                                            n "[persistent.date] gives you a peculiar look, [date_sub] almost [conj('date', 'looks', 'look')]... kind of hurt?"
                                             l "Oh... okay."
-                                            n "But then you see a confident smile grow on her face."
-                                            l "Well, I'm sure she'll say the same thing, so go ahead."
+                                            n "But then you see a confident smile grow on [date_pos] face."
+                                            l "Well, I'm sure [date_sub]'ll say the same thing, so go ahead."
                                             $ family_curiosity_checker_movetox()
 
                                         "You know I can't promise that.":
@@ -3747,9 +3760,9 @@ label silentconversationsbackontrack:
                 n "Or better said, the death you filled it with."
                 n "So many decomposing bodies."
                 n "Left alone in these woods."
-                n "They all are hers, [persistent.date]'s."
-                n "Don't worry, that voice you heard can't be her."
-                n "She can only speak the language of the forest now, utter silence."
+                n "They all are [date_pred], [persistent.date]'s."
+                n "Don't worry, that voice you heard can't be [date_obj]."
+                n "[date_sub!c] can only speak the language of the forest now, utter silence."
                 n "You can go to hell for all I care."
             else:
                 "Error! Something went wrong."

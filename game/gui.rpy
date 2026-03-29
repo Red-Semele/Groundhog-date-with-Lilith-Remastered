@@ -57,28 +57,40 @@ define gui.interface_text_color = '#404040'
 ## Fonts and Font Sizes ########################################################
 
 ## The font used for in-game text.
-define gui.text_font = "DejaVuSans.ttf"
+## Reads persistent.font_choice so the player's preferred font is applied at startup.
+define gui.text_font = (persistent.font_choice if (hasattr(persistent, "font_choice") and persistent.font_choice) else "DejaVuSans.ttf")
 
 ## The font used for character names.
-define gui.name_text_font = "DejaVuSans.ttf"
+define gui.name_text_font = (persistent.font_choice if (hasattr(persistent, "font_choice") and persistent.font_choice) else "DejaVuSans.ttf")
 
 ## The font used for out-of-game text.
-define gui.interface_text_font = "DejaVuSans.ttf"
+define gui.interface_text_font = (persistent.font_choice if (hasattr(persistent, "font_choice") and persistent.font_choice) else "DejaVuSans.ttf")
 
 ## The size of normal dialogue text.
-define gui.text_size = 33
+## Reads persistent.text_size_offset so player's chosen size survives gui.rebuild().
+define gui.text_size = 33 + (persistent.text_size_offset if (hasattr(persistent, "text_size_offset") and persistent.text_size_offset is not None) else 0)
 
 ## The size of character names.
-define gui.name_text_size = 45
+define gui.name_text_size = 45 + (persistent.text_size_offset if (hasattr(persistent, "text_size_offset") and persistent.text_size_offset is not None) else 0)
 
 ## The size of text in the game's user interface.
-define gui.interface_text_size = 33
+define gui.interface_text_size = 33 + (persistent.text_size_offset if (hasattr(persistent, "text_size_offset") and persistent.text_size_offset is not None) else 0)
 
 ## The size of labels in the game's user interface.
-define gui.label_text_size = 36
+define gui.label_text_size = 36 + (persistent.text_size_offset if (hasattr(persistent, "text_size_offset") and persistent.text_size_offset is not None) else 0)
 
 ## The size of text on the notify screen.
-define gui.notify_text_size = 24
+define gui.notify_text_size = 24 + (persistent.text_size_offset if (hasattr(persistent, "text_size_offset") and persistent.text_size_offset is not None) else 0)
+
+## Extra letter/kerning spacing (px) applied to dialogue text.
+## Reads persistent.letter_spacing so gui.rebuild() picks up the player's choice.
+define gui.text_letter_spacing = (persistent.letter_spacing if (hasattr(persistent, "letter_spacing") and persistent.letter_spacing is not None) else 0)
+
+## Textbox background opacity (0.0-1.0). Read from persistent.textbox_opacity (20-100).
+define gui.textbox_alpha = ((persistent.textbox_opacity * 0.01) if (hasattr(persistent, "textbox_opacity") and persistent.textbox_opacity is not None) else 1.0)
+
+## Text outline list for say_dialogue. Re-evaluated on every gui.rebuild().
+define gui.text_outlines = ([(2, "#000000c0", 0, 0)] if (hasattr(persistent, "text_outline") and persistent.text_outline == "outline") else ([(2, "#00000080", 2, 2)] if (hasattr(persistent, "text_outline") and persistent.text_outline == "shadow") else []))
 
 ## The size of the game's title.
 define gui.title_text_size = 75

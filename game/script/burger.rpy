@@ -20,7 +20,8 @@ label burger_start:
     l "Burgers sure sound good, see you there!"
     if persistent.rockMode:
         jump rockTransport
-    n "You arrive a tad late, [persistent.date] already has grabbed herself a seat and waves at you when she sees you."
+    scene burgerRestaurant
+    n "You arrive a tad late, [persistent.date] already has grabbed [date_pred] a seat and waves at you when [date_sub] [conj('date', 'sees', 'see')] you."
     label burger_arrived:
         l "Heya! Almost was scared you wouldn't show up."
 
@@ -47,16 +48,16 @@ label burger_start:
                 $ burger_alt = True
                 n "[persistent.date] gives you a smile and a thumbs up."
                 l "Sure, where would you like to sit?"
-                n "You quickly point to a table, it doesn't really matter which one, as long as she isn't sitting where she got shot before."
+                n "You quickly point to a table, it doesn't really matter which one, as long as [date_sub] [conj('date', 'is', 'are')]n't sitting where [date_sub] got shot before."
                 l "Alright, that table it is then!"
-                n "[persistent.date] takes her handbag and follows you as you wander to the table."
+                n "[persistent.date] takes [date_pos] handbag and follows you as you wander to the table."
                 n "You feel relieved, knowing what horrors you just escaped from."
-                n "The image of her laying there, on the brink of life and death, is burned into your mind."
+                n "The image of [date_obj] laying there, on the brink of life and death, is burned into your mind."
                 n "You shudder."
                 n "It's probably best to try and focus on the present, not the past."
                 l "Are you alright [persistent.name]?"
                 l "You look like you have just seen a ghost."
-                n "She's not far off, isn't she?"
+                n "[date_sub!c] [conj('date', 'is', 'are')] not far off, [conj('date', 'is', 'are')]n't [date_sub]?"
                 menu:
                     "Oh yeah, I am fine, I was just thinking about the traffic jam I was stuck in.":
                         jump burger_start_choice3
@@ -98,8 +99,8 @@ label burger_start_choice1:
             $ burgerBeenBefore = True
             l "Oh you have? That makes sense, these burgers are the best of the state, scratch that, of the world!"
             if not persistent.rockMode:
-                n "While she is enthusiastically exclaiming this her arms kind of seem to have a life of their own, making all kinds of gestures to get the point across even more. "
-                n "When she catches her arms in the act she blushes slightly, quiets for a moment and places her hands back down on the table."
+                n "While [date_sub] is enthusiastically exclaiming this [date_pos] arms kind of seem to have a life of their own, making all kinds of gestures to get the point across even more. "
+                n "When [date_sub] catches [date_pos] arms in the act [date_sub] blushes slightly, quiets for a moment and places [date_pos] hands back down on the table."
                 l "So, what are you going to pick? I think I'll go for the juicy cheeseburger myself."
             else:
                 l "They are so great that even though we cannot taste them, we sure can imagine."
@@ -119,7 +120,7 @@ label burger_beenBeforeXTimes:
             Like I've said before, they have really amazing bugers here."
         else: 
             l "Oh I see, you have great taste in that case!"
-            n "She lets out a hearty chuckle."
+            n "[date_sub!c] [conj('date', 'lets', 'let')] out a hearty chuckle."
 
     elif persistent.burgerwent == 1:
         l "Ah, I hope you liked your previous meal here!"
@@ -164,7 +165,7 @@ label burger_start_choice2:
         l "So, what do you want to order of the menu?  I think I am going to go with a juicy cheesburger."
     else:
         l "Let me make it up to you. You can order anything of the menu and I'll pay for it. How does that sound?"
-        n "You hear her soft chuckles echo in your mind once again."
+        n "You hear [date_pos] soft chuckles echo in your mind once again."
         l "What would you like to pick?"
         $ fakeBurger = True
     jump burger_start_menu
@@ -176,11 +177,11 @@ label burger_start_choice3:
         l "Now that you mention it, I think I heard something about it on the radio, they said some ghostrider caused  the traffic jam."
         l "If I'm not mistaken I think it was a Sedan or something like that?"
     else:
-        n "She lets out a hearthy telepathic laugh."
+        n "[date_sub!c] [conj('date', 'lets', 'let')] out a hearthy telepathic laugh."
         l "No worries at all [persistent.name]"
         l "I heard something about that on the radio, I think they mentioned there was a traffic jam caused by a ghostrider."
         l "I did not manage to catch the rest of that though, it sounded so muffled from underneath my lift's shoe."
-        n "She lets out a small chuckle, you feel it ring a little in your mind."
+        n "[date_sub!c] [conj('date', 'lets', 'let')] out a small chuckle, you feel it ring a little in your mind."
     if not persistent.rockMode:
         l "Anyway, what do you want to order of the menu?  I think I am going to go with a juicy cheesburger."
     else:
@@ -249,7 +250,7 @@ label burger_ordering:
         if persistent.burgerwent == 0:
             n "You were expecting having to order them from a screen like most fastfood places tend to have but as you looked around you couldn't spot any."
             n "Instead [persistent.date] walks to a counter.
-            You decide to follow her."
+            You decide to follow [date_obj]."
         else: 
             n "You walk towards the counter, [persistent.date] is walking right next to you, shooting you a subtle glance every now and then."
         if persistent.rosename_knowledge == True:
@@ -299,24 +300,24 @@ label burger_ordering:
             n "[persistent.date]'s face turning beetred is a lot easier to notice."
             l "{size=*0.5}Uhm, thank you Rose... we uhm have to get back to our table now.{/size}"
             n "You can't help but chuckle to yourself as [persistent.date] practically darts back to the table."
-            n "By the time you've reached the table she is already sitting down, still as red as she possibly could be."
-            n "She quickly brushes one hand over her left cheek and somehow manages to turn even more red at the realisation that she is still blushing."
-            n "Right then she lets out a few small coughs as she tries to somehow divert attention from what just happened."
-            n "As you sit back down she begins speaking once again."
+            n "By the time you've reached the table [date_sub] [conj('date', 'is', 'are')] already sitting down, still as red as [date_sub] possibly could be."
+            n "[date_sub] quickly brushes one hand over [date_pos] left cheek and somehow manages to turn even more red at the realisation that [date_sub] [conj('date', 'is', 'are')] still blushing."
+            n "Right then [date_sub] lets out a few small coughs as [date_sub] [conj('date', 'tries', 'try')] to somehow divert attention from what just happened."
+            n "As you sit back down [date_sub] begins speaking once again."
             l "Thank you for choosing this place [persistent.name].
             It has been too long since I've been here, to tell you the truth I actually was avoiding this place.
             But now the happy memories come flooding back to me."
 
-            n "[persistent.date] pauses for a moment, she seems unsure whether to continue or not."
+            n "[persistent.date] pauses for a moment, [date_sub] [conj('date', 'seems', 'seem')] unsure whether to continue or not."
 
-            l"You know, my brother really used to love this place before..."
+            l"You know, my [ghost_sib] really used to love this place before..."
 
-            n "[persistent.date] freezes before she can continue the sentence."
+            n "[persistent.date] freezes before [date_sub] can continue the sentence."
             l "{size=*0.5}Why did I have to bring that up now?{/size}"
             jump burger_brother
 
             menu burger_brother:
-                "What was his name?":
+                "What was [ghost_pos] name?":
                     jump burger_brother_question
 
                 "Are you alright [persistent.date]? You don't need to share this story if it hurts you too much.":
@@ -345,18 +346,18 @@ label burger_ordering:
                                 menu:
                                     "At least we'll have eachother, I'm sure anything would taste good if I'm enjoying your company.":
                                         l "You flatterer!"
-                                        n "She just turned close to beetred."
+                                        n "[date_sub!c] just turned close to beetred."
                                         l "You are in luck though, I'd love to check out the other restaurants I mentioned together with you."
                                         if persistent.cafe_death_1 and persistent.chinese_death_1:
-                                            n "Little does she know that she already did just that. Or well, a version of her I suppose."
+                                            n "Little [conj('date', 'does', 'do')] [date_sub] know that [date_sub] already did just that. Or well, a version of [date_obj] I suppose."
                                             n "But you will never forget, will you?"
-                                            n "How could you? Her deaths play out in front of your eyes every time you try to close them."
+                                            n "How could you? [date_pos!c] deaths play out in front of your eyes every time you try to close them."
                                             if not persistent.burger_death_2:
                                                 n "Do you think things will be better from here on out?"
                                                 n "I guess only time will tell."
                                             elif persistent.lildeaths > 9:
-                                                n "It seems her wish will be granted, over and over and over, she is lucky that she doesn't know what consequences that always brings."
-                                                n "You can't help but feel slightly jealous of her for her ignorance."
+                                                n "It seems [date_pos] wish will be granted, over and over and over, [date_sub] [conj('date', 'is', 'are')] lucky that [date_sub] [conj('date', 'does', 'do')]n't know what consequences that always brings."
+                                                n "You can't help but feel slightly jealous of [date_obj] for [date_pos] ignorance."
                                                 n "I suppose ignorance truly is bliss, isn't it?"
                                                 n "You really would prefer if you didn't know what happens next here, what always happens."
                                             else:
@@ -366,7 +367,7 @@ label burger_ordering:
 
                                         l "But let's not get ahead of ourselves,let's focus on this beautiful moment first and see how things go from there."
                                     "I don't think I can ever part ways with this burger.":
-                                        n "[persistent.date] giggles, but as she does you think you can spot some concern in her eyes."
+                                        n "[persistent.date] giggles, but as [date_sub] [conj('date', 'does', 'do')] you think you can spot some concern in [date_pos] eyes."
                                         l "I totally understand [persistent.name], sometimes it can be really hard to let go of something great."
                                         l "But if you never finish this burger and keep clutching on to it, it will begin to grow moldy."
                                         l "And if you do not clutch on to it but keep eating Rose's [burger_choice]s for the rest of your life they will grow very stale quicker than you think."
@@ -378,7 +379,7 @@ label burger_ordering:
                                 l "But you've been here before, right? What makes this burger better?"
                                 menu:
                                     "I have never ordered this burger before, now I'm wishing I had.":
-                                        n "She laughs quite loudly."
+                                        n "[date_sub!c] [conj('date', 'laughs', 'laugh')] quite loudly."
                                         l "If only you had a time machine, then you could."
                                         l "Wouldn't that be wonderful? To be able to go back in time as you please, maybe even change a few things?"
                                         if persistent.lildeaths > 9:
@@ -403,7 +404,7 @@ label burger_ordering:
                             l "How many things do you know that are perfect? Many of those tend to not remain perfect the harder and longer you begin to look."
                             l "Because in reality, almost nothing is truly perfect, and it also doesn't need to be."
                             l "I would say \"pretty good\" is more than good enough in most cases."
-                            n "She takes a thoughtful bite of her own burger, as if savoring the moment."
+                            n "[date_sub!c] [conj('date', 'takes', 'take')] a thoughtful bite of [date_pos] own burger, as if savoring the moment."
                             l "I'm glad you're enjoying it, [persistent.name]."
                             if not burgerBeenBefore:
                                 l "Maybe next time we can try some of the other things on the menu and see if they measure up?"
@@ -412,13 +413,13 @@ label burger_ordering:
 
                         "It's a nothing burger, literally.":
                             label burger_nothingBurger:
-                                n "[persistent.date] tilts her head, a small frown tugging at the corner of her lips."
+                                n "[persistent.date] tilts [date_pos] head, a small frown tugging at the corner of [date_pos] lips."
                                 l "A \"nothing burger\" huh? I guess that means it's... okay?"
-                                n "She tries to mask her disappointment with a soft chuckle."
+                                n "[date_sub!c] [conj('date', 'tries', 'try')] to mask [date_pos] disappointment with a soft chuckle."
                                 l "Maybe it just didn’t live up to the hype. I hope it wasn’t too underwhelming, though."
                                 if not burgerBeenBefore:
                                     l "Rose makes all her burgers with as much love as is feasibly possible but maybe her [burger_choice] isn't really your thing?"
-                                    n "You can tell she was hoping you would enjoy it more."
+                                    n "You can tell [date_sub] [conj('date', 'was', 'were')] hoping you would enjoy it more."
                                     l "If you'd like, we can come back and try something different next time. There's so much more on the menu here that might be more your style."
                                 
                                 else:
@@ -463,15 +464,15 @@ label burger_ordering:
                                                     l "Are you saying that this is all not real?"
                                                     l "I would say that that sounds absurd..."
                                                     l "But somehow..."
-                                                    n "She seemingly tries to study your face."
+                                                    n "[date_sub!c] seemingly [conj('date', 'tries', 'try')] to study your face."
                                                     l "You are not joking, right?"
                                                     l "Oh god, so I am in a game?"
                                                     l "We all are?"
                                                     l "The ramifications of that are-"
-                                                    n "I'll have to stop her there, you aren't supposed to be able to tell her the truth in any of the restaurants, that she is inside of a game."
+                                                    n "I'll have to stop [date_obj] there, you aren't supposed to be able to tell [date_obj] the truth in any of the restaurants, that [date_sub] [conj('date', 'is', 'are')] inside of a game."
                                                     n "Trust me, it's for the best."
-                                                    n "She needs a more calm place to properly process it fully."
-                                                    n "It seems that that dialogue choice was still a leftover from a time where you could tell her about that anywhere."
+                                                    n "[date_sub!c] [conj('date', 'needs', 'need')] a more calm place to properly process it fully."
+                                                    n "It seems that that dialogue choice was still a leftover from a time where you could tell [date_obj] about that anywhere."
                                                     n "Most of them were removed due to the Creator wanting to focus on it more in the woods."
                                                     n "Let's just rewind to before you made this choice and remove it."
                                                     if persistent.mayoFreak == True:
@@ -497,16 +498,16 @@ label burger_ordering:
                             if not burgerBeenBefore or not burgerBeforeLie:
                                 l "Really bad? Oh no, I'm so sorry, [persistent.name]."
                                 l "I hyped this place up so much, didn't I? Maybe that set your expectations too high."
-                                n "She looks genuinely upset."
+                                n "[date_sub] [conj('date', 'looks', 'look')] genuinely upset."
                                 l "I guess taste is pretty subjective. But hey, at least now we know, right?"
-                                n "She tries to force a smile, but it's clear your words stung more than she expected."
+                                n "[date_sub!c] [conj('date', 'tries', 'try')] to force a smile, but it's clear your words stung more than [date_sub] expected."
                                 l "Maybe next time we could go somewhere else?"
                                 l "Hopefully the chinese restaurant or the cafe will be more to your liking."
                             else:
                                 l "Really?..."
                                 l "But you've been here before, right?"
                                 l "Is something different now?"
-                                n "[persistent.date] gives you a confused look, she is clearly stumped."
+                                n "[persistent.date] gives you a confused look, [date_sub] [conj('date', 'is', 'are')] clearly stumped."
                                 menu:
                                     "I never picked this burger before.":
                                         l "Oh I see, so this [burger_choice] isn't really your thing?"
@@ -529,11 +530,11 @@ label burger_ordering:
                                         l "Okay, I do not know what makes you think that you can talk to me like that [persistent.date]."
                                         l "If you have just come here to be mean to me than why did you even come here at all?"
                                         if persistent.lildeaths == 0:
-                                            n "She does have a point, if this is how you treat all your dates it is no wonder you are on \"Another first date\"."
+                                            n "[date_sub!c] [conj('date', 'does', 'do')] have a point, if this is how you treat all your dates it is no wonder you are on \"Another first date\"."
                                         else:
-                                            n "She does make a good point, even if she does not know the full extent of it. You tried playing the game again to save her, didn't you?"
-                                            n "Then why are you treating her like that?"
-                                            n "Even if it could hypothetically save her, would it be worth it?"
+                                            n "[date_sub!c] [conj('date', 'does', 'do')] make a good point, even if [date_sub] [conj('date', 'does', 'do')] not know the full extent of it. You tried playing the game again to save [date_obj], didn't you?"
+                                            n "Then why are you treating [date_obj] like that?"
+                                            n "Even if it could hypothetically save [date_obj], would it be worth it?"
                                         l "You weren't like this at all when we talked before, is this how you really are?"
                                         l "Either way, I won't stick around to find out."
                                         l "Goodbye [persistent.name]."
@@ -548,19 +549,19 @@ label burger_ordering:
             n "You ask Rose how she knows your name."
             r "Oh but how could I forget you?" 
             r "The two of you have been here quite a few times, haven't you?"     
-            r "You are her killer right?"           
-            r "You shot her."
-            r "You blew her to smithereens."
+            r "You are [date_pos] killer right?"           
+            r "You shot [date_obj]."
+            r "You blew [date_obj] to smithereens."
             r "And I had to watch it. Over and over again." 
             menu:
                 "I didn't pull the trigger on the gun. The explosion was out of my control.":          
                     r "You may not have caused those things directly. But that doesn't matter, does it?"
                     r "You knew what would happen. And you still returned."
                     r "You are responsible for what happened."
-                    r "You tell yourself you do it to save her, but I wonder if there is a part of you that likes to watch her die again and again."
-                    r "Well you're in luck you coldblooded killer, this time you can warm your hearth by eating her."
+                    r "You tell yourself you do it to save [date_obj], but I wonder if there is a part of you that likes to watch [date_obj] die again and again."
+                    r "Well you're in luck you coldblooded killer, this time you can warm your hearth by eating [date_obj]."
                     n "She hands you a fleshy clump that almost resembles a burger."
-                    r "I made it from [persistent.date] herself."
+                    r "I made it from [persistent.date] [date_pred]."
                     n "She gives you an impatient look."
                     r "Well, aren't you going to eat it?"
                     r "You've held on to it for so long it has turned rotten."
@@ -572,12 +573,12 @@ label burger_ordering:
     else:
         if fakeBurger == True:
             l "Sounds good! Let me just telepathically call my rock to human translator."
-            n "She bursts out in laughter once again."
+            n "[date_sub!c] [conj('date', 'bursts', 'burst')] out in laughter once again."
             l "I'm sorry [persistent.name], I couldn't resist. I promise I will play nice from now on out."
         else:
             if burger_choice == "juicy cheeseburger":
                 l "My my, I suppose great minds think alike, don't they [persistent.name]?"
-                l "She lets out another chuckle."
+                l "[date_sub!c] [conj('date', 'lets', 'let')] out another chuckle."
             elif burger_choice == "chicken tenders":
                 l "They serve those here? I would say they probably won't live up to the reputation of the burgers here."
                 l "Although, I suppose if one place could pull it off it might just be this one!"
@@ -595,15 +596,15 @@ label burger_ordering:
         l "One no-one would ever bother to reveal the center of."
         l "But then one day you rolled into my life and showed me I was not alone anymore."
         l "It might have seemed small to you but to me it was undescribably meaningful."
-        n "For a brief moment she turns silent."
+        n "For a brief moment [date_sub] [conj('date', 'turns', 'turn')] silent."
         l "Was that too much? I'm sorry, I don't want to scare you away and-"
-        n "She turns silent once again. You can feel her desperately searching for something appropriate to say."
+        n "[date_sub!c] [conj('date', 'turns', 'turn')] silent once again. You can feel [date_pos] desperately searching for something appropriate to say."
         jump burger_brother_question
 
 label burger_brother_question:
     if persistent.rockMode == False:
         $ askedbrother = True
-        n "[persistent.date] tries to compose herself as well as she can but from the look in her eyes you can tell this is all a bit much for her."
+        n "[persistent.date] tries to compose [date_pred] as well as [date_sub] can but from the look in [date_pos] eyes you can tell this is all a bit much for [date_obj]."
 
 
     menu:
@@ -642,14 +643,14 @@ label burger_joke_Abigail:
     $ burger_jokeFromAbigailTold = True
     n "[persistent.date] bursts out in laughter."
     if not persistent.rockMode:
-        l "I really love that joke, my sister [persistent.date_sis] told me it once and I kept laughing and laughing for what seemed like an eternity.
+        l "I really love that joke, my [sis_sib] [persistent.date_sis] told me it once and I kept laughing and laughing for what seemed like an eternity.
         Just thinking about it again, it fills me with a warm feeling, like a blanket you wrap around yourself in the coldest of winters."
     else:
-        n "She really loses herself in the laughter, it seems to go on for quite a while."
+        n "[date_sub!c] really [conj('date', 'loses', 'lose')] [date_pred] in the laughter, it seems to go on for quite a while."
         l "That is one of the best jokes I have ever heard [persistent.name]! I haven't laughed like that in a long time."
         l "It feels weirdly familiar, it's a... distant feeling but a warm one all the same."
     l "Thank you for cracking me up [persistent.name]!"
-    n "[persistent.date] flashes you a cute smile, she seems pretty much completely composed once again."
+    n "[persistent.date] flashes you a cute smile, [date_sub] [conj('date', 'seems', 'seem')] pretty much completely composed once again."
     jump burger_living
 
 
@@ -657,10 +658,10 @@ label burger_joke_Abigail:
 label burger_joke_response:
     if not persistent.rockMode:
         n "A slight smile forms on [persistent.date]'s face.
-        She doesn't seem to find your joke that funny but from the gratitude in her eyes you can tell she is thankful for your effort.
-        She seems to have become slightly more composed."
+        [date_sub!c] [conj('date', 'do', 'does')]n't seem to find your joke that funny but from the gratitude in [date_pos] eyes you can tell [date_sub] [conj('date', 'is', 'are')] thankful for your effort.
+        [date_sub!c] [conj('date', 'seems', 'seem')] to have become slightly more composed."
     else:
-        n "You feel her mind calm down, not fully, but enough to not get swept away in her thoughts."
+        n "You feel [date_pos] mind calm down, not fully, but enough to not get swept away in [date_pos] thoughts."
         n "It was not necesarilly the joke doing this, you feel. Moreso the gesture behind it."
     #Typewriter:
     l "Thank you [persistent.name], I mean it."
@@ -708,7 +709,7 @@ label burger_living_writer:
 
 label burger_living_unemployed:
     l "Oh, do you like to write? That's pretty cool!"
-    l "[persistent.date] seems to be quite enthusiastic, her eyes have a certain shimmer to them that wasn't there just a moment ago."
+    l "[persistent.date] seems to be quite enthusiastic, [date_pos] eyes have a certain shimmer to them that wasn't there just a moment ago."
     l "I also like to write something from time to time, it's one of my hobbies actually."
     menu:
         "Would you like to show something you've written?":
@@ -716,7 +717,7 @@ label burger_living_unemployed:
 
 label burger_living_rockResponse:
     if changeableWord == "band":
-        n "She chuckles, it rings softly in your mind."
+        n "[date_sub!c] [conj('date', 'chuckles', 'chuckle')], it rings softly in your mind."
         l "Really? Now that would be something to {b}marble{/b} at, wouldn't it?"
         l "I would love to join your band to make it a reality."
         menu:
@@ -727,7 +728,7 @@ label burger_living_rockResponse:
                 l "But as you might see I lack the hands, mouth, lungs and a whole lot of extra parts I would need."
                 l "Although, if I one day manifested those parts I don't think I'd ever bore from playing the trombone."
                 l "But I have a feeling that if we would have an audience at all they would run away in terror seeing a rock with hands and a mouth."
-                n "You hear her chuckle again in your mind, but you also pick up on a hint of sadness. Even if she could grow those parts, it wouldn't be enough."
+                n "You hear [date_obj] chuckle again in your mind, but you also pick up on a hint of sadness. Even if [date_sub] could grow those parts, it wouldn't be enough."
                 menu:
                     
                     "We don't need them, to try to be part of their world is to not belong in neither theirs nor ours fully.":
@@ -744,7 +745,7 @@ label burger_living_rockResponse:
 
             "What's stopping you from doing so?":
                 l "Oh, we aren't joking? I thought we were."
-                n "She grows quiet for a moment, lost deep in reflection."
+                n "[date_sub!c] [conj('date', 'grows', 'grow')] quiet for a moment, lost deep in reflection."
                 l "...I suppose nothing really is stopping me."
                 l "Although I'm still not entirely sure."
                 l "It just seems a bit odd to me if I am being honest."
@@ -840,7 +841,7 @@ label burger_living_rockResponse:
                                     "A story of a timeloop where the protagonist has to save their date from dying.":
                                         l "Wow, you just came up with that? That could be a pretty good story!"
                                         l "Although I have to say, if I could die that might have worried me a little."
-                                        n "She chuckles, it once again rings softly in your mind, feeling like a comforting warmth spreading all through it."
+                                        n "[date_sub!c] [conj('date', 'chuckles', 'chuckle')], it once again rings softly in your mind, feeling like a comforting warmth spreading all through it."
                                         l "I do wonder how we would end a story like that though. Is it as simple as the loop ending when the date is saved?"
                                         l "Would that even be a satisfying end? And yet, all things do have to end, don't they?"
                                         l "Still, I think almost no ending we could come up with would statisfy the reader."
@@ -961,7 +962,7 @@ label burger_living_rockResponse:
                                                         l "That would be a silly sight, wouldn't it? The two of us just rolling down over and over again, trying to reach something unreachable."
                                                         if persistent.lildeaths > 25:
                                                             n "At this point you are very well aware of trying to reach something you never can, aren't you player?"
-                                                            n "Her joke is moreso a gutpunch to you, or the rock equivalent of it I suppose."
+                                                            n "[date_pos!c] joke is moreso a gutpunch to you, or the rock equivalent of it I suppose."
 
                                             "I like us just the way we are actually. It might not be perfect but it's nice.":
                                                 l "Do you mean that? ...That means a lot actually."
@@ -971,7 +972,7 @@ label burger_living_rockResponse:
                                                 l "But that isn't how things are, isn't it? Still, we found eachother, so does it matter?"
                                                 l "Like you said, it might not be perfect, but it is nice. This life is a little less lonely sharing it with someone who understands. Someone who understands that pain."
                                                 l "Maybe that's what brought us together, our shared understanding?"
-                                                n "She grows silent for a moment, you can feel her thinking in your head, but you have a hard time picking up her exact thoughts."
+                                                n "[date_sub!c] [conj('date', 'grows', 'grow')] silent for a moment, you can feel [date_obj] thinking in your head, but you have a hard time picking up [date_pos] exact thoughts."
                                                 l "...You are right, I like the way things are too. Perhaps different circumstances would lead to us just passing by eachother, never meeting, or only fleetingly."
                                                 l "But now we have the opportunity to get to know eachother on a deeper level. Afterall, we have nothing but time, don't we?"
                                                 l "For now though, instead of thinking of stories, let's continue writing ours, starting with this date"
@@ -988,9 +989,9 @@ label burger_living_showWriting:
     n "A wide smile grows on [persistent.date]'s face."
     l "You want to read something of me?"
     l "I'd love that!"
-    l "She eagerly digs in her handbag, retrieving a small notebook with a picture of a pug on it."
+    l "[date_sub!c] eagerly [conj('date', 'digs', 'dig')] in [date_pos] handbag, retrieving a small notebook with a picture of a pug on it."
     l "I think you'll like this one!"
-    n "She pushes the notebook, now flipped open, towards you.
+    n "[date_sub!c] [conj('date', 'pushes', 'push')] the notebook, now flipped open, towards you.
     Suddenly you are reminded of the burger sauce that is all over your fingers."
     menu:
         "*Clean your fingers with a napkin before taking the notebook.*":
@@ -1004,14 +1005,14 @@ label burger_living_showWriting_poem:
         $ persistent.tracker1 = True
     if burger_poem_cleancheck == True:
         n "[persistent.date] seems thankful that you cleaned your fingers.
-        You take the notebook out of her hand and begin to read.
-        You can read the entire thing in her voice somehow."
+        You take the notebook out of [date_pos] hand and begin to read.
+        You can read the entire thing in [date_pos] voice somehow."
     else:
         $ love_points = -1
         
-        n "[persistent.date] frowns when she sees your dirty fingers.
-        nonetheless you take the notebook out of her hand and begin to read.
-        You can read the entire thing in her voice somehow."
+        n "[persistent.date] frowns when [date_sub] [conj('date', 'sees', 'see')] your dirty fingers.
+        nonetheless you take the notebook out of [date_pos] hand and begin to read.
+        You can read the entire thing in [date_pos] voice somehow."
         $ love_meter_updater(False)
 
     l "Oh Moon
@@ -1027,12 +1028,12 @@ label burger_living_showWriting_poem:
     if burger_poem_cleancheck == True:
         n "When you get done reading your eyes linger on the notebook a bit longer before returning it to [persistent.date]."
         l "So [persistent.name], what did you think of it?"
-        n "She seems eager to find out what your thoughts are on her writing."
+        n "[date_sub!c] [conj('date', 'seems', 'seem')] eager to find out what your thoughts are on [date_pos] writing."
         jump burger_poem_rating
     else:
         n "When you get done reading your eyes linger on the now dirtied notebook a bit longer before returning it to [persistent.date]."
         l "So, what did you think of it?"
-        n "She seems irritated by your actions but is asking out of politeness."
+        n "[date_sub!c] [conj('date', 'seems', 'seem')] irritated by your actions but is asking out of politeness."
         jump burger_poem_rating
 
 
@@ -1056,7 +1057,7 @@ label burger_poem_rating:
             l "Something about that story is very intriguing to me."
             l "Two people, seperated by fate, trying to reunite and getting so close only to be torn appart once again."
             l "It's a very tragic story, isn't it?"
-            n "She ponders for a moment, only to seemingly realise something and continue."
+            n "[date_sub!c] [conj('date', 'pauses', 'pause')] for a moment, only to seemingly realise something and continue."
             l "Anyway, that’s the short version. I hope I didn't make you regret asking that too much [persistent.name]..."
             $ persistent.burger_Orpheus_knowledge = True
             jump burger_deathBuildup
@@ -1067,7 +1068,7 @@ label burger_poem_rating_terrible:
     $ love_points = -1
     $ love_meter_updater(False)
     n "[persistent.date] begins to frown slightly.
-    She looks hurt by your words."
+    [date_sub!c] [conj('date', 'looks', 'look')] hurt by your words."
     l "Oh...
     No need to be a douche about it."
     jump burger_Brotherasked
@@ -1125,32 +1126,32 @@ label burger_Brotherasked:
         if love_meter >= 3:
             $ persistent.brother_knowledge = True
             n "[persistent.date] pauses for a moment."
-            l "You asked what my brother's name was, right?
+            l "You asked what my [ghost_sib]'s name was, right?
             I don't know why but I feel like I can trust you enough to tell you about him.
-            I might tear up though, it's been a long time since I've told his story to anyone."
-            l "His... his name was [persistent.date_ghost]."
-            l "He was the best brother I could have asked for.
-            He was five years older than me but we always played together.
+            I might tear up though, it's been a long time since I've told [ghost_pos] story to anyone."
+            l "[ghost_pos!c]... [ghost_pos] name was [persistent.date_ghost]."
+            l "[ghost_sub!c] [conj('ghost', 'was', 'were')] the best [ghost_sib] I could have asked for.
+            [ghost_sub!c] [conj('ghost', 'was', 'were')] five years older than me but we always played together.
             We used to be the best of friends, playing hide and seek, video games, making our own stories to act out, you name it."
-            l "He was always there for me, he supported me however he could and appreciated me."
-            n "When she talks about her brother you can see one of the biggest smiles you've ever seen growing on her face."
+            l "[ghost_sub!c] [conj('ghost', 'was', 'were')] always there for me, [ghost_sub] supported me however [ghost_sub] could and appreciated me."
+            n "When [date_sub] [conj('date', 'talks', 'talk')] about [date_pos] [ghost_sib] you can see one of the biggest smiles you've ever seen growing on [date_pos] face."
             l "But that's when it happened..."
-            n "[persistent.date] pauses for a moment as she gasps for air, you can see tears dripping off her face."
-            l "He was only seventeen when he got hit by a speeding car.
-            He didn't die immediately, they say he must have layed there for an hour before..."
-            l "My... father..."
-            n "She seems to test the taste of those words, looking at her expression, they seem to taste quite bitter."
-            l "David couldn't accept [persistent.date_ghost] dying and left us.
+            n "[persistent.date] pauses for a moment as [date_sub] [conj('date', 'gasps', 'gasp')] for air, you can see tears dripping off [date_pos] face."
+            l "[ghost_sub!c] [conj('ghost', 'was', 'were')] only seventeen when [ghost_sub] got hit by a speeding car.
+            [ghost_sub!c] didn't die immediately, they say [ghost_sub] must have layed there for an hour before..."
+            l "My... [dad_par]..."
+            n "[date_sub!c] [conj('date', 'seems', 'seem')] to test the taste of those words, looking at [date_pos] expression, they seem to taste quite bitter."
+            l "[persistent.date_dad] couldn't accept [persistent.date_ghost] dying and left us.
             That day two people were taken away  from me by a car.
-            Actually, scratch that, David had a choice in the matter, [persistent.date_ghost] was the only one really taken away from me."
-            l "Mom really tried her best to fill the void left by them but the presence of their absence has always haunted us since that horrible day."
+            Actually, scratch that, [persistent.date_dad] had a choice in the matter, [persistent.date_ghost] was the only one really taken away from me."
+            l "[mom_parShort!c] really tried [mom_pos] best to fill the void left by them but the presence of their absence has always haunted us since that horrible day."
             if burger_jokeFromAbigailTold == True:
                 l "Although [persistent.date_sis], was 7 years at that moment and doesn't remember very well."
 
             else:
-                l "Although my sister, [persistent.date_sis], was 7 years when at that moment and doesn't remember very well."
-            l "Sometimes I envy her for that, but at the very least one person escaped a part of the hurt that day brought us."
-            n "She lets out a sigh of relief."
+                l "Although my [sis_sib], [persistent.date_sis], was 7 years when at that moment and doesn't remember very well."
+            l "Sometimes I envy [sis_obj] for that, but at the very least one person escaped a part of the hurt that day brought us."
+            n "[date_sub!c] [conj('date', 'lets', 'let')] out a sigh of relief."
             l "As much as it hurts me to talk about [persistent.date_ghost] it feels good to finally let it all out once again.
             Thank you for listening to me ramble on [persistent.name]."
             $ persistent.brother_knowledge = True
@@ -1194,7 +1195,7 @@ label burger_alt_askHerAQuestion:
     $ burger_alt = False
 
     menu:
-        "*Ask her a question.*":
+        "*Ask [date_obj] a question.*":
             menu:
                 "So you mentioned that you really like music. Which music do you listen to?" if persistent.musiclover_knowledge and musiclovertalked:
                     jump burger_alt_askHerAQuestion_musicLover

@@ -7,26 +7,26 @@ label chinese_start:
     if persistent.rockMode:
         jump rockTransport
     else:
-        n "You head to the Chinese restaurant, when you arive there [persistent.date] is already seated. She happily waves at you."
+        n "You head to the Chinese restaurant, when you arive there [persistent.date] is already seated. [date_sub!c] [conj('date', 'waves', 'wave')] at you happily."
         n "It's appears to be quite busy, there are people at every table."
-        n "You walk towards the table where [persistent.date] is sitting and greet her with a cheerful smile."
+        n "You walk towards the table where [persistent.date] is sitting and greet [date_obj] with a cheerful smile."
     label chinese_arrived:
         l "Heya [persistent.name]!
         Glad to see you here."
         if persistent.rockMode == False:
             l "You're in luck, I managed to save this table just in the nick of time."
-            n "She gives you an honest smile."
+            n "[date_sub!c] [conj('date', 'gives', 'give')] you an honest smile."
         else:
             l "Looks I beat you here, my lift is already gone with their takeaway."
             l "But you're in luck, I had to fight of a thousand other sentient rocks but I managed to fend of another spot under this table just for you."
-            n "She chuckles in your mind, you can feel something else too... a wave of warmth, of happiness, the translation of a smile."
+            n "[date_sub!c] [conj('date', 'chuckles', 'chuckle')] in your mind, you can feel something else too... a wave of warmth, of happiness, the translation of a smile."
         menu:
             "Glad to be here.":
                 l "Oh you flatterer!"
                 n "[persistent.date] pauses for a moment, seemingly lost in a thought."
                 l "Or are you glad to be here for the restaurant itself?"
                 menu:
-                    "Mostly the restaurant actually, otherwise I wouldn't have come her with you in the first place.":
+                    "Mostly the restaurant actually, otherwise I wouldn't have come here with you in the first place.":
                         jump chinese_start_gladToBeHere_theRestaurant
 
                     "I'm glad to see you of course, otherwise I would've just come to this place on my own.":
@@ -37,13 +37,13 @@ label chinese_start_gladToBeHere_theRestaurant:
     $ love_meter_updater(False)
     l "Oh, I mean I like this place aswell I suppose..."
     if persistent.rockMode == False:
-        n "She seems dissapointed with your answer."
-        n "Things turn silent for a moment. She seems to be trying to find anything at all to say."
+        n "[date_sub!c] [conj('date', 'seems', 'seem')] dissapointed with your answer."
+        n "Things turn silent for a moment. [date_sub!c] [conj('date', 'seems', 'seem')] to be trying to find anything at all to say."
         l "Anyway, I think I'd starve if I don't eat soon so let's continue our little chat while we wait on our food.
         What would you like to order?"
     else:
-        n "You feel a wave of dissapointment well up. Then you realize, it's hers."
-        n "Things turn silent for a moment. You feel her mind desperately looking for something trying to keep the conversation going."
+        n "You feel a wave of dissapointment well up. Then you realize, it's [date_pred]."
+        n "Things turn silent for a moment. You feel [date_pos] mind desperately looking for something trying to keep the conversation going."
         l "Humor me this [persistent.name], imagine you were a human, what would you like to order?"
     #Make her slightly more dissapointed.
     jump chinese_menu
@@ -52,14 +52,14 @@ label chinese_start_gladToBeHere_youOfcourse:
     if not persistent.rockMode:
         l "[persistent.date] lets out a sigh of relief and chuckles slightly."
         l "Sorry, that was just a thought that popped up in my head."
-        n "She looks like she could sink through the floor out of embarrassment so you decide it's best to forget what she has said."
+        n "[date_sub!c] [conj('date', 'looks', 'look')] like [date_sub] could sink through the floor out of embarrassment so you decide it's best to forget what [date_sub] has said."
 
         l "Anyway, I think I'd starve if I don't eat soon so let's continue our little chat while we wait on our food.
         What would you like to order?"
     else:
-        n "You feel a wave of relief wash over her mind, then it makes way for another sensation. The embarassment of even having that thought."
-        n "You chuckle slightly at the thought of her being embarrassed over something so small."
-        n "She seemingly picks up on you glimpsing her thoughts and quickly tries to move past it."
+        n "You feel a wave of relief wash over [date_pos] mind, then it makes way for another sensation. The embarassment of even having that thought."
+        n "You chuckle slightly at the thought of [date_obj] being embarrassed over something so small."
+        n "[date_sub!c] seemingly [conj('date', 'picks', 'pick')] up on you glimpsing [date_pos] thoughts and quickly tries to move past it."
         l "Humor me this [persistent.name], imagine you were a human, what would you like to order?"
     jump chinese_menu
 label chinese_menu:
@@ -117,9 +117,9 @@ label chinese_menu_result:
         elif orange == True:
             l "That's a good choice!
             I've had my fair share of orange chicken already throughout my life, so I think I'm going for something else."
-            n "[persistent.date] scratches her chin softly."
+            n "[persistent.date] scratches [date_pos] chin softly."
             l "I think I'm going to pick the peking duck, beats another portion of orange chicken."
-            n "She lets out a small chuckle."
+            n "[date_sub!c] [conj('date', 'lets', 'let')] out a small chuckle."
 
         menu:
             "Actually there is something in that peking duck that you are really allergic to, deathly even." if persistent.chinese_death_1:
@@ -127,7 +127,7 @@ label chinese_menu_result:
 
             "Sounds good to me!":
                 n "Suddenly a waitress stands right before your table, slightly startling you."
-                n "[persistent.date] tries her best not to burst out with laughter but a few muffled laughs get through.
+                n "[persistent.date] tries [date_pos] best not to burst out with laughter but a few muffled laughs get through.
 
                 After writing down both of your choices she wanders of towards the kitchen."
                 l "Do you want to try to answer a few riddles in the meantime?"
@@ -148,7 +148,7 @@ label chinese_menu_result:
             l "That's a good choice!"
             l "It's weird, but somehow I feel exhausted of orange chicken even though I've never eaten it before."
             l "Maybe I ate enough of it in a past life for both that life and this one?"
-            n "She lets out a small chuckle, you feel it resonate in your mind."
+            n "[date_sub!c] [conj('date', 'lets', 'let')] out a small chuckle, you feel it resonate in your mind."
         
         l "Would you like to answer a few riddles [persistent.name]? That should be fun, right?"
         menu:
@@ -299,7 +299,7 @@ label adriel_unanswered_chat:
 
     label chinese_riddle_second:
         l "Carried by Lightning with a crown of moon."
-        n "[persistent.date] gives you a moment to think about her riddle."
+        n "[persistent.date] gives you a moment to think about [date_pos] riddle."
         l "So, do you have an idea who I could be talking about?"
         if persistent.r2_knowledge == True:
             n "You remember [persistent.date] telling you the answer was Europa."
@@ -376,7 +376,7 @@ label adriel_unanswered_chat:
     label chinese_riddle_easy:
         if easy_rude == True:
             n "[persistent.date] seems to be very saddened by your remark."
-            n "She just looks at the table for a second and then speaks again."
+            n "[date_sub!c] just [conj('date', 'looks', 'look')] at the table for a second and then speaks again."
             l "Oh I see..."
             l "I was fearing that I might had asked you some impossible questions."
             l "So atleast that wasn't the case."
@@ -421,8 +421,8 @@ label adriel_unanswered_chat:
             l "I don't think I have met anyone with anything close to your persistence."
             l "It's impressive frankly!"
             if persistent.lildeaths >= 20:
-                n "She is right, you know."
-                n "You have seen her die over and over. [persistent.lildeaths] to be precise."
+                n "[date_sub!c] [conj('date', 'is', 'are')] right, you know."
+                n "You have seen [date_obj] die over and over. [persistent.lildeaths] to be precise."
                 n "Most people would probably have given up by now, but not you."
                 n "That is your strength. And yet I can't help but wonder if it might also be your weakness?"
         else:
@@ -493,25 +493,25 @@ label chinese_riddle_railroad:
     else:
         if love_meter >= 2:
             l "You know, it's kind of funny to be here in this specific restaurant with you."
-            l "Usually I come here with my mom and my sister, so it's a bit weird to be here with someone else."
+            l "Usually I come here with my [mom_parShort] and my [sis_sib], so it's a bit weird to be here with someone else."
             l "Weird in a good way though! It's a welcome change if I'm being honest."
-            l "The reason we come here so much is because my sister, [persistent.date_sis], really adores this place."
-            l "Since mom and me took her here for her fourteenth birthday she insisted on coming again for five years in a row."
-            l "She always picks the orange chicken, it really is her favourite."
+            l "The reason we come here so much is because my [sis_sib], [persistent.date_sis], really adores this place."
+            l "Since [mom_parShort] and me took [sis_obj] here for [sub_pos] fourteenth birthday [sis_sub] insisted on coming again for five years in a row."
+            l "[sis_sub!c] always [conj('sis', 'picks', 'pick')] the orange chicken, it really is [sis_pos] favourite."
             #In the rude route she tells you this but a bit more rude, you get the option to shit on the restaurant (verbally, not literally)
             menu:
-                "She sounds nice, can you tell me more about her?":
+                "[sis_sub!c] [conj('sis', 'sounds', 'sound')] nice, can you tell me more about [sis_obj]?":
                     n "[persistent.date] gives you a big smile."
                     l "Sure, what would you like to know?"
                     menu:
                         "What is the funniest memory the two of you share?":
                             jump chinese_riddle_talk_abbyMemory
 
-                        "What does she like to do?":
+                        "What [conj('sis', 'does', 'do')] [sis_sub] like to do?":
                             jump chinese_riddle_talk_abbyHobbies
         else:
-            n "[persistent.date] is really quiet, she is just scrolling on her phone now, barely paying you any attention."
-            n "It does not seem like she is having a good time at all."
+            n "[persistent.date] is really quiet, [date_sub] [conj('date', 'is', 'are')] just scrolling on [date_pos] phone now, barely paying you any attention."
+            n "It does not seem like [date_sub] [conj('date', 'is', 'are')] having a good time at all."
             jump chinese_phoneScene
 
 label chinese_riddle_talk_abbyMemory:
@@ -520,39 +520,39 @@ label chinese_riddle_talk_abbyMemory:
     #The code above this works for an easteregg
     l "I think I have a story you'll find quite funny, just stop me when I'm talking too much alright?"
     l "[persistent.date_sis] was like five years old at the time of our story.
-    One night she shook me until I was awake, we used to share a bedroom with a bunk bed."
-    l "She told me she heard whispering and laughing coming from underneath our bed and begged me to go investigate it."
-    l "I told her it was probably nothing and tried to go back to sleep but she wouldn't stop begging so I eventually gave in since I didn't want to wake the others."
+    One night [sis_sub] shook me until I was awake, we used to share a bedroom with a bunk bed."
+    l "[sis_sub!c] told me [sis_sub] heard whispering and laughing coming from underneath our bed and begged me to go investigate it."
+    l "I told [sis_obj] it was probably nothing and tried to go back to sleep but [sis_sub] wouldn't stop begging so I eventually gave in since I didn't want to wake the others."
     l "As I stood before the dark opening underneath the bunk bed I felt as if something was watching me. But monsters didn't exist, right?"
     l "Right when I was thinking that I heard something whisper.
-    I was terrified but as [persistent.date_sis_nickname]'s big sister I couldn't let her know I was so I tried to compose myself as best as I could and looked underneath the bed."
+    I was terrified but as [persistent.date_sis_nickname]'s big [date_sib] I couldn't let [sis_obj] know I was so I tried to compose myself as best as I could and looked underneath the bed."
     l "It was pitch-black so I decided to put my head fully underneath the bed, alongside with my right arm.
     My hand brushed against something soft and just as I grabbed it laughter came from underneath the bed."
     l "I jumped back out, utterly terrified, nearly bursting out in tears.
     In my hand I held a pink bear, [persistent.date_sis_nickname]'s favourite toy, Mr. bunfluff."
     l "Apparently he was causing all that ruckus, his voicebox was slightly malfunctioning ."
     l "It's extremely amusing to picture how a pink bear scared the crap out of two little girls, it even was funny back then.
-    I remember laughing with her about the whole ordeal for what must've been another hour or so before going to sleep."
+    I remember laughing with [sis_obj] about the whole ordeal for what must've been another hour or so before going to sleep."
     $ persistent.bedcheck_knowledge = True
     menu:
-        "It sounds like you really care for your little sister.":
-            l "Of course! I love her with all of my heart!
-            ... I just don't want to lose her, you know?"
+        "It sounds like you really care for your little [sis_sib].":
+            l "Of course! I love [sis_obj] with all of my heart!
+            ... I just don't want to lose [sis_obj], you know?"
             n "[persistent.date] gives you a saddened look."
             menu:
-                "I understand, I also know someone I wouldn't want to lose but it seems like I am always on the verge of losing her." if persistent.lildeaths > 0:
-                    n "[persistent.date] tries her best to give you a comforting smile and she half-succeeds."
+                "I understand, I also know someone I wouldn't want to lose but it seems like I am always on the verge of losing [date_obj]." if persistent.lildeaths > 0:
+                    n "[persistent.date] tries [date_pos] best to give you a comforting smile and [date_sub]  [conj('date', 'half-succeeds', 'half-succeeds')]."
                     l "I also sometimes feel like I will lose [persistent.date_sis]. When that happens I always try to give it my all so that that won't happen."
                     l "If your situation with the person you mentioned is even slightly similair I'm sure you'll figure something out."
                     if persistent.lildeaths < 4:
-                        n "[persistent.date]'s words fill your heart with hope, maybe there is a way to save her. "
+                        n "[persistent.date]'s words fill your heart with hope, maybe there is a way to save [date_obj]. "
                     
                     elif persistent.lildeaths <= 7:
-                        n "You are not sure if you can figure something out to save [persistent.date] but you have to try it, for her."
+                        n "You are not sure if you can figure something out to save [persistent.date] but you have to try it, for [date_obj]."
                     
                     else:
-                        n "You try to hold back your tears as to not alert her to something being wrong. You have seen her die so many times.
-                        Reliving her deaths over and over while only being able to slightly change the way to inevitably reach  them again is really messing with you."
+                        n "You try to hold back your tears as to not alert [date_obj] to something being wrong. You have seen [date_obj] die so many times.
+                        Reliving [date_pos] deaths over and over while only being able to slightly change the way to inevitably reach them again is really messing with you."
                     jump chinese_phoneScene
                 "Have you already lost someone close to you?":
                 #Give the player the ability to say "Like [persistent.date_ghost]?" if he has learned about him. Then you can tell her that you heard about it when it happened since it is a small town but [persistent.date] will say that her mom, [persistent.date_sis_nickname] and her moved away from her hometown so that you couldn't know.
@@ -568,7 +568,7 @@ label chinese_riddle_talk_abbyMemory:
                                     l "I'd rather not honestly..."
                                     menu:
                                         "That's fine, if you ever want to talk about it you can always give me a call.":
-                                            n "She gives you a slight smile."
+                                            n "[date_sub!c] [conj('date', 'gives', 'give')] you a slight smile."
                                             l "No offence [persistent.name] but you got to admit that I barely know you.
                                             Isn't it pretty weird to tell you about it?"
                                             menu:
@@ -590,7 +590,7 @@ label chinese_riddle_talk_abbyMemory:
                                                         l "{size=*0.5}Have you been stalking me [persistent.name]?{/size}"
                                                         n "You weren't meant to pick that up, so you do your best to not react too much to it."
                                                         n "Either way, there isn't really a good answer is there?"
-                                                        n "The alternative is telling her that you actually keep going on the same dates over and over, and that she ends up dead in most of them."
+                                                        n "The alternative is telling [date_obj] that you actually keep going on the same dates over and over, and that [date_sub] [conj('date', 'ends', 'end')] up dead in most of them."
                                                         n "Best to just stay quiet."
                                                         l "...Look [persistent.name], I'm not sure what is going on, but I do not feel comfortable going on this date anymore."
                                                         l "I think I'm just going to leave."
@@ -601,15 +601,15 @@ label chinese_riddle_talk_abbyHobbies:
     $ persistent.quest_knowledge = True
     #Does this still make sense if I'm using renpy to make the game?
     l "Alright, here I go, just stop me when I begin to ramble on too much."
-    l "She really likes to make all kinds of stuff, right now it's mostly games.
-    She can't really code much so she uses Quest, it's a program that makes it easier to make textbased games."
-    l "She makes tons of those games but barely manages to finish them.
-    Even is she finishes them eventually, she almost never does anything with them."
-    l "She asks me to play a select few of those that get finished every now and then, they are not really complex at the slightest but I always find them strangely intriguing nonetheless."
+    l "[sis_sub!c] really [conj('sis', 'likes', 'like')] to make all kinds of stuff, right now it's mostly games.
+    [sis_sub!c] can't really code much so [sis_sub] [conj('sis', 'uses', 'use')] Quest, it's a program that makes it easier to make textbased games."
+    l "[sis_sub!c] [conj('sis', 'makes', 'make')] tons of those games but barely [conj('sis', 'manages', 'manage')] to finish them.
+    Even if [sis_sub] [conj('sis', 'finishes', 'finish')] them eventually, [sis_sub] almost never [conj('sis', 'does', 'do')] anything with them."
+    l "[sis_sub!c] [conj('sis', 'asks', 'ask')] me to play a select few of those that get finished every now and then, they are not really complex at the slightest but I always find them strangely intriguing nonetheless."
     menu:
-        "What do you find interesting about her games?":
+        "What do you find interesting about [sis_pos] games?":
             l "Well for one, games made by a small team or even one person are almost an imprint of what those people were thinking right when they made their project."
-            l "Two of [persistent.date_sis_nickname]'s games especially seem like they have something to say about her as a person."
+            l "Two of [persistent.date_sis_nickname]'s games especially seem like they have something to say about [sis_obj] as a person."
             n "[persistent.date] pauses for a moment before continuing"
             l "In the first game you play as someone who has to feed a prisoner.
             You are discouraged from talking to the prisoner by someone who speaks in red text.
@@ -664,25 +664,25 @@ label chinese_riddle_talk_abbyHobbies:
                                 "You might be onto something!
                                 The feeder becoming the prisoner and the raven climbing the mountain again and again, those things are cleary loops.
                                 But what does that mean?
-                                Why would [persistent.date_sis_nickname] put that premise in two of her games?"
+                                Why would [persistent.date_sis_nickname] put that premise in two of [sis_pos] games?"
                                 menu:
-                                    "Maybe she just likes the concept of loops?":
+                                    "Maybe [sis_sub] just [conj('sis', 'likes', 'like')] the concept of loops?":
                                         n "[persistent.date] lets out a small chuckle."
                                         l "Who knows? Maybe that's all there is to it."
                                         n "[persistent.date] grows more somber and begins to slightly frown."
-                                        l "And yet I can't shake the feeling that there is something going on with her, something I'm not noticing."
-                                        l "There's this voice in my head that keeps telling me I'm not good enough, that I failed her and that I destroy everything I touch."
+                                        l "And yet I can't shake the feeling that there is something going on with [sis_obj],something I'm not noticing."
+                                        l "There's this voice in my head that keeps telling me I'm not good enough, that I failed [sis_obj] and that I destroy everything I touch."
                                         l "I would love to tell you that I didn't believe that voice in the slightest but that would be a lie."
-                                        l "I don't want to lose her [persistent.name], I can't go through all of that again."
-                                        l "Tears begin streaming down her face as she looks at you with a defeated look in her eyes."
+                                        l "I don't want to lose [sis_obj] [persistent.name], I can't go through all of that again."
+                                        l "Tears begin streaming down [date_pos] face as [date_sub] [conj('date', 'looks', 'look')] at you with a defeated look in [date_pos] eyes."
                                         menu:
                                             "I know that voice is hard to ignore but for whatever it is worth, I really like you [persistent.date].":
-                                                n "She let's out a small, almost apologetic chuckle."
+                                                n "[date_sub!c] [conj('date', 'lets', 'let')] out a small, almost apologetic chuckle."
                                                 l "Thank you [persistent.name], that's kind of you to say."
-                                                n "Something about the way she said it makes you think she isn't ready to believe those words. Not right now anyway."
+                                                n "Something about the way [date_sub] [conj('date', 'said', 'say')] it makes you think [date_sub] [conj('date', 'is', 'are')]n't ready to believe those words. Not right now anyway."
                                                 n "It came out almost like as if had been a practiced response."
-                                                n "Her doubt is close to being tangible, you can almost feel it hover over her like a dark cloud. And yet with the weight it pushes down on her, it doesn't even resemble anything close to a cloud."
-                                                n "Her face shifts into a worried look as she realizes you might have noticed what she has been carrying around."
+                                                n "[date_pos!c] doubt is close to being tangible, you can almost feel it hover over [date_obj] like a dark cloud. And yet with the weight it pushes down on [date_obj], it doesn't even resemble anything close to a cloud."
+                                                n "[date_pos!c] face shifts into a worried look as [date_sub] [conj('date', 'realizes', 'realize')] you might have noticed what [date_sub] [conj('date', 'has', 'have')] been carrying around."
                                                 jump chinese_phoneScene
 
                                             "That voice is just self-doubt, you are more than good enough [persistent.date].":
@@ -699,7 +699,7 @@ label chinese_riddle_talk_abbyHobbies:
 
 label chinese_abby_game_theme_nonsense:
     l "Hmm, do you really think so?"
-    n "[persistent.date] softly scratches her head."
+    n "[persistent.date] softly scratches [date_pos] head."
     l "It's hard to believe that something could ever be just pure nonsense and nothing else.
     You have to pull the ideas you use to make a game or something else from somewhere, right?"
     l "I'd like to think that even if someone would try to make a game that is just pure nonsense that atleast some aspects of meaning would seep into it."
@@ -708,7 +708,7 @@ label chinese_abby_game_theme_nonsense:
     l "Sorry if I'm boring you, it's just something I've been thinking about for a while now."
     menu:
         "You are not at all, this is actually very interesting.":
-            n "[persistent.date]'s face lights up with pride for a moment as she lets out a giggle."
+            n "[persistent.date]'s face lights up with pride for a moment as [date_sub] [conj('date', 'lets', 'let')] out a giggle."
             l "You know, if you want to we could talk about it a little more."
             jump chinese_phoneScene
 
@@ -718,15 +718,15 @@ label chinese_abby_game_theme_nonsense:
             jump chinese_phoneScene
 
 label chinese_abby_selfdoubt_IDo:
-    n "[persistent.date] chuckles with a pained expression painted on her face."
+    n "[persistent.date] chuckles with a pained expression painted on [date_pos] face."
     l "I suppose you are right.
     I need to believe that I'm a good person, otherwise it would just be empty praise coming from someone I barely met."
-    n "[persistent.date] tries her best to give you a smile, you can tell it's slightly forced."
+    n "[persistent.date] tries [date_pos] best to give you a smile, you can tell it's slightly forced."
     l "No offence [persistent.name]! I like how our date is going so far, even though I am messing it up pretty badly right now, but this is our first date after all."
     jump chinese_phoneScene
 
 label chinese_abby_selfdoubt_knowYouWell:
-    n "[persistent.date] wipes away some tears as she gives you a big smile."
+    n "[persistent.date] wipes away some tears as [date_sub] [conj('date', 'gives', 'give')] you a big smile."
     l "Thank you [persistent.name], I'd like to know you the same way you seem to know me.
     I know it is strange but somehow I can see in your eyes that you truly seem to know me quite well already."
     jump chinese_phoneScene
@@ -735,9 +735,9 @@ label chinese_abby_selfdoubt_knowYouWell:
 
 
 label chinese_lostSomeone_confideStranger:
-    n "[persistent.date] scratches her head and gives you a nice smile."
+    n "[persistent.date] scratches [date_pos] head and gives you a nice smile."
     l "I suppose you are right, I might take you up on that offer eventually."
-    n "You are not really sure if she means it."
+    n "You are not really sure if [date_sub] [conj('date', 'means', 'mean')] it."
     jump chinese_phoneScene
 label chinese_lostSomeone_questions:
     n "[persistent.date] begins to laugh."
@@ -753,18 +753,18 @@ label chinese_phoneScene:
             n "You notice a strange look on [persistent.date]'s face that is gone before you can realise just what it means."
             $ chinese_lilithBreakupTrigger = 2
         l "I'll be right back [persistent.name], I just need to go to the bathroom real quick."
-        n "[persistent.date] stands up from her chair and pushes it back under the table."
-        n "As she enters the bathroom stall you see that she has forgotten her phone, it is still laying on the table."
+        n "[persistent.date] stands up from [date_pos] chair and pushes it back under the table."
+        n "As [date_sub] [conj('date', 'enters', 'enter')] the bathroom stall you see that [date_sub] [conj('date', 'has', 'have')] forgotten [date_pos] phone, it is still laying on the table."
         if persistent.lildeaths >= 7:
             if persistent.peeked_phone == True:
                 n "You've already done it before, you might aswell do it again, right?"
                 n "After all, this might help give you another lead on how to solve all of this."
-                n "Is that what you are thinking? That she won't remember any of this so that it doesn't matter?"
+                n "Is that what you are thinking? That [date_sub] won't remember any of this so that it doesn't matter?"
                 n "Go on. I won't stop you, not as long as this remains my story."
             else:
                 $ nopeek = True
-                n "You know it isn't right to do but maybe you could find a way to save her on her phone.
-                If there is even the slightest chance that it will help her you owe it to her to try that out, right?"
+                n "You know it isn't right to do but maybe you could find a way to save [date_obj] on [date_pos] phone.
+                If there is even the slightest chance that it will help [date_obj] you owe it to [date_obj] to try that out, right?"
 
 
 
@@ -774,31 +774,31 @@ label chinese_phoneScene:
 
 
         menu:
-            "Take a quick peek at her phone.":
+            "*Take a quick peek at [date_pos] phone.*":
                 jump chinese_phone_peek
-            "Respect her privacy.":
+            "*Respect [date_pos] privacy.*":
                 jump chinese_phone_noPeek
     else:
         n "At around this time [persistent.date] and you would have recieved your food."
         n "This time however things are different. There is no food. Even if there was, it's not like you two can eat it."
-        n "That's probably for the better however. Her bloated face still haunts your nightmares."
-        n "For a second it almost feels like you were the one suffocating, not her."
+        n "That's probably for the better however. [date_pos!c] bloated face still haunts your nightmares."
+        n "For a second it almost feels like you were the one suffocating, not [date_obj]."
         n "You try to remain calm by reminding yourself you don't need to breathe in this form."
         jump restaurant_death_1_prevented
 
 label chinese_phone_peek:
-    n "As you open her phone you are greeted by a picture of a pug as the phone's background and a prompt.
+    n "As you open [date_pos] phone you are greeted by a picture of a pug as the phone's background and a prompt.
     The prompt says \"Enter password\". "
     if persistent.pass_knowledge == True:
-        n "You remember that her password is 81155"
+        n "You remember that [date_pos] password is 81155"
     else:
-        n "Suddenly it dawns on you that you do not know what [persistent.date] her password is."
+        n "Suddenly it dawns on you that you do not know what [date_pos] password is."
         $ persistent.need_pass_knowledge = True
         menu:
             "*Put the phone back.*":
                 label chinese_phone_peek_putPhoneBack:
                     n "You put the phone back and try to act as natural as you can."
-                    n "You quickly glance around the restaurant to see if anyone might have caught you trying to check her phone."
+                    n "You quickly glance around the restaurant to see if anyone might have caught you trying to check [date_pos] phone."
                     n "Everyone seems to be too busy enjoying their food to pay you any attention. You are saved by the excellent cuisine."
                     n "Just as you let out a sigh of relief [persistent.date] comes back to your table."
                     l "Hey [persistent.name], I'm back."
@@ -807,18 +807,18 @@ label chinese_phone_peek:
                         l "That's okay, I'm just really looking forward to it, the food here is to die for."
                         if persistent.chinese_death_1 == True:
                             n "It indeed seems to be that way doesn't it [persistent.name]?"
-                        n "You play along with [persistent.date], hoping she doesn't suspect what you just did."
+                        n "You play along with [persistent.date], hoping [date_sub] [conj('date', 'does', 'do')]n't suspect what you just did."
                         l "..."
-                        n "[persistent.date] squints her eyes and seems to be lost in thought for a moment."
+                        n "[persistent.date] squints [date_pos] eyes and seems to be lost in thought for a moment."
                         l "Is everything alright [persistent.name]? You look pretty nervous."
                         menu:
                             "Uhm yeah, I'm totally fine. (Lie)":
-                                n "[persistent.date] squints her eyes slightly and looks at you with an almost soul-piercing look in her eyes."
+                                n "[persistent.date] squints [date_pos] eyes slightly and looks at you with an almost soul-piercing look in [date_pos] eyes."
                                 $ love_points = -1
                                 $ love_meter_updater(False)
                                 l "Hmm, alright [persistent.name], if you say so."
-                                n "You have to stop yourself from shaking in your seat, did she buy that lie? The alternative gives you so much fear that you try to convince yourself that she did."
-                                n "Anyway, it's best to just move on now, you told the lie, you can always choose to not lie to her from now on, right?"
+                                n "You have to stop yourself from shaking in your seat, did [date_sub] buy that lie? The alternative gives you so much fear that you try to convince yourself that [date_sub] did."
+                                n "Anyway, it's best to just move on now, you told the lie, you can always choose to not lie to [date_obj] from now on, right?"
                                 jump chinese_phone_noPeek
 
 
@@ -830,8 +830,8 @@ label chinese_phone_peek:
                                     l "So it would be a shame if I somehow lost this."
                                     l "But right now we're both still here, right? So we should probably make the most out of it together."
                                     n "[persistent.date] gives you a cute smile."
-                                    n "You feel guilty for lying to her, because even if it was a half-truth, that still means it's a half-lie."
-                                    n "You try to ignore that feeling and just try to get the most of your remaining time with her."
+                                    n "You feel guilty for lying to [date_obj], because even if it was a half-truth, that still means it's a half-lie."
+                                    n "You try to ignore that feeling and just try to get the most of your remaining time with [date_obj]."
                                     jump chinese_phone_noPeek
                                 else: 
                                     l "Oh, I see."
@@ -842,8 +842,8 @@ label chinese_phone_peek:
                                     l "You seemed way nicer to me when we first talked about arranging this date. So I know there's someone nice underneath that mask you are wearing."
                                     l "Just allow yourself to relax a bit and enjoy your time with me here, alright?"
                                     l "You don't have to prove yourself to me. After all, I came here to go on a date with you, didn't I?"
-                                    n "[persistent.date] flashes you a cute smile, you can see some slight worry in her eyes."
-                                    n "What affects you the most is that the worry does not seem to be for herself, it seems to be for you."
+                                    n "[persistent.date] flashes you a cute smile, you can see some slight worry in [date_pos] eyes."
+                                    n "What affects you the most is that the worry does not seem to be for [date_pred], it seems to be for you."
                                     menu:
                                         "I... I guess you're right. Sorry for that [persistent.date]. I'm sorry if I hurt you by trying to act more tough.":
                                             l "It's alright [persistent.name]! I won't pretend that you didn't hurt me at all, but apoligizing is a good first step."
@@ -957,7 +957,7 @@ label chinese_phone_peek:
                     n "None of the other codes seem to result in anything either. You are not sure how many you tried, you decide to close the phone in case [persistent.date] will come back."
                     jump chinese_phone_caught
                 else:
-                    n "You feel as if you could still try a few more codes before she comes back."
+                    n "You feel as if you could still try a few more codes before [date_sub] [conj('date', 'comes', 'come')] back."
                     jump chinese_phone_randomNumbers
 
 
@@ -976,20 +976,20 @@ label chinese_phone_caught:
         else:
             if persistent.restrainingorderfamily_knowledge == True:
                 n "You succesfully memorised the number of the next person you are going to involve into this whole mess, the exact thing [persistent.date] asked you not to do."
-                n "How do you think that would make her feel if she knew?"
+                n "How do you think that would make [date_obj] feel if [date_sub] knew?"
             else:
                 n "You succesfully memorised the number of the next person you are going to involve into this already way too complicated situation."
                 n "Do you really think that that's a good idea?"
     n "No need to answer that, it was rhetorical. What you need to do is to close that phone."
     n "Right at the moment when you close the phone and look back up you can see [persistent.date] approaching."
-    n "Another thing you can also see is the very angry expression on her face."
-    n "As she walks up to the table she grabs her phone and puts it in her handbag"
+    n "Another thing you can also see is the very angry expression on [date_pos] face."
+    n "As [date_sub] [conj('date', 'walks', 'walk')] up to the table [date_sub] [conj('date', 'grabs', 'grab')] [date_pos] phone and puts it in [date_pos] handbag"
     l "What you just did was inexcusable [persistent.name]. I really didn't expect this from you."
     l "I'm leaving, you can pay for our meals or try and cancel them but I am sticking up for myself."
     l "Goodbye and do not ever contact me again."
     if persistent.chinese_phone_noretry == True:
         n "And yet here you are once again, making the same mistake you've already made. And [persistent.date] is none the wiser."
-        n "Is that why you came back to do the same thing she told you she didn't want you to do? Would you have acted differently if she could remember every action you took?"
+        n "Is that why you came back to do the same thing [date_sub] told you [date_sub] didn't want you to do? Would you have acted differently if [date_sub] could remember every action you took?"
         n "Don't worry [persistent.name], this is just all a game, right? Your actions here don't mean anything at all, right?"
         n "..."
     else:
@@ -999,7 +999,7 @@ label chinese_phone_caught:
 label chinese_phone_noPeek:
     if persistent.peeked_phone == False and persistent.lildeaths >= 2 :
         n "It's probably best not to look."
-        n "Even if it might have info on it that could help her survive. "
+        n "Even if it might have info on it that could help [date_obj] survive. "
         n "And yet..."
         n "You are thinking about it aren't you?"
         n "If you weren't before, now you most definetly are."
@@ -1007,14 +1007,14 @@ label chinese_phone_noPeek:
 
 label chinese_phone_peek_numbers:
 
-    n "You see the family section of her phone numbers, four names are listed there."
+    n "You see the family section of [date_pos] phone numbers, four names are listed there."
     if persistent.restrainingorderfamily_knowledge == True:
-        n "You remember that [persistent.date] told you to not involve her family."
-        n "She probably wouldn't appreciate this."
+        n "You remember that [persistent.date] told you to not involve [date_pos] family."
+        n "[date_sub!c] probably wouldn't appreciate this."
         n "But then again, it could really help you out in the long-term."
         $ restrainingorderfamily_violation_counter += 1
     else:
-        n "If anyone besides [persistent.date] will have some handy information about her it's them."
+        n "If anyone besides [persistent.date] will have some handy information about [date_obj] it's them."
         n "You might just have enough time to learn one phone-number."
 
     $ peeked_phone_temp = True
@@ -1022,13 +1022,13 @@ label chinese_phone_peek_numbers:
         "Learn [persistent.date_sis]'s phone number." if not persistent.abigail_call_knowledge:
             $ persistent.abigail_call_knowledge = True
             jump chinese_phone_loop
-        "Learn David's phone number." if not persistent.david_call_knowledge:
+        "Learn [persistent.date_dad]'s phone number." if not persistent.david_call_knowledge:
             $ persistent.david_call_knowledge = True
             jump chinese_phone_loop
         "Learn [persistent.date_ghost]' phone number." if not persistent.james_call_knowledge:
             $ persistent.james_call_knowledge = True
             jump chinese_phone_loop
-        "Learn Lila's phone number." if not persistent.lila_call_knowledge: 
+        "Learn [persistent.date_mom]'s phone number." if not persistent.lila_call_knowledge: 
             $ persistent.lila_call_knowledge = True
             jump chinese_phone_loop
         "Put the phone back." if persistent.abigail_call_knowledge and persistent.david_call_knowledge and persistent.james_call_knowledge and persistent.lila_call_knowledge:
@@ -1041,7 +1041,7 @@ label chinese_phone_peek_numbers:
 label chinese_phone_loop:
     if chinese_lilithBreakupTrigger > 0:
         if not persistent.abigail_call_knowledge or not persistent.david_call_knowledge or not persistent.james_call_knowledge or persistent.lila_call_knowledge:
-            n "You feel as if you have enough time to learn an extra phone number before she will come back."
+            n "You feel as if you have enough time to learn an extra phone number before [date_sub] will come back."
         jump chinese_learnNumberChoice
     else:
         jump chinese_phone_caught
@@ -1060,7 +1060,7 @@ label chinese_riddle_decline:
                     menu:
                         "Thanks, [persistent.date]! From your response, I gather you’re also into mythology, right?":
                             l "Oh, absolutely!"
-                            n "She said it pretty loudly, but didn't seem to notice."
+                            n "[date_sub!c] said it pretty loudly, but didn't seem to notice."
                             l "I practically live and breathe mythology."
                             l "When I was little, I got my first mythology book about the Greek and Roman gods, and it was like a whole new universe opened up. Each story was so vivid and alive, like I could picture every god, monster, and hero as if they were real people."
                             l "The first story I fell in love with was the tale of Persephone. How she was taken to the underworld and how her mother, Demeter, searched endlessly for her. I was so fascinated by the idea of the seasons coming from a mother’s love and grief."
@@ -1068,12 +1068,12 @@ label chinese_riddle_decline:
                             l "Recently, I’ve been reading Finnish mythology, specifically the Kalevala. It’s totally different from Greek myths. It’s full of epic poems and songs, and the stories are steeped in nature and magic. One of my favorites is about Väinämöinen, this wise old bard who could sing magical songs to make anything happen. His power wasn’t in strength or weapons, but in his words and wisdom."
                             l "It’s amazing how these stories, even though they’re ancient, still resonate today. They speak to something deep inside us, don’t you think?"
                             l "Meeting someone like you who’s into mythology is rare, [persistent.name]. It’s like finding someone who also sees the beauty in these old, forgotten worlds."
-                            n "As she stops she suddenly looks around to all the people in the restaurant, some of them are watching the both of you, or more specifically, her."
-                            n "She turns beetred."
+                            n "As [date_sub] [conj('date', 'stops', 'stop')] [date_sub] suddenly looks around to all the people in the restaurant, some of them are watching the both of you, or more specifically, [date_obj]."
+                            n "[date_sub!c] [conj('date', 'turns', 'turn')] beetred."
                             l "Was I a bit too loud? I'm sorry [persistent.name], I just got really excited."
                             menu:
                                 "No need to apoligize for being passionate [persistent.date]. It was very fun to see you like that.":
-                                    n "She turns even more beetred, something you did not consider even remotely possible."
+                                    n "[date_sub] [conj('date', 'turns', 'turn')] even more beetred, something you did not consider even remotely possible."
                                     l "Thank you [persistent.name], I guess you are right. It's very sweet of you to say that."
 
                             
@@ -1082,27 +1082,27 @@ label chinese_riddle_decline:
                             n "[persistent.date] looks slightly disappointed."
                             l "Oh... that's alright [persistent.name], I guess sometimes I forget that that riddle is practically used everywhere now."
                             l "Tons of movies, books and games now kind of use that riddle as a placeholder because it's so well known. It's the \"lorum ipsum\" of riddles."
-                            n "Hey, is she complaining about my ability to write riddles? Uhm, I mean your ability to come up with riddles."
+                            n "Hey, [conj('date', 'is', 'are')] [date_sub] complaining about my ability to write riddles? Uhm, I mean your ability to come up with riddles."
                             l "But still, thank you for your riddle! Regardless of how many times it has been used, it's still remains a clasic."
                             l "And I think you must've thought so aswell since you can still remember it after you first read it online."
                 "What has five teeth, twelve eyes, four arms and a thousand legs?":
                     l "..."
-                    n "[persistent.date] scrathes her head, deep in thought."
+                    n "[persistent.date] scrathes [date_pos] head, deep in thought."
                     l "I don't know [persistent.name], that's a really tough one."
                     l "What is the answer?"
                     menu:
                         "Well, the answer is that I don't know either.":
-                            n "[persistent.date] gives you a confused look before it all clicks and she burtst out in laughter."
+                            n "[persistent.date] gives you a confused look before it all clicks and [date_sub] [conj('date', 'bursts', 'burst')] out in laughter."
                             l "You sure got me there [persistent.name]!"
                             l "Although, if you don't know the answer, and that is the answer, doesn't that mean that you know the answer?"
-                            n "You are not entirely sure what she means."
-                            n "Apparently [persistent.date] must have been able to read just that from your face as she immediately turns beet-red and tenses up a bit."
+                            n "You are not entirely sure what [date_sub] [conj('date', 'means', 'mean')]."
+                            n "Apparently [persistent.date] must have been able to read just that from your face as [date_sub] immediately [conj('date', 'turns', 'turn')] beet-red and tenses up a bit."
                             l "I'm sorry, that was way too much for a first date wasn't it?"
                             l "I didn't mean to sound like a know-it-all."
                             l "Please just forget what I said, alright [persistent.name]?"
                             menu:
                                 "I don't mind at all [persistent.date], you just kind of threw me for a loop with what you just said. It does sound interesting though.":
-                                    n "[persistent.date] lets out a sigh of relief as she relaxes a bit more once again."
+                                    n "[persistent.date] lets out a sigh of relief as [date_sub] [conj('date', 'relaxes', 'relax')] a bit more once again."
                                     l "I already was fearing the worst."
                                     l "A lot of people have told me that I come off as info-dumping way too much, especially when I get to know someone at first."
                                     l "It's just that I love to think about things a lot, especially if they fascinate me."
@@ -1112,13 +1112,13 @@ label chinese_riddle_decline:
                                     n "[persistent.date] let's out a mischevious little chuckle."
                                     l "I'm only joking, I wouldn't want you to run away from me after all."
                                     if persistent.runAwayLilith_counter >= 3:
-                                        n "I don't think she has to worry about that in the slightest, does she?"
+                                        n "I don't think [date_sub] [conj('date', 'has', 'have')] to worry about that in the slightest, does [date_sub]?"
                                         n "After all, usually when it comes to running away it's the opposite way, isn't it player?"
                                     menu:
                                         "Running away? From such good company? I would never forgive myself of that.":
-                                            n "And just like that she turns completely beetred once again."
+                                            n "And just like that [date_sub] [conj('date', 'turns', 'turn')] completely beetred once again."
                                             l "{size=*0.5}Uhm...uhm... uhm...{/size}"
-                                            n "She covers her face for a short moment, takes a deep breath in and then continues."
+                                            n "[date_sub!c] [conj('date', 'covers', 'cover')] [date_pos] face for a short moment, takes a deep breath in and then [conj('date', 'continues', 'continue')]."
                                             l "My, you are quite a flatterer aren't you?"
                                             l "But seriously, that means a lot to me, to hear that you consider me good company."
                                             l "Normally I probably wouldn't tell you that, but I'm trying to become a bit more direct lately."
@@ -1139,7 +1139,7 @@ label chinese_riddle_decline:
                     l "{size=*0.5}But then how did he get in?{/size}"
                     l "{size=*0.5}Wait a second...{/size}"
                     l "I think I got the answer!"
-                    n "She is practically bouncing on her seat as she is saying this."
+                    n "[date_sub!c] [conj('date', 'is', 'are')] practically bouncing on [date_pos] seat as [date_sub] [conj('date', 'is', 'are')] saying this."
                     l "I think the answer is that there is no door but there is a doorframe!"
                     l "So that means he just has to walk out through there."
                     l "Did I get it right?"
@@ -1152,7 +1152,7 @@ label chinese_riddle_decline:
                     l "But I suppose you could choose a point where the rings starts and ends."
                     l "So in a way it does have an end if you decide it has one."
                     l "You could even argue that theoretically it has infinite ends since you can say it begins on an infinite ammount of points."
-                    n "For a moment she is lost deep in thought."
+                    n "For a moment [date_sub] [conj('date', 'is', 'are')] lost deep in thought."
                     l "Honestly, now that I'm thinking about it, the latter seems to actually make a lot of sense."
                     l "We constantly start and end things, don't we?"
                     l "The start of every second is the end of the previous one."

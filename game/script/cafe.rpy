@@ -13,7 +13,7 @@ label cafe_start:
         n "Colorful fish sometimes poke their head out of the aquarium as if they want to watch the customers. It makes you feel as if you are the one in the glass cage and you just don't know it."
         n "It's probably the other way around though. Atleast they seem to be enjoying themselves in their captivity, or you think so atleast."
         n "Your eyes fall on [persistent.date], who is already sitting at a nice looking mahogany table."
-        n "When she notices you she waves at you enthusiastically with a wide grin on her face."
+        n "When [date_sub] [conj('date', 'notices', 'notice')] you [date_sub] [conj('date', 'waves', 'wave')] at you enthusiastically with a wide grin on [date_pos] face."
         l "Heya, glad you could make it! "
         l "This place has a really nice atmosphere, those mahogany tables and the aquariums are real eye catchers don't you think?"
         l "Anyway, let's go order our food and then we can talk some more, I'm starving!"
@@ -67,7 +67,7 @@ label cafe_start:
                 l "This place has a really nice atmosphere, those mahogany tables and the aquariums are real eye catchers don't you think?"
                 l "It's a shame it's pretty hard to notice from down here, but atleast the food will be free."
                 l "My person already went to grab the food. It should be two beef sandwiches."
-                n "Right as she says that a tiny piece of beef falls right next to you."
+                n "Right as [date_sub] [conj('date', 'says', 'say')] that a tiny piece of beef falls right next to you."
                 l "Does it smell good?"
             
                 jump cafe_foodReplyChoice
@@ -110,7 +110,7 @@ label cafe_food_result:
 
     n "[persistent.date] gives you a mischievous smile."
     l "I just got a fun idea we could try while we wait."
-    n "She eagerly digs into her handbag and takes out two red six-sided dice."
+    n "[date_sub!c] eagerly [conj('date', 'digs', 'dig')] into [date_pos] handbag and takes out two red six-sided dice."
     l "It's a little game I came up with a while ago, I'd like to test it out with you."
     l "So, the rules are simple. "
     l "{size=*0.5}Actually they might be a little complex...{/size}"
@@ -129,7 +129,7 @@ label cafe_food_result:
 
 label cafe_dice_continue:
     $ persistent.dice_counter += 1
-    n "[persistent.date] throws two six-sided dice and puts her hands in front of them so you can't see the result."
+    n "[persistent.date] throws two six-sided dice and puts [date_pos] hands in front of them so you can't see the result."
     l "The sum of the dice is nine."
     if persistent.dice_knowledge == True:
         n "You remember that the first dice is 6 and the second dice is 3."
@@ -146,11 +146,11 @@ label cafe_dice_result:
     if cafedicecheat == True:
         n "You peek at the dice using the aquarium as a mirror, the first dice appears to be a 6 and the second is a 3."
         $ cafedicecheat = False
-    n "[persistent.date] waits for you to look away and she then takes an action."
+    n "[persistent.date] waits for you to look away and [date_sub] then [conj('date', 'takes', 'take')] an action."
     l "The sum of the dice is nine."
-    n "She takes her next action."
+    n "[date_sub!c] [conj('date', 'takes', 'take')] [date_pos] next action."
     l "The sum of the dice is eight."
-    n "[persistent.date] hums an unfamiliar song as she takes her next action, it's quite catchy."
+    n "[persistent.date] hums an unfamiliar song as [date_sub] [conj('date', 'takes', 'take')] [date_pos] next action, it's quite catchy."
     $ persistent.song_knowledge = True
     l "The sum of the dice is five."
     l "So, that was the puzzle. You'll need one hint to solve it."
@@ -174,7 +174,7 @@ label cafe_dice_result:
                     renpy.say(n, "That was a kind of weird response. Let's just pretend that never happened. Please enter a number this time.")
                     renpy.jump("cafe_dice_choice")
             if dicenumber > 6:
-                n "Let's try that again, she is using six-sided dice, remember? So you can only choose a number from 1-6."
+                n "Let's try that again, [date_sub] [conj('date', 'is', 'are')] using six-sided dice, remember? So you can only choose a number from 1-6."
                 jump cafe_dice_choice
         else:
             $ dicenumber = dicenumber.lower()
@@ -237,7 +237,7 @@ label cafe_dice_result:
                             "No, if I ever learn the answer I want it to be because I solved it.":
                                 l "That's respectable but I'm not sure when you'll get your next chance, this is not something I do all of the time."
                                 if persistent.dice_counter >= 2:
-                                    n "Oh I think she doesn't have to worry about that at all..."
+                                    n "Oh I think [date_sub] [conj('date', 'does', 'do')]n't have to worry about that at all..."
                                     n "After all, isn't this the [persistent.dice_counter] time you try this puzzle?"
                                     if persistent.dice_knowledge == True:
                                         n "But what is peculiar to me is that you already know the correct answer, right?"
@@ -374,10 +374,10 @@ label cafe_rateCafe_bad:
     n "[persistent.date] frowns at your reaction."
     l "..."
     l "There's no need to drag this place down just because you don't like it."
-    l "[persistent.date] takes her phone and begins aimlessly scrolling on it, you can see her screen through the reflection on the aquarium.
-    She's growing less and less responsive after every word you say until the two of you sit in pure silence for what feels like an hour."
+    l "[persistent.date] takes [date_pos] phone and begins aimlessly scrolling on it, you can see [date_pos] screen through the reflection on the aquarium.
+    [date_sub!c] [conj('date', 'is', 'are')] growing less and less responsive after every word you say until the two of you sit in pure silence for what feels like an hour."
     if persistent.need_pass_knowledge == True and not persistent.rockMode:
-        n "Atleast you also managed to catch her password thanks to the reflection, it's 81155."
+        n "Atleast you also managed to catch [date_pos] password thanks to the reflection, it's 81155."
         $ persistent.pass_knowledge = True
 
     jump restaurant_death_1
@@ -401,7 +401,7 @@ label cafe_rateCafe_result:
         "You are very welcome, thank you for making me come here in the first place.":
             l "Did you just counter my thank you with another thank you?"
             l "Well, in that case I'll retaliate with a \"You are very welcome.\" aswell!"
-            l "[persistent.date] let's out a cute giggle. She has a gleeful look in her eyes."
+            l "[persistent.date] let's out a cute giggle. [date_sub!c] [conj('date', 'has', 'have')] a gleeful look in [date_pos] eyes."
             l "You know, you made me laugh quite good there [persistent.name], now it's my turn! Would you like to hear a joke?"
             menu:
                 "Sure, I'd love to!":
@@ -439,9 +439,9 @@ label cafe_joke_bad:
 label cafe_joke_good:
     n "[persistent.date] explodes in laughter."
     if persistent.rockMode == False:
-        l "Exactly! The first time [persistent.date_sis], my sister, told me that joke I spent an entire hour laughing.
-        But then again, she always makes me laugh so much that I just might pass out one time."
-        l "I'm kidding, I'm kidding! About the passing out part that is, she really is funny though."
+        l "Exactly! The first time [persistent.date_sis], my [sis_sib], told me that joke I spent an entire hour laughing.
+        But then again, [sis_sub] always [conj('sis', 'makes', 'make')] me laugh so much that I just might pass out one time."
+        l "I'm kidding, I'm kidding! About the passing out part that is, [sis_sub] really [conj('sis', 'is', 'are')] funny though."
     else:
         l "Exactly! The first time I heard that joke I just spent an entire hour laughing."
         l "Although... it's strange, I do not remember where I heard that joke, just that I did."
@@ -450,7 +450,7 @@ label cafe_joke_good:
         "Quick, come stand next to me!" if persistent.cafe_death_1 and not persistent.rockMode:
             jump restaurant_death_1_prevented
 
-        "She sounds nice." if not persistent.rockMode:
+        "[sis_sub!c] [conj('sis', 'sounds', 'sound')] nice." if not persistent.rockMode:
             jump restaurant_death_1
 
         "That indeed is strange." if persistent.rockMode:
@@ -529,7 +529,7 @@ label cafe_badLove:
     menu:
         "No need to apologise for talking, I like listening to you.":
             l "Oh you flatterer! "
-            n "[persistent.date] looks at you and gives you a big grin, you can clearly see she's blushing."
+            n "[persistent.date] looks at you and gives you a big grin, you can clearly see [date_sub] [conj('date', 'is', 'are')] blushing."
             n "Suddenly the grin begins to make place for a slight frown."
             l "Is it normal for me to be that happy because someone told me they don't mind me speaking?"
             l "..."
@@ -541,5 +541,5 @@ label cafe_badLove:
 
                 "Well, I really enjoy our time together!":
                     l "Thank you [persistent.name], it really helps to hear someone say that from time to time."
-                    n "[persistent.date] gives give a thankfull smile."
+                    n "[persistent.date] gives you a thankfull smile."
                     jump restaurant_death_1

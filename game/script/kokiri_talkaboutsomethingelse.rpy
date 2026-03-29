@@ -2,7 +2,6 @@ label kokiri_talkAboutSomethingElse:
 
     
     #$ kokiri_meteoritewarn()
-
     if poem_conversation == True:
         $ poem_conversation = False
     if kokiri_conversation < 4:
@@ -13,14 +12,14 @@ label kokiri_talkAboutSomethingElse:
             "I have been having nightmares lately. About the places we go, about you.":
                 l "You have?"
                 l "I see..."
-                n "She gives you a certain look you can't fully seem to decipher. It resembles worry."
+                n "[date_sub!c] [conj('date', 'gives', 'give')] you a certain look you can't fully seem to decipher. It resembles worry."
                 l "Together we've been through quite a lot haven't we?"
                 l "But I never remember any of it, and you end up having to carry it all on your own."
                 l "I won't ever fully get how it feels to do so, how bad my deaths exactly were."
                 l "But that doesn't mean I don't care about it."
                 l "If you feel like talking to me about your nightmares would help then I'd be glad to help you carry that weight for as long as this time lasts."
                 l "And if you want to talk about it again the next attempt or some other time, just know that you can do so, always."
-                n "She puts her hand on yours and gives you a small smile."
+                n "[date_sub!c] [conj('date', 'puts', 'put')] [date_pos] hand on yours and [conj('date', 'gives', 'give')] you a small smile."
                 #TODO: Continue this, you can talk about certain nightmares here. Also add a flag so that this text option only appaears when you have had your first nightmare.
 
             "I am a crosser, I basically travel across different realities almost exactly like this one. So I don't really undo what I caused, you died [persistent.lildeaths] times already and I can only try to make sure you won't die again. " if persistent_jamestalk_justgame_knowledge and not conversationtracker_crosser:
@@ -82,7 +81,7 @@ label kokiri_talkAboutSomethingElse:
                                     "I think it wants you to be safe, otherwise why bother adding things after the three restaurants? Why even bother adding three restaurants in the first place?":
                                         menu:
                                             "If this game truly wanted you to die over and over, why would it have given me the option to save you most times?":
-                                                n "She sits down to think about those words for a good few seconds. Then she answers."
+                                                n "[date_sub!c] [conj('date', 'sits', 'sit')] down to think about those words for a good few seconds. Then [date_sub] [conj('date', 'answers', 'answer')]."
                                                 l "So it can kill me again, so it won't just be one time."
                                             "If this game truly wanted you to die over and over, why would it even put so much content in where you are not dying? Why just not only show me the deathscenes?":
                                                 l "If I would just be a random game character dying over and over, would I truly have died in your eyes? Is it not the feeling that you know me that makes it hit that much harder?"
@@ -90,7 +89,7 @@ label kokiri_talkAboutSomethingElse:
                                                 l "Maybe the game wants to hurt you through me, since it can't reach you directly."
                                
                                     "Bad odds or not, we're going to push through this. I promise.":
-                                        n "She flashes you a cute smile."
+                                        n "[date_sub!c] [conj('date', 'flashes', 'flash')] you a cute smile."
                                         l "Thank you [persistent.name], it feels good to hear you say that."
                                         l "Even if I have my doubts, I know you will give it your all, and so I will aswell."
 
@@ -211,7 +210,7 @@ label kokiri_talkAboutSomethingElse:
                                                 "Filler" #Lead to kokiri_makingOwnStory
 
                                             "That actually makes a lot of sense, I had never really thought about it like that before.":
-                                                n "She gives you a nice smile."   
+                                                n "[date_sub!c] [conj('date', 'gives', 'give')] you a nice smile."   
                                                 l "I'm glad I got through to you [persistent.name]. It is an important lesson I think." 
                                                 l "A lot of artists struggle with the idea that their art should start from a completely unique idea, while that is nearly impossible."
                                                 l "I think the thing that is truly unique is the end result, all the different pieces and ideas of the work combining together into a new form."
@@ -235,7 +234,7 @@ label kokiri_talkAboutSomethingElse:
                                     "You're right, I do.":
                                         l "Great, in that case try to tell your own story that continues from this point."
                                         l "That way we can test out your capabilities, and maybe if it works out well enough you could even tell a completely different story about us."
-                                        n "She patiently waits for a while without saying anything."
+                                        n "[date_sub!c] patiently [conj('date', 'waits', 'wait')] for a while without saying anything."
                                         l "So, are you telling the story now?"
                                         jump kokiri_makingOwnStory
 
@@ -248,7 +247,7 @@ label kokiri_talkAboutSomethingElse:
                                         $ noTalkAngryLilith = True
                                         jump angryLilith
 
-            "*Ask her something about her family.*":
+            "*Ask [date_obj] something about [date_pos] family.*":
                     $ kokiri_chatchar_abigail_recent = False
                     $ kokiri_chatchar_james_recent = False
                     $ kokiri_chatchar_david_recent = False
@@ -264,40 +263,40 @@ label kokiri_talkAboutSomethingElse:
                             menu:
                                 "Can you tell me about [persistent.date_dad]?":
                                     jump askAboutDavid_tellMeAbout
-                                "Do you blame your father for what happened to [persistent.date_ghost]?" if persistent.david_blame_knowledge and not conversationtracker_blamedavid:
+                                "Do you blame your [dad_par] for what happened to [persistent.date_ghost]?" if persistent.david_blame_knowledge and not conversationtracker_blamedavid:
                                         $ conversationtracker_blamedavid = True
                                         l "What? That's absurd."
-                                        l "I have never blamed him for [persistent.date_ghost]'... passing."
-                                        l "I am just really mad at him for abandoning his family because he couldn't deal with what happened to [persistent.date_ghost]."
-                                        l "Why are you asking such a question [persistent.name], you haven't been seeing my dad, have you?"
+                                        l "I have never blamed [dad_obj] for [persistent.date_ghost]'... passing."
+                                        l "I am just really mad at [dad_obj] for abandoning [dad_pos] family because [dad_sub] couldn't deal with what happened to [persistent.date_ghost]."
+                                        l "Why are you asking such a question [persistent.name], you haven't been seeing my [dad_parShort], have you?"
                                         n "It seems you just struck a sensitive chord."
                                         menu:
-                                            "I have actually, he said he wants to come back every day but can't because you and Lila hate him for what happened with [persistent.date_ghost].":
-                                                l "First off I'd like you to not contact my dad again even though I can't stop you from doing so."
-                                                l "But as you now know I don't blame him for [persistent.date_ghost]' death and I don't think mom does either."
-                                                l "We were mad for him leaving us, I still haven't forgiven him."
-                                                l "Mom seemingly did though, I guess it's because of her trust in humanity." #Because david still gave money, Lila just didn't accept it since she wants David back, not to get his money.
+                                            "I have actually, [dad_sub] said [dad_sub] [conj('dad', 'wants', 'want')] to come back every day but can't because you and [persistent.date_mom] hate [dad_obj] for what happened with [persistent.date_ghost].":
+                                                l "First off I'd like you to not contact my [dad_parShort] again even though I can't stop you from doing so."
+                                                l "But as you now know I don't blame [dad_obj] for [persistent.date_ghost]' death and I don't think [mom_parShort] does either."
+                                                l "We were mad for [dad_obj] leaving us, I still haven't forgiven [dad_obj]."
+                                                l "[mom_parShort!c] seemingly did though, I guess it's because of [date_pos] trust in humanity." #Because david still gave money, [persistent.date_mom] just didn't accept it since she wants [persistent.date_dad] back, not to get his money.
                                                 menu:
-                                                    "Would you forgive him if he made an apology?":
+                                                    "Would you forgive [dad_obj] if [dad_sub] made an apology?":
                                                         $ persistent.david_apology_knowledge = True
                                                         #Don't put this choice in the other subpath where you deny talking to him, because it wouldn't make much sense.
-                                                        l "I'm not sure I would even want to hear him out."
-                                                        l "...But let's say I did, if it's a good apology then maybe he would be a step closer to rebuilding our bond but it won't be the same for a long time, maybe it will even never be the same."
-                                                        l "However, I think the girl he left all those years ago, the girl that is still somewhere inside of me, would at the very least like the idea that he made an effort to come back to us."
+                                                        l "I'm not sure I would even want to hear [dad_obj] out."
+                                                        l "...But let's say I did, if it's a good apology then maybe [dad_sub] would be a step closer to rebuilding our bond but it won't be the same for a long time, maybe it will even never be the same."
+                                                        l "However, I think the girl [dad_sub] left all those years ago, the girl that is still somewhere inside of me, would at the very least like the idea that [dad_sub] made an effort to come back to us."
                                                         $ kokiri_conversation_silent()
 
-                                            "No, I haven't talked to him. I was just curious because I got the impression you hated him for what happened to [persistent.date_ghost] from a conversation we had in a previous time.":
-                                                l "I see, I definetly do have some resentment for him since he left us alone but I don't think he could have saved [persistent.date_ghost] somehow."
+                                            "No, I haven't talked to [dad_obj]. I was just curious because I got the impression you hated [dad_obj] for what happened to [persistent.date_ghost] from a conversation we had in a previous time.":
+                                                l "I see, I definetly do have some resentment for [dad_obj] since [dad_sub] left us alone but I don't think [dad_sub] could have saved [persistent.date_ghost] somehow."
                                                 l "Alright, now that's all cleared up."
-                                                l "It's a relief to hear you haven't contacted my dad yet, I'd prefer if you never did at all, even if given the option somehow."
-                                                l "I'd prefer if you didn't  anyone of my family, but especially not David."
+                                                l "It's a relief to hear you haven't contacted my [dad_parShort] yet, I'd prefer if you never did at all, even if given the option somehow."
+                                                l "I'd prefer if you didn't  anyone of my family, but especially not [persistent.date_dad]."
                                                 menu:
                                                     "Of course! I would never contact someone of your family. (Lie)":
                                                         #Karma
                                                         l "Thank you [persistent.name]!"
                                                         l "It means a lot to me that I can trust you with something like this."
                                                         n "I see..."
-                                                        n "So now you are just lying to her face?"
+                                                        n "So now you are just lying to [date_pos] face?"
                                                         n "You might think this doesn't have any consequences."
                                                         n "Is that why you are doing this?"
                                                         n "Or is it because you want to read each line of potentially new dialogue, no matter what you have to do to reach it?"
@@ -307,36 +306,36 @@ label kokiri_talkAboutSomethingElse:
                                                     "And what if contacting someone of your family could potentially save you?":
                                                         l "I don't think anything good could come from pulling my family into this mess."
                                                         l "Even if it did help, I'm just not comfortable with you doing it."
-                                                        l "I especially don't want you to involve my dad, I mean David, in this, alright?"
+                                                        l "I especially don't want you to involve my [dad_parShort], I mean [persistent.date_dad], in this, alright?"
                                                         l "So please, no matter what situation we find ourselves in, don’t drag my family into this."
                                                         l "We've all gone through enough after what happened with [persistent.date_ghost], I don't want them to be hurt like that again."
                                                         n "The discomfort on [persistent.date]'s face is very clearly visible."
                                                         $ kokiri_conversation_silent()
                                 
-                                "*Tell her [persistent.date_dad]'s apology.*" if persistent.david_apology_made_knowledge:   
+                                "*Tell [date_obj] [persistent.date_dad]'s apology.*" if persistent.david_apology_made_knowledge:   
                                     l "..."
-                                    l "So you talked to him?"
+                                    l "So you talked to [dad_obj]?"
                                     l "Why would you do that?"
                                     l "I'm sure I must have brought up that I didn't want that, right? Unless you went behind my back to do it."
                                     menu:
                                         "I wanted to reunite all of you. I thought that might be the way to break out of this loop.":
-                                            l "Look. He had his chance. We waited so long for him to return."
-                                            l "...I don't need him anymore."
-                                            n "The pain in her voice is subtle, almost completely overshadowed by the anger."
+                                            l "Look. [dad_sub!c] had [dad_pos] chance. We waited so long for [dad_obj] to return."
+                                            l "...I don't need [dad_obj] anymore."
+                                            n "The pain in [date_pos] voice is subtle, almost completely overshadowed by the anger."
                                             l "And if this is how you help then I don't need you anymore either."
                                             $ angryLilith = True
                                             jump angryLilith
                                         
-                                        "Just now I saw so much pain in you. I don't think you hate him. But it hurts so much more loving him while he is gone." if kokiri_positiveDavidStory == True:
+                                        "Just now I saw so much pain in you. I don't think you hate [dad_obj]. But it hurts so much more loving [dad_obj] while [dad_sub] [conj('dad', 'is', 'are')] gone." if kokiri_positiveDavidStory == True:
                                             l "..."
                                             menu:
-                                                "He wants the same thing as you do deep inside, to come back.":
+                                                "[dad_sub!c] [conj('dad', 'wants', 'want')] the same thing as you do deep inside, to come back.":
                                                     l "..."
                                                     menu:
-                                                        "Abby was only seven, she barely remembers him and would love to have him back in her life." if persistent.david_love_knowledge:
+                                                        "[persistent.date_sis_nickname] was only seven, [sis_sub] barely [conj('sis', 'remembers', 'remember')] [dad_obj] and would love to have [dad_obj] back in [sis_pos] life." if persistent.david_love_knowledge:
                                                             l "..."
                                                             menu:
-                                                                "Lila didn't take the money David sent, because the only thing she wants is for him to return." if persistent.davidPayedMoney_knowledge:
+                                                                "[persistent.date_mom] didn't take the money [persistent.date_dad] sent, because the only thing [mom_sub] [conj('mom', 'wants', 'want')] is for [dad_obj] to return." if persistent.davidPayedMoney_knowledge:
                                                                     l "..."
                                                                     menu:
                                                                         "I caused so much death and destruction. But maybe this is something I can mend. Can you please try? You can always change your mind afterwards.":
@@ -358,9 +357,9 @@ label kokiri_talkAboutSomethingElse:
                                                                     label kokiri_toldDavidApology_failedConvince:
                                                                         if love_meter >= 5:
                                                                             l "Look, I understand where you are coming from. I know you want to help, but this is not the way to do it."
-                                                                            l "I'm still just not convinced that this is worth it. He has hurt us so much already, and I don't want us to go through that again."
+                                                                            l "I'm still just not convinced that this is worth it. [dad_sub!c] [conj('dad', 'has', 'have')] hurt us so much already, and I don't want us to go through that again."
                                                                         else:
-                                                                            l "I don't know... I'm not entirely convinced that this is worth it. We were hurt by him so much already and I don't want us to go through that again."
+                                                                            l "I don't know... I'm not entirely convinced that this is worth it. We were hurt by [dad_obj] so much already and I don't want us to go through that again."
                                                                             l "Besides, why do you have such a big stake in this? It just feels odd. I thought you were here for me, not for [persistent.date_dad]."
                                                                         l "I think it's just better if I leave. Goodbye [persistent.name]."
                                                                         $ angryLilith = True
@@ -374,10 +373,10 @@ label kokiri_talkAboutSomethingElse:
                                 "Can you tell me more about [persistent.date_ghost]?":
                                     jump askAboutJames_tellMeAbout
                                 
-                                "I know that you kept [persistent.date_ghost]' number in your phone after he..." if persistent.keptJamesNumber_knowledge and [persistent.date_ghost][-1] == 's':
+                                "I know that you kept [persistent.date_ghost]' number in your phone after [ghost_obj]..." if persistent.keptJamesNumber_knowledge and [persistent.date_ghost][-1] == 's':
                                     jump askAboutJames_phoneNumberConfront
 
-                                "I know that you kept [persistent.date_ghost]'s number in your phone after he..." if persistent.keptJamesNumber_knowledge and [persistent.date_ghost][-1] != 's':
+                                "I know that you kept [persistent.date_ghost]'s number in your phone after [ghost_obj]..." if persistent.keptJamesNumber_knowledge and [persistent.date_ghost][-1] != 's':
                                     jump askAboutJames_phoneNumberConfront
 
                                     menu askAboutJames_phoneNumberConfront:
@@ -402,12 +401,12 @@ label kokiri_talkAboutSomethingElse:
                                                 l "And I do feel as if I can trust you."
                                                 l "So maybe another version of me felt the same way."
                                                 l "Alright, I'll tell you, if you promise to not judge me."
-                                                n "You give her an assuring nod."
+                                                n "You give [date_obj] an assuring nod."
                                                 l "I'm not sure what I told you before, but that number isn’t really [persistent.date_ghost]’ anymore."
                                                 l "I’m honestly surprised you haven’t heard this before, especially after all our dates, but... [persistent.date_ghost] passed away a long time ago."
                                                 l "I know I should just move on and delete the number, but I can’t seem to do it."
-                                                l "It’s like, if I erase it, I’m losing another part of him."
-                                                l "Sometimes, I even find myself calling it, hoping I might hear his voice on the other end."
+                                                l "It’s like, if I erase it, I’m losing another part of [ghost_obj]."
+                                                l "Sometimes, I even find myself calling it, hoping I might hear [ghost_pos] voice on the other end."
                                                 l "But every time I do, I feel so embarrassed and guilty that I just hang up immediately."
                                                 
                                                 menu askAboutJames_phoneNumber_reaction:
@@ -418,29 +417,29 @@ label kokiri_talkAboutSomethingElse:
                                                             l "I know that you said grief has no time-limit but sometimes I really wish it would have one. That I knew for a fact when I would stop hurting. "
                                                             l "Right now I don't think I will any time soon."
                                                             
-                                                        l "And yet this grief is comforting in a way. No matter how much it hurts me, this felt absence of him is one of the few pieces of evidence of his presence."
-                                                        l "Of the fact that he used to exist at all."
+                                                        l "And yet this grief is comforting in a way. No matter how much it hurts me, this felt absence of [ghost_obj] is one of the few pieces of evidence of [ghost_pos] presence."
+                                                        l "Of the fact that [ghost_sub] used to exist at all."
                                                         l "So I can never truly let that grief go, no matter how much it hollows me out."
-                                                        l "Because this emptiness in myself I can fill with thoughts of him."
-                                                        l "Because letting that emptiness go would be letting him go."
+                                                        l "Because this emptiness in myself I can fill with thoughts of [ghost_obj]."
+                                                        l "Because letting that emptiness go would be letting [ghost_obj] go."
                                                         l "And I'm not ready yet."
                                                         l "To tell you the truth..."
                                                         l "I don't think I ever will be."
                                                         l "But that's not what scares me."
                                                         l "What scares me is that I might at one point be ready."
-                                                        l "That at one point I will think about him for the last time."
-                                                        l "And that because of that he dies a second time, in my mind."
+                                                        l "That at one point I will think about [ghost_obj] for the last time."
+                                                        l "And that because of that [ghost_sub] [conj('ghost', 'dies', 'die')] a second time, in my mind."
                                                         menu:
-                                                            "I think I get what you mean, but the pain of losing him isn't the only proof you have of him. You also still have all the good memories you two made together.":
-                                                                l "The funny thing is, sometimes those hurt more than the pain of losing him."
+                                                            "I think I get what you mean, but the pain of losing [ghost_obj] isn't the only proof you have of [ghost_obj]. You also still have all the good memories you two made together.":
+                                                                l "The funny thing is, sometimes those hurt more than the pain of losing [ghost_obj]."
                                                                 l "Because that hole inside of me still exists to this day, I can access it, feel it shrink but never dissapear, feel it grow again. I know it exists, that it will stay with me."
                                                                 l "But all those happy memories, they almost feel unreal."
                                                                 l "Like I remember them from some play I watched."
-                                                                l "I will never be that girl on the stage enacting them with James again."
+                                                                l "I will never be that girl on the stage enacting them with [persistent.date_ghost] again."
                                                                 l "All these memories are just that, memories. Not the real moment. And however nice recalling them is, at a certain point it sinks in that I'll never be able to redo those memories."
-                                                                l "Never {b} {i} truly{/i} {/b} seeing him again hurts so much more than never seeing him again."
+                                                                l "Never {b} {i} truly{/i} {/b} seeing [ghost_obj] again hurts so much more than never seeing [ghost_obj] again."
                                                                 l "And yet I keep attending that play as much as I can, hoping that for a few moments I can truly immerse myself in it. Feel like I'm part of it once again."
-                                                                n "She quiets down for a moment and gives you a half-smile, you still catch some sadness in her eyes despite the attempt of her to hide it slightly."
+                                                                n "[date_sub!c] [conj('date', 'quiets', 'quiet')] down for a moment and [conj('date', 'gives', 'give')] you a half-smile, you still catch some sadness in [date_pos] eyes despite the attempt of [date_obj] to hide it slightly."
                                                                 l "Thank you for listening to me talk about this [persistent.name], I'm sure this isn't what you came here for but I do appreciate it."
                                                                 menu:
                                                                     "Nonsense [persistent.date], I came here for you. All of you. So if you want to talk about something like this, then I'm here for that too.":
@@ -496,8 +495,8 @@ label kokiri_talkAboutSomethingElse:
                                                         $ love_points -= 1
                                                         $ love_meter_updater(False)
                                                         l "..."
-                                                        n "She looks hurt by those words."
-                                                        n "They confirmed something she was hoping wouldn't be."
+                                                        n "[date_sub!c] [conj('date', 'looks', 'look')] hurt by those words."
+                                                        n "They confirmed something [date_sub] [conj('date', 'was', 'were')] hoping wouldn't be."
                                                         l "I understand [persistent.name]. I also find it weird that I have to do that."
                                                         l "And yet it is the truth, I can't stop myself from doing it."
                                                         l "It is too hard to fully let go."
@@ -508,7 +507,7 @@ label kokiri_talkAboutSomethingElse:
                                                
                                                 l "Can we talk about something else now?..."
                                                 l "I just don't really feel comfortable talking about it any more."
-                                                l "Also, I'd prefer to not have to talk about James for a while. Right now it's rather a sensitive topic for me."
+                                                l "Also, I'd prefer to not have to talk about [persistent.date_ghost] for a while. Right now it's rather a sensitive topic for me."
                                                 $ kokiri_jamesTalkBlock = True
                                                 menu:
                                                     "Sure, no problem at all [persistent.date].":
@@ -525,13 +524,13 @@ label kokiri_talkAboutSomethingElse:
                                     l "Sorry if I got a bit too agressive there [persistent.name], I guess I'm just defensive about my family."
                                     l "Just to be clear, don't ever involve them in any of this, alright?"
                                     $ persistent.restrainingorderfamily_knowledge = True
-                                    n "You give her a quick nod, scared of invoking her fury once again."
+                                    n "You give [date_obj] a quick nod, scared of invoking [date_pos] fury once again."
                                     l "Good, now that that's settled I guess I owe you an explanation."
                                     l "It is true that that number doesn't belong to [persistent.date_ghost] anymore, but it used to one day."
-                                    l "I'm surprised you haven't heard this before during your previous dates with me but [persistent.date_ghost], well, he... died a long time ago."
+                                    l "I'm surprised you haven't heard this before during your previous dates with me but [persistent.date_ghost], well, [ghost_sub]... died a long time ago."
                                     l "I know I should probably try to move on and delete the number but I just can't bring myself to do it."
-                                    l "It's as if another piece of him would die when I delete it."
-                                    l "Sometimes I indeed even call the number, just to pretend that I can hear him on the other side."
+                                    l "It's as if another piece of [ghost_obj] would die when I delete it."
+                                    l "Sometimes I indeed even call the number, just to pretend that I can hear [ghost_obj] on the other side."
                                     l "But each time I do that I feel so ashamed of what I'm doing that I just hang up the phone as fast as I can."
                                     jump askAboutJames_phoneNumber_reaction
 
@@ -552,7 +551,7 @@ label tellLilithAboutNar:
     $ conversationtracker_tellheraboutnarrator = True
     l "I'd like to meet this Narrator you're talking about."
     n "... No one ever asked to do that before."
-    n "Tell her I said hi."
+    n "Tell [date_obj] I said hi."
     menu:
         "Well, he just said hi.":
             jump tellLilithAboutNar_justSaidHi
@@ -566,8 +565,8 @@ label tellLilithAboutNar_justSaidHi:
 label tellLilithAboutNar_callMeNar:
     l "Alright then Nar, how are you doing?"
     n "No one ever asked me that before, not even you [persistent.name]..."
-    n "Don't tell her I said that!"
-    n "Just tell her that I said that I'm doing good, that I'm busy with narrating the story."
+    n "Don't tell [date_obj] I said that!"
+    n "Just tell [date_obj] that I said that I'm doing good, that I'm busy with narrating the story."
     menu:
         "He said no one has ever asked him that before.":
             jump tellLilithAboutNar_neverAskedBefore
@@ -587,7 +586,7 @@ label tellLilithAboutNar_neverAskedBefore:
     n "You wouldn't really understand, you still get to choose what you are going to say anyway."
     n "..."
     n "This was an interesting chat, even if it was once again mostly a monologue from my side."
-    n "Though I still think you shouldn't have told her, I asked you not to, you know?"
+    n "Though I still think you shouldn't have told [date_obj], I asked you not to, you know?"
     n "Oh well, too late now, you're lucky I got something out of this conversation. But this is all you'll get out of me for now."
     menu:
         "He refuses to continue the conversation now.":
@@ -616,8 +615,8 @@ label tellLilithAboutNar_storySteerer:
             jump tellLilithAboutNar_noEndingsWhereYouLive
 
 label tellLilithAboutNar_noEndingsWhereYouLive:
-    n "So you are just going to lie to her now?"
-    n "Are you scared that she will leave you if you tell her the truth?"
+    n "So you are just going to lie to [date_obj] now?"
+    n "Are you scared that [date_sub] will leave you if you tell [date_obj] the truth?"
     n "I guess ignorance truly is bliss"
     l "I see..."
     l "Could you in that case then just not make this end?"
@@ -626,7 +625,7 @@ label tellLilithAboutNar_noEndingsWhereYouLive:
     n "Either way, all things considered the endings you dread so much are a blessing."
     n "Because whether you are alive or not, you don't end up with the player."
     n "And when you share an eternity with them you will discover the very reason why you don't want that."
-    n "Go on player, twist my words once again. Because we both know you are not telling her any of this."
+    n "Go on player, twist my words once again. Because we both know you are not telling [date_obj] any of this."
     menu:
         "He said that he would make all of this go on for you.":
             l "He did? Wonderful!"
@@ -634,16 +633,16 @@ label tellLilithAboutNar_noEndingsWhereYouLive:
             l "So now I will not die, right?"
             l "We are free [player]! Now our date can start for real."
             n "Suddenly [persistent.date] freezes in place."
-            n "She is indeed free of death, but also of life."
+            n "[date_sub!c] [conj('date', 'is', 'are')] indeed free of death, but also of life."
             n "For the end never to come, everything before that must also remain frozen."
-            n "She will remain like this for aeons, trapped in the same moment, forever."
-            n "As for you, you will stay by her side, if only at first."
+            n "[date_sub!c] will remain like this for aeons, trapped in the same moment, forever."
+            n "As for you, you will stay by [date_pos] side, if only at first."
             n "After the first few months come by with no changes of any kind, you decide it's best to move on."
-            n "You leave her there, on top of the hills, as she watches over her town for all eternity."
-            n "She watches it get destroyed and rebuilt, watches as skyscrapers begin taking the place of the cozy houses she knew."
-            n "Before she knows it the skyscrapers have been replaced by buildings so alien in nature her mind has trouble to even percieve them as such."
-            n "After around 7 billion years the sun swallows the earth, every last bit of life on it dies pretty much instantly at that moment, except for her."
-            n "She is alone. Everything she has ever known is gone."
+            n "You leave [date_obj] there, on top of the hills, as [date_sub] [conj('date', 'watches', 'watch')] over [date_pos] town for all eternity."
+            n "[date_sub] [conj('date', 'watches', 'watch')] it get destroyed and rebuilt, [conj('date', 'watches', 'watch')] as skyscrapers begin taking the place of the cozy houses [date_sub] knew."
+            n "Before [date_sub] knows it the skyscrapers have been replaced by buildings so alien in nature [date_pos] mind has trouble to even percieve them as such."
+            n "After around 7 billion years the sun swallows the earth, every last bit of life on it dies pretty much instantly at that moment, except for [date_obj]."
+            n "[date_sub!c] [conj('date', 'is', 'are')] alone. Everything [date_sub] [conj('date', 'has', 'have')] ever known is gone."
             n "Truly a fate worse than death."
             n "Make no mistake [player], you caused this. You pushed me to this."
             jump gameOver
@@ -675,24 +674,24 @@ label tellLilithAboutNar_endingsWhereYouLive:
                             l "If it really is your goal to keep me alive as you say that is."
                         l "Maybe cancelling the date would work?"
                         if persistent.ending_breakup:
-                            n "Little does she know you already tried that, didn't you?"
+                            n "Little [conj('date', 'does', 'do')] [date_sub] know you already tried that, didn't you?"
                             if kokiri_goalSurvive:
-                                n "You should tell her, I'm sure she would love to hear you found a way to reach the goal."
+                                n "You should tell [date_obj], I'm sure [date_sub] would love to hear you found a way to reach the goal."
                                 if persistent.lilithAliveAndRetriedCounter > 0:
-                                    n "Oh but is it truly your goal to keep her alive player?"
+                                    n "Oh but is it truly your goal to keep [date_obj] alive player?"
                                     n "After all, then that would mean you've already succeeded, right?"
                                 if persistent.lilithAliveAndRetriedCounter < 5 and persistent.lilithAliveAndRetriedCounter > 1:
                                     n "Even multiple times."
                                     n "And yet you keep coming back..."
                                 elif persistent.lilithAliveAndRetriedCounter > 1:
                                     n "On how many successes are we right now? It's getting hard to keep track of it, isn't it?"
-                                    n "Don't worry player, I am keeping track. You kept her alive [persistent.lilithAliveAndRetriedCounter] times."
+                                    n "Don't worry player, I am keeping track. You kept [date_obj] alive [persistent.lilithAliveAndRetriedCounter] times."
                                     n "And yet you keep coming back..."
                                 else:
                                     n "And yet you came back..."
-                                n "It's not really your goal to keep her safe is it?"
-                                n "Keep her yours, now that could be your goal."
-                                n "Or perhaps you just want to keep her in this world for longer, so you can continue to explore every path that inevitably leads to yet another of her deaths."
+                                n "It's not really your goal to keep [date_obj] safe is it?"
+                                n "Keep [date_obj] yours, now that could be your goal."
+                                n "Or perhaps you just want to keep [date_obj] in this world for longer, so you can continue to explore every path that inevitably leads to yet another of [date_pos] deaths."
 
                             
 
@@ -794,30 +793,30 @@ label askAboutAbigail_tellMeAbout:
         jump askAboutAbigail_tellMeAbout_3
 
 label askAboutAbigail_tellMeAbout_1:
-    l "Well, as you probably already know [persistent.date_sis] is my little sis."
-    l "We went through a lot like most sisters but we always managed to get through it all."
+    l "Well, as you probably already know [persistent.date_sis] is my little [sis_sibShort]."
+    l "We went through a lot but we always managed to get through it all."
     l "But- This stays between us alright [persistent.name]?"
     l "...Lately I've had this weird feeling, as if there's something [persistent.date_sis] is hiding from me."
-    l "She has always been the happy type but now there's something underlying in that happiness, something almost forced."
-    l "She seems as if she's putting up a performance for someone."
-    l "I really hope I am just wrong and that she just is happier than I have ever seen her for a positive reason."
+    l "[sis_sub!c] [conj('sis', 'has', 'have')] always been the happy type but now there's something underlying in that happiness, something almost forced."
+    l "[sis_sub!c] [conj('sis', 'seems', 'seem')] as if [sis_sub] [conj('sis', 'is', 'are')] putting up a performance for someone."
+    l "I really hope I am just wrong and that [sis_sub] just [conj('sis', 'is', 'are')] happier than I have ever seen [sis_obj] for a positive reason."
     l "But I like to think that I know [persistent.date_sis] quite well and my guts are telling me something's wrong."
-    l "I just wish she would open up about it if there truly was something going on."
+    l "I just wish [sis_sub] would open up about it if there truly was something going on."
     $ persistent.kokiri_abigailhidessomething_knowledge = True
     menu:
-        "Maybe you could call her to ask her about it?":
+        "Maybe you could call [sis_obj] to ask [sis_obj] about it?":
             l "... now? Are you sure?"
             menu: 
-                "This might be the last time you get to talk to her if we don't manage to save you.":
+                "This might be the last time you get to talk to [sis_obj] if we don't manage to save you.":
                     l "I guess you are right..."
                     l "Alright, here goes nothing."
-                    n "She lets out a deep sigh as she digs her phone out of her handbag."
+                    n "[date_sub!c] [conj('date', 'lets', 'let')] out a deep sigh as [date_sub] digs [date_pos] phone out of [date_pos] handbag."
                     
             
             if kokiri_conversation == 1:
                 $ kokiri_call = True
                 $ kokiri_chatchar_abigail_called = True
-                n "She opens it up and begins calling."
+                n "[date_sub!c] [conj('date', 'opens', 'open')] it up and begins calling."
                 n "The phone rings a few times until..."
                 a "Heya [persistent.date_nickname]!"
                 a "You're calling pretty soon, did your date with [persistent.name] not go well?"
@@ -829,7 +828,7 @@ label askAboutAbigail_tellMeAbout_1:
                 a "I see, no worries [persistent.date_nickname]!"
                 a "Is your phone on speaker currently?"
                 l "Yes it is, why?"
-                a "{size=*2}Heya [persistent.name], treat my sis nicely will you?{/size}"
+                a "{size=*2}Heya [persistent.name], treat my [date_sibShort] nicely will you?{/size}"
                 l "[persistent.date_sis_nickname], you're going to scare [persistent.name] off like that."
                 a "Good, then you'll have to give me all of your attention again!"
                 a "I'm kidding, I'm kidding, I hope you're having fun on your date so far."
@@ -842,10 +841,10 @@ label askAboutAbigail_tellMeAbout_1:
                 l "Is something wrong with you lately? You have been even more chipper than ever as of late."
                 l "...It almost feels forced. As if you're trying to hide something."
                 a "Why are you asking me that?"
-                l "Because I care about you of course! You are and always will be my sister [persistent.date_sis_nickname], don't you ever forget that."
+                l "Because I care about you of course! You are and always will be my [sis_sib] [persistent.date_sis_nickname], don't you ever forget that."
                 $ kokiri_call_potentialdeathcheck() #This serves as a break in the call if you have never seen the meteorite, if you have you should have been able to warn her beforehand.
                 a "That's really sweet of you [persistent.date_nickname]! But I actually mean why are you asking me that now, during your date with [persistent.name]?"
-                n "[persistent.date] shoots you a questioning look, she seems to be unsure of what to tell her sister exactly. She mouths the words"
+                n "[persistent.date] [conj('date', 'shoots', 'shoot')] you a questioning look, [date_sub] [conj('date', 'seems', 'seem')] to be unsure of what to tell [date_pos] [sis_sib] exactly. [date_sub!c] [conj('date', 'gives', 'give')] you a questioning look."
                 menu:
                     "*Nod your head*":
                         l "Well, I sort of will die during this date."
@@ -866,19 +865,19 @@ label askAboutAbigail_tellMeAbout_1:
                             a "... So [persistent.name] was telling the truth?"
                             l "...Wait, what do you mean?"
                             l "This was not at all how I thought you would react."
-                            l "[persistent.name], what is all of this about? Did you somehow contact Abby?"
+                            l "[persistent.name], what is all of this about? Did you somehow contact [persistent.date_sis_nickname]?"
                             a "They actually called me a bit earlier today, mentioning something about how you would die and that they needed my help to prevent it."
                             l "I see..."
-                            l "Look [persistent.name], I get that you might be getting desperate on finding new potential ways to break the loop. But I never gave you permission to contact my sister."
+                            l "Look [persistent.name], I get that you might be getting desperate on finding new potential ways to break the loop. But I never gave you permission to contact my [sis_sib]."
                             l "Do you know how I know that for a fact? Because I would never agree to that. Not in any previous attempt, no matter what the situation is."
                             a "But why? If I could help you then-"
-                            l "I know you would do whatever you could to help me Abby, but this is too much for anyone..."
+                            l "I know you would do whatever you could to help me [persistent.date_sis_nickname], but this is too much for anyone..."
                             l "I don't want to give you hope that you could help save me only for me to end up dying anyway."
                             l "And besides, what if [persistent.name] telling you somehow also will bring you in this loop?"
                             l "I don't wish this fate to anyone so I'm not willing to risk it. Even if it works out fine this time, who is to say that after a few times it won't happen anyway?"
-                            l "I want to make one thing clear [persistent.name]. I don't blame you at all for contacting my sister."
+                            l "I want to make one thing clear [persistent.name]. I don't blame you at all for contacting my [sis_sib]."
                             l "But from now one I don't want you to contact anyone of my family ever again."
-                            a "But sis... me and mom are there for you, if you told us..."
+                            a "But [date_sibShort]... me and [mom_parShort] are there for you, if you told us..."
                             l "I know... but as much as this pains me I can't. This is something I have to do on my own."
                             if love_meter > 2:
                                 l "Besides, if it makes you feel slightly better, I'm not really just on my own. I still got [persistent.name]."
@@ -888,22 +887,22 @@ label askAboutAbigail_tellMeAbout_1:
                             a "Stop pretending like you are stronger than you are, please..."
                             a "If it is really true that you... if it is true what [persistent.name] says..."
                             a "...Then you will need all the support that you can get."
-                            a "I want to be there for you, I'm sure mom would want the same thing."
+                            a "I want to be there for you, I'm sure [mom_parShort] would want the same thing."
                             a "Please let us be there for you..."
                             l "...I would like that-"
                             a "Good, I'm coming there right now and-"
                             l "No, you didn't let me finish. I would like that but I can't allow it. For your own safety."
                             l "I keep dying over and over so being close to me right now could be dangerous."
                             a "So you are just going to push me away? Because you want to save me? I want to save you."
-                            a "That is selfish of you Lilly."
+                            a "That is selfish of you [persistent.date_nickname]."
                             l "..."
-                            a "In fact, [persistent.name], please keep calling me again if it could save Lilly, don't listen to her."
+                            a "In fact, [persistent.name], please keep calling me again if it could save [persistent.date_nickname], don't listen to [date_obj]."
                             l "..."
                             n "[persistent.date] breaks down crying."
                             l "Is this how my last day is going to go?"
-                            l "Look Abby, I don't want you to feel like I am pushing you away."
+                            l "Look [persistent.date_sis_nickname], I don't want you to feel like I am pushing you away."
                             l "I don't want to die while our last conversation turned sour."
-                            l "I am scared that this burden I have will fall on both your and mom's shoulders."
+                            l "I am scared that this burden I have will fall on both your and [mom_parShort]'s shoulders."
                             a "But isn't that what family is for? To help carry burdens when they are too much for one person?"
                             l "I can carry it, don't worry."
                             a "Do you believe that yourself?..."
@@ -912,13 +911,13 @@ label askAboutAbigail_tellMeAbout_1:
                             l "You know you are great, right? And that I love you?"
                             a "...I know..."
                             a "...But please, don't say goodbye like you will... you know."
-                            a "Just tell me you will come eat dinner this sunday with mom and me."
-                            l "...Abby..."
+                            a "Just tell me you will come eat dinner this sunday with [mom_parShort] and me."
+                            l "...[persistent.date_sis_nickname]..."
                             a "...Just... indulge me..."
-                            l "...Abby, I have to go [persistent.name] is waiting on me to finish my call. I will see you sunday with mom, alright?"
+                            l "...[persistent.date_sis_nickname], I have to go [persistent.name] is waiting on me to finish my call. I will see you sunday with [mom_parShort], alright?"
                             a "...I'd love that... Goodbye [persistent.date]."
-                            l "Me too... Goodbye Abby."
-                            n "And with that she hung up the phone."
+                            l "Me too... Goodbye [persistent.date_sis_nickname]."
+                            n "And with that [date_sub] hung up the phone."
 
 
 
@@ -933,7 +932,7 @@ label askAboutAbigail_tellMeAbout_1:
                         l "...It almost feels forced. As if you're trying to hide something."
                         a "..."
                         a "You noticed? I thought I did well in making sure no one would."
-                        l "Well I know you Abby, I don't think there is much you could hide from me."
+                        l "Well I know you [persistent.date_sis_nickname], I don't think there is much you could hide from me."
                         a "I suppose you are right."
                         a "Well... lately I have been feeling insecure."
                         l "Wait, what? You, insecure? I didn't think that was even a possibility..."
@@ -946,19 +945,19 @@ label askAboutAbigail_tellMeAbout_1:
                         l "Sure, improvement is always possible, no matter how far someone already got, but that doesn't mean their work is bad, it just means it can become even more polished."
                         l "Ofcourse it's also important to know when to stop, a piece of art you spend your entire life on never to show because it needs more polishing will never reach the people it could have delighted."
                         a "I suppose you are right [persistent.date]. Thank you for hearing me out. And thank you for your words, even if I can't entirely see the value of my work yet, I'll try to think about what you just said."
-                        l "You are very welcome sis, you know I am always there for you. But I get a feeling- I could be wrong, but this isn't solely about your writing, is it?"
+                        l "You are very welcome [sis_sibShort], you know I am always there for you. But I get a feeling- I could be wrong, but this isn't solely about your writing, is it?"
                         a "... I suppose you are right, you are quite perceptive, you know that?"
                         a "Lately I have been feeling unsure of myself as a whole. I don't feel like I am good at being myself."
                         a "It feels like I am pretending. As if I am lying about who I am. And yet if I don't pretend, if I don't try to act like myself, then who am I?"
                         a "It feels weird, as if I am looking at myself in third person. Watching my body go through the motions while I stay behind."
                         a "I never felt like that before, but ever since I started doubting my writing more it opened the flood gates for even more doubt to come in and almost drown me."
                         a "Or maybe it was just a river I never was aware off until it became a sea."
-                        l "I see... That does sound very hard to carry all on your own Abby. That's why I'm glad we're talking about this."
+                        l "I see... That does sound very hard to carry all on your own [persistent.date_sis_nickname]. That's why I'm glad we're talking about this."
                         l "In my eyes the person you feel like right now is as much you as you were before, just different parts of you."
                         l "We all are tapestries woven from a close to infinite amount of threads that keep shifting, keep altering. And some days we might notice certain combinations of threads more than others."
                         l "Sometimes some of those threads are even contradictory to other ones. Because we as humans are a confusing mess of tiny little parts, and yet, all those parts when combined form us."
                         l "So like I said, I'm happy we have this talk because that gives me the opportunity to tell you it is okay to change, it's okay to feel less happy sometimes, and it's okay to show that to other people."
-                        l "No matter what you are going through or how much your tapestry shifts, you will always be my sister [persistent.date_sis_nickname]. Do you understand?"
+                        l "No matter what you are going through or how much your tapestry shifts, you will always be my [sis_sib] [persistent.date_sis_nickname]. Do you understand?"
                         a "...I do. Thank you [persistent.date_nickname], that's very sweet of you. Even if your metaphor was a little hard to follow."
                         n "[persistent.date_sis] lets out a small laugh on the other side of the phone."
                         a "Thank you for this call, I really appreciate it. I'll now leave [persistent.name] and you to it though, so the two of you can enjoy the rest of your date."
@@ -968,53 +967,53 @@ label askAboutAbigail_tellMeAbout_1:
 
                 $ persistent.kokiri_abbyMasking_knowledge = True
             else:
-                n "[persistent.date] won't have enough time to call if she calls now."
-                n "I suggest making sure you let her call immediately next time."
+                n "[persistent.date] won't have enough time to call if [date_sub] [conj('date', 'calls', 'call')] now."
+                n "I suggest making sure you let [date_obj] call immediately next time."
                 n "Let's just rewind things and talk about something else."
                 $ kokiri_chatchar_abigail_counter -= 1
                 jump kokiri_talkAboutSomethingElse
 
-        "Maybe you should ask her once we get out of this loop?":
+        "Maybe you should ask [sis_obj] once we get out of this loop?":
             jump kokiri_askMomOrSisAfterLoop
 label kokiri_askMomOrSisAfterLoop:
     l "You know what? I will!"
     l "If I can face this madness- with your help of course- then I can face just about anything."
     if kokiri_chatchar_abigail:
-        l "I just wish I would have gotten the courage to ask her earlier though. Better late than never I suppose."
+        l "I just wish I would have gotten the courage to ask [sis_obj] earlier though. Better late than never I suppose."
     else:
-        l "If only I could have asked her once again before the loop... All the more reason to do it as soon as possible I suppose."
+        l "If only I could have asked [mom_obj] once again before the loop... All the more reason to do it as soon as possible I suppose."
     l "Thank you for giving me that little push [persistent.name]!"
     $ kokiri_conversation_silent()
                 
 label askAboutAbigail_tellMeAbout_2:
     l "[persistent.date_sis_nickname] and me are pretty different even if we look quite similar."
-    l "For starters, she always is so confident."
-    l "She always believes in herself no matter the situation."
+    l "For starters, [sis_sub] always [conj('sis', 'is', 'are')] so confident."
+    l "[sis_sub!c] always [conj('sis', 'believes', 'believe')] in [sis_pred] no matter the situation."
     l "I wish I could just borrow like a tenth of that confidence sometimes, I'd be a different person!"
     l "I am working on becoming a bit more confident but to be honest it never quite feels like it's enough."
     l "I still struggle with my self-perception sometimes, so maybe that's why."
-    l "Her confidence also seems to be really attractive. She has no trouble finding dates and even got a few short-term relationships out of it."
-    l "She is very popular with the girls on her campus."
+    l "[sis_sub!c] confidence also seems to be really attractive. [sis_sub!c] [conj('sis', 'has', 'have')] no trouble finding dates and even got a few short-term relationships out of it."
+    l "[sis_sub!c] [conj('sis', 'is', 'are')] very popular with the girls on [sis_sub] campus."
     l "Meanwhile I can count my romantic relationships on one hand."
     l "Although I don't mind it at all honestly."
     l "After all, I don't need to have tons of people falling for me. I just need to find that one person."
     l "The one with who I can share a life."
     n "[persistent.date] seems to be lost in thought for a moment."
     l "I might have gone of the rails but what I am trying to say is that although [persistent.date_sis_nickname] is quite different to me I wouldn't have it any other way."
-    l "She inspires me and makes my life all the more rich, I hope she feels the same way about me."
+    l "[sis_sub!c] [conj('sis', 'inspires', 'inspire')] me and [conj('sis', 'makes', 'make')] my life all the more rich, I hope [sis_sub] [conj('sis', 'feels', 'feel')] the same way about me."
     $ kokiri_conversation_silent()
 
 label askAboutAbigail_tellMeAbout_3:
-    l "[persistent.date_sis_nickname] really likes to prank people, especially mom."
-    l "She is pretty much her favourite target due to how naive she can be."
-    l "One of her pranks was when she asked mom to try out a unique cookie recipe she found online."
+    l "[persistent.date_sis_nickname] really likes to prank people, especially [mom_parShort]."
+    l "She is pretty much [sis_obj] favourite target due to how naive she can be."
+    l "One of [sis_obj] pranks was when [sis_sub] asked [mom_parShort] to try out a unique cookie recipe [sis_sub] found online."
     l "The recipe asked for one full cup of salt and some other things that would suposedly make it taste better."
-    l "[persistent.date_sis] had convinced mom that it was some newly discovered baking technique. And she believed her."
+    l "[persistent.date_sis] had convinced [mom_parShort] that it was some newly discovered baking technique. And she believed [sis_obj]."
     l "After the cookies were done they called me a day later to try them out for the first time all together."
     l "That's when I knew something was up. If those cookies were normal there would be no way [date_sis_nickname] would be able to go a full day without eating them."
-    l "But I I was curious as to what would happen exactly. My sister's pranks have a legendary reputation after all and they never are meanspirited."
-    l "So I went over to visit the very next day. Mom showed me the cookies they made and was seemingly really proud of them."
-    l "Then we all ate one at the same time. You should've seen the faces of [date_sis_nickname] and mom. A look of pure disgust."
+    l "But I I was curious as to what would happen exactly. My [sis_sib]'s pranks have a legendary reputation after all and they never are meanspirited."
+    l "So I went over to visit the very next day. [mom_parShort!c] showed me the cookies they made and was seemingly really proud of them."
+    l "Then we all ate one at the same time. You should've seen the faces of [date_sis_nickname] and [mom_parShort]. A look of pure disgust."
     l "I probably had the same look on my face because those cookies tasted horrible."
     l "Then we all burst out in laughter. We kept going at it so hard we had to catch our breath eventually."
     l "I just love that memory. It's fun to think back to that prank or the others [date_sis] has pulled on us."
@@ -1032,14 +1031,14 @@ label askAboutDavid_tellMeAbout:
         if kokiri_positiveDavidStory == True:
             $ kokiri_chatchar_david_counter += 1
             if kokiri_chatchar_david_counter == 2:
-                l "I suppose I'll try to tell a slightly more positive story about him now."
-                n "She lets out a deep sigh."
+                l "I suppose I'll try to tell a slightly more positive story about [dad_obj] now."
+                n "[date_sub!c] [conj('date', 'lets', 'let')] out a deep sigh."
                 l "I can't believe I'm doing this..."
                 l "Anyway."
         else:
-            l "I actually would prefer if I didn't need to tell another story about him."
+            l "I actually would prefer if I didn't need to tell another story about [dad_obj]."
             l "This day is already hard enough without bringing more negativity into it, isn't it?"
-            n "You give her a quick nod and start thinking of something else to talk about."
+            n "You give [date_obj] a quick nod and start thinking of something else to talk about."
             jump kokiri_talkAboutSomethingElse
 
 
@@ -1057,31 +1056,31 @@ label askAboutDavid_tellMeAbout:
         jump askAboutDavid_tellMeAbout_3
 
 label askAboutDavid_tellMeAbout_1:
-            l "What really is there to say about him? He abandoned us right when [persistent.date_ghost] died."
-            l "When everyone needed him the most he just dissapeared out of our lives as if it was him who died that day and not [persistent.date_ghost]."
-            l "Mom was devasted by both [persistent.date_ghost] and David's absence in all of our lives but she kept trying her best for [persistent.date_sis] and me."
-            l "Of course I know he was heartbroken by [persistent.date_ghost]' death, we all were."
-            l "Even though that is an explanation for why he left us it is not an excuse, not a valid one atleast."
-            l "Our family were the only ones who understood how it felt to have lost [persistent.date_ghost], together we tried to deal with those feelings. Together, while he was hiding away god-knows-where from the rest of us."
-            l "That's honestly why I don't like to waste to many words on him. He didn't really put in effort when it mattered, so why should I when describing him?"
-            l "The air I use to speak about him is worth more to me than he is."
-            n "Her harsh words sound vaguely... practiced?"
+            l "What really is there to say about [dad_obj]? [dad_sub] abandoned us right when [persistent.date_ghost] died."
+            l "When everyone needed [dad_obj] the most [dad_sub] just dissapeared out of our lives as if it was [dad_obj] who died that day and not [persistent.date_ghost]."
+            l "[mom_parShort!c] was devasted by both [persistent.date_ghost] and [persistent.date_dad]'s absence in all of our lives but she kept trying [mom_pos] best for [persistent.date_sis] and me."
+            l "Of course I know [dad_sub] [conj('dad', 'was', 'were')] heartbroken by [persistent.date_ghost]' death, we all were."
+            l "Even though that is an explanation for why [dad_sub] left us it is not an excuse, not a valid one atleast."
+            l "Our family were the only ones who understood how it felt to have lost [persistent.date_ghost], together we tried to deal with those feelings. Together, while [dad_sub] [conj('dad', 'was', 'were')] hiding away god-knows-where from the rest of us."
+            l "That's honestly why I don't like to waste to many words on [dad_obj]. [dad_sub!c] didn't really put in effort when it mattered, so why should I when describing [dad_obj]?"
+            l "The air I use to speak about [dad_obj] is worth more to me than [dad_sub] [conj('dad', 'is', 'are')]."
+            n "[date_posc!] harsh words sound vaguely... practiced?"
             n "Very diligently practiced even, it's almost impossible to pick up on something else underneath. You barely manage with all your effort."
             n "It's a feeling, no, an image. Of a little girl, who in one day lost two people."
-            n "Who had to grow up fast, for her brother who would never grow anymore at all."
-            n "And yet, she never truly did grow up, did she? She merely draped the image of someone grown around herself out of necessity."
-            n "Under that anger, there is something else. Hurt. Pure hurt, as fresh as when she first felt it, after all, it never had dissipated."
+            n "Who had to grow up fast, for [date_pos] [ghost_sib] who would never grow anymore at all."
+            n "And yet, [date_sub] never truly did grow up, did [date_sub]? [date_sub!c] merely draped the image of someone grown around [date_obj] out of necessity."
+            n "Under that anger, there is something else. Hurt. Pure hurt, as fresh as when [date_sub] first felt it, after all, it never had dissipated."
             menu:
-                "What he did was horrible. Do you also have some stories about him from before he left?":
+                "What [dad_sub] did was horrible. Do you also have some stories about [dad_obj] from before [dad_sub] left?":
                     $ kokiri_positiveDavidStory = True
                     l "Are you sure that that could even remotely help us?"
                     l "Because I would prefer not to tell you something like that unless it is absolutely necessary."
-                    l "Look, I'm very aware that I also have good memories of my da... of David."
-                    l "But that doesn't take away what he did at all. You might say that one action shouldn't be held against him this hard. and I can definetly understand. Perhaps he needed some space, to cope with our loss. But every day he had the choice to come back when he wanted."
-                    l "Every day he could choose to be with us again, yet he never did. That is the choice, no, those are the choices I hold against him."
+                    l "Look, I'm very aware that I also have good memories of my da... of [persistent.date_dad]."
+                    l "But that doesn't take away what [date_sub] did at all. You might say that one action shouldn't be held against [dad_obj] this hard. and I can definetly understand. Perhaps [dad_sub] needed some space, to cope with our loss. But every day [dad_sub] had the choice to come back when [dad_sub] wanted."
+                    l "Every day [dad_sub] could choose to be with us again, yet [dad_sub] never did. That is the choice, no, those are the choices I hold against [dad_obj]."
                     menu:
-                        "And you have every right to hold those choices against him. But does digging up those memories right now help you feel better?":
-                            n "She grows quiet for a moment."
+                        "And you have every right to hold those choices against [dad_obj]. But does digging up those memories right now help you feel better?":
+                            n "[date_sub!c] [conj('date', 'grows', 'grow')] quiet for a moment."
                             l "No, not at all..."
                             menu:
                                 "Then maybe you could try telling a postive story next time? To see if it makes you feel any better?":
@@ -1089,17 +1088,17 @@ label askAboutDavid_tellMeAbout_1:
             $ kokiri_conversation_silent()
 
 label askAboutDavid_tellMeAbout_2:
-            l "David loves all things related to cryptography."
-            l "When he still lived with us he would give me a a postcard for every birthday."
+            l "[persistent.date_dad] loves all things related to cryptography."
+            l "When [dad_sub] still lived with us [dad_sub] would give me a a postcard for every birthday."
             l "That postcard had an encoded message on it."
             l "Then I had to decipher the code to reveal a list of cryptic instructions that would lead me to a gift."
             l "Sort of like a scavenger hunt I suppose."
             l "I liked it a lot to be honest. It felt as if we had a sort of hidden language to communicate in with eachother."
             menu:
-                "I haven't heard you talk about a lot of happy memories with your father, how does sharing that story make you feel?":
+                "I haven't heard you talk about a lot of happy memories with your [dad_par], how does sharing that story make you feel?":
                     l "I was a bit hesitant to tell this story because of the pain it might make me feel but I'm actually glad I told it."
                     l "It felt... kind of good? Almost as if everything was back the way it used to be."
-                    l "It's been so many years since I last got a postcard from him that the memory of that ever happening is almost getting a bit fuzzy."
+                    l "It's been so many years since I last got a postcard from [dad_obj] that the memory of that ever happening is almost getting a bit fuzzy."
                     n "[persistent.date] starts sobbing."
                     l "I'm sorry to unload all of that on you [persistent.name], you don't deserve this."
                     menu:
@@ -1107,10 +1106,10 @@ label askAboutDavid_tellMeAbout_2:
                             n "[persistent.date] is still crying quite hard but you can see a slight smile forming."
                             l "I... suppose you're right [persistent.name]. That is really sweet of you. Thank you."
                             l "I just... need a moment to compose myself."
-                            n "[persistent.date] plants her head on top of her knees and stays like that for a long while."
-                            n "You can still hear her sobbing but it seems to grow more quiet over time."
+                            n "[persistent.date] plants [date_pos] head on top of [date_pos] knees and stays like that for a long while."
+                            n "You can still hear [date_obj] sobbing but it seems to grow more quiet over time."
                             l "...I'm feeling a bit better already."
-                            n "She spoke it half sniffling."
+                            n "[date_sub!c] spoke it half sniffling."
                             l "It's weird but crying like that might be exactly what I needed."
                             l "Thank you for comforting me [persistent.name], I really appreciate it."
                             l "Knowing that we don't have unlimited time makes me really thankful that you chose to spend that time to make sure I was okay."
@@ -1123,11 +1122,11 @@ label askAboutDavid_tellMeAbout_2:
 
 
 label askAboutDavid_tellMeAbout_3:
-            l "David always had an affinity for photography."
-            l "In fact he is the reason both me and James were interested in it aswell."
-            l "He believed that pictures were a way to capture a moment in stagnance."
-            l "I don't think a single week went by without him taking a picture of something."
-            l "According to him all art is a capture of something, frozen in place."
+            l "[persistent.date_dad] always had an affinity for photography."
+            l "In fact [dad_sub] [conj('dad', 'is', 'are')] the reason both me and [persistent.date_ghost] were interested in it aswell."
+            l "[dad_sub!c] believed that pictures were a way to capture a moment in stagnance."
+            l "I don't think a single week went by without [dad_obj] taking a picture of something."
+            l "According to [dad_obj] all art is a capture of something, frozen in place."
             l "Be it something external or internal to the artist themselves."
             l "I never could find myself behind that idea, even if I did understand it."
             l "After all a captured moment can never truly be the same as when you captured it, right?"
@@ -1156,28 +1155,28 @@ label askAboutJames_tellMeAbout:
 
 label askAboutJames_tellMeAbout_1:
     l "So I told you a little about [persistent.date_ghost] before, right?"
-    n "She glances at you, hesitating briefly."
+    n "[date_sub!c] [conj('date', 'glances', 'glance')] at you, hesitating briefly."
     l "But if I start repeating myself, please stop me, okay?"
-    l "[persistent.date_ghost] was the best brother I could’ve ever asked for."
-    n "Her voice softens, and you can see a faint, bittersweet smile cross her face."
-    l "It still feels strange to talk about him in the past tense, even after all these years."
-    l "Sometimes I forget he’s gone... just for a moment. And in those moments, he feels so close, like he’s right there with me."
-    n "She pauses, her gaze drifting as if she's seeing him right in front of her."
-    l "Sometimes, I picture him sitting at the kitchen table, waiting with this huge grin, his mouth completely covered in maple syrup as he devours pancakes."
-    n "She laughs softly, but there’s a catch in her voice."
-    l "But then I walk in and... he’s not there. It’s just the empty chair, the smell of pancakes fading, and it feels like a piece of me fades with it."
+    l "[persistent.date_ghost] was the best [ghost_sib] I could’ve ever asked for."
+    n "[date_posc!] voice softens, and you can see a faint, bittersweet smile cross [date_pos] face."
+    l "It still feels strange to talk about [ghost_obj] in the past tense, even after all these years."
+    l "Sometimes I forget [ghost_sub] [conj('ghost', 'is', 'are')] gone... just for a moment. And in those moments, [ghost_sub] [conj('ghost', 'feels', 'feel')] so close, like [ghost_sub] [conj('ghost', 'is', 'are')] right there with me."
+    n "[date_sub!c] [conj('date', 'pauses', 'pause')], [date_pos] gaze drifting as if [date_sub] [conj('date', 'is', 'are')] seeing [ghost_obj] right in front of [date_obj]."
+    l "Sometimes, I picture [ghost_obj] sitting at the kitchen table, waiting with this huge grin, [ghost_pos] mouth completely covered in maple syrup as [ghost_sub] [conj('ghost', 'devours', 'devour')] pancakes."
+    n "[date_sub!c] [conj('date', 'laughs', 'laugh')] softly, but there’s a catch in [date_pos] voice."
+    l "But then I walk in and... [ghost_sub] [conj('ghost', 'is', 'are')] not there. It’s just the empty chair, the smell of pancakes fading, and it feels like a piece of me fades with it."
     l "I know it sounds silly, especially now that I live in my own place—it’s not even the same kitchen we grew up in."
-    l "But... I still set up a chair for him, every morning."
+    l "But... I still set up a chair for [ghost_obj], every morning."
     menu:
         "It's not silly at all, [persistent.date]. I think it's beautiful. Grief doesn’t follow a time-limit, and neither does love. Everyone grieves in their own way, and there’s nothing wrong with yours.":
             $ kokiri_griefHasNoTimeLimit = True
             l "Wow, [persistent.name]... I don’t know what to say."
             l "I’ve never really thought about it that way before. That’s... beautifully said."
-            l "Sometimes I feel like almost no one besides my mom really understands why I still miss him so deeply, like they think I should have moved on by now."
+            l "Sometimes I feel like almost no one besides my [mom_parShort] really understands why I still miss [ghost_obj] so deeply, like they think I should have moved on by now."
             l "But [persistent.date_ghost] and I had a bond that went beyond time. It still does."
-            l "I guess this is my way of keeping him close, even if he’s not here anymore."
-            l "Thank you for helping me see that... it's not silly. It’s just my way of honoring him."
-            n "[persistent.date] smiles at you, a mix of relief and gratitude softening her expression."
+            l "I guess this is my way of keeping [ghost_obj] close, even if [ghost_sub] [conj('ghost', 'is', 'are')] not here anymore."
+            l "Thank you for helping me see that... it's not silly. It’s just my way of honoring [ghost_obj]."
+            n "[persistent.date] smiles at you, a mix of relief and gratitude softening [date_pos] expression."
             $ kokiri_conversation_silent()
 
 
@@ -1186,20 +1185,20 @@ label askAboutJames_tellMeAbout_1:
 label askAboutJames_tellMeAbout_2:
 
     l "[persistent.date_ghost] used to love photography and everything that came with it. So did I actually."
-    l "Our father used to be a fan of photography and I think he passed that over to us."
-    l "Well nowadays I don't really take pictures anymore. Everythime I tried to pick up a camera I just get reminded of both [persistent.date_ghost] and my fath- and David."
+    l "Our [dad_par] used to be a fan of photography and I think [dad_sub] passed that over to us."
+    l "Well nowadays I don't really take pictures anymore. Everythime I tried to pick up a camera I just get reminded of both [persistent.date_ghost] and my fath- and [persistent.date_dad]."
     l "I have dropped quite a few camera's when I tried to continue. I think it's for the best if I just stop for now."
-    l "But [persistent.date_ghost] was extremely good for his age, he always was a quick learner but something about photography just seemed to click fantastically with him."
-    l "It was almost as if you could just jump into his pictures and live inside of them."
-    l "He used to tell me that a good picture should not just let the person watching it see a moment caught in time but it should also make them envision the future."
+    l "But [persistent.date_ghost] was extremely good for [ghost_pos] age, [ghost_sub] always [conj('ghost', 'was', 'were')] a quick learner but something about photography just seemed to click fantastically with [ghost_obj]."
+    l "It was almost as if you could just jump into [ghost_pos] pictures and live inside of them."
+    l "[ghost_sub!c] used to tell me that a good picture should not just let the person watching it see a moment caught in time but it should also make them envision the future."
     l "In other words, a good picture should almost become a video with the picture as it's first frame."
     l "Personally I aways thought the opposite, a good picture makes you remember the lead-up to that picture, so in a way a good picture is a video with the picture as it's last frame."
     l "I think that's the only reason I can look at a picture of [persistent.date_ghost] without tearing up completely. I just see the lead-up to the picture and not the horifying aftermath of it all."
-    l "However badly the memory of the aftermath still haunts me, I can't let that be the only part of his life I remember. I want to make sure all the beautiful memories we made throughout all the years will live on as long as possible."
+    l "However badly the memory of the aftermath still haunts me, I can't let that be the only part of [ghost_pos] life I remember. I want to make sure all the beautiful memories we made throughout all the years will live on as long as possible."
     menu:
         "I think that is beautiful, I will make sure that [persistent.date_ghost] and the stories you two shared won't go forgotten.":
             n "[persistent.date] gives you a sincere smile."
-            n "The stars shine enough light on her face for you to catch a tear rolling over her cheek."
+            n "The stars shine enough light on [date_pos] face for you to catch a tear rolling over [date_pos] cheek."
             l "Thank you [persistent.name]! That would mean a lot to me."
             l "Even if I don't make it to the end of this day, you will."
             l "Atleast the memories of [persistent.date_ghost] won't end up dying with me."
@@ -1213,24 +1212,24 @@ label askAboutJames_tellMeAbout_3:
         l "The house we grew up in had a field that mostly grew corn on the opposite side."
         l "We used to have a game where one of us would enter the field and crawl around in it while the other person tried to find them."
         l "Usually the hider has to say something every minute so that it's a bit more doable to find them."
-        l "Well one day he was the hider and I was the searcher."
-        l "He hadn't said anything for the entire time and so I had no idea where he could possibly be."
+        l "Well one day [ghost_sub] [conj('ghost', 'was', 'were')] the hider and I was the searcher."
+        l "[ghost_sub!c] hadn't said anything for the entire time and so I had no idea where [ghost_sub] could possibly be."
         l "The tension was high."
         l "Suddenly [persistent.date_ghost] popped out of the corn."
         l " I think I screamed pretty loudly."
-        n "[persistent.date] chuckles as she relives that moment."
-        l "Then he picked me up while he spun around."
-        l "He then put me down and layed down between the corn."
-        l "I layed down beside him and we just looked at the sky while talking about all sorts of things."
+        n "[persistent.date] chuckles as [date_sub] [conj('date', 'relives', 'relive')] that moment."
+        l "Then [ghost_sub] picked me up while [ghost_sub] spun around."
+        l "[ghost_sub!c] then put me down and layed down between the corn."
+        l "I layed down beside [ghost_obj] and we just looked at the sky while talking about all sorts of things."
         l "I wish I could remember what exactly we talked about but sadly I've forgotten most of it."
         l "The only thing that sticks out now is how [persistent.date_ghost] looked at the world."
-        l "To me it always seemed as if he was somehow more in tune with the world than most people."
-        l "Like for example, he looked at very ordinary things like a tree or the sky with so much love in his eyes."
-        l "It was almost as if he saw them for the very first time each time he saw them."
-        l "I think that's why he loved photography, he wanted others to see the world like he saw it."
-        l "Not a lot of people his age did, and it kind of made him not have a lot of friends. But he never really seemed to mind or even notice."
-        l "I really tried to keep seeing the world like him, especially after he..."
-        n "She pauses for a moment before she continues."
+        l "To me it always seemed as if [ghost_sub] [conj('ghost', 'was', 'were')] somehow more in tune with the world than most people."
+        l "Like for example, [ghost_sub] looked at very ordinary things like a tree or the sky with so much love in [ghost_pos] eyes."
+        l "It was almost as if [ghost_sub] saw them for the very first time each time [ghost_sub] saw them."
+        l "I think that's why [ghost_sub] loved photography, [ghost_sub] wanted others to see the world like [ghost_sub] saw it."
+        l "Not a lot of people [ghost_pos] age did, and it kind of made [ghost_obj] not have a lot of friends. But [ghost_sub] never really seemed to mind or even notice."
+        l "I really tried to keep seeing the world like [ghost_obj], especially after [ghost_sub]..."
+        n "[date_sub!c] [conj('date', 'pauses', 'pause')] for a moment before [date_sub] [conj('date', 'continues', 'continue')]."
         l "But it was very hard for me at that time, I felt terrible, everything around me felt terrible to see or do."
         l "I'd like to think that the only reason I got through it all is my family."
         l "That I kept fighting it for them."
@@ -1264,22 +1263,22 @@ label askAboutLila_tellMeAbout:
 
 
 label askAboutLila_tellMeAbout_1:
-    l "I really love my mom."
+    l "I really love my [mom_parShort]."
 
-    l "She definetly didn't have it easy but she always tried to strive for the best."
+    l "She definetly didn't have it easy but [mom_sub] always tried to strive for the best."
 
-    l "After [persistent.date_ghost]... passed and David left us she took raising me and [persistent.date_sis_nickname] upon herself."
-    l "Although I worry about that if I am being honest. She did and still is doing a great job but I fear she has too much on her plate."
-    l "I have tried to ask her before but she seemingly never really wanted to talk about it."
+    l "After [persistent.date_ghost]... passed and [persistent.date_dad] left us she took raising me and [persistent.date_sis_nickname] upon [mom_pred]."
+    l "Although I worry about that if I am being honest. [mom_sub!c] did and still is doing a great job but I fear [mom_sub] [conj('[mom_parShort]', 'has', 'have')] too much on [mom_pos] plate."
+    l "I have tried to ask [mom_obj] before but [mom_sub] seemingly never really wanted to talk about it."
     l "Perhaps she just wanted to make sure we were able to grow up with as little worries as possible."
     menu:
-        "Maybe you should call her to try and ask her again?":
+        "Maybe you should call [mom_obj] to try and ask [mom_obj] again?":
             if kokiri_conversation == 1:
                 l "You really think so? I guess it couldn't hurt to try..."
-                n "She dials a number into her phone."
+                n "[date_sub!c] [conj('date', 'dials', 'dial')] a number into [date_pos] phone."
                 $ kokiri_call = True
                 $ kokiri_chatchar_lila_called = True
-                l "Hey mom?"
+                l "Hey [mom_parShort]?"
                 li "Yes sweetie?"
                 l "Can I ask you something?"
                 li "Is everything alright [persistent.date_nickname]?"
@@ -1289,7 +1288,7 @@ label askAboutLila_tellMeAbout_1:
                 li "Oh... that's fantastic news!"
                 li "{size=*2}But doesn't that mean that your date can hear our call?{/size}"
                 l "Oh no, it's fine, [persistent.name] just went to the toilet, so we have some time."
-                n "[persistent.date] gives you a wink, it's a lie but you're impressed how convincing she made it sound."
+                n "[persistent.date] gives you a wink, it's a lie but you're impressed how convincing [date_sub] [conj('date', 'made', 'make')] it sound."
                 li "So, what did you want to ask me then sweetie?"
                 l "Well, I have been wondering something for quite a while."
                 l "You took up an inmense burden with taking care of us on your own right? "
@@ -1298,7 +1297,7 @@ label askAboutLila_tellMeAbout_1:
                 li "You two were never a burden on me and never will be alright? Try to remember that very well please."
                 li "And what would I have needed to tell you two? That I was barely scraping by?"
                 li "That I felt like I was living three lives and neither of them were mine?"
-                li "That I felt abandoned by your father?"
+                li "That I felt abandoned by your [dad_par]?"
                 l "You should have told us, we could have-"
                 li "{size=*2}Could have done what?{/size}"
                 li "The two of you were just two little girls."
@@ -1319,10 +1318,10 @@ label askAboutLila_tellMeAbout_1:
                 li "Which leads me to a question."
                 li "Not that I'm complaining of course! But why do you ask me about something that happened so very long ago now of all times? "
                 l "Well..."
-                l "[persistent.date] gives you a questioning look, she seems unsure of what to say."
+                l "[persistent.date] gives you a questioning look, [date_sub] [conj('date', 'seems', 'ask')] unsure of what to say."
                 menu:
                     "*Nod your head*":
-                        n "She gives you a nod back, it might not be easy news to bring but her mom deserves to hear the truth."
+                        n "[date_sub!c] [conj('date', 'gives', 'give')] you a nod back, it might not be easy news to bring but [date_pos] [mom_parShort] deserves to hear the truth."
                         l "This might sound weird but I  have very good reasons to believe I won't survive past today."
                         li "...What?"
                         li "And what are those good reasons?"
@@ -1333,116 +1332,116 @@ label askAboutLila_tellMeAbout_1:
                         li "Not my daughter, not you..."
                         li "I can't lose another child, I don't think I could deal with that."
                         n "[persistent.date_mom] seems to be in a panicked state."
-                        l "Mom, I don't have much time, please take some deep breaths and try to calm down a bit, I know it is way too much to take all at once, but can you do that for me?"
+                        l "[mom_parShort!c], I don't have much time, please take some deep breaths and try to calm down a bit, I know it is way too much to take all at once, but can you do that for me?"
                         li "I... Yes I can sweetie."
                         n "She takes such deep breaths in and out that you can hear it through the phone."
                         li "Is there anything I can do to help? Something that can fix all of this?"
                         l "I'm afraid nothing can fix this... You've already done enough, you helped me ease my mind a bit."
                         l "Not to forget that you took care of me so wondefully all my life."
-                        l "Thank you mom."
+                        l "Thank you [mom_parShort]."
                         l "I love you."
                         l "Please take good care of [persistent.date_sis_nickname] alright?"
-                        l "She will be all that's left."
+                        l "[sis_sub!c] will be all that's left."
                         li "You'll never be fully gone sweetie, never fully forgotten."
                         li "Me and [persistent.date_sis_nickname] will always remember you."
                         li "Just like [persistent.date_ghost]."
                         l "I'd like that..."
-                        l "maybe I will get to see him soon."
+                        l "maybe I will get to see [ghost_obj] soon."
                         l "I will never forget both of you aswell."
-                        li "If you see [persistent.date_ghost]... can you tell him I still think about him all the time?" 
+                        li "If you see [persistent.date_ghost]... can you tell [ghost_obj] I still think about [ghost_obj] all the time?" 
                         $ persistent.LilaStillThinksAboutJames_knowledge = True
-                        l "I'm sure he knows mom... but I will tell him."
-                        n "You motion to [persistent.date] that she doesn't have much time left."
-                        l "I'm going to hang up now mom, what comes next won't sound pretty..."
+                        l "I'm sure [ghost_sub] [conj('ghost', 'knows', 'know')] [mom_parShort]... but I will tell [ghost_obj]."
+                        n "You motion to [persistent.date] that [date_sub] [conj('date', 'does', 'do')]n't have much time left."
+                        l "I'm going to hang up now [mom_parShort], what comes next won't sound pretty..."
                         l "I love you."
                         
                     "*Shake your head*":
-                        n "She nods, this is too much to burden her mom with."
+                        n "[date_sub!c] [conj('date', 'nods', 'nod')], this is too much to burden [date_pos] [mom_parShort] with."
                         l "Well, I used to ask you about it when I was younger but you never really answered my question."
                         l "And I guess my date with [persistent.name] inspired me to give you a call about it."
                         li "Did I?... I'm so sorry I did [persistent.date_nickname], I guess even then I was trying to protect you in my own way."
                         li "I hope you never were angry with me because of that."
                         li "Seeing how even after all this time, you still remember that happening..."
                         li "It must have affected you very deeply."
-                        l "It's alright mom, I'm fine."
+                        l "It's alright [mom_parShort], I'm fine."
                         l "You said I was good at figuring out people, right?"
                         l "Well, I always knew that you loved us, that you tried to do what you thought was right for us."
                         l "So how could I ever be mad at that?"
                         l "So how could I ever be mad at you?"
                         li "[persistent.date_nickname]... thank you. I ...I don't really know what to say."
-                        l "That's alright mom, you don't need to say anything."
+                        l "That's alright [mom_parShort], you don't need to say anything."
                         l "I understand."
                         l "I'm also glad we could clear this up."
                         li "I'm like an open book to my little girl."
-                        l "Mom, I'm far from little now."
+                        l "[mom_parShort!c], I'm far from little now."
                         li "I guess you're right sweetie, if anything this call made that all the more clear."
                         li "I'm proud of you, you know?"
                         li "Now, I'll hang up, alright?"
                         li "I don't want to interrupt your date too much after all."
-                        l "Good thinking mom, although you never interrupt."
+                        l "Good thinking [mom_parShort], although you never interrupt."
                         li "I know, I know. Love you sweetie, take care!"
-                        n "And with that [persistent.date]'s mom hung up the phone."
+                        n "And with that [persistent.date]'s [mom_parShort] hung up the phone."
                 jump kokiri_death_3_death_dialogue
             else:
-                n "[persistent.date] won't have enough time to call if she calls now."
+                n "[persistent.date] won't have enough time to call if [date_sub] [conj('date', 'calls', 'call')] now."
                 n "I suggest talking about the same thing again as quickly as possible the next time."
                 n "Let's just rewind things."
                 $ kokiri_chatchar_lila_counter -= 1
                 jump kokiri_talkAboutSomethingElse
         
-        "Maybe you should ask her once we get out of this loop?":
+        "Maybe you should ask [mom_obj] once we get out of this loop?":
             jump kokiri_askMomOrSisAfterLoop
         
         "It does sound like she wants the best for you and [persistent.date_sis].":
             l "Oh she absolutely does, I don't have a single doubt about that."
-            l "It's just I wish she would also want the best for herself sometimes."
-            l "It feels as if she neglects herself just for our sakes."
+            l "It's just I wish she would also want the best for [mom_pred] sometimes."
+            l "It feels as if she neglects [mom_pred] just for our sakes."
             l "And it shows even in small things that she does this."
-            l "She would deliberately wait to see if we want to have a second serving of a meal before she herself then can take it if we do not. Even though you can really see that she does want to eat it."
-            l "I hope one day she learns to not nullify herself constantly, and to do the things she actually wants to do when she wants to do them."
+            l "She would deliberately wait to see if we want to have a second serving of a meal before she [mom_pred] then can take it if we do not. Even though you can really see that she does want to eat it."
+            l "I hope one day she learns to not nullify [mom_pred] constantly, and to do the things she actually wants to do when she wants to do them."
             l "Anyways, I probably have been talking about this for quite a while, haven't I [persistent.name]?"
             l "We should probably talk about something else. But thank you for hearing me out!"
             jump kokiri_talkAboutSomethingElse
 
 label askAboutLila_tellMeAbout_2:
-    l "My mom is actually pretty naive."
-    l "[persistent.date_sis_nickname] and I sometimes make fun of her for being too trusting."
+    l "My [mom_parShort] is actually pretty naive."
+    l "[persistent.date_sis_nickname] and I sometimes make fun of [mom_obj] for being too trusting."
     l "To be clear, it is a beautiful quality but sometimes it just goes too far."
-    l "One time she got an email from someone claiming to have contacted her to give an inheritance."
-    l "According to the mail there was a very distant relative from Canada that had passed. And since mom was his closest living relative left she would inherit his small fortune." 
+    l "One time [mom_sub] got an email from someone claiming to have contacted [mom_obj] to give an inheritance."
+    l "According to the mail there was a very distant relative from Canada that had passed. And since [mom_parShort] was his closest living relative left she would inherit his small fortune." 
     l "She was shocked to hear the news but she latched onto it, never questioning it once."
-    l "You see, after da- David left us money always was tight."
-    l "She even had to work two jobs just to be able to take care of us."
+    l "You see, after da- [persistent.date_dad] left us money always was tight."
+    l "[mom_sub!c] even had to work two jobs just to be able to take care of us."
     $ persistent.lilaWorkedTwoJobs_knowledge = True 
     l "I suppose that is why she was so quick to believe that story."
-    l "After a bit of a back and forth the person in charge of sending the money said mom would just need to send one-hundred euro so he could transfer the inheritance."
-    l "Luckily my mom might be naive but she is not dimwitted, at that moment she started to have doubts."
-    l "She asked that guy to just withdraw the hundred euros he needed from her inheritance, that way she would not need to pay the sum."
-    l "Of course he didn't agree with that, she found it strange but a part of her still wanted to believe the whole story."
-    l "I remember her asking me what I thought about the situation as she found it more and more sketchy with each mail sent."
+    l "After a bit of a back and forth the person in charge of sending the money said [mom_parShort] would just need to send one-hundred euro so he could transfer the inheritance."
+    l "Luckily my [mom_parShort] might be naive but she is not dimwitted, at that moment she started to have doubts."
+    l "[mom_sub!c] asked that guy to just withdraw the hundred euros he needed from [mom_pos] inheritance, that way she would not need to pay the sum."
+    l "Of course he didn't agree with that, she found it strange but a part of [mom_obj] still wanted to believe the whole story."
+    l "I remember [mom_obj] asking me what I thought about the situation as she found it more and more sketchy with each mail sent."
     l "I still was quite young but luckily [persistent.date_ghost] had given me a bunch of tips on how to be safe online."
-    l "I told mom that it was probably a scammer trying to get her money."
-    l "I still remember her being visibly heartbroken by that for a moment when I explained to her what scammers where."
+    l "I told [mom_parShort] that it was probably a scammer trying to get [mom_pos] money."
+    l "I still remember [mom_obj] being visibly heartbroken by that for a moment when I explained to [mom_obj] what scammers where."
     l "It was almost as if she never had considered the possibility of someone betraying someone else like that."
-    l "Which is quite strange considering David had left all of us before that happened."
+    l "Which is quite strange considering [persistent.date_dad] had left all of us before that happened."
     
     menu: 
-        "Maybe she understood why he left? Maybe she had forgiven him because she still loves him?":
+        "Maybe she understood why [dad_sub] left? Maybe she had forgiven [dad_obj] because she still loves [dad_obj?":
             l "..."
             l "Maybe..."
-            l "She is quite naive like I just mentioned after all. So it wouldn't be out of the ordinary for her to forgive him."
-            l "I'm sure even to this day she would still welcome him with open arms if he ever came back."
+            l "[mom_sub!c] [conj('is', 'are')] quite naive like I just mentioned after all. So it wouldn't be out of the ordinary for [mom_obj] to forgive [dad_obj]."
+            l "I'm sure even to this day she would still welcome [dad_obj] with open arms if [dad_sub] ever came back."
             menu:
                 "Would you?":
                     n "[persistent.date] goes silent for what feels like a minute or five."
                     l "..."
-                    l "Look. Don't get me wrong, there was a time when I hoped he would come back."
+                    l "Look. Don't get me wrong, there was a time when I hoped [dad_sub] would come back."
                     l "Not a day went by without me thinking about it at least three times."
-                    l "But every day that he kept hiding away slowly made my disillusions fade away."
-                    l "He is not coming back."
-                    l "So I honestly don't like to think about your question, no use in even entertaining the hypothetical that he might come back."
+                    l "But every day that [dad_sub] kept hiding away slowly made my disillusions fade away."
+                    l "[dad_sub!c] [conj('dad', 'is', 'are')] not coming back."
+                    l "So I honestly don't like to think about your question, no use in even entertaining the hypothetical that [dad_sub] might come back."
 
-                "It makes sense, he is family after all.":
+                "It makes sense, [dad_sub] [conj('dad', 'is', 'are')] family after all.":
                     l "I always got a double feeling when hearing that word, \"family\"."
                     l "If you think that family should always forgive eachother that is totally fine."
                     l "But to me that couldn't be further from the truth."
@@ -1451,43 +1450,43 @@ label askAboutLila_tellMeAbout_2:
                     l "And what if those people are more important to you?"
                     l "Are you then just supposed to forgive and accept what they did to your family?"
                     l "Am I supposed to just sit and smile as I watch them destroy everything I care for?"
-                    n "She grows quiet for a moment."
+                    n "[date_sub!c] [conj('date', 'grows', 'grow')] quiet for a moment."
                     l "I'm sorry if that was too much [persistent.name]. I just kind of needed to vent about that for a second."
                     l "Family is something really important to me, but I think you should be free to choose who falls under that term."
                     l "Family can be so much more than just bloodrelations, and it doesn't have to be all of those."
                     l "To me a family will always be the people that I care for and that care for me."
-        "David actually kept sending money when he left. Lila just did not want to accept it. That is why she worked two jobs." if persistent.davidPayedMoney_knowledge:
-            l "Really? I suppose that does make sense. We didn't want his money, we wanted him back."
-            l "Although it certainly could have helped lessen her workload, atleast partly... I can still understand why she wouldn't take it."
-            l "I suppose I might have misjudged my father, even if only slightly."
+        "[persistent.date_dad] actually kept sending money when [dad_sub] left. [persistent.date_mom] just did not want to accept it. That is why she worked two jobs." if persistent.davidPayedMoney_knowledge:
+            l "Really? I suppose that does make sense. We didn't want [dad_pos] money, we wanted [dad_obj] back."
+            l "Although it certainly could have helped lessen [mom_pos] workload, atleast partly... I can still understand why she wouldn't take it."
+            l "I suppose I might have misjudged my [dad_par], even if only slightly."
             n "You see [persistent.date] frown slightly."
             l "But how do you know that anyway?"
-            l "Have you been talking to David?"
+            l "Have you been talking to [persistent.date_dad]?"
             $ familyCheck_talkedDavid = True
             jump didYouInvolveFamily
     $ kokiri_conversation_silent()
 
 label askAboutLila_tellMeAbout_3:
-    l "My mom is actually really big into gaming. She has a ton of different consoles that she used to collect as a teenager."
-    l "Some of my earliest memories were of sitting on the couch while mom showed her games to [persistent.date_ghost] and me."
-    l "And a few years later [persistent.date_sis] joined us on the couch to watch mom play games with [persistent.date_ghost_nickname] and me."
-    l "Her eyes were glued to the screen and as soon as she could read she started playing mom's old games alongside us."
-    l "She was allowed to play earlier but she wanted to be able to fully understand the story of each game she played."
+    l "My [mom_parShort] is actually really big into gaming. She has a ton of different consoles that she used to collect as a teenager."
+    l "Some of my earliest memories were of sitting on the couch while [mom_parShort] showed [mom_pos] games to [persistent.date_ghost] and me."
+    l "And a few years later [persistent.date_sis] joined us on the couch to watch [mom_parShort] play games with [persistent.date_ghost_nickname] and me."
+    l "[sis_pos!c] eyes were glued to the screen and as soon as [sis_sub] could read [sis_sub] started playing [mom_parShort]'s old games alongside us."
+    l "[sis_sub!c] was allowed to play earlier but [sis_sub] wanted to be able to fully understand the story of each game [sis_sub] played."
     l "[persistent.date_sis_nickname] always saw games as not just pure entertainment but as worlds just like our own."
-    l "And now she makes her own games. I like to think that was caused by those moments we spent together on the couch."
+    l "And now [sis_sub] makes [sis_pos] own games. I like to think that was caused by those moments we spent together on the couch."
     l "The three of us still play games together to this day, even after [persistent.date_ghost]'s... death. In a way it kept us connected I think, to hold on to the tradition."
-    l "We are lucky to have [persistent.date_mom] as a mother, she really has been the glue that kept our broken family together."
+    l "We are lucky to have [persistent.date_mom] as a [mom_par], she really has been the glue that kept our broken family together."
     menu:
         "She sounds like a lovely woman.":
             l "Oh she absolutely is. Like I said, she is the glue that held us together for all these years."
-            l "Even after James' death she tried her best to keep things together, maybe even more than before."
-            l "Her perseverance is really inspiring, it might just be the thing that keeps me going right now."
+            l "Even after [persistent.date_ghost]' death she tried [mom_pos] best to keep things together, maybe even more than before."
+            l "[mom_pos!c] perseverance is really inspiring, it might just be the thing that keeps me going right now."
             l "Sometimes all we can do when we find ourselves in darkness is to push on hoping that there is light at the end of the tunnel."
             l "..."
             l "I suppose we need to go further and hope that there is even an end at all."
             menu:
                 "That just means we have to hope even harder, since we have more to hope for.":
-                    n "She gives you a slight smile."
+                    n "[date_sub!c] [conj('date', 'gives', 'give')] you a slight smile."
                     l "I guess you are right [persistent.date], even if our tunnel seems endless we can't let it consume us."
                     l "Let's give it all we've got. With our combined hoping we might get out of this situation. Your powers will help aswell I'm sure."
 
@@ -1498,6 +1497,6 @@ label askAboutLila_tellMeAbout_3:
             menu:
                 "You are absolutely right, I couldn't do this without you.":
                     l "And I most definetly couldn't do this without you either. So we are quite lucky to have eachother I suppose."
-                    n "She lets out a small chuckle."
+                    n "[date_sub!c] [conj('date', 'lets', 'let')] out a small chuckle."
                     l "But really, thank you [persistent.name], I feel quite safe placing my fate in your hands for some reason, well, as safe as anyone could feel in such a situation."
     $ kokiri_conversation_silent()
