@@ -123,28 +123,55 @@ label burger_beenBeforeXTimes:
             n "[date_sub!c] [conj('date', 'lets', 'let')] out a hearty chuckle."
 
     elif persistent.burgerwent == 1:
-        l "Ah, I hope you liked your previous meal here!"
+        if persistent.rockMode:
+            l "Oh, you've been here before? Is that why you wanted to come back here so much? I must admit, I can't blame you at all."
+            l "This place sure looks lovely, pretty cozy too!"
+        else:
+            l "Ah, I hope you liked your previous meal here!"
 
     else:
         if persistent.burgerwent <= 4:
-            l "Ah, you've been here a few times already.
-            Then you surely know how good the burgers are here."
+            l "Ah, you've been here a few times already."
+            if persistent.rockMode:
+                l "I guess you must like the feel this place has quite a lot. I can't blame you honestly, it's absolutely great!"
+            else:
+                l "Then you surely know how good the burgers are here."
 
         elif persistent.burgerwent <= 6:
-            l "Wow, you've been here quite a few times already!
-            You must really like it here then, I knew we were on the same wavelength!"
+            l "Wow, you've been here quite a few times already!"
+            l "You must really like it here then, I knew we were on the same wavelength!"
+            if persistent.rockMode:
+                l "This place really seems cozy to me. I can see why there's so many people here."
+            else:
+                l "We aren't the only ones on that wavelength, there's pretty much always a nice crowd here. The burgers here have a legendary reputation."
         elif persistent.burgerwent <=9:
             l "Wow, you've been here a lot of times!"
-            l "... Come to think of it, you might have visited this place more than I have."
-            n "[persistent.date] lets out a small giggle."
+            if not persistent.rockMode:
+                l "... Come to think of it, you might have visited this place more than I have."
+                n "[persistent.date] lets out a small giggle."
+            else:
+                l "If you were that eager to come back here this place must be really great."
+                l "All these people here seem to agree with you."
         elif persistent.burgerwent < 22:
-            n "[persistent.date] lets out a joyful laugh."
-            l "Wow! I almost feel like I should let you choose my burger with all that burger knowledge you must have."
-            l "Almost though, this is far from my first rodeo either [persistent.name]!"
+                if not persistent.rockMode:
+                    n "[persistent.date] lets out a joyful laugh."
+                    l "Wow! I almost feel like I should let you choose my burger with all that burger knowledge you must have."
+                    l "Almost though, this is far from my first rodeo either [persistent.name]!"
+                else:
+                    l "Wow, that many times? You must really like the vibes of this place."
+                    l "I have to say, I can see why, who knows? Maybe it won't be long before I beat your high score."
+                    n "A joyful laugh rings in your mind."
         else:
-            l "Wow... is it weird to be impressed by that?"
-            n "[persistent.date] lets out a small laugh."
-            l "It probably is but I'm quite impressed by the expertise you must have when it comes to the burgers here."
+            if not persistent.rockMode:
+                l "Wow... is it weird to be impressed by that?"
+                n "[persistent.date] lets out a small laugh."
+                l "It probably is but I'm quite impressed by the expertise you must have when it comes to the burgers here."
+            else:
+                l "You could practically live here [persistent.name]!"
+                l "Now that doesn't sound like a bad idea actually..."
+                l "I'm sure they wouldn't notice two little pebbles just hanging around, right?"
+                n "A small laugh rings in your mind."
+                l "I'm kidding, I'm kidding."
 
 
     if not persistent.rockMode:
@@ -234,6 +261,9 @@ label burger_start_menu:
             "I definetly would pick the chicken tenders." if persistent.chickenTendiesUnlock:
                 $ burger_choice = "chicken tenders"
                 jump burger_ordering
+
+            "What's the point of dreaming about food if neither of us can eat it?":
+                jump restaurant_menu_pointOfPretending
 
 
 
@@ -584,22 +614,24 @@ label burger_ordering:
                 l "Although, I suppose if one place could pull it off it might just be this one!"
             else:
                 l "Ah, that sounds like a lovely choice [persistent.name]!"
-        n "Things grow quiet for a moment."
-        l "You know... I'm really glad we could meet here. The burgers here should be really good from what I heard."
-        l "But to tell you the truth, I'm even more glad to meet {b}you{/b} here."
-        l "I have been so alone for a long time."
-        l "It has been years since I last found someone who could understand me."
-        l "Not for a lack of trying though, I have been reaching out to someone, anyone for all that time."
-        l "But my calls went unanswered. This world is full of beings, but practically no-one could hear me."
-        l "In the begining I felt excited to reach out, the earth was one big organism and I was excited to meet other cells of it, cells like me."
-        l "But the more I cried out into the void the more it felt like the only cells that existed were the ones of loneliness and iron, wrapped around me like layers of an onion."
-        l "One no-one would ever bother to reveal the center of."
-        l "But then one day you rolled into my life and showed me I was not alone anymore."
-        l "It might have seemed small to you but to me it was undescribably meaningful."
-        n "For a brief moment [date_sub] [conj('date', 'turns', 'turn')] silent."
-        l "Was that too much? I'm sorry, I don't want to scare you away and-"
-        n "[date_sub!c] [conj('date', 'turns', 'turn')] silent once again. You can feel [date_pos] desperately searching for something appropriate to say."
-        jump burger_brother_question
+        jump burger_ordering_rockModeIsolation
+        label burger_ordering_rockModeIsolation:
+            n "Things grow quiet for a moment."
+            l "You know... I'm really glad we could meet here. Sure the burgers here are legendary, even if we can't eat them."
+            l "But to tell you the truth, I'm even more glad to meet {b}you{/b} here."
+            l "I have been so alone for a long time."
+            l "It has been years since I last found someone who could understand me."
+            l "Not for a lack of trying though, I have been reaching out to someone, anyone for all that time."
+            l "But my calls went unanswered. This world is full of beings, but practically no-one could hear me."
+            l "In the begining I felt excited to reach out, the earth was one big organism and I was excited to meet other cells of it, cells like me."
+            l "But the more I cried out into the void the more it felt like the only cells that existed were the ones of loneliness and iron, wrapped around me like layers of an onion."
+            l "One no-one would ever bother to reveal the center of."
+            l "But then one day you rolled into my life and showed me I was not alone anymore."
+            l "It might have seemed small to you but to me it was undescribably meaningful."
+            n "For a brief moment [date_sub] [conj('date', 'turns', 'turn')] silent."
+            l "Was that too much? I'm sorry, I don't want to scare you away and-"
+            n "[date_sub!c] [conj('date', 'turns', 'turn')] silent once again. You can feel [date_pos] desperately searching for something appropriate to say."
+            jump burger_brother_question
 
 label burger_brother_question:
     if persistent.rockMode == False:

@@ -33,6 +33,7 @@ default date_sub = "she"
 default date_obj = "her"
 default date_pos = "her"
 default date_is  = "is"
+default from_menu = False
 
 # Persistent family term dicts (defaulted for safe access)
 default persistent.date_family_terms = {"sibShort": "sis", "sib": "sister", "child": "daughter"}
@@ -360,6 +361,8 @@ label start:
           default persistent.burger_faceRemembered = False
           default persistent.cabinVoice = "S."
           default persistent.davidPromise = False
+          default persistent.datedJames = False
+          default persistent.datedLilith = False
           default persistent.firstLocation = ""
           default persistent.ringRiddle_knowledge = False
           default persistent.lilaToldAbbyOpportunity_knowledge = False
@@ -370,6 +373,7 @@ label start:
           default persistent.testmode = False
           default persistent.david_apology_made_knowledge = False
           default persistent.lilithOpenToReunion_knowledge = False
+          default persistent.lilaTwoJobsOwnChoice_knowledge = False
 
           #Non-persistent
           default love_meter = 3
@@ -478,6 +482,7 @@ label start:
           default kokiri_chatchar_lila_recent = False
           default familyCheck_talkedDavid = False
           #CONVERSATION TRACKERS
+          default kokiri_conversation = 0
           default conversationtracker_poems = False
           default conversationtracker_tellheraboutnarrator = False
           default conversationtracker_questmade = False
@@ -700,10 +705,6 @@ label game_start:
                     n "I've never been more glad to get to narrate this part of the story."
                else:
                     n "It is a beautiful day like the previous one, exactly like the previous one."
-                    n "Actually it's just the same day."
-                    n "Maybe you can make it just a tiny bit different."
-               n "Your phone once again blares \"Baby it's cold outside\" even though it is anything but cold outside."
-               n "It's [date_obj], again."
                if persistent.testmode:
                     dev "[persistent.lildeaths] [persistent.date!c] deaths."
                if persistent.rockMode == True:
@@ -721,7 +722,8 @@ label game_start:
                     n "But let's stay on track as much as possible, what do you want to do now?"
                     menu:
                          "*Remember that all rocks have a telepathic network to communicate with eachother and use it to reach out to [persistent.date].*" if persistent.psychicConnection_knowledge:
-                              "Filler"
+                              n "Having been already familiar with your current situation you manage to relatively easily establish a connection with [persistent.date]."
+                         
                               #TODO: Fill in.
                               jump Game_start2
                          "*Struggle against your inescapable prison of a body and try to roll to the phone.*" if not persistent.psychicConnection_knowledge:
@@ -763,7 +765,12 @@ label game_start:
                                                             l "Don't even mention it [persistent.name], it can happen to anyone of us."
                                                             $ persistent.psychicConnection_knowledge = True
                                                             jump Game_start2
-                                          
+               else:
+                    if not rockModeBackToStart:
+                         n "Actually it's just the same day."
+                         n "Maybe you can make it just a tiny bit different."
+                    n "Your phone once again blares \"Baby it's cold outside\" even though it is anything but cold outside."
+                    n "It's [date_obj], again."                  
           else:
                n "You awaken in cold sweat as your phone begins to blare \"Baby it's cold outside\" even though it's nowhere near winter."
                n "You had a terrible nightmare but you try to shake it off as best as you can."
@@ -1560,7 +1567,6 @@ label phone_call_abigail:
                                                                       a "Really? So she knows about the job offer I got from winning that competition? And you do aswell?"
                                                                       menu:
                                                                            "Yup, and I was wondering why you didn't want to take that opportunity.":
-                                                                                #TODO: Make sure to have no dead ends in here, just have her hang up because you are running out of time.
                                                                                 a "..."
                                                                                 a "This better be useful to somehow save [persistent.date_nickname] [persistent.name]."
                                                                                 n "[sis_sub!c] [conj('sis', 'lets', 'let')] out a deep sigh."
@@ -1594,6 +1600,11 @@ label phone_call_abigail:
                                                                                           a "And yet, I want to go there, I want to work in the game design studio, that has been my dream for so long after all. But I know that if I were to go I would feel it, the lifeblood of the studio on my tongue, as I leave no drop of it behind."
                                                                                           a "After all, ruining the studio is not something I would do out of malicousness, moreso out of sheer incompetence. I just am not ready yet. I'm not sure if I'll ever be honestly."
                                                                                 
+                                                                                a "Anyway, that's all I want to share about it. It's quite personal and if I'm being honest I can't see how this could ever possibly save [persistent.date]."
+                                                                                a "Still, I am not the one stuck in the loop am I? So maybe I'm missing something."
+                                                                                a "Good luck and goodbye [persistent.name]."
+                                                                                n "And with that she hung up the phone."
+                                                                                jump phone_callMenu
 
      
                                              "Actually I would just like to talk about something else.":
@@ -1949,7 +1960,7 @@ label phone_call_james:
      else:
           j "Ah, welcome [persistent.name]. I see you have managed to get my number?"
           j "Well it used to be my number anyway but you can still reach me through it."
-          j "So what do you want to ask me?"
+          j "So what do you want to ask me?" 
           menu:
                #TODO: Add some more stuff to ask him, this will be the way you can chat with him"
  
@@ -2176,12 +2187,13 @@ label phone_call_lila:
                                              li "But let me assure you Sam, without going too much into unnecessary detail, that that's fully my own choice and we won't need your programs."
                                              li "Thank you for informing me about it though, that was a very sweet thing of you to do."
                                              li "If that's all for now then I suppose I will be hearing from you again later today?"
+                                             $ persistent.lilaTwoJobsOwnChoice_knowledge = True
                                              menu:
                                                   "You will, thank you for your time.":
                                                        li "Thank you aswell to make some time for this, goodbye Sam."
                                                        n "She hung up the phone."
                                                        jump phone_callMenu
-                                             #TODO: Fill this out a bit more, and make it learnable that she is not in debt, you can confront her during the phone call in the kokiri woods about this.
+                                             
   
                               "Actually, that is why I called, I'd rather meet up with you and [persistent.date_sis] in person to talk about the opportunity from the game design competition. Could you meet me at the market square?" if persistent.lilaToldAbbyOpportunity_knowledge:
                                    li "I see... It is a bit odd that you wouldn't mention that in your mail, but I suppose we could do that. We'll see you there."
@@ -4160,28 +4172,25 @@ return
 
 
 label LilithOrJames:
+     # Normalize so left is always Lilith (date) and right is always James (date_ghost).
+     # If jamesMode is True the names are currently swapped, so un-swap them first.
      if persistent.jamesMode:
-          "Test"
           python:
                persistent.date, persistent.date_ghost = persistent.date_ghost, persistent.date
                persistent.date_nickname, persistent.date_ghost_nickname = persistent.date_ghost_nickname, persistent.date_nickname
-               # Swap pronoun dictionaries as well
-               persistent.date_pronouns, persistent.date_ghost_pronouns = persistent.date_ghost_pronouns, persistent.date_pronouns
-               # Refresh the pronoun dicts in case they need to be updated from the new names
                _pd = _get_pronoun_dict("date")
                _pgd = _get_pronoun_dict("date_ghost")
                persistent.date_pronouns = _pd
                persistent.date_ghost_pronouns = _pgd
-               # Update shorthand variables to match swapped pronouns
                store.date_sub = persistent.date_pronouns["sub"]
                store.date_obj = persistent.date_pronouns["obj"]
                store.date_pos = persistent.date_pronouns["pos"]
                store.ghost_sub = persistent.date_ghost_pronouns["sub"]
                store.ghost_obj = persistent.date_ghost_pronouns["obj"]
                store.ghost_pos = persistent.date_ghost_pronouns["pos"]
-               
+               persistent.jamesMode = False
           $ updatePronouns()
-          "Test [date_pos] test [ghost_pos]"
+     # State is now always: date=Lilith, date_ghost=James, jamesMode=False
      n "You are floating in a seemingly endless tunnel of darkness."
      n "After what feels like hours the tunnel seperates into two smaller tunnels, at the end of each you see a scene that is similar in many ways and yet is also slightly different."
      n "The left tunnel ends on a vision of you sitting together in some sort of restaurant with a (description of [persistent.date]), you get the strange feeling you know [date_pos] name, it's [persistent.date]."
@@ -4189,27 +4198,20 @@ label LilithOrJames:
      n "Choose which path you want to walk player, left or right? [persistent.date] or [persistent.date_ghost]?"
      menu:
           "Walk left. ([persistent.date])":
-               if persistent.jamesMode:
-                    python:
-                         persistent.date, persistent.date_ghost = persistent.date_ghost, persistent.date
-                         persistent.date_nickname, persistent.date_ghost_nickname = persistent.date_ghost_nickname, persistent.date_nickname
-                         _pd = _get_pronoun_dict("date")
-                         _pgd = _get_pronoun_dict("date_ghost")
-                         #n "Test [date_ghost_obj] test [date_obj]" #TODO: For some reason this throws a syntax error
-                         persistent.date_pronouns, persistent.date_ghost_pronouns = _pgd, _pd
-                         persistent.jamesMode = False
-                    $ updatePronouns()
+               # Already normalized: date=Lilith, jamesMode=False — nothing to do.
+               $ persistent.datedLilith = True
                jump game_start
           "Walk right. ([persistent.date_ghost])":
-               if not persistent.jamesMode:
-                    python:
-                         persistent.date, persistent.date_ghost = persistent.date_ghost, persistent.date
-                         persistent.date_nickname, persistent.date_ghost_nickname = persistent.date_ghost_nickname, persistent.date_nickname
-                         _pd = _get_pronoun_dict("date")
-                         _pgd = _get_pronoun_dict("date_ghost")
-                         persistent.date_pronouns, persistent.date_ghost_pronouns = _pgd, _pd
-                         persistent.jamesMode = True
-                    $ updatePronouns()
+               # Swap so James becomes the active date.
+               python:
+                    persistent.date, persistent.date_ghost = persistent.date_ghost, persistent.date
+                    persistent.date_nickname, persistent.date_ghost_nickname = persistent.date_ghost_nickname, persistent.date_nickname
+                    _pd = _get_pronoun_dict("date")
+                    _pgd = _get_pronoun_dict("date_ghost")
+                    persistent.date_pronouns, persistent.date_ghost_pronouns = _pgd, _pd
+                    persistent.jamesMode = True
+                    persistent.datedJames = True
+               $ updatePronouns()
                jump game_start
 
 label ufoVisitAlone:
@@ -4238,8 +4240,7 @@ label ufoVisitAlone:
 
                ship "We would tell you where you would find both of them but due to how the anomaly works it isn't always set to be in the same place, rather a few possible places.
                If they go to any of the three restaurants they will visit you do not need to intervene, the universe will take care of it in a acceptable way with a small amount of death.
-               However, if they go to either the forest or the beach you need to keep a close eye on them, if [date_sub] [conj('date', 'has', 'have')]n't died by (hour here) then you will need to intervene, otherwise our fates will look quite gruesome, let me asure you."
-               #TODO: Replace that "hour here" and maybe just completely rewrite this.
+               However, if they go to either the forest or the beach you need to keep a close eye on them, if [date_sub] [conj('date', 'has', 'have')] been killed by the either the falling star or car we have to come into the picture, otherwise our fates will look quite gruesome, let me asure you."
                      
 label reunionEnding:
      n "As you head towards the Chinese restaurant you pass by the market square."
@@ -4294,6 +4295,8 @@ label reunionEnding:
                jump reunion_showUp
           "*Leave them alone.*":
                jump reunion_noShowUp
+          "*Use the connection you built with [persistent.date_ghost] to pull [ghost_obj] into this reality.*" if persistent.datedJames and persistent.datedLilith:
+               jump badReunionTransferUniverse
     
 
 label reunion_showUp:
@@ -4987,7 +4990,6 @@ label polaroidZone_endOfEverything_darknessLore:
    
 
 label badReunionTransferUniverse:
-     #TODO: PRIORITY: Add a way to actually make this happen in the reunion as a choice if you have been on a date with [persistent.date_ghost] aswell.
      n "You focus all your energy into tapping in to another world. A world where [persistent.date_ghost] is standing in this exact place."
      n "Slowly but surely you open a rift big enough to pull something, someone from that world into this one."
      n "Almost instantaniously a figure appears in front of you."

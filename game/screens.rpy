@@ -97,6 +97,20 @@ init python:
         store.ghost_sib = persistent.date_ghost_family_terms.get("sib", "brother")
         store.ghost_child = persistent.date_ghost_family_terms.get("child", "son")
 
+    def sync_pronoun_shorthands():
+        # Assign all pronoun shorthands (excluding verbs except vs)
+        _prefix_map = [
+            ("date",       "date"),
+            ("date_sis",   "sis"),
+            ("date_dad",   "dad"),
+            ("date_mom",   "mom"),
+            ("date_ghost", "ghost"),
+        ]
+        for npc_var, prefix in _prefix_map:
+            p = _get_pronoun_dict(npc_var)
+            for form in ("sub", "obj", "pos", "ref", "pred", "vs"):
+                setattr(store, f"{prefix}_{form}", p.get(form, ""))
+
 screen show_family_input_screen(npc_var, term_key, term_label, term_default):
     frame:
         style_prefix "menu"
@@ -217,9 +231,12 @@ style scrollbar:
     thumb Frame("gui/scrollbar/horizontal_[prefix_]thumb.png", gui.scrollbar_borders, tile=gui.scrollbar_tile)
 
 style vscrollbar:
-    xsize gui.scrollbar_size
-    base_bar Frame("gui/scrollbar/vertical_[prefix_]bar.png", gui.vscrollbar_borders, tile=gui.scrollbar_tile)
-    thumb Frame("gui/scrollbar/vertical_[prefix_]thumb.png", gui.vscrollbar_borders, tile=gui.scrollbar_tile)
+    xsize 72
+    ypadding 0
+    unscrollable "hide"
+    base_bar Transform(Frame("gui/scrollbar/vertical_idle_bar.png", gui.vscrollbar_borders, tile=gui.scrollbar_tile), matrixcolor=TintMatrix("#000000"))
+    thumb Transform("gui/scrollbar/vertical_idle_thumb.png", matrixcolor=TintMatrix("#336600"))
+    thumb_offset 36
 
 style slider:
     ysize gui.slider_size
@@ -259,17 +276,16 @@ style frame:
 screen say(who, what):
     style_prefix "say"
 
-    window:
-        id "window"
-        text what id "what"
-
-    ## Namebox — rendered outside the main textbox window so it can sit
-    ## as its own floating rectangle above it, connected by a slight overlap.
+    ## Namebox — rendered before the main textbox window so it appears behind it.
     if who is not None:
         window:
             id "namebox"
             style "namebox"
             text who id "who"
+
+    window:
+        id "window"
+        text what id "what"
 
     ## If there's a side image, display it above the text. Do not display on the
     ## phone variant - there's no room.
@@ -295,19 +311,19 @@ style window:
     xfill True
     yalign gui.textbox_yalign
     ysize gui.textbox_height
+    yoffset -40
 
     background At(Image("gui/textbox.png", xalign=0.5, yalign=1.0), Transform(alpha=gui.textbox_alpha))
 
 style namebox:
-    ## Flush to the left edge of the screen.
-    xpos 0
+    xpos gui.name_xpos
     xanchor 0.0
     xminimum 180
     ## yanchor 1.0 + yalign 1.0 + yoffset = -gui.textbox_height puts the
     ## bottom of the namebox exactly at the top of the textbox — touching, not overlapping.
     yanchor 1.0
     yalign 1.0
-    yoffset -(gui.textbox_height)
+    yoffset -(gui.textbox_height) - 20
 
     background Frame(Solid(gui.accent_color), Borders(0, 0, 0, 0))
     padding (20, 10, 20, 10)
@@ -376,6 +392,7 @@ screen choice(items):
     style_prefix "choice"
 
     default max_visible = 5
+    default _inline_hovered = ""
 
     ## Tooltip captured reactively every interaction so the notecard updates live.
     $ tt = GetTooltip()
@@ -388,12 +405,49 @@ screen choice(items):
     ## Scroll threshold: grid mode caps at 4 items (5+ scroll); default uses max_visible.
     $ _scroll_at = 4 if persistent.grid_choices else max_visible
 
-    if len(_active) > _scroll_at:
+    if persistent.inline_choices:
+        # ── Inline mode: choices appear inside the dialogue box ──────────
+        window:
+            style "window"
+
+            viewport:
+                mousewheel True
+                draggable True
+                scrollbars "vertical"
+                xpos gui.dialogue_xpos
+                xsize gui.dialogue_width
+                ypos gui.dialogue_ypos
+                ymaximum (gui.textbox_height - gui.dialogue_ypos - 10)
+
+                vbox:
+                    style "inline_choice_vbox"
+                    for i in items:
+                        if i.action is None:
+                            text i.caption style "inline_choice_caption"
+                        else:
+                            $ _short = truncate_to_width(i.caption, gui.dialogue_width - 72)
+                            $ _hovering = (_inline_hovered == i.caption)
+                            $ _caption_display = i.caption if _hovering else _short
+                            button:
+                                alt i.caption
+                                style "inline_choice_button"
+                                hovered SetScreenVariable("_inline_hovered", i.caption)
+                                unhovered SetScreenVariable("_inline_hovered", "")
+                                action [i.action, Function(narrator.add_history, kind="adv", who=("{color=#7BCF7D}%s" % persistent.name), what=__(i.caption))]
+                                hbox:
+                                    spacing 20
+                                    add Transform("gui/bullet_loop.png", matrixcolor=(TintMatrix("#336600") if _inline_hovered == i.caption else TintMatrix("#707070")), zoom=(0.5 * gui.text_size / 33.0)) yalign 0.5
+                                    text _caption_display:
+                                        style "inline_choice_button_text"
+                                        xfill True
+
+    elif len(_active) > _scroll_at:
         # ── Scrollable version — UNTOUCHED ─────────────────────────────
         window:
             background None
             xalign 0.5
-            yalign 0.5
+            ypos 650
+            yanchor 0.0
             
 
             viewport:
@@ -404,21 +458,37 @@ screen choice(items):
                 xalign 0.5
                 yalign 0.5
                 xsize 1200  
-                ymaximum 300 
+                ymaximum 280 
 
                 vbox:
                     spacing 10
                     xalign 0.5
                     yalign 0.5
                     for i in items:
-                        textbutton i.caption action [i.action, Function(narrator.add_history, kind="adv", who=("{color=#7BCF7D}%s" % persistent.name), what=__(i.caption))]
+                        button:
+                            style "choice_button"
+                            hovered SetScreenVariable("_inline_hovered", i.caption)
+                            unhovered SetScreenVariable("_inline_hovered", "")
+                            action [i.action, Function(narrator.add_history, kind="adv", who=("{color=#7BCF7D}%s" % persistent.name), what=__(i.caption))]
+                            hbox:
+                                spacing 20
+                                add Transform("gui/bullet_loop.png", matrixcolor=(TintMatrix("#336600") if _inline_hovered == i.caption else TintMatrix("#707070")), zoom=(0.5 * gui.text_size / 33.0)) yalign 0.5
+                                text i.caption style "choice_button_text"
 
-    elif len(_active) == 2 or not persistent.grid_choices:
-        # ── Default stacked layout (2 choices, or compact grid turned off) ─
+    elif len(_active) <= 2 or not persistent.grid_choices:
+        # ── Default stacked layout (1–2 choices, or compact grid turned off) ─
         vbox:
             style "grid_choice_vbox"
             for i in items:
-                textbutton i.caption action [i.action, Function(narrator.add_history, kind="adv", who=("{color=#7BCF7D}%s" % persistent.name), what=__(i.caption))]
+                button:
+                    style "choice_button"
+                    hovered SetScreenVariable("_inline_hovered", i.caption)
+                    unhovered SetScreenVariable("_inline_hovered", "")
+                    action [i.action, Function(narrator.add_history, kind="adv", who=("{color=#7BCF7D}%s" % persistent.name), what=__(i.caption))]
+                    hbox:
+                        spacing 20
+                        add Transform("gui/bullet_loop.png", matrixcolor=(TintMatrix("#336600") if _inline_hovered == i.caption else TintMatrix("#707070")), zoom=(0.5 * gui.text_size / 33.0)) yalign 0.5
+                        text i.caption style "choice_button_text"
 
     else:
         ## ── Compact grid layout (3–4 items, grid mode on) ──────────────
@@ -432,6 +502,7 @@ screen choice(items):
                     for i in _active[:2]:
                         $ _short = truncate_choice(i.caption)
                         textbutton _short:
+                            alt i.caption
                             style "grid_choice_button"
                             tooltip (i.caption if _short != i.caption else "")
                             action [i.action, Function(narrator.add_history, kind="adv", who=("{color=#7BCF7D}%s" % persistent.name), what=__(i.caption))]
@@ -442,6 +513,7 @@ screen choice(items):
                     for i in _active[2:]:
                         $ _short = truncate_choice(i.caption)
                         textbutton _short:
+                            alt i.caption
                             style "grid_choice_button"
                             tooltip (i.caption if _short != i.caption else "")
                             action [i.action, Function(narrator.add_history, kind="adv", who=("{color=#7BCF7D}%s" % persistent.name), what=__(i.caption))]
@@ -454,6 +526,7 @@ screen choice(items):
                     for i in _active[:2]:
                         $ _short = truncate_choice(i.caption)
                         textbutton _short:
+                            alt i.caption
                             style "grid_choice_button"
                             tooltip (i.caption if _short != i.caption else "")
                             action [i.action, Function(narrator.add_history, kind="adv", who=("{color=#7BCF7D}%s" % persistent.name), what=__(i.caption))]
@@ -463,12 +536,13 @@ screen choice(items):
                     for i in _active[2:]:
                         $ _short = truncate_choice(i.caption)
                         textbutton _short:
+                            alt i.caption
                             style "grid_choice_button"
                             tooltip (i.caption if _short != i.caption else "")
                             action [i.action, Function(narrator.add_history, kind="adv", who=("{color=#7BCF7D}%s" % persistent.name), what=__(i.caption))]
 
     ## ── Tooltip notecard — yellow card with full text on hover ─────────────
-    if tt and persistent.grid_choices and 2 < len(_active) <= 4:
+    if tt and persistent.grid_choices and 2 < len(_active) <= 4 and not persistent.inline_choices:
         frame:
             style "notecard_frame"
             xalign 0.5
@@ -515,6 +589,25 @@ style notecard_text:
     text_align 0.5
     size gui.text_size
 
+## Inline choices — choices displayed inside the dialogue box
+style inline_choice_vbox:
+    spacing 4
+    xsize (gui.dialogue_width - gui.scrollbar_size)
+
+style inline_choice_caption is say_dialogue:
+    italic True
+
+style inline_choice_button is default:
+    background None
+    padding (0, 3, 0, 3)
+    xfill True
+
+style inline_choice_button_text is default:
+    properties gui.text_properties("dialogue")
+    idle_color "#000000"
+    hover_color gui.accent_color
+    insensitive_color "#6060607f"
+
 
 ## Quick Menu screen ###########################################################
 ##
@@ -536,6 +629,8 @@ screen quick_menu():
 
             textbutton _("Back") action Rollback()
             textbutton _("History") action ShowMenu('history')
+            if persistent.testmode or persistent.rockMode:
+                textbutton _("Clear Cheats") action [SetField(persistent, "testmode", False), SetField(persistent, "rockMode", False)]
             textbutton _("Skip") action Skip() alternate Skip(fast=True, confirm=True)
             textbutton _("Auto") action Preference("auto-forward", "toggle")
             if persistent.canSave:
@@ -550,6 +645,14 @@ screen quick_menu():
 ## the player has not explicitly hidden the interface.
 init python:
     config.overlay_screens.append("quick_menu")
+
+    def start_over_reset():
+        _pref_keys = ["font_choice", "text_size_offset", "text_outline", "grid_choices", "inline_choices"]
+        _saved = {k: getattr(persistent, k, None) for k in _pref_keys}
+        persistent._clear()
+        for k, v in _saved.items():
+            if v is not None:
+                setattr(persistent, k, v)
 
 default quick_menu = True
 
@@ -803,7 +906,7 @@ style game_menu_content_frame:
     top_margin 15
 
 style game_menu_viewport:
-    xsize 1380
+    xsize 1300
 
 style game_menu_vscrollbar:
     unscrollable gui.unscrollable
@@ -1085,6 +1188,7 @@ screen preferences():
                     style_prefix "check"
                     label _("Choices")
                     textbutton _("Compact Grid") action ToggleField(persistent, "grid_choices")
+                    textbutton _("Inline") action ToggleField(persistent, "inline_choices")
 
                 ## Additional vboxes of type "radio_pref" or "check_pref" can be
                 ## added here, to add additional creator-defined preferences.
@@ -1674,7 +1778,7 @@ screen start_over_confirm():
 
                 textbutton _("Yes") action [
                     Hide("start_over_confirm"),
-                    Function(lambda: setattr(persistent, "firstboot", None)),
+                    Function(start_over_reset),
                     Function(renpy.full_restart)
                 ]
 

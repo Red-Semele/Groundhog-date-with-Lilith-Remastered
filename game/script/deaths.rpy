@@ -261,11 +261,11 @@ label restaurant_deaths:
                         "I'm fine, but what about you?":
                             l "That's a relief, I was so worried that I would have lost you too."
                             if burger:
-                                "Filler"
-                                #TODO: Fill in.
+                                l "I'm mostly fine I think, I got flung across the restaurant but can't feel any pain."
+                                l "I suppose not feeling anything has some perks afterall."
                             elif cafe:
-                                "Filler"
-                                #TODO: Fill in.
+                                l "I'm mostly fine I think, the stream just slightly carried me away."
+                                l "I'm for once glad I don't have lungs, or a mouth, or... well you get the point."
                             elif chinese:
                                 l "I'm mostly fine I think, just burried underneath all these... feathers?"
                                 l "This might be one of the few times I'm glad I don't have a nose."

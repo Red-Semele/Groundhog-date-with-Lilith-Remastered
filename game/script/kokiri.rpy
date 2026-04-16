@@ -1735,7 +1735,31 @@ label kokiri_poems_oldPoems_bang:
     l "It was me who closed my eyes."
     jump kokiri_poems_askOrRate
 label kokiri_poems_recentPoems:
-    "Filler"
+    menu:
+        "Time poem":
+            l "Times endless and unrelenting"
+            l "Flowing through us, vainly pretending"
+            l "Things to be the other way around."
+            l "Yet do we not measure it through fossils in the ground?"
+
+            l "Seems to me the ruler of times forgotten"
+            l "Needs a ruler in the form of things rotten."
+
+            l "It is only through this endless flow of decay"
+            l "We can tell the difference between each day."
+
+            l "This clock ever ticking, needs us all the same I know."
+            l "For without us ticks no line, and without it no flow."
+
+            l "Yet one can't help but wonder, in a frozen world of stagnance"
+            l "Are things stopped in their potential? Or brimming, swimming in oceans of chance."
+
+            l "For what happened will repeat if rewound."
+            l "But until that moment is spun, it's still unbound."
+
+            l "Let us then pray for the earth to cease it's tiring motion."
+            l "So for one frozen second we can indulge in our refreshing ocean."
+            
     #TODO: Fill this in with more recent poems from the quest version. (No new poems in there, I need to add them.)
 label kokiri_poems_askOrRate:
     menu:
@@ -2096,7 +2120,7 @@ label kokiri_death_3_death_dialogue:
         else: 
             l "I really love that I still managed to help my [mom_parShort] in my last moments but if everything gets reset inevitably doesn't that make all of this pointless?"
     else:
-        l "So after all those things that just happened I am still going to die?" #TODO: PRIORITY: This already triggers in the begining of the game if you do "talk about something else when she asks if the name is your real one, fix that."
+        l "So after all those things that just happened I am still going to die?"
     menu:
 
         "Well, it is better to die with a clear conscience and slightly less doubts. So that call was anything but pointless." if kokiri_call:

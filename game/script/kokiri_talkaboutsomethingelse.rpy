@@ -1056,7 +1056,7 @@ label askAboutDavid_tellMeAbout:
         jump askAboutDavid_tellMeAbout_3
 
 label askAboutDavid_tellMeAbout_1:
-            l "What really is there to say about [dad_obj]? [dad_sub] abandoned us right when [persistent.date_ghost] died."
+            l "What really is there to say about [dad_obj]? [dad_sub!c] abandoned us right when [persistent.date_ghost] died."
             l "When everyone needed [dad_obj] the most [dad_sub] just dissapeared out of our lives as if it was [dad_obj] who died that day and not [persistent.date_ghost]."
             l "[mom_parShort!c] was devasted by both [persistent.date_ghost] and [persistent.date_dad]'s absence in all of our lives but she kept trying [mom_pos] best for [persistent.date_sis] and me."
             l "Of course I know [dad_sub] [conj('dad', 'was', 'were')] heartbroken by [persistent.date_ghost]' death, we all were."
@@ -1455,7 +1455,8 @@ label askAboutLila_tellMeAbout_2:
                     l "Family is something really important to me, but I think you should be free to choose who falls under that term."
                     l "Family can be so much more than just bloodrelations, and it doesn't have to be all of those."
                     l "To me a family will always be the people that I care for and that care for me."
-        "[persistent.date_dad] actually kept sending money when [dad_sub] left. [persistent.date_mom] just did not want to accept it. That is why she worked two jobs." if persistent.davidPayedMoney_knowledge:
+
+        "[persistent.date_dad] actually kept sending money when [dad_sub] left. [persistent.date_mom] just did not want to accept it. That is why she worked two jobs." if persistent.lilaTwoJobsOwnChoice_knowledge:
             l "Really? I suppose that does make sense. We didn't want [dad_pos] money, we wanted [dad_obj] back."
             l "Although it certainly could have helped lessen [mom_pos] workload, atleast partly... I can still understand why she wouldn't take it."
             l "I suppose I might have misjudged my [dad_par], even if only slightly."

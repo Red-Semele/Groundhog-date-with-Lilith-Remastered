@@ -85,11 +85,34 @@ label cafe_start:
                 n "Either way, I think it is best to not think too much about it. Ignorance is bliss afterall, isn't it?"
                 l "I know silly, but what do you think it smells like?"
                 l "Our imagination is one hell of a tool, isn't it? Then we better put it to good use."
+                menu:
+                    "What's the point of dreaming about food if neither of us can eat it?":
+                        jump restaurant_menu_pointOfPretending
+                    "I imagine it smells...":
+                        menu:
+                            "...sweet.":
+                                "filler"
+                            "...savory.":
+                                "filler"
+                            "...spicy.":
+                                "filler"
+                            "...sour.":
+                                "filler"
+                            
             
             "It does, it's just a shame I can't eat it.":
                 l "Eat it? Why would we do that? We are rocks, we don't need to eat."
                 l "Just watching it is it's own experience, isn't it?"
                 l "Sure, it might be a little... different, but it's an experience nontheless, right?"
+                menu:
+                    "What's the point of dreaming about food if neither of us can eat it?":
+                            jump restaurant_menu_pointOfPretending
+                    "It's better than not watching I suppose.":
+                        l "See? Now you are getting it! We are as close as we could possibly be to actually experiencing the food the way humans do."
+                        l "We are lucky to catch a glimpse of their world, even such a small one."
+                        l "You must know as well as me how isolating our lives can be. To be so close to all these people, for a moment, I don't feel it as much."
+                        l "And yet, a different part of me seems to feel it even more than normal. Yet luckily for that part we are here together, aren't we?"
+        
         #TODO: Have this lead to a better segway that then moves to the next part.
         jump cafe_dice_stop
 
@@ -294,7 +317,7 @@ label cafe_dice_result:
 
 label cafe_dice_stop:
     if not persistent.rockMode:
-        #TODO: This could be a good place to add something else, instead of just segwaying she offers another game of sorts.
+        #EXTRA: This could be a good place to add something else, instead of just segwaying she offers another game of sorts.
         l "Oh no worries [persistent.name]!
         I might have made this a bit too daunting so I completely understand."
     else: 

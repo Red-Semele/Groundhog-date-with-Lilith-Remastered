@@ -279,6 +279,7 @@ label gdwl_functions:
             globals()["riddleAnswersTold"] = 0
             globals()["chinese_lilithBreakupTrigger"] = 0
             globals()["callsMade"] = 0
+            globals()["kokiri_conversation"] = 0
             
             
             

@@ -66,6 +66,33 @@ init python:
             return text
         return u" ".join(words[:max_words]) + u"\u2026"
 
+    def _measure_text_px(s, style_name):
+        """Return the rendered pixel width of string s using the named style."""
+        import renpy.text.text as _rtt
+        t = _rtt.Text(s, style=style_name)
+        surf = renpy.display.render.render(t, 99999, 999, 0, 0)
+        return surf.get_size()[0]
+
+    def truncate_to_width(text, max_px, style_name="inline_choice_button_text"):
+        """
+        Truncate text so it fits within max_px pixels when rendered with the
+        given style.  Uses Ren'Py's own font rendering, so it's accurate for
+        any font or size.  Binary-searches for the cutoff to keep it fast.
+        """
+        if _measure_text_px(u"\u00b7 " + text, style_name) <= max_px:
+            return text
+        # Binary-search the character cutoff.
+        lo, hi = 1, len(text) - 1
+        while lo < hi:
+            mid = (lo + hi + 1) // 2
+            if _measure_text_px(u"\u00b7 " + text[:mid] + u"\u2026", style_name) <= max_px:
+                lo = mid
+            else:
+                hi = mid - 1
+        # Snap back to the last word boundary.
+        cut = text[:lo].rsplit(None, 1)[0] if u" " in text[:lo] else text[:lo]
+        return cut + u"\u2026"
+
     def apply_text_size(offset):
         offset = max(TEXT_SIZE_MIN_OFFSET, min(TEXT_SIZE_MAX_OFFSET, int(offset)))
         persistent.text_size_offset = offset

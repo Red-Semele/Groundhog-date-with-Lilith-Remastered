@@ -85,27 +85,93 @@ label chinese_menu:
                 jump chinese_menu_result
 
             "What's the point of dreaming about food if neither of us can eat it?":
-                #TODO: Keep writing and fleshing this out, eventually link it to the burger and cafe path aswell.
-                l "Doesn't everyone dream of something they might never be able to attain?"
-                l "When something is out of reach it makes you want it even more, doesn't it?"
-                l "In fact, it might even keep you reaching out at all. To keep you going."
-                l "That's a beautiful thing, isn't it? As long as we stay aware it's unreachable deep down."
-                l "Hope is a beautiful thing, but it can quickly turn into delusion."
-                l "I know I'll never be able to enjoy the taste of food, but sometimes I pretend I can."
-                l "I guess I do it as a way to cope with things."
-                l "For others eating is something almost mundane, something normal even. But for us it's something we'll never do."
-                l "Even in something so simple as eating we are separated from these people around us."
-                l "That's a lonely existence isn't it [persistent.name]?"
-                l "I suppose that's why I like pretending. To lessen the distance between me and them even the tiniest bit."
-                menu:
-                    "But doesn't it sting more when the reality sets in again?":
-                        l "I suppose sometimes it does. To dream is to wake. And to wake is to leave the comfy blanket for cold reality."
-                        l "That change might be more startling, more uncomfortable than bearing the cold reality all of the time."
-                        l "But isn't the comfortable dream what keeps us going? If we live in a world where we deny our dreams, is it worth it to be awake?"
-                        l "I fear that sting might be a necessary evil."
-                        #TODO: Continue this? And get it back on track.
+                jump restaurant_menu_pointOfPretending
+                
+                label restaurant_menu_pointOfPretending:
+                    l "Doesn't everyone dream of something they might never be able to attain?"
+                    l "When something is out of reach it makes you want it even more, doesn't it?"
+                    l "In fact, it might even keep you reaching out at all. To keep you going."
+                    l "That's a beautiful thing, isn't it? As long as we stay aware it's unreachable deep down."
+                    l "Hope is a beautiful thing, but it can quickly turn into delusion."
+                    l "I know I'll never be able to enjoy the taste of food, but sometimes I pretend I can."
+                    l "I guess I do it as a way to cope with things."
+                    l "For others eating is something almost mundane, something normal even. But for us it's something we'll never do."
+                    l "Even in something so simple as eating we are separated from these people around us."
+                    l "That's a lonely existence isn't it [persistent.name]?"
+                    l "I suppose that's why I like pretending. To lessen the distance between me and them even the tiniest bit."
+                    menu:
+                        "But doesn't it sting more when the reality sets in again?":
+                            l "I suppose sometimes it does. To dream is to wake. And to wake is to leave the comfy blanket for cold reality."
+                            l "That change might be more startling, more uncomfortable than bearing the cold reality all of the time."
+                            l "But isn't the comfortable dream what keeps us going? If we live in a world where we deny our dreams, is it worth it to be awake?"
+                            l "I fear that sting might be a necessary evil."
+                            l "Besides, I like to believe that in our dreams, in our fantasies, we can sometimes get inspiration or a drive to make it through our reality."
+                            l "We do not have to have a clear divide between both worlds, not fully anyway. The worlds we belong to in our minds can bring us new copiing mechanisms."
+                            l "It might sound silly, but it's not because those worlds are not real that the lessons they thaught you, that you picked up yourself from them, aren't real."
+                            l "So I think the beauty that comes from pretending is worth a sting every now and then."
+                            l "It's like plucking a beautiful rose, sure, every now and then you might get pricked, wheter you are careful or not. But the rose is more than worth it, isn't it?"
+                            
+                            menu:
+                                "I don't think so, I don't like pretending. I prefer the real world.":
+                                    l "And that is totally alright [persistent.name]."
+                                    l "Still, I can't help but wonder if you don't pretend at all every now and then?"
+                                    l "Almost all of us go through some suspension of disbelief for example when we interact with books, movies, games and all other kinds of media."
+                                    l "Even for the briefest moment we pretend that what we experience could plausibly happen, and that we are actually there."
+                                    l "Even besides that, I like to think that all of us get caught up in some sort of fantasy at some point, right?"
+                                    l "What is the real world afterall? If you see someone make a certain expression and you automatically think what it means, aren't you biased by your own thoughts?"
+                                    l "I think when we try to interpret the world we aren't capturing the real one anymore. Merely a representation of it."
+                                    l "Besides, aren't we all pretending in a way? Think about all the humans, do you really think they are who they present themselves at?"
+                                    l "In the best case I like to think they are, but they still are merely fragments of that."
+                                    l "They are like impossibly complex tapestries of contradictionary threads, it's easier to represent yourself as one of those threads, or at most a few." 
+                                    l "Besides, I'm sure a lot of them aren't even entirely aware of the tapestry they are, not fully."
+                                    l "It is scary to realise just how little you can see of your own self, the person you are supposed to know the best."
+                                    l "If even you, the tapestry itself is blind of it's full design, how could you transfer that image to others?"
+                                    l "Still, I hope they try. The gift of having someone see you, or even give it the slightest attempt... it must be nice."
+                                    l "It gets lonely as a rock, so in a way it feels sad to see humans lock themselves away from a shot at genuine connection."
+
+                                "I agree, I even think that the size of the sting, or even feeling it at all can even say something about how much something touched us.":
+                                    l "That's a very lovely way to look at it now that you bring that up. I like that sentiment a lot."
+                                    l "The sting we feel can indeed be the feeling of losing something meaningful and beautiful to us."
+                                    l "We only feel it because we felt something for the rose we plucked and we are saddened to let it go."
+                                    l "In that way, if we feel nothing at all after letting it go it might be more sad than if it stung."
+                                    l "Still, ofcourse I can understand from a purely logical perspective that we do not want things to hurt."
+                                    l "We might rather cling onto the rose for all of eternity."
+                                    l "But all things wither in the end I'm afraid. If we hold onto the rose for too long it's merely a wilted flower, not even resembling the form we remembered it for."
+                                    l "Even if it didn't wither, we can only hold so many flowers can we? To cling onto one is to miss out on others."
+                                    l "The world is a flower field, adorned with so many roses, tulips and the such, could you truly rob yourself of picking one of those?"
+                                    l "Would you still be able to smell this eternal rose if that is all you smelled for the rest of your life? Or would sweet fragrance be traded for pure mundanity?"
 
 
+                        "I like pretending too. The suspension of disbelief gives access to so many things beyond our reach.":
+                            l "Exactly! I knew you of all people would understand [persistent.name]."
+                            l "...Being a rock and all I mean."
+                            l "To not pretend is to almost just watch from the sidelines, if even that."
+                            l "But by just being ignorant of reality , even for the shortest moment, we can belong to a world we got so used to just watching."
+
+                            l "Ofcourse it is important to not stay submerged into that world for too long. If your dreams last years and being awake is just a day, would you not think the latter is the dream?"
+                            l "The bliss of pretending is nice for a while, but it's important not to abandon the world we see as real for one we merely wish to be."
+                            menu:
+                                "What if neither world truly was real?":
+                                    l "I am not sure it would matter much."
+                                    l "Would we know they are not real?"
+                                    l "Are we sure this world right here is real? That there isn't one above this one that is the real one?"
+                                    l "Or even yet another layer above that one, that is truly the real world?"
+
+                                    l "If we find a world above our own, why wouldn't we believe there isn't one even higher? And one after that, and so on and on until infinity."
+                                    l "So to look for the real world, is in my opinion, to never find it."
+
+                                    l "And if we were not aware of our world not being real, would it matter at all? We'd just treat it like it was."
+                                    l "So either way I think it's an interesting question, but not one we should seriously entertain."
+                    
+                    l "Anyway, I hope I haven't been boring you to death too much. It's just not every day I get to talk to someone about this."
+                    l "{size=*0.5}Or talk to anyone for that matter.{/size}"
+                    l "Still, it's probably time to change the subject."
+                    if burger == True:
+                        jump burger_ordering_rockModeIsolation
+                    elif cafe == True:
+                        jump cafe_dice_stop
+                    else:
+                        jump chinese_riddle
         
 
 
@@ -149,14 +215,15 @@ label chinese_menu_result:
             l "It's weird, but somehow I feel exhausted of orange chicken even though I've never eaten it before."
             l "Maybe I ate enough of it in a past life for both that life and this one?"
             n "[date_sub!c] [conj('date', 'lets', 'let')] out a small chuckle, you feel it resonate in your mind."
-        
-        l "Would you like to answer a few riddles [persistent.name]? That should be fun, right?"
-        menu:
-            "I'd rather not actually, I'm pretty bad at answering riddles.":
-                jump chinese_riddle_decline
+        jump chinese_riddle
+        label chinese_riddle:
+            l "Would you like to answer a few riddles [persistent.name]? That should be fun, right?"
+            menu:
+                "I'd rather not actually, I'm pretty bad at answering riddles.":
+                    jump chinese_riddle_decline
 
-            "Sure, I'd like that!":
-                jump chinese_riddle_accept
+                "Sure, I'd like that!":
+                    jump chinese_riddle_accept
 
 
 label chinese_riddle_accept:
@@ -487,7 +554,7 @@ label chinese_riddle_railroad:
                         l "Either way, it's probably nothing, right? I think we should just focus on this date."
                         
         
-        #TODO: For now this is a way to keep the game moving in the right direction, might add more content inbetween here.
+        #EXTRA: For now this is a way to keep the game moving in the right direction, might add more content inbetween here.
         jump chinese_phoneScene           
     
     else:
