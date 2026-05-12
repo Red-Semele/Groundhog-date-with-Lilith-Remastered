@@ -143,5 +143,12 @@
                 }
             }
         ]
-    }
+    },
+    "branchpy.projects": [
+        "c:\\Users\\brent\\Downloads\\.git\\Groundhog-date-with-Lilith-Remastered"
+    ],
+    "branchpy.projectLabels": {
+        "c:\\Users\\brent\\Downloads\\.git\\Groundhog-date-with-Lilith-Remastered": "Groundhog-date-with-Lilith-Remastered"
+    },
+    "branchpy.currentProject": "c:\\Users\\brent\\Downloads\\.git\\Groundhog-date-with-Lilith-Remastered"
 }

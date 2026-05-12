@@ -1,6 +1,12 @@
 
 label gdwl_functions:
     init python:
+        
+        def flash_screen(color_name="red", duration=0.5): 
+            renpy.show(color_name) 
+            renpy.pause(duration, hard=True) 
+            renpy.hide(color_name)
+
         def love_meter_result(alwaysJump):
             if love_meter <= 0 or alwaysJump == True:
                 #Check for the location to send to the right place.
@@ -294,193 +300,27 @@ label gdwl_functions:
             globals()["major_love_offence"] = 0
             globals()["other_phone"] = 0
 
-
+ 
             global_vars = [
-                "called_phone",
-                "burger",
-                "cafe",
-                "chinese",
-                
-                "nightmare",
-                "kokiri_cherishAllDates",
-                "burgerBeforeLie",
-                "abby_phoneToldSisDies",
-                "kokiri_griefHasNoTimeLimit",
-                "kokiri_groundhog_lie",
-                "kokiri_psychic_lie",
-
-                "car_caught",
-                "car_free",
-                "groundhog",
-                "psychic", 
-                "hugRequestedBeforeDeath", 
-            
-                # Locations:
-                "burger_poem_cleancheck", 
-                "burger", 
-                "burgerBeenBefore", 
-                "burger_alt", 
-                "cafe", 
-                "kokiri", 
-                "beach", 
-                "brotherasked", 
-                "burger_nightmare",
-                "kokiri_jamesTalkBlock",
-                
-                "cafedicecheat", 
-                "cafe_badLove_lowbar", 
-                "cafe_badLove_justafeeling", 
-                "chinese", 
-                "peking", 
-                "orange", 
-                "kokiri_goalSurvive",
-                
-                "riddle_loop", 
-                "kokiri", 
-                "kokiri_groundhog_lie", 
-                "kokiri_psychic_lie", 
-                
-                "poem_conversation", 
-                "teaseDeath", 
-                "angryLilith", 
-                "kokiri_poemBad", 
-                "kokiri_promiseCancelDate", 
-                "abby_phoneToldSisDies", 
-
-                "kokiri_poems_rated_once", 
-                "kokiri_poems_rateblock", 
-                "kokiri_alternateplace", 
-                "kokiri_holdhand", 
-                "kokiri_scenery_headhurt", 
-                "kokiri_scenery_breakfrombreakingyourhead", 
-                "kokiri_scenery_gamegoal", 
-                "kokiri_meteorite_alert", 
-                "kokiri_meteorite_no_alert", 
-                "kokiri_finalTalk", 
-                "kokiri_call_death_2_check", 
-                "kokiri_call_death_1_check", 
-                "kokiri_death_4_playerResponse", 
-                "damoclesAsked", 
-                "big_sis_mode", 
-                "lilithAliveEnding", 
-                "playerCalledSomeone", 
-                "kokiri_positiveDavidStory",
-                "kokiri_familyContacted",
-                "kokiri_ToldLillyHowManyRetries",
-                "kokiri_toldLillySheLives",
-                "kokiri_fullControlAndStillDying",
-                "noTalkAngryLilith",
-                "kokiri_griefHasNoTimeLimit",
-                "kokiri_notReadyToLetGo",
-                
-                
-                "peeked_phone_temp",
-                "kokiriStarGazed", #Check if you have watched the stars with [persistent.date] at a certain part of the game this run.
-                "kokiriSceneryWatched", #Check if you have watched the scenery with [persistent.date] this run.
-                "kokiri_scenery_shutUpLackOfSelfEsteem", 
-            
-                "kokiri_griefHasNoTimeLimit", 
-                "kokiri_silentMoment", 
-                #Kokiri recent poems
-                "kokiri_poem_snowwoman_recent", 
-                "kokiri_poem_shadowman_recent", 
-                "kokiri_poem_lights_recent", 
-                "kokiri_poem_bang_recent", 
-                "kokiri_poem_window_recent", 
-                #Booleans to see who you ask about the most at familyask in kokiri
-                
-
-                "kokiri_chatchar_abigail", 
-                "kokiri_chatchar_james", 
-                "kokiri_chatchar_lila", 
-                "kokiri_chatchar_david", 
-                "kokiri_call", 
-                "james_interest", 
-                "abigail_interest", 
-                "david_interest", 
-                "lila_interest", 
-                "james_obsession", 
-                "abigail_obsession", 
-                "david_obsession", 
-                "lila_obsession", 
-                "no_fam_obsession", 
-                "james_involved", 
-                "kokiri_chatchar_abigail_recent",
-                "kokiri_chatchar_james_recent", 
-                "kokiri_chatchar_david_recent", 
-                "kokiri_chatchar_lila_recent", 
-                "familyCheck_talkedDavid",
-                #CONVERSATION TRACKERS
-                "conversationtracker_poems", 
-                "conversationtracker_tellheraboutnarrator", 
-                "conversationtracker_questmade", 
-                
-                "conversationtracker_abigail", 
-                "conversationtracker_david", 
-                "conversationtracker_james", 
-                "conversationtracker_lila", 
-                "conversationtracker_blamedavid", 
-                "conversationtracker_poem_window", 
-                "conversationtracker_poem_snowwoman", 
-                "conversationtracker_poem_window", 
-                "conversationtracker_poem_shadowman", 
-                "conversationtracker_poem_lights", 
-                "conversationtracker_poem_bang", 
-                "conversationtracker_mayo",
-                "conversationtracker_determinism",
-                "conversationtracker_crosser",
-                "conversationtracker_becomeGame",
-
-
-
-                #Other flags
-                "abby_askedAboutGameTheme", 
-                "nmDetect", 
-                "mDetect", 
-                "hard_rude", 
-                "easy_rude", 
-                
-                "demetrius", 
-                "adriel", 
-                "currentcar", 
-                
-                "booklovertalked", 
-                "musiclovertalked", 
-                "phone_wrongPassword_graceSystem", 
-                "lilithAliveEnding", 
-                "burger_explosion_outside", 
-                "called_phone", 
-            
-                
-                "burger_jokeFromAbigailTold", 
-                "onlyDates", 
-                "kokiri_cherishAllDates", 
-                "davidPromise", 
-                "abbyCalled",
-                "lilaCalled",
-                "jamesCalled", 
-                "davidCalled", 
-                "policeCalled", 
-                "rockMode_rockBand",
-                "rockModeBackToStart",
-                "reunion_davidPresent",
-                "reunion_lilaPresent",
-
-                #Beach
-                "beachStart_doneBook", 
-                "beachStart_doneDunes", 
-                "beachStart_doneBeach", 
-                "beachStart_doneFriterie", 
-                "beachStart_doneIce", 
-                "beachStart_doneCinema", 
-
-                
-            
-                #QOL-settings:
-                "no_nightmare", 
-                "perm_nightmare", 
-                "hypotheticalBurger",
-                "fakeBurger"
+                "called_phone", "burger", "cafe", "chinese", "nightmare", "kokiri_cherishAllDates", "burgerBeforeLie", "abby_phoneToldSisDies", "kokiri_griefHasNoTimeLimit", "kokiri_groundhog_lie", "kokiri_psychic_lie",
+                "car_caught", "car_free", "groundhog", "psychic", "hugRequestedBeforeDeath",
+                # Locations
+                "burger_poem_cleancheck", "burgerBeenBefore", "burger_alt", "brotherasked", "burger_nightmare", "kokiri_jamesTalkBlock",
+                "cafedicecheat", "cafe_badLove_lowbar", "cafe_badLove_justafeeling", "peking", "orange", "kokiri_goalSurvive",
+                "riddle_loop", "poem_conversation", "teaseDeath", "angryLilith", "kokiri_poemBad", "kokiri_promiseCancelDate",
+                "kokiri_poems_rated_once", "kokiri_poems_rateblock", "kokiri_alternateplace", "kokiri_holdhand", "kokiri_scenery_headhurt", "kokiri_scenery_breakfrombreakingyourhead", "kokiri_scenery_gamegoal", "kokiri_meteorite_alert", "kokiri_meteorite_no_alert", "kokiri_finalTalk", "kokiri_call_death_2_check", "kokiri_call_death_1_check", "kokiri_death_4_playerResponse", "damoclesAsked", "big_sis_mode", "lilithAliveEnding", "kokiri_positiveDavidStory", "kokiri_familyContacted", "kokiri_ToldLillyHowManyRetries", "kokiriSceneryWatched", "kokiri_scenery_shutUpLackOfSelfEsteem", "kokiri_poem_time_recent", "kokiri_poem_sun_recent", "kokiri_poem_marble_recent", "kokiri_poem_beach_recent", "kokiri_griefHasNoTimeLimit", "kokiri_silentMoment",
+                # Kokiri recent poems
+                "kokiri_poem_snowwoman_recent", "kokiri_poem_shadowman_recent", "kokiri_poem_lights_recent", "kokiri_poem_bang_recent", "kokiri_poem_window_recent",
+                # Booleans to see who you ask about the most at familyask in kokiri
+                "kokiri_chatchar_abigail", "kokiri_chatchar_james", "kokiri_chatchar_lila", "kokiri_chatchar_david", "kokiri_call", "james_interest", "abigail_interest", "david_interest", "lila_interest", "james_obsession", "abigail_obsession", "david_obsession", "lila_obsession", "no_fam_obsession", "james_involved", "kokiri_chatchar_abigail_recent", "kokiri_chatchar_james_recent", "kokiri_chatchar_david_recent", "kokiri_chatchar_lila_recent", "familyCheck_talkedDavid",
+                # Conversation trackers
+                "conversationtracker_poems", "conversationtracker_tellheraboutnarrator", "conversationtracker_questmade", "conversationtracker_abigail", "conversationtracker_david", "conversationtracker_james", "conversationtracker_lila", "conversationtracker_blamedavid", "conversationtracker_poem_window", "conversationtracker_poem_snowwoman", "conversationtracker_poem_shadowman", "conversationtracker_poem_lights", "conversationtracker_poem_bang", "conversationtracker_mayo", "conversationtracker_determinism", "conversationtracker_crosser", "conversationtracker_becomeGame", "conversationtracker_nightmares",
+                # Other flags
+                "abby_askedAboutGameTheme", "nmDetect", "mDetect", "hard_rude", "easy_rude", "demetrius", "adriel", "currentcar", "booklovertalked", "musiclovertalked", "phone_wrongPassword_graceSystem", "burger_explosion_outside", "onlyDates", "davidPromise", "abbyCalled", "lilaCalled", "jamesCalled", "davidCalled", "policeCalled", "rockMode_rockBand", "rockModeBackToStart", "reunion_davidPresent", "reunion_lilaPresent",
+                # Beach
+                "beachStart_doneBook", "beachStart_doneDunes", "beachStart_doneBeach", "beachStart_doneFriterie", "beachStart_doneIce", "beachStart_doneCinema",
+                # QOL-settings
+                "no_nightmare", "perm_nightmare", "hypotheticalBurger", "fakeBurger"
             ]
 
             for var in global_vars:

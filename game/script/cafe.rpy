@@ -33,7 +33,6 @@ label cafe_start:
             "I'll have the beef sandwich and a frappuchino.":
                 jump cafe_food_choice2
     else:
-        #TODO: This needs to be written way better, just writing it as a first version of the persistent.rockMode part
         label rockTransport:
             if burger == True:
                 $ changeableWord = "burger restaurant"
@@ -41,18 +40,22 @@ label cafe_start:
                 $ changeableWord = "cafe"
             else:
                 $ changeableWord = "chinese restaurant"
-
-                n "You are lying on the sidewalk, waiting until the moment is right."
-                n "Then suddenly, your moment comes. You hear someone right in front of you talking to someone on the phone about a date in the [changeableWord]."
-                n "You decide to exert all your psychic energy to move a full 5 centimeters to the right."
-                n "You perfectly align yourself with the shoe stomping down right on you, using this opportunity to nudge yourself inbetween it."
-                n "You can't see anything, but you do feel the sensation of every step."
-                n "Suddenly you feel something soft brush against you, and then something plastic that gets pushed in and out."
-                n "These sensations feel quite familiar, even if a bit different than how you might experience them normally."
-                n "And then it dawns on you, the person you are lifting with is in their car."
-                n "After that it doesn't take long at all for you to feel the pavement brush against you with each step once more."
+            n "Through excruciating effort you manage to roll off your bed. Now what though? It's not like you can open any doors or windows."
+            n "And then suddenly you see it, a very small gap in the corner of the wall. No wonder your room always feels chilly."
+            n "Right now though, that hole is a welcome sight, you still take a mental note to plug it up later though."
+            n "You roll right through, landing on the sidewalk outside. There you wait until the moment is right."
+            n "You aren't sure exactly what you are waiting for, just that it shouldn't take too long."
+            n "And then suddenly, you hear someone right in front of you talking to someone on the phone about a date in the [changeableWord]."
+            n "You decide to exert all your psychic energy to move a full 5 centimeters to the right."
+            n "You perfectly align yourself with the shoe stomping down right on you, using this opportunity to nudge yourself inbetween it."
+            n "You can't see anything, but you do feel the sensation of every step."
+            n "Suddenly you feel something soft brush against you, and then something plastic that gets pushed in and out."
+            n "These sensations feel quite familiar, even if a bit different than how you might experience them normally."
+            n "And then it dawns on you, the person you are lifting with is driving their car."
+            n "After that it doesn't take long at all for you to feel the pavement brush against you with each step once more."
             if burger == True:
-                "You make it to the restaurant again. (Filler)"
+                n "Eventually you make contact with a familiar looking floor. You wriggle yourself free from the shoe."
+                n "The familiar walls of the restaurant greet you as you can't help but feel the same sense of comfiness you usually feel, just perhaps a tad more distant."
                 n "Suddenly you feel a presence in your mind."
                 jump burger_arrived
                 
@@ -72,7 +75,8 @@ label cafe_start:
             
                 jump cafe_foodReplyChoice
             else:
-                "You make it to the restaurant again. (Filler)"
+                n "You hear your ride open and close a door, before sitting down. You wriggle your way out of the shoe."
+                n "You are surrounded by the busy sounds of the Chineserestaurant, the clattering of dishes, the chattering of people all contrasted by the lovely calming music playing."
                 n "Suddenly you feel a presence in your mind."
                 jump chinese_arrived
                 
@@ -112,8 +116,8 @@ label cafe_start:
                         l "We are lucky to catch a glimpse of their world, even such a small one."
                         l "You must know as well as me how isolating our lives can be. To be so close to all these people, for a moment, I don't feel it as much."
                         l "And yet, a different part of me seems to feel it even more than normal. Yet luckily for that part we are here together, aren't we?"
+                        n "Things turn quiet for a short moment. It's not a bad silence at all, you are just existing together, watching the people around you."
         
-        #TODO: Have this lead to a better segway that then moves to the next part.
         jump cafe_dice_stop
 
 label cafe_food_choice1:
@@ -527,7 +531,14 @@ label cafe_badLove:
         l "There are some who can, but psychic rocks like you and me are very very few and far between."
         l "However, I guess I did have one experience with love, if I should call it that."
         l "There was this one rock who called themself \"Flint\"."
-        #TODO: Write the story of meeting him and some shenigans inbetween here.
+        l "I didn't really have any friends or anything that came close to resembling that."
+        l "I suppose I really was living under a {i}rock{/i}."
+        n "She lets out a small chuckle in your mind, but it feels anything but humorous."
+        l "One day I felt this voice in my mind. It was confident, charismatic. It was Flint."
+        l "It turns out they were a travelling rock, trying to find others like them wherever they went."
+        l "His stories about his travels were just so...- I liked imagining myself in his place, living that life, meeting all those others."
+        l "Eventually we started talking more and more, and for the first time in years I began leaving my house again."
+        l "We went on adventures all over the country, just exploring to our hearts content."
         l "I felt seen by Flint. For the first time in my life there was someone with who I could do things together."
         l "Eventually... I felt something else. I had been so starved of contact, of attention that I thought I felt love."
         l "In a way it definetly was possible, but with a lot of reflection on my end I now know that I was more in love with the idea of it all than with him. With the idea of being in love."

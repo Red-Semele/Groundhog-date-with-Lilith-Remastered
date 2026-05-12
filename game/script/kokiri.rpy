@@ -242,7 +242,20 @@ label kokiri_explanation_game:
                                                     "That's great to hear! Why did you choose to be a teacher specifically?":
                                                         l "Well, to be honest, part of it is that I really enjoy helping people. There’s a satisfaction in knowing you’re making a positive impact on a young person’s life."
                                                         l "But also, I’ll admit, I do enjoy the vacations! It might be a little selfish, but it gives me time to recharge and catch up on new books for example."
-                                                        #TODO: Continue this?
+                                                        l "Besides, is taking a break really selfish? Recharching and taking time for myself allows be to fully invest my time and energy in others once I'm back."
+                                                        l "It might sound a bit cliche but to take care of someone else you also have to be able to take care of yourself."
+                                                        l "..." 
+                                                        l "Do- do you take care of yourself [persistent.name_real]?"
+                                                        l "..."
+                                                        l "You know, I'm really grateful for the effort you are putting into breaking this loop. But I do not want you to lose yourself in the process."
+                                                        l "For all we know, it might not even be possible breaking the loop..."
+                                                        l "I can only imagine how hard all of this will begin weighing on you, if it hasn't already started to."
+                                                        l "Just know that if you ever need a break, or even if you feel like you can't try breaking this loop anymore, I understand."
+                                                        menu:
+                                                            "Thank you [persistent.date], I'll keep it in mind.":
+                                                                l "Good, that's all I ask of you."
+                                                                l "Don't ever feel like you owe me anything, okay?"
+                                                    
 
                                                 $kokiri_conversation_silent()
 
@@ -1737,6 +1750,8 @@ label kokiri_poems_oldPoems_bang:
 label kokiri_poems_recentPoems:
     menu:
         "Time poem":
+            $ persistent.kokiri_poem_time_knowledge = True
+            $ kokiri_poem_time_recent = True
             l "Times endless and unrelenting"
             l "Flowing through us, vainly pretending"
             l "Things to be the other way around."
@@ -1759,8 +1774,51 @@ label kokiri_poems_recentPoems:
 
             l "Let us then pray for the earth to cease it's tiring motion."
             l "So for one frozen second we can indulge in our refreshing ocean."
+
+        "Sun poem":
+            $ persistent.kokiri_poem_sun_knowledge = True
+            $ kokiri_poem_sun_recent = True
+            l "I dreamt of eternally glaring sun"
+            l "As she stares right through me with her rays I reflect."
+            l "Burning sensations are all that warm me from this freezing night."
+            l "And yet, as your flames envelop me, as I burn bright"
+            l "I do so with a smile on my face."
+            l "One can only learn to pull her hand away through pain."
+            l "Then what shall become of me when I can not feel it anymore?"
+            l "My blisters and sores protecting and destroying me all the while."
+            l "So do I live or die? A broken question. The answer would not steer me away from searching your scorching embrace."
+            l "And with these blisters of mine. I can stay bliss-fully unaware until the end of time."
+
+        "Marble poem":
+            $ persistent.kokiri_poem_marble_knowledge = True
+            $ kokiri_poem_marble_recent = True
+            l "You stare at her, a face like a fresh piece of paper. Pale, empty."
+            l "In a way uncanny yet angelic."
+            l "A being who was not yet entirely set in stone."
+            l "The chisel was still stuck in her half defined foot, the other yet to follow suit."
+            l "An empty face, not obscured by detail. A skindeep mask of marble."
+            l "And as that..."
+            l "thing"
+            l "woman"
+            l "angel"
+            l "catches your gaze you seem to catch hers."
+            l "And for a moment you watched yourself through her nonexistent eyes."
             
-    #TODO: Fill this in with more recent poems from the quest version. (No new poems in there, I need to add them.)
+        "Beach poem":
+            $ persistent.kokiri_poem_beach_knowledge = True
+            $ kokiri_poem_beach_recent = True
+            l "Sand, a remnant of the past yet present every time."
+            l "The past ever closing in on us. The waves of our time ebb yet never flow."
+            l "The dead were burried in the dunes where new life sprouts, where it too will decay."
+            l "Those that try to hold on feel the sand slipping away through their fingers caged."
+            l "And as their sunken eyes meet their mirror image aged."
+            l "They too feel themselves slip."
+            l "Children play in the remnants of the dead."
+            l "Their dust the foundation, walls and everything else of mighty kingdoms that crumble underneath the gentlest of waves."
+            l "And yet, the children must leave the fountain of their youth. The sand clings onto their skin."
+            l "Carrying their own beach with them, until they become the dust, the new castles, the new ruins."
+
+     
 label kokiri_poems_askOrRate:
     menu:
         "*Rate the poem*" if not kokiri_poems_rateblock:
@@ -1823,7 +1881,7 @@ label kokiri_poems_askOrRate:
             menu:
                 "There seems to be a connection between some of your poems. In one you close your eyes, in the other the shadows hope to open their eyes. Was that intentional?" if persistent.kokiri_poem_bang_knowledge and persistent.kokiri_poem_window_knowledge:
                     jump kokiri_poemConnections
-                "Is the poem about you?":
+                "Is the poem about you?" if kokiri_poem_window_recent or kokiri_poem_shadowman_recent or kokiri_poem_snowwoman_recent or kokiri_poem_lights_recent or kokiri_poem_bang_recent:
                     #TODO: Fill in. This question fits for pretty much every poem. Make something up for most old ones.
                     if kokiri_poem_window_recent == True:
                             l "Well yes, or it used to be about me anyway."
@@ -1860,9 +1918,9 @@ label kokiri_poems_askOrRate:
 label kokiri_poemConnections:
         l "I am honestly not entirely sure."
         l "I definetly see where you are coming from but I think that most similarities are actually a coincidence."
-        l  "I do really like to make some of my poems cyclical or make them reference eachother."
+        l "I do really like to make some of my poems cyclical or make them reference eachother."
         l "But the poems where I really started to do that actually were a lot more recent."
-        l  "Due to me referencing my past poems in them they are pretty inacessible for readers."
+        l "Due to me referencing my past poems in them they are pretty inacessible for readers."
         l "It doesn't help that most of them use quite a few references to mythology."
         $ persistent.kokiri_newerPoems_knowledge = True
         menu:
@@ -3150,6 +3208,11 @@ label kokiri_scenery_choice:
                             "But you, you come pretty close.":
                                 "Filler"
                                 #TODO: Here write a few extra options, like telling her she cares for her family etc, tries to make the best out of tough situations etc. If you use some of your learned things during the loops you can make her come slighty to terms with parts of herself and gain one love point. The other parts she thanks you but isn't really convinced.
+                                menu:
+                                    "You always try to be there for your family.":
+                                        "Filler"
+                                    "You try to make the best out of tough situations.":
+                                        "Filler"
 
     else:
         label kokiri_continue_talking: #This will be the place where the player can choose to talk extra about certain topics.
@@ -3497,6 +3560,7 @@ label silentconversationsbackontrack:
 
     label kokiri_nightmare:
             $ nightmare = True
+            $ persistent.nightmareCounter += 1
          
             $ forest_place = 0
             if forest_place == 0:

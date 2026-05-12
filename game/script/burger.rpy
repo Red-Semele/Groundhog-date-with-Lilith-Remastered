@@ -368,6 +368,9 @@ label burger_ordering:
                         
                             if not burgerBeenBefore:
                                 l "That good huh?"
+                                
+                               
+                                
                                 n "[persistent.date] let's out a small chuckle."
                                 l "Rose's burgers are indeed extrememly tasty."
                                 l "I'm glad you like them so much [persistent.name]!"
@@ -396,6 +399,7 @@ label burger_ordering:
                                                 n "You don't want to finish that thought."
 
                                         l "But let's not get ahead of ourselves,let's focus on this beautiful moment first and see how things go from there."
+                                        
                                     "I don't think I can ever part ways with this burger.":
                                         n "[persistent.date] giggles, but as [date_sub] [conj('date', 'does', 'do')] you think you can spot some concern in [date_pos] eyes."
                                         l "I totally understand [persistent.name], sometimes it can be really hard to let go of something great."
@@ -404,6 +408,7 @@ label burger_ordering:
                                         l "I think sometimes we just need to enjoy what we have in the moment and when we don't enjoy something anymore, let go of it."
                                         l "It's easy to fool ourselves into thinking that if we liked something in the past we must like it now aswell."
                                         l "But sometimes it's just nostalgia, to how things were before, not even necesarilly to whatever you feel the need to hold on to."
+                                        $ hide_cinematic_bars(animate=True, duration=0.3)
                             else:
                                 l "Really? That's very sweet of you to say [persistent.name]!"
                                 l "But you've been here before, right? What makes this burger better?"
@@ -599,6 +604,7 @@ label burger_ordering:
                     
             $ nightmare = True
             $ burger_nightmare = False
+            $ persistent.nightmareCounter += 1
             jump game_start
     else:
         if fakeBurger == True:
@@ -843,8 +849,16 @@ label burger_living_rockResponse:
                         l "That way you can still feel like you accomplished something while not getting stuck working on one work for the rest of your life."
 
                     "They use their strengths to make up for their weaknesses.":
-                        "filler"
-                        #TODO: Fill this in
+                        l "I suppose that only makes sense now that you mention it."
+                        l "Filling the hole of a weakness up with the heap of our strenght is something a lot of people tend to do."
+                        l "I like to believe that all the heart and soul we put into our art is what makes it, well, art. Even if some parts of it might be more flawed than others."
+                        l "I think there is nothing wrong with those flaws, if effort and passion has been put inside of your work, potentially in other parts of it."
+                        l "Imagine there is a piece of art that is completely smoothed out of any flaws but also it contains no passion or effort."
+                        l "Would you take something that just... is over something that might be a bit messy but has a lot of charm to it?"
+                        l "That is why we need lots of varied strenghts."
+                        l "People have some many different backgrounds, experiences, it's beautiful that those then can color their work to be so different from eachother."
+                        l "That way, even creations with the same premise can be so wildly different from eachother in how the creator went about it."
+                        
 
                     "They repurpose their \"weaknesses\" as their strengths, creating something truly unique.":
                         l "I never really thought about it like that [persistent.name], but you do make quite a lot of sense."
@@ -1009,9 +1023,16 @@ label burger_living_rockResponse:
                                                 l "But now we have the opportunity to get to know eachother on a deeper level. Afterall, we have nothing but time, don't we?"
                                                 l "For now though, instead of thinking of stories, let's continue writing ours, starting with this date"
                     
-                                            " Do you have another idea for a story?":
-                                                "Filler"
-                                                #TODO: Fill this in. And get it back on track.
+                                            "Do you have another idea for a story?":
+                                                l "Hmmm, maybe something simple?"
+                                                l "I think I'd like a fantasy story."
+                                                l "It could be about a merchant and a princess who is also a leader of a thieves' guild."
+                                                l "Together they have to save the kingdom from a tyrant king, who's rule would lead the kingdom only to ruin."
+                                                l "To do so they would need to usurp the king, something seemingly impossible."
+                                                l "First they would need to defeat the evil jester who is also a bit of a magic trickster, protecting the castle with a forcefield."
+                                                l "I'm not sure exactly how they would do that, but I'm sure we could brainstorm a statisfying way to do so later."
+                                                l "For now though, I'd like to be in the moment with you. Maybe we could write that story together during our next date?"
+                                                #In the ending, have the two of you write this story and make it more and more convoluted over time, involving 8 timelines splitting off of one and so on and on.
        
         
     jump burger_deathBuildup   

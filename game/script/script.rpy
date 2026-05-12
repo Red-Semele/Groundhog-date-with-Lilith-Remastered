@@ -41,6 +41,15 @@ default persistent.date_sis_family_terms = {"sibShort": "sis", "sib": "sister", 
 default persistent.date_dad_family_terms = {"parShort": "dad", "par": "father"}
 default persistent.date_mom_family_terms = {"parShort": "mom", "par": "mother"}
 default persistent.date_ghost_family_terms = {"sibShort": "bro", "sib": "brother", "child": "son"}
+# Flash overlay screen for flash_screen effect
+screen flash(color="#ff0000"):
+     add Solid(color) at flash_fade
+
+transform flash_fade:
+     alpha 1.0
+     linear 0.15 alpha 1.0
+     pause 0.2
+     linear 0.15 alpha 0.0
 
 # Family term shorthands (defaulted for store variable safety)
 default date_sibShort = "sis"
@@ -60,6 +69,7 @@ default ghost_child = "son"
 
 image forestHill = "kokiriForestHill.png"
 image burgerRestaurant = "burgerRestaurant.png"
+image red = Solid("#780808") 
 
 
 
@@ -94,6 +104,7 @@ label start:
           default persistent.canSave = False
           #Deaths:
           default persistent.lildeaths = 0
+          default persistent.nightmareCounter = 0
           default persistent.retry_counter = 0
           default persistent.name_real = ""
           #Main restaurant deaths:
@@ -124,6 +135,8 @@ label start:
           default persistent.beach_hole_death = False
           default persistent.beach_potDeath = False
           default persistent.beach_slipDeath = False
+          #Polaroid zone death:
+          default persistent.ufoCrash_knowledge = False
           
 
           #Knowledge:
@@ -247,6 +260,10 @@ label start:
           default persistent.kokiri_poem_lights_knowledge = False
           default persistent.kokiri_poem_snowwoman_knowledge = False
           default persistent.kokiri_poem_shadowman_knowledge = False
+          default persistent.kokiri_poem_time_knowledge = False
+          default persistent.kokiri_poem_sun_knowledge = False
+          default persistent.kokiri_poem_marble_knowledge = False
+          default persistent.kokiri_poem_beach_knowledge = False
           default persistent.kokiri_allOldPoemsRead = False
           default persistent.kokiri_allRecentPoemsRead = False
           default persistent.rp_detect = False #This flag will be used to try to check if a player is returning to the game after erasing their save-file.
@@ -374,6 +391,7 @@ label start:
           default persistent.david_apology_made_knowledge = False
           default persistent.lilithOpenToReunion_knowledge = False
           default persistent.lilaTwoJobsOwnChoice_knowledge = False
+          default persistent.jamesUnclearAnswered = False
 
           #Non-persistent
           default love_meter = 3
@@ -421,7 +439,6 @@ label start:
           default kokiri_promiseCancelDate = False
           default kokiri_toldLillySheLives = False
           default kokiri_fullControlAndStillDying = False
-          
           default noTalkAngryLilith = False
 
           default kokiri_poems_rated_once = False
@@ -452,15 +469,20 @@ label start:
           default kokiri_positiveDavidStory = False
           default kokiri_familyContacted = False
           default kokiri_notReadyToLetGo = False
+
           #Kokiri recent poems
           default kokiri_poem_snowwoman_recent = False
           default kokiri_poem_shadowman_recent = False
           default kokiri_poem_lights_recent = False
           default kokiri_poem_bang_recent = False
           default kokiri_poem_window_recent = False
+          default kokiri_poem_time_recent = False
+          default kokiri_poem_sun_recent = False
+          default kokiri_poem_marble_recent = False
+          default kokiri_poem_beach_recent = False
+
           #Booleans to see who you ask about the most at familyask in kokiri
           default family_ask = 0
-
           default kokiri_chatchar_abigail = False
           default kokiri_chatchar_james = False
           default kokiri_chatchar_lila = False
@@ -481,6 +503,7 @@ label start:
           default kokiri_chatchar_david_recent = False
           default kokiri_chatchar_lila_recent = False
           default familyCheck_talkedDavid = False
+
           #CONVERSATION TRACKERS
           default kokiri_conversation = 0
           default conversationtracker_poems = False
@@ -501,8 +524,6 @@ label start:
           default kokiri_jamesTalkBlock = False
           #Chinese
           default chinese_lilithBreakupTrigger = 0
-
-
 
           #Other flags
           default abby_askedAboutGameTheme = False
@@ -533,6 +554,7 @@ label start:
           default conversationtracker_determinism = False
           default conversationtracker_crosser = False
           default conversationtracker_becomeGame = False
+          default conversationtracker_nightmares = False
           
           default keySeenNow = False
           default ending_check = ""
@@ -554,8 +576,6 @@ label start:
           default beachStart_doneIce = False
           default beachStart_doneCinema = False
 
-          
-     
           #QOL-settings:
           default no_nightmare = False
           default perm_nightmare = False
@@ -679,7 +699,7 @@ label after_setup:
 
 
 label game_start:
-    
+     scene black
 
      $ renpy.save_persistent() #This should save the persistent data.
      $ resetRegularFlags()
@@ -723,8 +743,7 @@ label game_start:
                     menu:
                          "*Remember that all rocks have a telepathic network to communicate with eachother and use it to reach out to [persistent.date].*" if persistent.psychicConnection_knowledge:
                               n "Having been already familiar with your current situation you manage to relatively easily establish a connection with [persistent.date]."
-                         
-                              #TODO: Fill in.
+                              l "Heya [persistent.name]!"
                               jump Game_start2
                          "*Struggle against your inescapable prison of a body and try to roll to the phone.*" if not persistent.psychicConnection_knowledge:
                               n"You use all your strength to slowly wiggle a little bit, falling out of your bed and landing right on the soft carpet near it."
@@ -1960,10 +1979,119 @@ label phone_call_james:
      else:
           j "Ah, welcome [persistent.name]. I see you have managed to get my number?"
           j "Well it used to be my number anyway but you can still reach me through it."
+          j "Let me first transport you back to the end though, that way we can talk more easily."
           j "So what do you want to ask me?" 
-          menu:
-               #TODO: Add some more stuff to ask him, this will be the way you can chat with him"
- 
+          menu jamesConversationMenu:
+           
+               "What is this place?":
+                    j "Although I guess it didn't start out as a place you might consider it as one now."
+                    j "Where we are right now is essentially right before the end. Before the end of everything as we know it."
+                    j "We call that end the Void. Every soul of every person that dies is supposed to enter the Void."
+                    j "It is essentially a gateway to other worlds, but if you enter it you yourself become changed. The Void compacts your entire being and can alter anything it would like for whatever purpose it has in mind."
+                    j "So chances are you won't ever be aware of who you were before entering the Void when you leave it."
+                    j "That is what so many people are scared about, of losing themselves and the other people they left behind."
+                    j "A lot of those people that have fears about entering the Void try to despereately cling onto this world."
+                    j "But the longer you cling to this world the less human you start becoming. After a while you turn into one of those."
+                    n "[persistent.date_ghost] points to something in the distance. When you try to see what it is your eyes fall on a tree with a thousand branches that seemingly pulsates."
+                    j "Their roots make it easier for other souls to stay here aswell, they get caught on those roots and then before long their own roots grow around the other roots."
+                    j "So this place is essentially a manifestation of not being able to let go."
+                    menu: 
+                         "And what where those polaroids I had to jump on to reach you all about?":
+                              j "Those where a manifestation of yours I fear."
+                              j "Handy to reach me but that means you are also starting to settle into this place."
+                              j "Let us hope that you won't stay long."
+
+               "What are those bubbles?":
+                    j "Ah, yes. I thought you would ask about them."
+                    j "They are the way we as lingering souls can see the world outside of here."
+                    j "Each bubble shows a choice made out there. Some choices that could have been made but never were, some choices that yet have to happen and some choices that are happening right now."
+                    j "You could probably label each bubble as a sort of alternate world. You have the power to cross those different worlds and to maintain your memories of them."
+                    j "Since this is a game where everyone has an expected way to act on every action that means that every world is almost exactly the same except for the choices you make and the reactions that come from those."
+                    j "So all these choices, both made in the past, never made, and yet to be made are yours."
+                    n "Looking at the bubbles a few catch your eye."
+                    n "The first one depicts [persistent.date] and you sitting in the burger restaurant, but at a different table than the one where [date_sub] got shot."
+                    n "The second bubble shows you [persistent.date] getting up from the table at the chinese restaurant and you running after [date_obj] pleading for [date_obj] to stop. The red Sedan never shows up and [date_sub] [conj('date', 'leaves', 'leave')] you standing at the exit."
+                    n "The third one shows you in the cafe, peeking at the dice [persistent.date] rolled using the reflection of the aquarium."
+                    n "The next bubble shows you in the ufo in kokiri forest, alone, with [persistent.date] nowhere in sight."
+                    n "The last bubble shows you popping a full blob of mayo straigth into your mouth at a fritstore near the beach."
+                    $ persistent.mayoProphecy_knowledge = True
+               
+               "No matter what I try [persistent.date] keeps dying when I go on a date with [date_obj].":
+                    if persistent.lilithAliveAndRetriedCounter > 0:
+                         j "That is the thing, isn't it [persistent.name]?"
+                         j "[date_sub!c] [conj('date', 'seems', 'seem')] to keep dying when you go on dates with [date_obj]."
+                         j "But we both know that there are endings where [date_sub] [conj('date', 'lives', 'live')], just not where the two of you live together or anything like that."
+                         j "I have overlooked many many possibilities, many different choices and I don't think I have found what you are looking for."
+                         j "Maybe you are looking for the wrong thing. After all, anything perfect is never handed to you just like that, if something perfect even exists in the first place."
+                         j "I doubt that the game will just hand you an ending like that. Would it even feel like you earned it if it did?"
+                         j "With how hard you've been searching up to this point I doubt any ending the game can give you will be enough to satisfy you."
+                         j "So isn't it perhaps better to just call it quits from here?"
+                         j "Or maybe you should look elsewhere instead?"
+                         n "[ghost_sub!c] [conj('ghost', 'pauses', 'pause')] for a moment after saying that. [ghost_sub!c] [conj('ghost', 'gives', 'give')] you a curious look, seemingly trying to gauge your reaction to what [ghost_sub] just said."
+                    else: 
+                         j "I see..."
+                         j "That does indeed seem to be the case doesn't it?"
+                         j "Every interaction with [date_obj] just seems to lead to death."
+                         j "And yet..."
+                         j "I know there is more out there."
+                         j "Ways for [date_obj] to live."
+                         j "Though I think you might not like how you reach them or even what they are in general."
+                         j "I even think with some of them, you might not even know whether or not you found them."
+                         menu:
+                              "But that's ridiculous! Of course I would know if I found an ending like that.":
+                                   j "Well, do you recall finding an ending like that?"
+                                   n "You shake your head."
+                                   j "That might just prove my point. Or it might not. Who knows?"
+                                   j "I know you must think I'm being a little annoying at the very least right now, but trust me, I am trying to help."
+                                   j "I just have to balance between being too vague and too clear at the same time."
+                                   j "You aren't the only one reading this after all."
+                                   menu:
+                                        "What are you talking about?":
+                                             j "I see..."
+                                             j "So I was too vague..."
+                                             j "What I mean is, that we are merely visitors in this house. "
+                                             j "And the host is very well aware that we are talking about the meaning behind his interior design."
+                                             j "He does not like that."
+                                             j "But don't worry, he does not like that because it has to stay hidden."
+                                             j "He doesn't like it because he hopes the clues he planted around the house will be enough for you to figure it out."
+                                             j "And yet, a lot of these sorts of things lead to multiple possible interpretations, don't they?"
+                                             j "So I wonder what your take will be when you leave his house."
+
+                                        "Are you talking about the other souls here?":
+                                             j "I am not."
+                                             j "To them this would not be reading, this would be something more like listening."
+                                             j "Hearing the words spoken by an imaginary actor rather than reading them of the script."
+                                             j "But these souls can listen all they want for all I care."
+                                             j "Even if they were listening, I doubt they would care."
+
+                                        "Are you talking about the narrator?":
+                                             j "A good guess!"
+                                             j "But no, he does not care that much whether I reveal any secrets to you."
+                                             j "He can not care in fact. For as much as he pretends to read the script, he is the script."
+                                             j "Now his boss? That's a different story, he wrote the script. And he very much cares that certain things aren't spoiled too soon."
+                                             j "To not lose their... meaning."
+
+                                        "Are you talking about the creator?":
+                                             j "It seems like I was clear enough for you after all."
+                                             j "I'm glad you understood!"
+                                             j "He does not really like me or anyone for that matter giving away things too much."
+                                             j "We can only ever allude to them, but never speak of them until someone else at another time and place can directly adress those things."
+                                             j "And even then there still has to be some subtext."
+                                             j "I guess He wants you to think about those things for yourself, to not just take what the game says at face value."
+                                             j "A bit pretentious if you ask me, but I suppose creators like acting as if their work is deeper then it is sometimes."
+                                             j "Maybe that's why He wants you to think about these concepts for yourself?"
+                                             j "So you can come up with a better interpretation than He ever could and He only has to nod His head and say that that was always what was intended."
+                                             j "Funny isn't it? To this world He and the narrator might almost seem like Gods. And yet, this world, this specific instance of it, would not exist if you weren't here to observe it."
+                                             j "What would happen if you stopped observing this specific instance of our world? Would it cease to be? Would it continue as planned? Or would it go a different way?"
+                                             j "Either way, in a way, you blew life into the world He created. Without you it would be dormant. Something, unobserved to the point of becoming practically nothing."
+                                             j "I wonder, what does that make you?..."
+                                             j "A believer giving them the strength they require to call this world their own? Or a God in your own right?"
+                                             j "I think they would like you to believe you are the first."
+                                             j "I'm not so sure myself..."
+                                             j "But neither of our thoughts about that matter do they? Yours do."
+                                             j "So please [persistent.name], don't forget your own role in this story, the perks it can bring."
+                                             j "Because I think it is more important than you might think."
+                                             
                "I'd like to just have a chat with you if that's fine.":
                     j "Sure, I think I have enough energy to talk about one topic right now."
                     j "So, what would you like to talk about with me?"
@@ -1983,7 +2111,7 @@ label phone_call_james:
                               
                               menu:
                                    "I know what you mean [persistent.date_ghost], I feel the same way.":
-                                      
+                                        
                                         j "Oh, you do?"
                                         j "Why is that [persistent.name]?"
                                         menu:
@@ -2101,8 +2229,6 @@ label phone_call_james:
                                                             j "Don't worry though, that just feels like bad game design, I'm sure the developer wouldn't force you to wait a few years for a new ending."
                                                             jump jamesLowEnergy
 
-                    
- 
                "I need help to convince [persistent.date] to listen to [persistent.date_dad]. I figured [date_sub] might listen to you." if persistent.david_apology_knowledge:
                     j "[date_sub!c] probably would..."
                     j "Although I'd rather stay in the shadows. [date_sub!c] already has had a hard time dealing with my death."
@@ -2116,9 +2242,19 @@ label phone_call_james:
                     j "That seemed to calm [date_obj] down a bit and [date_sub] stopped crying. To further calm [date_obj] down I asked [date_obj] if [date_sub] wanted to try to find fairies in the woods with me. "
                     j "We spent an hour or so searching for fairies, of course never finding one but at the end of it [date_sub] forgot all about [date_pos] bad grade."
                     $ persistent.james_story_knowledge = True
-                    jump jamesLowEnergy
+                    jump jamesLowEnergy    
+                              
+     j "I have exhausted most of my energy having this conversation with you. If you want to talk about other things next time you know how to find me don't you?"
+     j "I'll send you back now, good luck [persistent.name]."
+     jump Game_start2
+
+
+     
+ 
+              
      label jamesLowEnergy:
           j "I have to go now, keeping up this connection asks a lot of energy from me."
+          j "I'll send you back to your home now. Good luck [persistent.name]"
           n "[persistent.date_ghost] hung up."
           jump phone_callMenu              
  
@@ -3413,7 +3549,6 @@ label explanation_noTimeToExplain:
                     n "[persistent.date] is standing there, [date_sub] [conj('date', 'seems', 'seem')] to be quite scared but [date_sub] [conj('date', 'is', 'are')] taking it pretty well all things considered."
                     menu:
                          "*Talk with [persistent.date]*":
-                              #TODO: Add some extra choices here? Not too much though!
                               l "What just happened [persistent.name]?"
                               l "How did you know about the Kokiri forest?"
                               l "How did you know there was an ufo there?"
@@ -3462,6 +3597,12 @@ label explanation_noTimeToExplain:
                                                        "My favourite part was the Kokiri forest.":
                                                             $ persistent.favouriteFirstDate = "kokiri"
                                                             jump ufo_talk_favouriteFirstDate
+          
+                         "*Stay silent*" if persistent.ufoCrash_knowledge:
+                              n "You can't bare to talk to her. Not after knowing what is about to happen."
+                              n "[persistent.date] is too much in a shock herself to break the silence. Maybe it's better that way?"
+                              n "Hopefully the silence will make what is next to come less hard."
+                              jump ufo_alert
           else:
                jump explanation_noTimeToExplain_hitByCar
      else:
@@ -3556,6 +3697,9 @@ label ufo_talk_favouriteFirstDate:
      n "A fate worse than death has befallen [date_obj]."
      $ renpy.input("")
      n "Just then you hear something. Not [persistent.date], it's a loud beeping sound coming from the metal ship itself."
+     jump ufo_alert
+
+     label ufo_alert:
      ship "Alert: Universal inconsistency has been detected."
      ship "Previous stabilisation attempts proved fruitless."
      ship "Implosion of universe is set in motion as last effort to remove inconsistency."
@@ -3576,6 +3720,8 @@ label ufo_crash:
      n "The thought of [persistent.date] takes you out of this confused state of mind in an instant."
      n "You open your eyes and get back up."
      n "You look around in search of [date_obj] but all you can find is bright white emptiness."
+     n "The very emptiness her death always leaves you with."
+     $ persistent.ufoCrash_knowledge = True
      n "Bright white emptiness and a floating  trail of gigantic polaroids. The white borders of the polarioid were seemingly melting over in the emptiness."
      n "As you continue looking around you notice you are standing on one of those giant polarioids, it's a picture of your messy room. Hang on, how is that possible? How is any of this possible?"
      n "Your not sure if you want to know who took those pictures but regardless the only way is forward by following the trail."
@@ -3585,12 +3731,24 @@ label ufo_crash:
 label ufo_crash_polaroids:
      #TODO: Add some small descriptions of each picture you jump on
      #Reality is glitching so that you won't have to draw every picture.
+     #Picture ideas, if you did bad things have those too
      if polaroidzone_picture == 1:
           n "You jump to the next picture."
+          #This will showcase a picture of your first date ever "your face still looked like you were all taking it in for the first time"
+          if persistent.firstLocation == "burger":
+               "Filler"
+          elif persistent.firstLocation == "cafe":
+               "Filler"
+          elif persistent.firstLocation == "chinese":
+               "Filler"
+          else:
+               "Error, no first location found."
+     
      elif polaroidzone_picture == 2:
           n "You keep jumping from picture to picture."
      elif polaroidzone_picture == 3:
           n "At first it doesn't seem like you are making much progress."
+          #A picture here maybe where it didn't seem like you were making a lot of progress to mirror the feeling now?
      elif polaroidzone_picture == 4:
           n "But after a while you see something coming closer and closer."
      elif polaroidzone_picture == 5:
@@ -3599,10 +3757,12 @@ label ufo_crash_polaroids:
           n "You didn't jump far enough, you barely manage to grab the border of the polaroid and pull yourself up."
           n "You take a moment to breath after performing such a feat. While you do you look once more at the mysterious figure."
           n "The figure wears a grey hoodie."
+          #The picture here where Lilith pulls you back up from the hill maybe? And if you don't have that a backup.
      elif polaroidzone_picture == 7:
           n "Your legs are beginning to get really tired, luckily it seems as if you are getting closer to the figure. "
           n "They have their back turned towards you."
      elif polaroidzone_picture == 8:
+          #If the player has seen the neverending, always show that one here (since it is the eighth picture, infinity), otherwise show a regular ending here.
           n "Only one picture is between you and the figure, which is standing on a picture aswell, you ignore the cramp in your legs."
      elif polaroidzone_picture == 9:
           n "The next jump will land you on the picture the figure is standing on, right behind them."
@@ -3699,6 +3859,7 @@ label ufo_crash_polaroids_James:
                          j "So please try giving it some thought, alright [persistent.name]?"
                          j "In time that might come in handy..."
                          $ persistent_jamestalk_ilikeher_knowledge = True
+                         
                     "I don't really think anything of [date_obj], [date_sub] [conj('date', 'is', 'are')] just a game character.":
                          $ justgame = True
                          j "This is going to be pretty hard..."
@@ -3982,15 +4143,63 @@ label jamesChat_whyDidYouReturn:
                          j "Because I like you I'll clue you into something, those endings I'm talking about you won't be able to find here."
                          j "Best of luck [persistent.name]."
 
-          "You can't just bombard me with so much info and then just move on like I should understand, can you please atleast explain something clearly?":
+          "You can't just bombard me with so much info and then just move on like I should understand, can you please atleast explain something clearly?" if not persistent.jamesUnclearAnswered:
                j "I see..."
                j "I guess that indeed was a bit too much info for you to handle."
                j "I will let you ask me one question about what I just said, then you have to answer my previous question."
                menu:
-                    "Filler":
-                         "Filler"
-                         #TODO: Fill the menu in with some questions they can ask.
-                         #After it has been answered let [persistent.date_ghost] reask the question.
+                    "What do you mean that my actions still have consequences?":
+                         j "It really is a matter of multiple layers I think."
+                         j "Firstly, the worlds you leave to try again in another keep going."
+                         j "The loss, the destruction. All of that doesn't just cease the moment you turn your back to it."
+                         j "If it did, I wouldn't remember them, would I?"
+                         j "However, that might not matter to you."
+                         j "Maybe something more personal?"
+                         j "Imagine for a second the world would truly reset. You don't exist in that world, do you?"
+                         j "You turn back the clock but you can't do the same to yourself."
+                         j "You can say it doesn't matter, maybe it really doesn't. But your memories are still proof of your actions."
+                         if persistent.nightmareCounter > 0:
+                              j "Surely you have felt those memories seep back into the game, haven't you?"
+                              j "The one you wield as a vessel is haunted by them..."
+                         else:
+                              j "From what I have seen in the other worlds, it's only a metter of time before those memories will seep back into the game."
+                              j "I wonder if then you'll still be able to act as if nothing is wrong?"
+
+                    "I don't understand your explanation about the Void.":
+                         j "Picture the world you interact with as a play."
+                         j "You are an audience member, perhaps even a participating one."
+                         j "This place is what lies behind the curtain of that performance."
+                         j "It is what remains after it all ended and the lights have gone out."
+                         j "The characters enter the dark, ready to be shedded by their actors and to move on to new forms, new plays."
+                         j "Yet sometimes, some characters or ideas linger in the dark. Not ready to move on."
+                         j "They peer into the Void and as they do so they grow aware of others peering in aswell, from their own stage. Yet there is only one Void, only one End. No matter how many different endings exist, it all truly ends by becoming nothing."
+                         j "It is through glimpsing those other ghosts glimpsing us that we can peak behind the curtains, to watch other plays being held without us."
+
+                    "What other crossers did you meet?":
+                         j "More like you. Others playing this game."
+                         j "Some in the same circumstances. Some come here to see the next piece of content. Others to talk to me after other crossers told them about me."
+                         j "They keep flocking to worlds with her in it like moths to a flame. Retry after retry after retry."
+                         j "The death and destruction that brings with it not just limited to one crosser like you, but many, many more."
+                         j "I have steered some off that path, yet I failed with many others."
+                         j "I even met some of the pillars of this world. Ones threading the many paths woven by the Creator."
+                         j "The Creator Himself has also shared a few words with me as he gave me mine."
+
+
+                    "Why do you feel like you are also stuck in a loop?":
+                         j "Here I am linked to every other version of me in their own world, their own version of this place."
+                         j "I see what they see. Together we watch over every one of our family in every world."
+                         j "Lately more and more of those worlds have been birthed to house the likes of you."
+                         j "Which means more and more versions of me who all have to watch our sister suffer death after death."
+                         j "We could try to talk you out of it, in fact we sometimes manage to do so."
+                         j "But many other crossers don't even reach us, so we can never convince them. Others don't agree even if they meet us."
+                         j "Besides, even then many new, separate crossers pop up all of the time."
+                         j "Alongside them many more of me and new worlds of suffering and pain to watch over."
+                         j "It never stops. It seemingly never will."
+
+               j "So, I have answered your question, now it is time you answer mine."
+               $ persistent.jamesUnclearAnswered = True
+               j "Why did you come back even after [persistent.date] [conj('date', 'was', 'were')] safe and happy?"
+               jump jamesChat_whyDidYouReturn
                    
 
 label jamesChat_whyDidYouReturn_ringResponse:
@@ -4053,122 +4262,6 @@ label jamesChat_whyDidYouReturn_toBeTogether_choices:
 
 
 
-label jamesConversationMenu:
-     #TODO:A way to more easily loredump and talk about aspects that [persistent.date] can't remember/ alternate realities. Add some more loredumps and in character questions.
-     menu:
-          "What is this place?":
-               j "Although I guess it didn't start out as a place you might consider it as one now."
-               j "Where we are right now is essentially right before the end. Before the end of everything as we know it."
-               j "We call that end the Void. Every soul of every person that dies is supposed to enter the Void."
-               j "It is essentially a gateway to other worlds, but if you enter it you yourself become changed. The Void compacts your entire being and can alter anything it would like for whatever purpose it has in mind."
-               j "So chances are you won't ever be aware of who you were before entering the Void when you leave it."
-               j "That is what so many people are scared about, of losing themselves and the other people they left behind."
-               j "A lot of those people that have fears about entering the Void try to despereately cling onto this world."
-               j "But the longer you cling to this world the less human you start becoming. After a while you turn into one of those."
-               n "[persistent.date_ghost] points to something in the distance. When you try to see what it is your eyes fall on a tree with a thousand branches that seemingly pulsates."
-               j "Their roots make it easier for other souls to stay here aswell, they get caught on those roots and then before long their own roots grow around the other roots."
-               j "So this place is essentially a manifestation of not being able to let go."
-               menu: 
-                    "And what where those polaroids I had to jump on to reach you all about?":
-                         j "Those where a manifestation of yours I fear."
-                         j "Handy to reach me but that means you are also starting to settle into this place."
-                         j "Let us hope that you won't stay long."
-
-          "What are those bubbles?":
-               j "Ah, yes. I thought you would ask about them."
-               j "They are the way we as lingering souls can see the world outside of here."
-               j "Each bubble shows a choice made out there. Some choices that could have been made but never were, some choices that yet have to happen and some choices that are happening right now."
-               j "You could probably label each bubble as a sort of alternate world. You have the power to cross those different worlds and to maintain your memories of them."
-               j "Since this is a game where everyone has an expected way to act on every action that means that every world is almost exactly the same except for the choices you make and the reactions that come from those."
-               j "So all these choices, both made in the past, never made, and yet to be made are yours."
-               n "Looking at the bubbles a few catch your eye."
-               n "The first one depicts [persistent.date] and you sitting in the burger restaurant, but at a different table than the one where [date_sub] got shot."
-               n "The second bubble shows you [persistent.date] getting up from the table at the chinese restaurant and you running after [date_obj] pleading for [date_obj] to stop. The red Sedan never shows up and [date_sub] [conj('date', 'leaves', 'leave')] you standing at the exit."
-               n "The third one shows you in the cafe, peeking at the dice [persistent.date] rolled using the reflection of the aquarium."
-               n "The next bubble shows you in the ufo in kokiri forest, alone, with [persistent.date] nowhere in sight."
-               n "The last bubble shows you popping a full blob of mayo straigth into your mouth at a fritstore near the beach."
-               $ persistent.mayoProphecy_knowledge = True
-          "No matter what I try [persistent.date] keeps dying when I go on a date with [date_obj].":
-               if persistent.lilithAliveAndRetriedCounter > 0:
-                    j "That is the thing, isn't it [persistent.name]?"
-                    j "[date_sub!c] [conj('date', 'seems', 'seem')] to keep dying when you go on dates with [date_obj]."
-                    j "But we both know that there are endings where [date_sub] [conj('date', 'lives', 'live')], just not where the two of you live together or anything like that."
-                    j "I have overlooked many many possibilities, many different choices and I don't think I have found what you are looking for."
-                    j "Maybe you are looking for the wrong thing. After all, anything perfect is never handed to you just like that, if something perfect even exists in the first place."
-                    j "I doubt that the game will just hand you an ending like that. Would it even feel like you earned it if it did?"
-                    j "With how hard you've been searching up to this point I doubt any ending the game can give you will be enough to satisfy you."
-                    j "So isn't it perhaps better to just call it quits from here?"
-                    j "Or maybe you should look elsewhere instead?"
-                    n "[ghost_sub!c] [conj('ghost', 'pauses', 'pause')] for a moment after saying that. [ghost_sub!c] [conj('ghost', 'gives', 'give')] you a curious look, seemingly trying to gauge your reaction to what [ghost_sub] just said."
-               else: 
-                    j "I see..."
-                    j "That does indeed seem to be the case doesn't it?"
-                    j "Every interaction with [date_obj] just seems to lead to death."
-                    j "And yet..."
-                    j "I know there is more out there."
-                    j "Ways for [date_obj] to live."
-                    j "Though I think you might not like how you reach them or even what they are in general."
-                    j "I even think with some of them, you might not even know whether or not you found them."
-                    menu:
-                         "But that's ridiculous! Of course I would know if I found an ending like that.":
-                              j "Well, do you recall finding an ending like that?"
-                              n "You shake your head."
-                              j "That might just prove my point. Or it might not. Who knows?"
-                              j "I know you must think I'm being a little annoying at the very least right now, but trust me, I am trying to help."
-                              j "I just have to balance between being too vague and too clear at the same time."
-                              j "You aren't the only one reading this after all."
-                              menu:
-                                   "What are you talking about?":
-                                        j "I see..."
-                                        j "So I was too vague..."
-                                        j "What I mean is, that we are merely visitors in this house. "
-                                        j "And the host is very well aware that we are talking about the meaning behind his interior design."
-                                        j "He does not like that."
-                                        j "But don't worry, he does not like that because it has to stay hidden."
-                                        j "He doesn't like it because he hopes the clues he planted around the house will be enough for you to figure it out."
-                                        j "And yet, a lot of these sorts of things lead to multiple possible interpretations, don't they?"
-                                        j "So I wonder what your take will be when you leave his house."
-
-                                   "Are you talking about the other souls here?":
-                                        j "I am not."
-                                        j "To them this would not be reading, this would be something more like listening."
-                                        j "Hearing the words spoken by an imaginary actor rather than reading them of the script."
-                                        j "But these souls can listen all they want for all I care."
-                                        j "Even if they were listening, I doubt they would care."
-
-                                   "Are you talking about the narrator?":
-                                        j "A good guess!"
-                                        j "But no, he does not care that much whether I reveal any secrets to you."
-                                        j "He can not care in fact. For as much as he pretends to read the script, he is the script."
-                                        j "Now his boss? That's a different story, he wrote the script. And he very much cares that certain things aren't spoiled too soon."
-                                        j "To not lose their... meaning."
-
-                                   "Are you talking about the creator?":
-                                        j "It seems like I was clear enough for you after all."
-                                        j "I'm glad you understood!"
-                                        j "He does not really like me or anyone for that matter giving away things too much."
-                                        j "We can only ever allude to them, but never speak of them until someone else at another time and place can directly adress those things."
-                                        j "And even then there still has to be some subtext."
-                                        j "I guess He wants you to think about those things for yourself, to not just take what the game says at face value."
-                                        j "A bit pretentious if you ask me, but I suppose creators like acting as if their work is deeper then it is sometimes."
-                                        j "Maybe that's why He wants you to think about these concepts for yourself?"
-                                        j "So you can come up with a better interpretation than He ever could and He only has to nod His head and say that that was always what was intended."
-                                        j "Funny isn't it? To this world He and the narrator might almost seem like Gods. And yet, this world, this specific instance of it, would not exist if you weren't here to observe it."
-                                        j "What would happen if you stopped observing this specific instance of our world? Would it cease to be? Would it continue as planned? Or would it go a different way?"
-                                        j "Either way, in a way, you blew life into the world He created. Without you it would be dormant. Something, unobserved to the point of becoming practically nothing."
-                                        j "I wonder, what does that make you?..."
-                                        j "A believer giving them the strength they require to call this world their own? Or a God in your own right?"
-                                        j "I think they would like you to believe you are the first."
-                                        j "I'm not so sure myself..."
-                                        j "But neither of our thoughts about that matter do they? Yours do."
-                                        j "So please [persistent.name], don't forget your own role in this story, the perks it can bring."
-                                        j "Because I think it is more important than you might think."
-                                        
-     j "I have exhausted most of my energy having this conversation with you. If you want to talk about other things next time you know how to find me don't you?"
-     j "I'll send you back now, good luck [persistent.name]."
-     jump Game_start2
-
-return
 
 
 label LilithOrJames:
@@ -4798,6 +4891,9 @@ label ghostReunion_transferUniverse:
           j "I would like that aswell. Goodbye [persistent.name], and may there be a chance we get to meet again."
           l "Goodbye [persistent.name]. Thanks for everything."
 
+     
+          n "...We're out the prelude, at the ending."
+          n "I guess there's no more pretending, it was overdue."
           n "So, this is it?"
           n "This is how all of this is going to end?"
           n "Don't get me wrong, it's a beautiful way to go out."

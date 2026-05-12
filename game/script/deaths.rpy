@@ -9,13 +9,30 @@ label restaurant_deaths:
         label restaurant_death_1:
             if burger == True:
                 #Burgerscene here
+                
                 n "Now the screaming is also paired with hellish sounds, just great."
+                
                 if not persistent.rockMode:
                     n "You look at [persistent.date] and tell [date_obj] to hide under the table."
+                    window hide
+                    $ flash_screen()
+                    window show
+                    $ renpy.restart_interaction()
+              
                     l "I..."
                     play music game_over
+                    
+                    $ show_cinematic_bars(sides=["top", "bottom"], size=180, duration=5, curve="ease")
+                    $ enable_cinematic_textbox_shift(True)
+                    
                     n "[persistent.date] seems to be frozen, on [date_pos] face you can clearly see a mixture of fear and confusion. It takes you a moment to notice the steadily increasing red stains on [persistent.date]'s clothes."
+                    
+                    
+                    
                     l "I've been shot?"
+                    $ hide_cinematic_bars(animate=True, duration=5, curve="ease")
+                    $ enable_cinematic_textbox_shift(True)
+                    
                     n "[date_sub!c] [conj('date', 'falls', 'fall')] of [date_pos] chair, you crawl towards [date_obj] and try to call an ambulance."
                     n "With trembling hands you type the emergency number and beg for help."
                     n "Everything seems to fade away, even the continuous  barage of gunshots, all you can hear is the sound of [persistent.date]'s breathing as it grows weaker and weaker."
@@ -1291,6 +1308,7 @@ label other_deaths:
 
 
 label gameOver:
+    scene black
     if kokiriStarGazed == True:
         $ persistent.kokiriWatchedStars = True
     if teaseDeath == True:

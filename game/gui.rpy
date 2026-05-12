@@ -1,4 +1,6 @@
-﻿################################################################################
+﻿define gui.textbox_ypos = 800  # Set this to your default dialogue box y position (adjust as needed)
+define gui.cinematic_bar_height = 120  # Should match your cinematic bar size
+################################################################################
 ## Initialization
 ################################################################################
 

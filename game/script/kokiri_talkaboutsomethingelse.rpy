@@ -9,7 +9,8 @@ label kokiri_talkAboutSomethingElse:
         menu:
 
             
-            "I have been having nightmares lately. About the places we go, about you.":
+            "I have been having nightmares lately. About the places we go, about you." if persistent.nightmareCounter > 2 and not conversationtracker_nightmares:
+                $ conversationtracker_nightmares = True
                 l "You have?"
                 l "I see..."
                 n "[date_sub!c] [conj('date', 'gives', 'give')] you a certain look you can't fully seem to decipher. It resembles worry."
@@ -20,7 +21,7 @@ label kokiri_talkAboutSomethingElse:
                 l "If you feel like talking to me about your nightmares would help then I'd be glad to help you carry that weight for as long as this time lasts."
                 l "And if you want to talk about it again the next attempt or some other time, just know that you can do so, always."
                 n "[date_sub!c] [conj('date', 'puts', 'put')] [date_pos] hand on yours and [conj('date', 'gives', 'give')] you a small smile."
-                #TODO: Continue this, you can talk about certain nightmares here. Also add a flag so that this text option only appaears when you have had your first nightmare.
+                #TODO: Continue this, you can talk about certain nightmares here.
 
             "I am a crosser, I basically travel across different realities almost exactly like this one. So I don't really undo what I caused, you died [persistent.lildeaths] times already and I can only try to make sure you won't die again. " if persistent_jamestalk_justgame_knowledge and not conversationtracker_crosser:
                 $ conversationtracker_crosser = True
@@ -207,7 +208,8 @@ label kokiri_talkAboutSomethingElse:
                                                 l "See? Everything is an inspiration of another inspiration of another... you get the deal."
                                                 l "So don't ever let that hold you back if you want to create [persistent.name]!"
                                                 l "I think as long as you try to give what you created it's own unique voice atleast a few people will be able to appreciate it."
-                                                "Filler" #Lead to kokiri_makingOwnStory
+                                                
+                                                
 
                                             "That actually makes a lot of sense, I had never really thought about it like that before.":
                                                 n "[date_sub!c] [conj('date', 'gives', 'give')] you a nice smile."   
@@ -217,7 +219,12 @@ label kokiri_talkAboutSomethingElse:
                                                 l "But we shouldn't be ashamed of being inspired from other works, after all I think that is the beauty of creating isn't it?"
                                                 l "A work of art inspired by another, inspired by another and so on and on."
                                                 l "Perhaps your art will one day inspire someone else aswell?"
-                                                "Filler" #lead to kokiri_makingOwnStory
+                                                
+                                        l "Go on, give it a try [persistent.name]!"
+                                        l "I'm sure you'll do a great job, besides, if we can escape this loop we got nothing to lose."
+                                        n "Things turn silent for a moment, [date_sub] [conj('date', 'studies', 'study')] your face, trying to gauge your reaction."
+                                        l "So, are you telling the story now?"
+                                        jump kokiri_makingOwnStory
 
                             "But there is still so much of this game I might not have seen yet.":
                                 l "Wouldn't that content just lead to more of the same?"

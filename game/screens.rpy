@@ -1,4 +1,141 @@
-﻿screen show_name_input_screen(npc_var, npc_default):
+﻿# --- Cinematic Textbox Shift Toggle ---
+default cinematic_textbox_shift = True
+default cinematic_textbox_shift_last_size = 0
+default cinematic_textbox_shift_prev_shift = 0
+# Cinematic Black Bars Overlay
+# Usage: call show_cinematic_bars(sides=["top","bottom"], size=120, animate=True)
+
+default cinematic_bars_state = {"sides": [], "size": 0, "target_size": 0, "animate": False, "duration": 0.3, "hide_duration": 0.3, "retracting": False, "retract_from": 0, "retract_pending": False, "curve": None, "block_dismiss_until": 0.0}
+
+
+screen cinematic_bars():
+    zorder 200
+    $ size = cinematic_bars_state["target_size"]
+    $ duration = cinematic_bars_state["duration"] if cinematic_bars_state["animate"] else 0.0
+    if "top" in cinematic_bars_state["sides"] and size > 0:
+        fixed:
+            xysize (config.screen_width, size)
+            align (0, 0)
+            at bar_grow_ysize(duration, size)
+            add Solid("#000") xysize (config.screen_width, size)
+    if "bottom" in cinematic_bars_state["sides"]:
+        fixed:
+            xysize (config.screen_width, max(size, 1))
+            at bar_grow_ysize_bottom(duration, size)
+            add Solid("#000") xysize (config.screen_width, max(size, 1))
+            # Always add a 1px black line at the very bottom to cover any gap
+            add Solid("#000") xysize (config.screen_width, 1) ypos config.screen_height - 1
+    if "left" in cinematic_bars_state["sides"] and size > 0:
+        fixed:
+            xysize (size, config.screen_height)
+            align (0, 0)
+            at bar_grow_xsize(duration, size)
+            add Solid("#000") xysize (size, config.screen_height)
+    if "right" in cinematic_bars_state["sides"]:
+        fixed:
+            xysize (max(size, 1), config.screen_height)
+            at bar_grow_xsize_right(duration, size)
+            add Solid("#000") xysize (max(size, 1), config.screen_height)
+            # Always add a 1px black line at the very right to cover any gap
+            add Solid("#000") xysize (1, config.screen_height) xpos config.screen_width - 1
+
+# Animate ysize for vertical bars
+
+# Top bar grows down from the top
+transform bar_grow_ysize(duration, target):
+    on show:
+        ysize 0
+        cinematic_ease duration ysize target
+    on hide:
+        cinematic_ease cinematic_bars_state.get("hide_duration", duration) ysize 0
+    ysize target
+
+# Bottom bar grows up from the bottom (by animating ysize and ypos)
+transform bar_grow_ysize_bottom(duration, target):
+    on show:
+        ysize 0
+        ypos config.screen_height
+        cinematic_ease duration ysize target+1 ypos config.screen_height - target
+    on hide:
+        cinematic_ease cinematic_bars_state.get("hide_duration", duration) ysize 0 ypos config.screen_height
+    ysize target+1
+    ypos config.screen_height - target
+
+
+# Animate xsize for left bar (grows from left)
+transform bar_grow_xsize(duration, target):
+    on show:
+        xsize 0
+        cinematic_ease duration xsize target
+    on hide:
+        cinematic_ease cinematic_bars_state.get("hide_duration", duration) xsize 0
+    xsize target
+
+# Animate xsize and xpos for right bar (grows from right, +1px to prevent gap)
+transform bar_grow_xsize_right(duration, target):
+    on show:
+        xsize 1
+        xpos config.screen_width
+        cinematic_ease duration xsize target+1 xpos config.screen_width - target
+    on hide:
+        cinematic_ease cinematic_bars_state.get("hide_duration", duration) xsize 1 xpos config.screen_width
+    xsize target+1
+    xpos config.screen_width - target
+
+
+init python:
+    import time as _cinematic_time
+
+    def show_cinematic_bars(sides=["top", "bottom"], size=120, animate=True, duration=0.3, curve=None):
+        """
+        Shows cinematic black bars on specified sides.
+        sides:    list of "top", "bottom", "left", "right"
+        size:     pixel thickness of bars
+        animate:  whether to animate the bars
+        duration: animation duration in seconds
+        curve:    easing — None/"linear", "ease", "easein", "easeout",
+        or [(seconds, fraction), ...] for multi-segment
+        """
+        global cinematic_bars_state, cinematic_textbox_shift_last_size, cinematic_textbox_shift_prev_shift
+        cinematic_bars_state["sides"] = sides
+        cinematic_bars_state["target_size"] = size
+        cinematic_bars_state["animate"] = animate
+        cinematic_bars_state["duration"] = duration if animate else 0.0
+        cinematic_bars_state["curve"] = curve
+        # Block dismiss for the full animation duration
+        if animate and duration > 0:
+            cinematic_bars_state["block_dismiss_until"] = _cinematic_time.time() + duration
+        # Store previous shift for textbox animation
+        if cinematic_textbox_shift and "bottom" in sides and size > 0:
+            cinematic_textbox_shift_prev_shift = cinematic_textbox_shift_last_size
+        else:
+            cinematic_textbox_shift_prev_shift = 0
+        cinematic_textbox_shift_last_size = size
+        renpy.show_screen("cinematic_bars")
+
+    def hide_cinematic_bars(animate=True, duration=0.3, curve=None):
+        """
+        Hides the cinematic bars (animates out if animate=True).
+        curve: same options as show_cinematic_bars (None/"linear", "ease", etc.)
+        """
+        global cinematic_bars_state, cinematic_textbox_shift_prev_shift, cinematic_textbox_shift_last_size
+        hide_dur = duration if animate else 0.0
+        cinematic_bars_state["target_size"] = 0
+        cinematic_bars_state["animate"] = animate
+        cinematic_bars_state["duration"] = hide_dur
+        cinematic_bars_state["hide_duration"] = hide_dur
+        cinematic_bars_state["curve"] = curve
+        # Block dismiss for the retract duration
+        if animate and hide_dur > 0:
+            cinematic_bars_state["block_dismiss_until"] = _cinematic_time.time() + hide_dur
+        # Store retract info so the say screen can animate the textbox back down
+        if cinematic_textbox_shift and "bottom" in cinematic_bars_state["sides"]:
+            cinematic_bars_state["retracting"] = True
+            cinematic_bars_state["retract_pending"] = True
+            cinematic_bars_state["retract_from"] = cinematic_textbox_shift_last_size
+        cinematic_textbox_shift_last_size = 0
+        renpy.hide_screen("cinematic_bars")
+screen show_name_input_screen(npc_var, npc_default):
     frame:
         style_prefix "menu"
         xalign 0.5
@@ -260,6 +397,10 @@ style frame:
 ################################################################################
 
 
+
+
+
+
 ## Say screen ##################################################################
 ##
 ## The say screen is used to display dialogue to the player. It takes two
@@ -276,21 +417,82 @@ style frame:
 screen say(who, what):
     style_prefix "say"
 
-    ## Namebox — rendered before the main textbox window so it appears behind it.
+
+
+    $ shift = 0
+    $ prev_shift = 0
+    $ duration = 0.0
+    $ animate_shift = False
+    if cinematic_textbox_shift and "bottom" in cinematic_bars_state["sides"]:
+        if cinematic_bars_state["target_size"] > 0:
+            $ shift = cinematic_bars_state["target_size"]
+            $ prev_shift = cinematic_textbox_shift_prev_shift
+            $ duration = cinematic_bars_state["duration"] if cinematic_bars_state["animate"] else 0.0
+            $ animate_shift = (prev_shift != shift and duration > 0.0)
+        elif cinematic_bars_state.get("retracting", False):
+            $ prev_shift = cinematic_bars_state.get("retract_from", 0)
+            $ duration = cinematic_bars_state["duration"]
+            $ animate_shift = (prev_shift > 0 and duration > 0.0)
+
     if who is not None:
         window:
             id "namebox"
             style "namebox"
+            at (textbox_shift_smooth(prev_shift, shift, duration) if animate_shift else textbox_shift_static(shift))
             text who id "who"
 
-    window:
-        id "window"
-        text what id "what"
+    if what is not None and what != "":
+        window:
+            id "window"
+            at (textbox_shift_smooth(prev_shift, shift, duration) if animate_shift else textbox_shift_static(shift))
+            text what id "what"
+
+transform textbox_shift_smooth(prev, new, duration):
+    yoffset -prev
+    cinematic_ease duration yoffset -new
+
+## Two transforms: one animated, one static
+transform textbox_shift_animated(shift, duration):
+    on show:
+        yoffset 0
+        linear duration yoffset -shift
+    yoffset -shift
+
+transform textbox_shift_static(shift):
+    yoffset -shift
+init python:
+    def enable_cinematic_textbox_shift(enable=True):
+        """
+        Enables or disables shifting the textbox and namebox up with the bottom bar.
+        """
+        global cinematic_textbox_shift
+        cinematic_textbox_shift = enable
+
+    def _cinematic_after_say(event, interact=True, **kwargs):
+        if event == "end" and interact:
+            store.cinematic_textbox_shift_prev_shift = store.cinematic_textbox_shift_last_size
+            if store.cinematic_bars_state.get("retract_pending", False):
+                # First click after retract — the animation played, now clear everything
+                store.cinematic_bars_state["retracting"] = False
+                store.cinematic_bars_state["retract_from"] = 0
+                store.cinematic_bars_state["retract_pending"] = False
+    config.all_character_callbacks.append(_cinematic_after_say)
+
+    def _cinematic_say_allow_dismiss():
+        until = store.cinematic_bars_state.get("block_dismiss_until", 0.0)
+        if until > 0.0:
+            if _cinematic_time.time() < until:
+                return False
+            store.cinematic_bars_state["block_dismiss_until"] = 0.0
+        return True
+    config.say_allow_dismiss = _cinematic_say_allow_dismiss
 
     ## If there's a side image, display it above the text. Do not display on the
     ## phone variant - there's no room.
-    if not renpy.variant("small"):
-        add SideImage() xalign 0.0 yalign 1.0
+    # Side image support is currently disabled due to syntax issues.
+    # if not renpy.variant("small"):
+    #     fixed:
+    #         add SideImage() xalign 0.0 yalign 1.0
 
 
 ## Make the namebox available for styling through the Character object.
@@ -390,9 +592,13 @@ style input:
 
 screen choice(items):
     style_prefix "choice"
+    zorder 100
 
     default max_visible = 5
     default _inline_hovered = ""
+
+    ## Shift choices up when cinematic bottom bar is active.
+    $ _choice_shift = cinematic_bars_state["target_size"] if cinematic_textbox_shift and "bottom" in cinematic_bars_state["sides"] and cinematic_bars_state["target_size"] > 0 else 0
 
     ## Tooltip captured reactively every interaction so the notecard updates live.
     $ tt = GetTooltip()
@@ -405,10 +611,21 @@ screen choice(items):
     ## Scroll threshold: grid mode caps at 4 items (5+ scroll); default uses max_visible.
     $ _scroll_at = 4 if persistent.grid_choices else max_visible
 
+    ## Number-key map: maps each active item's id to its 1-based choice number.
+    $ _num_map = {id(i): idx+1 for idx, i in enumerate(_active)}
+
+    ## Bind number keys 1–9 (main and numpad) to the corresponding active choice when enabled.
+    if persistent.number_keys:
+        for _kidx, _kitem in enumerate(_active):
+            if _kidx < 9:
+                key "K_%d" % (_kidx + 1) action _kitem.action
+                key "K_KP%d" % (_kidx + 1) action _kitem.action
+
     if persistent.inline_choices:
         # ── Inline mode: choices appear inside the dialogue box ──────────
         window:
             style "window"
+            at textbox_shift_static(_choice_shift)
 
             viewport:
                 mousewheel True
@@ -427,7 +644,8 @@ screen choice(items):
                         else:
                             $ _short = truncate_to_width(i.caption, gui.dialogue_width - 72)
                             $ _hovering = (_inline_hovered == i.caption)
-                            $ _caption_display = i.caption if _hovering else _short
+                            $ _nprefix = ("%d. " % _num_map[id(i)]) if persistent.number_keys and id(i) in _num_map else ""
+                            $ _caption_display = _nprefix + (i.caption if _hovering else _short)
                             button:
                                 alt i.caption
                                 style "inline_choice_button"
@@ -448,6 +666,7 @@ screen choice(items):
             xalign 0.5
             ypos 650
             yanchor 0.0
+            at textbox_shift_static(_choice_shift)
             
 
             viewport:
@@ -473,12 +692,13 @@ screen choice(items):
                             hbox:
                                 spacing 20
                                 add Transform("gui/bullet_loop.png", matrixcolor=(TintMatrix("#336600") if _inline_hovered == i.caption else TintMatrix("#707070")), zoom=(0.5 * gui.text_size / 33.0)) yalign 0.5
-                                text i.caption style "choice_button_text"
+                                text (("%d. " % _num_map[id(i)]) + i.caption if persistent.number_keys and id(i) in _num_map else i.caption) style "choice_button_text"
 
     elif len(_active) <= 2 or not persistent.grid_choices:
         # ── Default stacked layout (1–2 choices, or compact grid turned off) ─
         vbox:
             style "grid_choice_vbox"
+            at textbox_shift_static(_choice_shift)
             for i in items:
                 button:
                     style "choice_button"
@@ -488,12 +708,13 @@ screen choice(items):
                     hbox:
                         spacing 20
                         add Transform("gui/bullet_loop.png", matrixcolor=(TintMatrix("#336600") if _inline_hovered == i.caption else TintMatrix("#707070")), zoom=(0.5 * gui.text_size / 33.0)) yalign 0.5
-                        text i.caption style "choice_button_text"
+                        text (("%d. " % _num_map[id(i)]) + i.caption if persistent.number_keys and id(i) in _num_map else i.caption) style "choice_button_text"
 
     else:
         ## ── Compact grid layout (3–4 items, grid mode on) ──────────────
         vbox:
             style "grid_choice_vbox"
+            at textbox_shift_static(_choice_shift)
             if len(_active) == 3:
                 # Row 1: first 2 side by side
                 hbox:
@@ -501,7 +722,8 @@ screen choice(items):
                     xalign 0.5
                     for i in _active[:2]:
                         $ _short = truncate_choice(i.caption)
-                        textbutton _short:
+                        $ _nprefix = ("%d. " % _num_map[id(i)]) if persistent.number_keys else ""
+                        textbutton (_nprefix + _short):
                             alt i.caption
                             style "grid_choice_button"
                             tooltip (i.caption if _short != i.caption else "")
@@ -512,7 +734,8 @@ screen choice(items):
                     xalign 0.5
                     for i in _active[2:]:
                         $ _short = truncate_choice(i.caption)
-                        textbutton _short:
+                        $ _nprefix = ("%d. " % _num_map[id(i)]) if persistent.number_keys else ""
+                        textbutton (_nprefix + _short):
                             alt i.caption
                             style "grid_choice_button"
                             tooltip (i.caption if _short != i.caption else "")
@@ -525,7 +748,8 @@ screen choice(items):
                     xalign 0.5
                     for i in _active[:2]:
                         $ _short = truncate_choice(i.caption)
-                        textbutton _short:
+                        $ _nprefix = ("%d. " % _num_map[id(i)]) if persistent.number_keys else ""
+                        textbutton (_nprefix + _short):
                             alt i.caption
                             style "grid_choice_button"
                             tooltip (i.caption if _short != i.caption else "")
@@ -535,7 +759,8 @@ screen choice(items):
                     xalign 0.5
                     for i in _active[2:]:
                         $ _short = truncate_choice(i.caption)
-                        textbutton _short:
+                        $ _nprefix = ("%d. " % _num_map[id(i)]) if persistent.number_keys else ""
+                        textbutton (_nprefix + _short):
                             alt i.caption
                             style "grid_choice_button"
                             tooltip (i.caption if _short != i.caption else "")
@@ -647,7 +872,7 @@ init python:
     config.overlay_screens.append("quick_menu")
 
     def start_over_reset():
-        _pref_keys = ["font_choice", "text_size_offset", "text_outline", "grid_choices", "inline_choices"]
+        _pref_keys = ["font_choice", "text_size_offset", "text_outline", "grid_choices", "inline_choices", "number_keys"]
         _saved = {k: getattr(persistent, k, None) for k in _pref_keys}
         persistent._clear()
         for k, v in _saved.items():
@@ -1189,6 +1414,7 @@ screen preferences():
                     label _("Choices")
                     textbutton _("Compact Grid") action ToggleField(persistent, "grid_choices")
                     textbutton _("Inline") action ToggleField(persistent, "inline_choices")
+                    textbutton _("Number Keys") action ToggleField(persistent, "number_keys")
 
                 ## Additional vboxes of type "radio_pref" or "check_pref" can be
                 ## added here, to add additional creator-defined preferences.
