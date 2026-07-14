@@ -3,7 +3,7 @@ label burger_start:
     $ burger = True
     if persistent.lildeaths > 0:
         if no_nightmare == False:
-            if perm_nightmare == True:
+            if persistent.perm_nightmare == True:
                 #Set the nightmare flag always since perm_nightmare is true.
                 $ burger_nightmare = True #The flag that will be checked in the burger path for what kind of nightmare triggers.
             else:
@@ -20,10 +20,22 @@ label burger_start:
     l "Burgers sure sound good, see you there!"
     if persistent.rockMode:
         jump rockTransport
-    scene burgerRestaurant
-    n "You arrive a tad late, [persistent.date] already has grabbed [date_pred] a seat and waves at you when [date_sub] [conj('date', 'sees', 'see')] you."
+    scene black
+    show burgerRestaurant_bg
+    show burgerRestaurant_fg onlayer foreground
+    
+    transform burgerSit:
+        zoom 0.40
+        xanchor 0.5
+        yanchor 1.0
+        xpos 800
+        ypos 1000
+    show lilith talking_happy at burgerSit
+
+    n "You arrive a tad late, [persistent.date] already has grabbed [date_ref] a seat and waves at you when [date_sub] [conj('date', 'sees', 'see')] you."
     label burger_arrived:
         l "Heya! Almost was scared you wouldn't show up."
+
 
         if persistent.burgerstart == False:
             $ persistent.burgerstart = True
@@ -220,7 +232,7 @@ label burger_start_choice3:
 label burger_start_menu:
     
     if not hypotheticalBurger:
-        menu:
+        menu burgerChoice:
             "I could go for a veggie burger!":
                 $ burger_choice = "veggie burger"
                 jump burger_ordering
@@ -237,10 +249,43 @@ label burger_start_menu:
                 $ burger_choice = "beef burger"
                 jump burger_ordering
             
-            "I think I will go for some chicken tenders." if persistent.chickenTendiesUnlock:
-                $ burger_choice = "chicken tenders"
-                jump burger_ordering
-    else:
+            "I think I will go for some chicken tenders." if persistent.chickenTendiesUnlock and not onlyBurgers:
+                l "Oh... I thought you were going to try one of Rose's burgers?"
+                l "I promise, they are to die for! Those tenders are pre-made. Still good ofcourse but they pale to Rose's craftsmanship."
+                menu:
+                    "That does sound good... sure, I'll pick a burger!":
+                        $ onlyBurgers = True
+                        jump burgerChoice
+
+                    "I'm actually more in the mood for tenders.":
+                        l "I see, that's totally fine! Sorry if I was a bit pushy just now, I just really love the burgers here."
+                        $ burger_choice = "chicken tenders"
+                        jump burger_ordering
+
+                    "I yearn to touch the tenders. To feast on fistfuls of flesh from feathered dinosaurs. Doth not come between me and mine tenders!":
+                        "...Are you alright [persistent.name]?"
+                        menu:
+                            "Of course, I am better than ever, so close in the vicinity of some succulent chicken.":
+                                l "You're scaring me [persistent.name]! I...Why are you acting so obsessed with chicken tenders?"
+                                l "Is this a joke? Please say literally anything else!"
+                                menu:
+                                    "Why waste another breath on anything lesser when it should be spent on praising and eating the tenders?":
+                                        n "Her face turns completely pale."
+                                        l "Oh god, you aren't joking, are you?"
+                                        l "You're going mad! I...I can't do this [persistent.name]!"
+                                        n "She quickly gets up and runs out of the restaurant."
+                                        n "You don't even consider running after her for a second, you have other priorities."
+                                        n "It is however odd that you don't hear the impact of the car that would usually hit her."
+                                        n "You can't get distracted though, you have tenders to eat."
+                                        n "Walking up to Rose with a sickly grin you order all the chicken tenders she has in stock."
+                                        n "Scarfing them down like a dog until closing time, you only leave when it is closing time."
+                                        n "You camp outside, ready to repeat all of this the next day and the day after that ad infinitum."
+                                        n "Or atleast until your heart decides to give out from all the greasy goodness."
+                                        #Ending
+                                        $ persistent.ending_food = True
+                                        $ lilithAliveEnding = True
+                                        $ ending_check = "food ending"
+                                        jump gameOver
         menu:
             "I would pick a veggie burger!":
                 $ burger_choice = "veggie burger"
@@ -277,10 +322,12 @@ label burger_ordering:
         else:
             l "That's a great choice [persistent.name]!"
         l "Let's go order, alright?"
+        define move_out_left = MoveTransition(3.0, leave=offscreenleft, leave_time_warp=_warper.easeout)
+        hide lilith talk_closed with move_out_left #Tmove_out_left is a custom defined move transition since this is the only way to not have it hapen in 0.5 seconds
         if persistent.burgerwent == 0:
             n "You were expecting having to order them from a screen like most fastfood places tend to have but as you looked around you couldn't spot any."
-            n "Instead [persistent.date] walks to a counter.
-            You decide to follow [date_obj]."
+            n "Instead [persistent.date] walks to a counter."
+            n "You decide to follow [date_obj]."
         else: 
             n "You walk towards the counter, [persistent.date] is walking right next to you, shooting you a subtle glance every now and then."
         if persistent.rosename_knowledge == True:
@@ -330,6 +377,7 @@ label burger_ordering:
             n "[persistent.date]'s face turning beetred is a lot easier to notice."
             l "{size=*0.5}Uhm, thank you Rose... we uhm have to get back to our table now.{/size}"
             n "You can't help but chuckle to yourself as [persistent.date] practically darts back to the table."
+            show lilith talking_happy at burgerSit
             n "By the time you've reached the table [date_sub] [conj('date', 'is', 'are')] already sitting down, still as red as [date_sub] possibly could be."
             n "[date_sub] quickly brushes one hand over [date_pos] left cheek and somehow manages to turn even more red at the realisation that [date_sub] [conj('date', 'is', 'are')] still blushing."
             n "Right then [date_sub] lets out a few small coughs as [date_sub] [conj('date', 'tries', 'try')] to somehow divert attention from what just happened."

@@ -1,5 +1,44 @@
 #Put all the deaths in here as a way to clean up all the other files and also just make this way easier to find deaths to rewrite etc.
 
+init python:
+    def ending_title_from_check(ending_id):
+        ending_titles = {
+            "reunitedGood": "Reunited",
+            "lettingGo": "Letting Go",
+            "unseenContent": "Unseen Content",
+            "anEnding": "An Ending",
+            "quitter": "Quitter",
+            "quitter extraodinaire": "Quitter Extraordinaire",
+            "breakup": "Breakup",
+            "abigailDistraction": "Abigail Distraction",
+            "badDate": "Bad Date",
+            "traumaReunion": "Traumatized Reunion",
+            "Voided": "No More A-Voiding",
+            "food ending": "Food Ending",
+        }
+        return ending_titles.get(ending_id, "")
+
+    def increment_ending_retry_count(ending_id):
+        if not ending_id:
+            return
+
+        ending_retry_counts = getattr(persistent, "ending_retry_counts", None)
+        if ending_retry_counts is None:
+            ending_retry_counts = {}
+            setattr(persistent, "ending_retry_counts", ending_retry_counts)
+
+        ending_retry_counts[ending_id] = ending_retry_counts.get(ending_id, 0) + 1
+
+    def get_ending_retry_count(ending_id):
+        if not ending_id:
+            return 0
+
+        ending_retry_counts = getattr(persistent, "ending_retry_counts", None)
+        if ending_retry_counts is None:
+            return 0
+
+        return ending_retry_counts.get(ending_id, 0)
+
 
 
 
@@ -13,6 +52,19 @@ label restaurant_deaths:
                 n "Now the screaming is also paired with hellish sounds, just great."
                 
                 if not persistent.rockMode:
+                    $ _death_seen = check_death_skip("burger_death_1")
+                    if is_death_skipped("burger_death_1"):
+                        play music game_over
+                        jump gameOver
+                    elif _death_seen >= death_skip_threshold:
+                        play music game_over
+                        n "[death_skip_prompt('burger_death_1')]"
+                        menu:
+                            "Always skip this from now on.":
+                                $ set_death_always_skip("burger_death_1")
+                                jump gameOver
+                            "Show the death narration.":
+                                pass
                     n "You look at [persistent.date] and tell [date_obj] to hide under the table."
                     window hide
                     $ flash_screen()
@@ -30,8 +82,8 @@ label restaurant_deaths:
                     
                     
                     l "I've been shot?"
-                    $ hide_cinematic_bars(animate=True, duration=5, curve="ease")
-                    $ enable_cinematic_textbox_shift(True)
+                    hide lilith talk_closed with moveoutbottom
+                    show burgerRestaurant_bg with hpunch
                     
                     n "[date_sub!c] [conj('date', 'falls', 'fall')] of [date_pos] chair, you crawl towards [date_obj] and try to call an ambulance."
                     n "With trembling hands you type the emergency number and beg for help."
@@ -52,6 +104,19 @@ label restaurant_deaths:
             elif cafe == True:
                 #Cafescene here
                 if not persistent.rockMode:
+                    $ _death_seen = check_death_skip("cafe_death_1")
+                    if is_death_skipped("cafe_death_1"):
+                        play music game_over
+                        jump gameOver
+                    elif _death_seen >= death_skip_threshold:
+                        play music game_over
+                        n "What's to come next is etched into your mind I'm sure, maybe it's better we just skip to how it ends?"
+                        menu:
+                            "Always skip this from now on.":
+                                $ set_death_always_skip("cafe_death_1")
+                                jump gameOver
+                            "Show the death narration.":
+                                pass
                     n "Suddenly you hear someone scream, you can turn your head just quickly enough to see someone fall with a plate in their hands."
                     n "The plate flies in the air, with it the ham sandwich that was put on top of it."
                     n "You are apparently not the only one who has noticed, as you can see a beautiful blue merlin jump from an opening in the aquarium."
@@ -70,6 +135,19 @@ label restaurant_deaths:
             elif chinese == True:
                 #Chinesescene here
                 if not persistent.rockMode:
+                    $ _death_seen = check_death_skip("chinese_death_1")
+                    if is_death_skipped("chinese_death_1"):
+                        play music game_over
+                        jump gameOver
+                    elif _death_seen >= death_skip_threshold:
+                        play music game_over
+                        n "What's to come next is etched into your mind I'm sure, maybe it's better we just skip to how it ends?"
+                        menu:
+                            "Always skip this from now on.":
+                                $ set_death_always_skip("chinese_death_1")
+                                jump gameOver
+                            "Show the death narration.":
+                                pass
                     n "For a moment you get lost in your thoughts."
                     n "When you refocus you notice [persistent.date] walking back to [date_pos] chair."
                     l "Heya [persistent.name], I hope you didn't have to wait too long."
@@ -119,6 +197,7 @@ label restaurant_deaths:
                     l "Alright, I'm trying my best to remain calm but how did you know that would even happen?"
                 elif chinese == True:
                     $ persistent.dumbo_knowledge = True
+                    $ dumboStoryTold = True
                     l "I suppose that makes sense, I am allergic to quite a few things."
                     l "When I was a kid I once ate a few peanuts while I was watching Dumbo, I felt my throat swell and I thought I was becoming a little elephant, just like Dumbo."
                     l "I ran to my parents and said:\"Look mommy, look daddy! I can fly!\" and then I started using my hands to flap my ears around like Dumbo."
@@ -198,6 +277,19 @@ label restaurant_deaths:
             if persistent.rockMode == False:
                 if burger == True:
                     $ persistent.burger_death_2 = True
+                    $ _death_seen = check_death_skip("burger_death_2")
+                    if is_death_skipped("burger_death_2"):
+                        $ burger_explosion_outside = False
+                        jump gameOver
+                    elif _death_seen >= death_skip_threshold:
+                        n "What's to come next is etched into your mind I'm sure, maybe it's better we just skip to how it ends?"
+                        menu:
+                            "Always skip this from now on.":
+                                $ set_death_always_skip("burger_death_2")
+                                $ burger_explosion_outside = False
+                                jump gameOver
+                            "Show the death narration.":
+                                pass
                     if not burger_explosion_outside == True:
                         n "Suddenly a inmense sensation of pain overwhelms you, the only thing you can see is a glimpse of pure white and an eternity of black."
                     n "When you awaken you find yourself surrounded by doctors, they tell you that with the force of sheer luck the stray bullet that would've hit [persistent.date] managed to cause a gas leak."
@@ -211,6 +303,17 @@ label restaurant_deaths:
                     jump gameOver
 
                 elif cafe == True:
+                    $ _death_seen = check_death_skip("cafe_death_2")
+                    if is_death_skipped("cafe_death_2"):
+                        jump gameOver
+                    elif _death_seen >= death_skip_threshold:
+                        n "What's to come next is etched into your mind I'm sure, maybe it's better we just skip to how it ends?"
+                        menu:
+                            "Always skip this from now on.":
+                                $ set_death_always_skip("cafe_death_2")
+                                jump gameOver
+                            "Show the death narration.":
+                                pass
                     n "Suddenly you begin to hear the sound of shattering glass."
                     n "As you turn to look at the source of the sound you can see that the aquarium next to where [persistent.date] was sitting has shattered."
                     n "The water is gushing out rapidly and it does not seem to be planning to stop."
@@ -246,6 +349,17 @@ label restaurant_deaths:
                     jump gameOver
 
                 elif chinese == True:
+                    $ _death_seen = check_death_skip("chinese_death_2")
+                    if is_death_skipped("chinese_death_2"):
+                        jump gameOver
+                    elif _death_seen >= death_skip_threshold:
+                        n "What's to come next is etched into your mind I'm sure, maybe it's better we just skip to how it ends?"
+                        menu:
+                            "Always skip this from now on.":
+                                $ set_death_always_skip("chinese_death_2")
+                                jump gameOver
+                            "Show the death narration.":
+                                pass
                     n "Suddenly you hear the faint sound of quacking."
                     n "The sound of the quacking steadily grows louder and louder untill it's all you can hear."
                     n "A true quackophony if you will."
@@ -400,10 +514,13 @@ label restaurant_deaths:
                                                 n "A sense of recognition. A deep loneliness it tried sleeping through."
                                                 n "But most importantly, a promise it had made. In this lifetime, or in another? It was hard to say."
                                                 n "Even the promise itself was hard to think of, except that it was just that, a promise. The concept was almost too big to grasp but this tiny piece of sentient rock found itself thinking one word."
-                                                menu:
-                                                    "Retry.":
-                                                        $ persistent.rockMode = False
-                                                        jump game_start
+                                                n "One word that would start it all over again."
+                                                #Ending
+                                                $ persistent.ending_quitter = True
+                                                $ lilithAliveEnding = True
+                                                $ ending_check = "neverEnding"
+                                                $ persistent.rockMode = False
+                                                jump gameOver
 
 
                             
@@ -499,6 +616,17 @@ label restaurant_deaths:
                 jump restaurant_death_2
 
             elif cafe == True:
+                $ _death_seen = check_death_skip("car_death_cafe")
+                if is_death_skipped("car_death_cafe"):
+                    jump gameOver
+                elif _death_seen >= death_skip_threshold:
+                    n "What's to come next is etched into your mind I'm sure, maybe it's better we just skip to how it ends?"
+                    menu:
+                        "Always skip this from now on.":
+                            $ set_death_always_skip("car_death_cafe")
+                            jump gameOver
+                        "Show the death narration.":
+                            pass
                 n "[persistent.date] leaves the cafe restaurant, you rush after [date_obj] in an effort to calm [date_obj] down. "
                 n "When you set one foot outside of the doorframe the red Sedan that always thwarts your plans drives head first into the both of you."
                 n "Luckily you managed to get flung to the side somehow. [persistent.date] however was not so lucky."
@@ -529,6 +657,7 @@ label restaurant_deaths:
                 $ persistent.ending_badDate = True
                 $ ending_check = "badDate"
                 $ persistent.lildeaths -= 1
+                $ persistent.gallery_unlocked = True
 
                 if angryLilith == True:
                     n "You probably shouldn't have angered [date_obj] so much."
@@ -572,6 +701,17 @@ label restaurant_deaths:
                     n "[persistent.date] follows you to the exit of the [resname]."
                 n "When you set one foot outside of the doorframe [carDescription] drives head first into the both of you."
                 label car_death_result:
+                    $ _death_seen = check_death_skip("car_death_" + resname2)
+                    if is_death_skipped("car_death_" + resname2):
+                        jump gameOver
+                    elif _death_seen >= death_skip_threshold:
+                        n "What's to come next is etched into your mind I'm sure, maybe it's better we just skip to how it ends?"
+                        menu:
+                            "Always skip this from now on.":
+                                $ set_death_always_skip("car_death_" + resname2)
+                                jump gameOver
+                            "Show the death narration.":
+                                pass
                     n "Luckily you managed to get flung to the side somehow. [persistent.date] however was not so lucky."
                     n "[date_sub!c] died on impact when the speeding car hit [date_obj]."
                     if persistent.redSedan_knowledge == False:
@@ -605,6 +745,17 @@ label kokiri_deaths:
         n "[date_sub!c] [conj('date', 'does', 'do')]n't get far from the hill, maybe a metre or fifteen before [date_sub] seemingly [conj('date', 'trips', 'trip')] over a tree root."
         n "[date_sub!c] [conj('date', 'does', 'do')] not get up."
         play music game_over
+        $ _death_seen = check_death_skip("angryLilith_death")
+        if is_death_skipped("angryLilith_death"):
+            jump gameOver
+        elif _death_seen >= death_skip_threshold:
+            n "What's to come next is etched into your mind I'm sure, maybe it's better we just skip to how it ends?"
+            menu:
+                "Always skip this from now on.":
+                    $ set_death_always_skip("angryLilith_death")
+                    jump gameOver
+                "Show the death narration.":
+                    pass
         if persistent.kokiri_angryLilithDeath == False:
             n "When you rush to [date_obj] you notice why."
             n "[persistent.date] hit [date_pos] head pretty badly on a small rock."
@@ -650,6 +801,17 @@ label kokiri_deaths:
                             jump kokiri_death_1_prevented
                 
                 play music game_over
+                $ _death_seen = check_death_skip("kokiri_death_1")
+                if is_death_skipped("kokiri_death_1"):
+                    jump gameOver
+                elif _death_seen >= death_skip_threshold:
+                    n "What's to come next is etched into your mind I'm sure, maybe it's better we just skip to how it ends?"
+                    menu:
+                        "Always skip this from now on.":
+                            $ set_death_always_skip("kokiri_death_1")
+                            jump gameOver
+                        "Show the death narration.":
+                            pass
                 n "Eventually, due to the energy exerted on the meteorite it breaks into many different chunks that spread all around the forest."
                 n "One of them crashes straight against [persistent.date]'s head with a frightening impact."
                 n "[date_sub!c] immediately [conj('date', 'goes', 'go')] limp and [date_pos] body falls down on the picnic blanket."
@@ -740,6 +902,17 @@ label kokiri_deaths:
     label kokiri_2:
         label kokiri_death_2:
             play music game_over
+            $ _death_seen = check_death_skip("kokiri_death_2")
+            if is_death_skipped("kokiri_death_2"):
+                jump gameOver
+            elif _death_seen >= death_skip_threshold:
+                n "What's to come next is etched into your mind I'm sure, maybe it's better we just skip to how it ends?"
+                menu:
+                    "Always skip this from now on.":
+                        $ set_death_always_skip("kokiri_death_2")
+                        jump gameOver
+                    "Show the death narration.":
+                        pass
             if kokiri_alternateplace == True:
                 if kokiri_call_death_2_check == True:
                     n "While [persistent.date] is engrossed in [date_pos] call you notice the red Sedan that rode up the hill and hit [persistent.date] riding up the hill once again."
@@ -1121,6 +1294,19 @@ label kokiri_showpicture:
 
                 n "Suddenly the earth begins to shake. The roots of the big tree [persistent.date] is standing next to begin unearthing. Before you can do anything the tree falls over right on top of [date_obj]."
                 play music game_over
+                $ _death_seen = check_death_skip("kokiri_death_3")
+                if is_death_skipped("kokiri_death_3"):
+                    $ persistent.kokiri_death_3 = True
+                    jump gameOver
+                elif _death_seen >= death_skip_threshold:
+                    n "What's to come next is etched into your mind I'm sure, maybe it's better we just skip to how it ends?"
+                    menu:
+                        "Always skip this from now on.":
+                            $ set_death_always_skip("kokiri_death_3")
+                            $ persistent.kokiri_death_3 = True
+                            jump gameOver
+                        "Show the death narration.":
+                            pass
                 n "You push the tree off with all your might but it seems like it was to no avail, the force of the tree killed [date_obj] instantly."
                 n "Your screams pierce through the woods, it answers with pure silence, mourning the loss of [persistent.date] once more."
                 $ persistent.kokiri_death_3 = True
@@ -1143,6 +1329,17 @@ label kokiri_showpicture:
 
             play music game_over
             $ persistent.kokiri_death_4 = True
+            $ _death_seen = check_death_skip("kokiri_death_4_hill")
+            if is_death_skipped("kokiri_death_4_hill"):
+                jump gameOver
+            elif _death_seen >= death_skip_threshold:
+                n "What's to come next is etched into your mind I'm sure, maybe it's better we just skip to how it ends?"
+                menu:
+                    "Always skip this from now on.":
+                        $ set_death_always_skip("kokiri_death_4_hill")
+                        jump gameOver
+                    "Show the death narration.":
+                        pass
             if kokiri_death_4_playerResponse == True:
 
                 n "You want to answer [date_obj] when suddenly the ground begins to shake once again, this time it even shakes more than when [persistent.date] showed you the picture."
@@ -1212,6 +1409,19 @@ label kokiri_showpicture:
             l "You know, the stars are absolutely beautiful from here. I have a feeling we'll be able to see them even closer soon."
             n "[persistent.date] shudders as [date_sub] [conj('date', 'speaks', 'speak')] those words but when you look at [date_obj] [date_sub] [conj('date', 'tries', 'try')] [date_pos] best to give you a smile."
             play music game_over
+            $ _death_seen = check_death_skip("kokiri_death_4_hill_holdHand")
+            if is_death_skipped("kokiri_death_4_hill_holdHand"):
+                $ persistent.kokiri_death_4_hill_holdHand = True
+                jump gameOver
+            elif _death_seen >= death_skip_threshold:
+                n "What's to come next is etched into your mind I'm sure, maybe it's better we just skip to how it ends?"
+                menu:
+                    "Always skip this from now on.":
+                        $ set_death_always_skip("kokiri_death_4_hill_holdHand")
+                        $ persistent.kokiri_death_4_hill_holdHand = True
+                        jump gameOver
+                    "Show the death narration.":
+                        pass
             
             n "[persistent.date] was right, the hill flew up into space itself, probably to some far-off stars, not that the two of you would know as after fifteen seconds everything went black.
             You can only imagine the gruesome death the two of you suffered, that is if you weren't unconcious."
@@ -1220,6 +1430,17 @@ label kokiri_showpicture:
         label kokiri_death_4_noHill:
             play music game_over
             $ persistent.kokiri_death_4_noHill = True
+            $ _death_seen = check_death_skip("kokiri_death_4_noHill")
+            if is_death_skipped("kokiri_death_4_noHill"):
+                jump gameOver
+            elif _death_seen >= death_skip_threshold:
+                n "What's to come next is etched into your mind I'm sure, maybe it's better we just skip to how it ends?"
+                menu:
+                    "Always skip this from now on.":
+                        $ set_death_always_skip("kokiri_death_4_noHill")
+                        jump gameOver
+                    "Show the death narration.":
+                        pass
             n "The earth begins shaking once again. The mechanical mound begins to ascend slowly, until it hovers above [persistent.date] and you."
             n "A green pillar of light shoots out from inbetween the four thrusters at the bottom of the ufo."
             n "The beam envelops the both of you and before you can do anything [persistent.date] gets rapidly sucked into an opening of the hill that closes the moment [date_sub] [conj('date', 'is', 'are')] inside. It begins ascending again, only this time much faster."
@@ -1248,12 +1469,12 @@ label beach_deaths:
         n "(A flower pot falls on her)"
             
     label beach_holeDeath:
-        $ hole_death = True
+        $ persistent.beach_hole_death = True
         n "She fell down a hole in the sand, it collapses."
         jump gameOver  
             
     label beach_jellyDeath:
-        $ jelly_death = True
+        $ persistent.beach_jelly_death = True
         n "She stepped on a jellyfish and she got into cardiac arrest."
         if persistent.fish == True:
             $ Salmon1 = True
@@ -1282,6 +1503,19 @@ label other_deaths:
             n "You call an ambulance to go to [date_pos] house in the hope that this time [date_sub] might just survive... "
 
         play music game_over
+        $ _death_seen = check_death_skip("plane_death_untoldstory")
+        if is_death_skipped("plane_death_untoldstory"):
+            $ persistent.plane_knowledge = True
+            jump gameOver
+        elif _death_seen >= death_skip_threshold:
+            n "What's to come next is etched into your mind I'm sure, maybe it's better we just skip to how it ends?"
+            menu:
+                "Always skip this from now on.":
+                    $ set_death_always_skip("plane_death_untoldstory")
+                    $ persistent.plane_knowledge = True
+                    jump gameOver
+                "Show the death narration.":
+                    pass
         
         n "When the ambulance arrived there isn't much they could do, apparently a plane crashed on [persistent.date]'s house."
 
@@ -1300,15 +1534,168 @@ label other_deaths:
         n "As [persistent.date] hangs up [date_pos] phone you turn on the tv in frustration."
         n "The news is on apparently, it's talking about a plane that had lost height just a moment ago"
         play music game_over
+        $ _death_seen = check_death_skip("plane_death_phone")
+        if is_death_skipped("plane_death_phone"):
+            jump gameOver
+        elif _death_seen >= death_skip_threshold:
+            n "What's to come next is etched into your mind I'm sure, maybe it's better we just skip to how it ends?"
+            menu:
+                "Always skip this from now on.":
+                    $ set_death_always_skip("plane_death_phone")
+                    jump gameOver
+                "Show the death narration.":
+                    pass
         n "The plane crashed right in the living room of a nice looking house, the house doesn't look unfamilliar to you at all."
         n "Then it hits you."
         n "It's [date_pos] house."
+        if death_narration != "":
+            n "[death_narration]"
         jump gameOver
 
+    label reunion_death:
+        n "Suddenly you spot a very familiar red Sedan rushing towards all of you."
+        n "Things are hectic, the whole family is screaming and everything seems to happen in a blur."
+        n "You can't react in time before you meet the immense force of the car."
+        n "Everything turns to black."
+        n "After drifting  around in the dark for what feels like an eternity you awaken."
+        n "You find yourself in a hospital bed."
+        n "When you look around to check for any nurses or doctors you instead place your gaze on a half familiar figure."
+        n "It's [persistent.date_dad]."
+        d "Hello [persistent.name], I'm happy to see that you've finally awoken."
+        d "It's been quite a while, you've been in a coma for about 2 years."
+        n "You ponder the implications about what [persistent.date_dad] said for a moment when another thought enters your mind."
+        menu:
+            "What happened to [persistent.date]? Is everyone fine?":
+                d "[persistent.date] didn't make it..."
+                d "[persistent.date_mom] and [persistent.date_sis] are fine, as fine as they could be after losing [persistent.date]."
+                d "I am also moving along, it's what [date_sub] would have wanted I tell myself."
+                d "I won't make the same mistake as last time, my family needs me more than ever."
+                d "Most days, I get up and after eating breakfast and brushing my teeth I see them in the mirror, [persistent.date_ghost] and [persistent.date]."
+                d "The thing is, the first time I saw them I expected them to be angry, but they weren't, they were smilling at me."
+                d "They were asking me to keep living, because they couldn't anymore."
+                d "And now, I am asking you to undo all of this."
+                d "That's why I came to visit everyday these past 2 years, to beg you to undo all of this."
+                d "If it's possible I'd like to still have the reunion we had but with [date_obj] surviving."
+                d "Maybe if you didn't talk that long with us we would've walked away somewhere where that car wouldn't hit us?"
+                d "But, if you find out that [date_sub] [conj('date', 'dies', 'die')] whatever choice you make at the reunion, please don't reunite us again."
+                d "If I have to let her go to keep her safe, then so be it."
+                d "Can you promise me you'll try your best?" 
+                menu:
+                    "I promise.":
+                            d "Thank you [persistent.name], thank you for everything!"
+                            jump reunion_ending_davidLeavesSegway
+
+                    "Actually it doesn't work like that, [date_sub] will still stay dead in this world but will survive in another one.":
+                            d "Then please go through with it, make sure my [date_child] from another world is safe."
+                            d "I'm fine living my life like this, I can be there for [persistent.date_sis] and [persistent.date_mom], like I should have before."
+                            d "So go and be there for [persistent.date]."
+                            d "I'll live my life here with a smile, both for what I still have and what my other self will gain without knowing."
+                            jump reunion_ending_davidLeavesSegway
+
+                    "Oh, [date_sub] [conj('date', 'survives', 'survive')] in another outcome, I've already seen it." if persistent.ending_reunionGoodEnding:
+                            d "What?..."
+                            d "So you went back after you had already sucesfully reunited us?"
+                            d "Can I ask you why you did?"
+                            menu:
+                                "I hadn't seen what happened if I kept talking to all of you.":
+                                    d "So out of curiosity you just undid our perfect little ending?"
+                                    d "Why would you do that? Is this just some kind of game to you?"
+                                    d "I thought you wanted the best for my [date_child], for all of us."
+                                    d "However, it seems this hasn't been about [date_obj] for quite a while now."
+                                    menu:
+                                        "Of course not, I just wanted to see if there was a better ending somewhere for [date_obj].":
+                                                d "Oh spare me the nonsense. A better ending than being reunited with [date_pos] family and surviving?"
+                                                d "I assume the only one that ending didn't pan out for as hoped was you [persistent.name]."
+                                                d "Which meant you couldn't help but alter things."
+                                                d "I'm not sure what's worse, lying about doing this for [date_obj], or truly believing so."
+                                                d "Eitherway I want nothing to do with someone like you."
+                                                d "I might have been a coward when it mattered, but you aren't any different at all."
+                                                d "Undoing a world where all of us were happy just so you can chase a happy ending you're not even sure exists. Does this seem like that happy ending to you [persistent.name]?"
+                                                d "Well, I hope you heed these words and go back to the other ending, [date_sub] [conj('date', 'deserves', 'deserve')] that one, you know?"
+                                                d "Or at the very least [date_sub] [conj('date', 'deserves', 'deserve')] one where [date_sub] [conj('date', 'does', 'do')]n't die."
+                                                d "Somewhere deep down you must know that too, right? I'm not sure if you still feel that way but at some point you at the very least must've felt it."
+
+                                        "Of course, after a while repeating the same dialogue over and over got boring. This however is very interesting.":
+                                                d "... What do you mean?"
+                                                menu:
+                                                    "This is extra content, can't you see [persistent.date_dad]? Did you really think I reunited all of you out of the kindness of my heart?":
+                                                        d "..."
+                                                        menu:
+                                                            "To me you all are just lines of text, entertainment to stave off the boredom.":
+                                                                    d "..."
+                                                                    menu:
+                                                                        "When one set of lines becomes boring, I move on to the next. In this case that's you [persistent.date_dad]. Soon it will be the others.":
+                                                                            d "..."
+                                                                            d "{size=*2.5}No!{/size}"
+                                                                            d "No."
+                                                                            d "There is no way in {b} {i}hell{/i}{/b} that I'm going to let you play with my family like that."
+                                                                            d "I have abandoned them for too long, I won't do that again."
+                                                                            menu:
+                                                                                "Oh but you do so over and over and over again [persistent.date_dad]. Every restart means you've abandoned them once again.":
+                                                                                        d "... Maybe you are right."
+                                                                                        d "So I should really make this time count."
+                                                                                        d "This time I will not abandon them."
+                                                                                        n "[persistent.date_dad] takes a pillow that was resting next to you on the bed and presses it into your face, hard."
+                                                                                        n "You try to fight against [dad_obj] but your arms that haven't moved for years are no strength against [dad_pos] anger."
+                                                                                        n "Soon everything becomes black."
+                                                                                        jump gameOver
+                                                                                        
+                    "I have had this conversation with you multiple times already. I'm not promising you anything." if persistent.davidPromise:
+                            d "... You did? Then why did you make the same choice once again?"
+                            d "Why did you once again let everything go wrong?"
+                            d "Couldn't you have prevented it this time by doing literally anything else?"
+                            d "I really don't know what to make of you [persistent.name], you reunited us, right?"
+                            d "That must mean you want the best for all of us, or atleast for [persistent.date]."
+                            d "Otherwise, you wouldn't go through all the effort that undoubtedly took."
+                            n "[ghost_sub!c] [conj('dad', 'is', 'are')]n't exactly wrong... That took quite a few steps to set up. Your motivations are hard to get a grasp on."
+                            n "Especially since a lot of those steps were... less than ethical, yet you kept going."
+                            n "Now here you are, having this same conversation with [persistent.date_dad], once again."
+                            n "So [ghost_sub] [conj('ghost', 'is', 'are')] hitting the nail on the head with [ghost_pos] question, why {b}are{/b} you back here?"
+                            menu:
+                                "To see if there is some new dialogue.":
+                                    d "Really?"
+                                    d "That's all we are to you? Just some text on a screen?"
+                                    d "I can excuse and even accept that if that's how you view me. But [persistent.date]?"
+                                    d "The two of you must have been on countless dates for you to pull of our reunion, did all of that mean nothing to you?"
+                                    d "Was it all just nothing but words?"
+                                    d "Did you even reunite us because you cared for us, or did you just want to see what dialogue that would get you aswell?"
+                                    d "I can't- I can't stay here for any longer."
+                                    d "You let my daugther die- no, killed [date_obj], for some extra dialogue?"
+                                    d "[date_pos!c] life being in your hands is a fate worse than dying."
+
+                                "I am trying to find a better ending.":
+                                    d "A better ending than the one where me and my family get reunited and [persistent.date] survives?"
+                                    d "What exactly are you looking for in that case?"
+                                    d "What could possibly be better?"
+                                    n "[dad_sub!c] [conj('ghost', 'does', 'do')] have a point, that ending is as good as they come, isn't it?"
+                                    n "Do you really think there is something that is better for [date_obj], for them, in here?"
+                                    n "Or do you think there is something better for you in here?"
+                                    n "Perhaps an ending where the both of you end up together?"
+                                    d "I'm done. I genuinely thought you wanted the best for [date_obj], for us."
+                                    d "But now I see you as you are, and I want nothing to do with it."
+                                    d "Thank you for reuniting me with my family, but for nothing else."
+                                    d "At the very least we will be able to comfort eachother during our loss."
+                
+                                d "Goodbye [persistent.name]. And stay away from my [date_child] next time if [date_sub] only [conj('date', 'means', 'mean')] so little to you."
+                
+                label reunion_ending_davidLeavesSegway:
+                    d "I'll give you some time to recover, you'll need it."  
+                    d "Take it easy and once you are fully recovered you can try again."   
+                    n "[persistent.date_dad] gets up from [dad_pos] chair and walks towards the door, [dad_pos] hand rests on the doorhandle."
+                    d "Once again I'd like to thank you [persistent.name]."      
+                    d "Goodbye, and perhaps we'll meet again? Just, some other time."  
+                    n "With that [dad_sub] left."   
+                    n "Now you're once again alone." 
+                    n "Especially without [persistent.date]."
+                    n "Laying there, waiting, it is too much for you." 
+                    n "You want to see [date_obj] again, and preferably now."
+                    $ persistent.davidPromise = True
+                    jump gameOver
+ 
 
 
 label gameOver:
-    scene black
+    
     if kokiriStarGazed == True:
         $ persistent.kokiriWatchedStars = True
     if teaseDeath == True:
@@ -1319,33 +1706,58 @@ label gameOver:
         $ hugRequestedBeforeDeath = False
     $ persistent.lildeaths += 1
     $ persistent.retry_counter += 1
-    n "{size=*2.5}Game over{/size}"
     n "Your date surely didn't go as planned."
-    play music sunrise
+    $ show_cinematic_bars(sides=["top", "bottom"], size=550, duration=8, curve="ease")
+    pause 8
+
+    $ ending_title_card = ""
+    if lilithAliveEnding and ending_check != "":
+        $ ending_title_card = ending_title_from_check(ending_check)
+
+    transform gameover_zoom:
+        alpha 0.0
+        zoom 1.2
+        ease 1.2 alpha 1.0 zoom 1.0
+
+    transform endingcard_zoom:
+        alpha 0.0
+        zoom 1.08
+        ease 1.0 alpha 1.0 zoom 1.0
+
+    scene black
+    $ hide_cinematic_bars(animate=False, duration=0, curve="ease")
+
+    if ending_title_card != "":
+        show text "{color=#336600}{size=72}{b}ENDING{/b}{/size}\n{size=56}[ending_title_card]{/size}{/color}" at truecenter, endingcard_zoom
+    else:
+        show text "{color=#d00000}{size=90}{b}GAME OVER{/b}{/size}{/color}" at truecenter, gameover_zoom
+
+    pause 3
+
+    hide text
+    with Dissolve(1.0)
+    play music sunrise fadein 1.5
+    show screen retry_wall
+    pause 4
+    
+   
+    #TODO: Add like a glitch effect here maybe? The first time it is definetly allowed to be longer, after that I'd like it to be more subtle but it shows the game "broken" in a way, allowing the player to retry.
+    
     menu :
-        "Retry." if not lilithAliveEnding:
+        "Retry." if not lilithAliveEnding and ending_check != "Voided":
+            hide screen retry_wall
             if  persistent.kokiri_angry_noretry == True or persistent.chinese_phone_noretry == True:
                 n "So you are going back even when [date_sub] [conj('date', 'asked', 'ask')] you not to?"
                 n "In that case I hope you at the very least don't make the same mistake you did last time."
             jump game_start
-        "Retry?" if lilithAliveEnding:
+        "Retry?" if lilithAliveEnding and ending_check != "Voided":
+            hide screen retry_wall
             $ persistent.lilithAliveAndRetriedCounter += 1
             $ lilithAliveEnding = False
-            
-            if ending_check == "reunionGoodEnding":
-                $ persistent.ending_reunionGoodEnding_counter = 0
-            elif ending_check == "lettingGo":
-                $ persistent.ending_lettingGo_counter = 0
-            elif ending_check == "unseenContent":
-                $ persistent.ending_unseenContent_counter  = 0
-            elif ending_check == "anEnding":
-                $ persistent.ending_anEnding_counter  = 0
-            elif ending_check == "quitter":
-                $ persistent.ending_quitter_counter = 0
-            elif ending_check == "breakup":
-                $ persistent.ending_breakup_counter = 0
-            elif ending_check == "abigailDistraction":
-                $ persistent.ending_abigailDistraction_counter = 0
-            elif ending_check == "badDate":
-                $ persistent.ending_badDate_counter = 0
+            $ increment_ending_retry_count(ending_check)
             jump game_start
+
+        "Let go." if ending_check == "Voided":
+            $ start_over_reset()
+            $ persistent.pictureBookUnlocked = True #Upon the next boot up of the game it should just become a picture book with all kinds of screenshots from the game while you played. Maybe some new art etc.
+            $ renpy.quit()

@@ -3,9 +3,12 @@ default cinematic_textbox_shift = True
 default cinematic_textbox_shift_last_size = 0
 default cinematic_textbox_shift_prev_shift = 0
 # Cinematic Black Bars Overlay
-# Usage: call show_cinematic_bars(sides=["top","bottom"], size=120, animate=True)
 
 default cinematic_bars_state = {"sides": [], "size": 0, "target_size": 0, "animate": False, "duration": 0.3, "hide_duration": 0.3, "retracting": False, "retract_from": 0, "retract_pending": False, "curve": None, "block_dismiss_until": 0.0}
+default persistent.menu_choice_history = {}
+default persistent.menu_choice_history_display = {}
+default persistent.menu_choice_history_current = {}
+default persistent.auto_pick_underlined_choice = False
 
 
 screen cinematic_bars():
@@ -115,7 +118,7 @@ init python:
 
     def hide_cinematic_bars(animate=True, duration=0.3, curve=None):
         """
-        Hides the cinematic bars (animates out if animate=True).
+        Hides the cinematic bars (animates out if animate equals True).
         curve: same options as show_cinematic_bars (None/"linear", "ease", etc.)
         """
         global cinematic_bars_state, cinematic_textbox_shift_prev_shift, cinematic_textbox_shift_last_size
@@ -590,12 +593,99 @@ style input:
 ##
 ## https://www.renpy.org/doc/html/screen_special.html#choice
 
+init python:
+    def _choice_menu_id():
+        filename, line = renpy.get_filename_line()
+        return "%s:%s" % (filename, line)
+
+    def _choice_caption_key(caption):
+        return renpy.substitute(caption)
+
+    def _ensure_menu_choice_history():
+        legacy = getattr(persistent, "menu_choice_history", None)
+
+        if getattr(persistent, "menu_choice_history_display", None) is None or not isinstance(persistent.menu_choice_history_display, dict):
+            # Migrate legacy storage so existing data remains visible.
+            persistent.menu_choice_history_display = legacy if isinstance(legacy, dict) else {}
+
+        if getattr(persistent, "menu_choice_history_current", None) is None or not isinstance(persistent.menu_choice_history_current, dict):
+            persistent.menu_choice_history_current = {}
+
+        if not isinstance(legacy, dict):
+            persistent.menu_choice_history = {}
+
+    def start_menu_choice_session(menu_id):
+        _ensure_menu_choice_history()
+
+        previous = persistent.menu_choice_history_current.get(menu_id, [])
+        if isinstance(previous, list) and previous:
+            # Show only the immediately previous encounter of this menu.
+            persistent.menu_choice_history_display[menu_id] = list(previous)
+
+        # Start a fresh sequence for this encounter.
+        persistent.menu_choice_history_current[menu_id] = []
+
+    def remember_menu_choice(menu_id, caption):
+        _ensure_menu_choice_history()
+        caption_key = _choice_caption_key(caption)
+
+        choices = persistent.menu_choice_history_current.get(menu_id, [])
+        if not isinstance(choices, list):
+            choices = []
+
+        choices.append(caption_key)
+        persistent.menu_choice_history_current[menu_id] = choices
+
+    def get_menu_choice_order_marks(menu_id):
+        _ensure_menu_choice_history()
+
+        marks = {}
+        choices = persistent.menu_choice_history_display.get(menu_id, [])
+        if not isinstance(choices, list):
+            return marks
+
+        for idx, cap in enumerate(choices, 1):
+            marks.setdefault(cap, []).append(idx)
+
+        return marks
+
+    def get_auto_pick_item(items, marks):
+        """Return the marked item that was chosen latest in the previous encounter."""
+        if not marks:
+            return None
+
+        best_item = None
+        best_order = -1
+
+        for i in items:
+            if not i.action:
+                continue
+
+            key = _choice_caption_key(i.caption)
+            order_marks = marks.get(key, [])
+            if not order_marks:
+                continue
+
+            last_order = order_marks[-1]
+            if last_order > best_order:
+                best_order = last_order
+                best_item = i
+
+        return best_item
+
+    def underline_if_marked(text, is_marked):
+        if not is_marked:
+            return text
+        return "{u}%s{/u}" % text
+
 screen choice(items):
     style_prefix "choice"
     zorder 100
 
     default max_visible = 5
     default _inline_hovered = ""
+    default _menu_session_initialized = False
+    default _auto_pick_scheduled = False
 
     ## Shift choices up when cinematic bottom bar is active.
     $ _choice_shift = cinematic_bars_state["target_size"] if cinematic_textbox_shift and "bottom" in cinematic_bars_state["sides"] and cinematic_bars_state["target_size"] > 0 else 0
@@ -613,6 +703,19 @@ screen choice(items):
 
     ## Number-key map: maps each active item's id to its 1-based choice number.
     $ _num_map = {id(i): idx+1 for idx, i in enumerate(_active)}
+    $ _menu_id = _choice_menu_id()
+
+    if not _menu_session_initialized:
+        $ start_menu_choice_session(_menu_id)
+        $ _menu_session_initialized = True
+
+    $ _menu_choice_marks = get_menu_choice_order_marks(_menu_id)
+    $ _auto_pick_item = get_auto_pick_item(_active, _menu_choice_marks)
+    $ _auto_pick_delay = max(0.25, min(2.0, float(getattr(preferences, "afm_time", 15.0) or 15.0) / 15.0))
+
+    if persistent.auto_pick_underlined_choice and preferences.afm_enable and _auto_pick_item is not None and not _auto_pick_scheduled:
+        $ _auto_pick_scheduled = True
+        timer _auto_pick_delay action [Function(remember_menu_choice, _menu_id, _auto_pick_item.caption), _auto_pick_item.action, Function(narrator.add_history, kind="adv", who=("{color=#7BCF7D}%s" % persistent.name), what=__(_auto_pick_item.caption))] repeat False
 
     ## Bind number keys 1–9 (main and numpad) to the corresponding active choice when enabled.
     if persistent.number_keys:
@@ -642,139 +745,49 @@ screen choice(items):
                         if i.action is None:
                             text i.caption style "inline_choice_caption"
                         else:
-                            $ _short = truncate_to_width(i.caption, gui.dialogue_width - 72)
+                            $ safe_caption = renpy.substitute(i.caption)
+                            $ _inline_text_max = max(120, gui.dialogue_width - gui.scrollbar_size - 120)
+                            $ _short = truncate_to_width(safe_caption, _inline_text_max)
+                            $ _choice_key = _choice_caption_key(i.caption)
+                            $ _was_marked = bool(_menu_choice_marks.get(_choice_key, []))
+                            #TODO: Make the truncuation revealing work better. have it always show the full text the same way.
                             $ _hovering = (_inline_hovered == i.caption)
                             $ _nprefix = ("%d. " % _num_map[id(i)]) if persistent.number_keys and id(i) in _num_map else ""
-                            $ _caption_display = _nprefix + (i.caption if _hovering else _short)
+                            $ _base_caption = (safe_caption if _hovering else _short)
+                            $ _caption_display = _nprefix + underline_if_marked(_base_caption, _was_marked)
                             button:
                                 alt i.caption
                                 style "inline_choice_button"
                                 hovered SetScreenVariable("_inline_hovered", i.caption)
                                 unhovered SetScreenVariable("_inline_hovered", "")
-                                action [i.action, Function(narrator.add_history, kind="adv", who=("{color=#7BCF7D}%s" % persistent.name), what=__(i.caption))]
+                                action [Function(remember_menu_choice, _menu_id, i.caption), i.action, Function(narrator.add_history, kind="adv", who=("{color=#7BCF7D}%s" % persistent.name), what=__(i.caption))]
                                 hbox:
                                     spacing 20
-                                    add Transform("gui/bullet_loop.png", matrixcolor=(TintMatrix("#336600") if _inline_hovered == i.caption else TintMatrix("#707070")), zoom=(0.5 * gui.text_size / 33.0)) yalign 0.5
+                                    $ _bullet_num = min(7, max(0, persistent.lildeaths))
+                                    $ _bullet_img = "gui/bullet_loop.png" if _bullet_num == 0 else "gui/bullet_loop%s.png" % _bullet_num
+                                    yalign 0.5
+
+                                    add Transform(
+                                        _bullet_img,
+                                        zoom=0.09,
+                                        matrixcolor=(
+                                            ColorizeMatrix("#336600", "#ffffff")
+                                            if _inline_hovered == i.caption
+                                            else ColorizeMatrix("#000000", "#ffffff") ##707070 is also pretty for the dark color
+                                        )
+                                    ):
+                                        yalign 0.5
+                                    
+
+
                                     text _caption_display:
                                         style "inline_choice_button_text"
+                                        xmaximum _inline_text_max
                                         xfill True
+                                        layout "subtitle"
+                                        yalign 0.5
 
-    elif len(_active) > _scroll_at:
-        # ── Scrollable version — UNTOUCHED ─────────────────────────────
-        window:
-            background None
-            xalign 0.5
-            ypos 650
-            yanchor 0.0
-            at textbox_shift_static(_choice_shift)
-            
-
-            viewport:
-                draggable True
-                mousewheel True
-                pagekeys True
-                scrollbars "vertical"
-                xalign 0.5
-                yalign 0.5
-                xsize 1200  
-                ymaximum 280 
-
-                vbox:
-                    spacing 10
-                    xalign 0.5
-                    yalign 0.5
-                    for i in items:
-                        button:
-                            style "choice_button"
-                            hovered SetScreenVariable("_inline_hovered", i.caption)
-                            unhovered SetScreenVariable("_inline_hovered", "")
-                            action [i.action, Function(narrator.add_history, kind="adv", who=("{color=#7BCF7D}%s" % persistent.name), what=__(i.caption))]
-                            hbox:
-                                spacing 20
-                                add Transform("gui/bullet_loop.png", matrixcolor=(TintMatrix("#336600") if _inline_hovered == i.caption else TintMatrix("#707070")), zoom=(0.5 * gui.text_size / 33.0)) yalign 0.5
-                                text (("%d. " % _num_map[id(i)]) + i.caption if persistent.number_keys and id(i) in _num_map else i.caption) style "choice_button_text"
-
-    elif len(_active) <= 2 or not persistent.grid_choices:
-        # ── Default stacked layout (1–2 choices, or compact grid turned off) ─
-        vbox:
-            style "grid_choice_vbox"
-            at textbox_shift_static(_choice_shift)
-            for i in items:
-                button:
-                    style "choice_button"
-                    hovered SetScreenVariable("_inline_hovered", i.caption)
-                    unhovered SetScreenVariable("_inline_hovered", "")
-                    action [i.action, Function(narrator.add_history, kind="adv", who=("{color=#7BCF7D}%s" % persistent.name), what=__(i.caption))]
-                    hbox:
-                        spacing 20
-                        add Transform("gui/bullet_loop.png", matrixcolor=(TintMatrix("#336600") if _inline_hovered == i.caption else TintMatrix("#707070")), zoom=(0.5 * gui.text_size / 33.0)) yalign 0.5
-                        text (("%d. " % _num_map[id(i)]) + i.caption if persistent.number_keys and id(i) in _num_map else i.caption) style "choice_button_text"
-
-    else:
-        ## ── Compact grid layout (3–4 items, grid mode on) ──────────────
-        vbox:
-            style "grid_choice_vbox"
-            at textbox_shift_static(_choice_shift)
-            if len(_active) == 3:
-                # Row 1: first 2 side by side
-                hbox:
-                    spacing 30
-                    xalign 0.5
-                    for i in _active[:2]:
-                        $ _short = truncate_choice(i.caption)
-                        $ _nprefix = ("%d. " % _num_map[id(i)]) if persistent.number_keys else ""
-                        textbutton (_nprefix + _short):
-                            alt i.caption
-                            style "grid_choice_button"
-                            tooltip (i.caption if _short != i.caption else "")
-                            action [i.action, Function(narrator.add_history, kind="adv", who=("{color=#7BCF7D}%s" % persistent.name), what=__(i.caption))]
-                # Row 2: last choice centered
-                hbox:
-                    spacing 30
-                    xalign 0.5
-                    for i in _active[2:]:
-                        $ _short = truncate_choice(i.caption)
-                        $ _nprefix = ("%d. " % _num_map[id(i)]) if persistent.number_keys else ""
-                        textbutton (_nprefix + _short):
-                            alt i.caption
-                            style "grid_choice_button"
-                            tooltip (i.caption if _short != i.caption else "")
-                            action [i.action, Function(narrator.add_history, kind="adv", who=("{color=#7BCF7D}%s" % persistent.name), what=__(i.caption))]
-
-            else:
-                # 4 items: 2×2 grid
-                hbox:
-                    spacing 30
-                    xalign 0.5
-                    for i in _active[:2]:
-                        $ _short = truncate_choice(i.caption)
-                        $ _nprefix = ("%d. " % _num_map[id(i)]) if persistent.number_keys else ""
-                        textbutton (_nprefix + _short):
-                            alt i.caption
-                            style "grid_choice_button"
-                            tooltip (i.caption if _short != i.caption else "")
-                            action [i.action, Function(narrator.add_history, kind="adv", who=("{color=#7BCF7D}%s" % persistent.name), what=__(i.caption))]
-                hbox:
-                    spacing 30
-                    xalign 0.5
-                    for i in _active[2:]:
-                        $ _short = truncate_choice(i.caption)
-                        $ _nprefix = ("%d. " % _num_map[id(i)]) if persistent.number_keys else ""
-                        textbutton (_nprefix + _short):
-                            alt i.caption
-                            style "grid_choice_button"
-                            tooltip (i.caption if _short != i.caption else "")
-                            action [i.action, Function(narrator.add_history, kind="adv", who=("{color=#7BCF7D}%s" % persistent.name), what=__(i.caption))]
-
-    ## ── Tooltip notecard — yellow card with full text on hover ─────────────
-    if tt and persistent.grid_choices and 2 < len(_active) <= 4 and not persistent.inline_choices:
-        frame:
-            style "notecard_frame"
-            xalign 0.5
-            yalign 0.90 # Slightly lower to ensure 30px gap
-            xmaximum 820
-            text tt:
-                style "notecard_text"
+   
 
 
 
@@ -872,7 +885,21 @@ init python:
     config.overlay_screens.append("quick_menu")
 
     def start_over_reset():
-        _pref_keys = ["font_choice", "text_size_offset", "text_outline", "grid_choices", "inline_choices", "number_keys"]
+        _pref_keys = [
+            "font_choice",
+            "text_size_offset",
+            "text_outline",
+            "talking_animation_mode",
+            "grid_choices",
+            "inline_choices",
+            "number_keys",
+            "auto_pick_underlined_choice",
+            "pictureBookUnlocked",
+            "gallery_unlocked",
+            "menu_choice_history",
+            "menu_choice_history_display",
+            "menu_choice_history_current",
+        ]
         _saved = {k: getattr(persistent, k, None) for k in _pref_keys}
         persistent._clear()
         for k, v in _saved.items():
@@ -923,6 +950,9 @@ screen navigation():
             textbutton _("Load") action ShowMenu("load")
 
         textbutton _("Preferences") action ShowMenu("preferences")
+
+        if main_menu and getattr(persistent, "gallery_unlocked", True):
+            textbutton _("Gallery") action Start("gallery")
 
         if _in_replay:
 
@@ -1415,6 +1445,7 @@ screen preferences():
                     textbutton _("Compact Grid") action ToggleField(persistent, "grid_choices")
                     textbutton _("Inline") action ToggleField(persistent, "inline_choices")
                     textbutton _("Number Keys") action ToggleField(persistent, "number_keys")
+                    textbutton _("Auto Pick Underlined") action ToggleField(persistent, "auto_pick_underlined_choice")
 
                 ## Additional vboxes of type "radio_pref" or "check_pref" can be
                 ## added here, to add additional creator-defined preferences.
@@ -1568,6 +1599,7 @@ screen text_settings():
     default font_open        = False
     default outline_open     = False
     default customfont_open  = False
+    default talking_mode_open = False
 
     ## Rebuild styles once when the player navigates away so gui.rebuild()
     ## never fires mid-drag (which would kill the drag gesture).
@@ -1607,14 +1639,16 @@ screen text_settings():
                                     action [SetFont("DejaVuSans.ttf"), SetLocalVariable("font_open", False)]
                                     text_font "DejaVuSans.ttf"
                                 textbutton _("Pacifico"):
-                                    action [SetFont("Pacifico-Regular.ttf"), SetLocalVariable("font_open", False)]
-                                    text_font "Pacifico-Regular.ttf"
+                                    action [SetFont("defaultFonts/Pacifico-Regular.ttf"), SetLocalVariable("font_open", False)]
+                                    text_font "defaultFonts/Pacifico-Regular.ttf"
+
                                 textbutton _("Indie Flower"):
-                                    action [SetFont("IndieFlower-Regular.ttf"), SetLocalVariable("font_open", False)]
-                                    text_font "IndieFlower-Regular.ttf"
+                                    action [SetFont("defaultFonts/IndieFlower-Regular.ttf"), SetLocalVariable("font_open", False)]
+                                    text_font "defaultFonts/IndieFlower-Regular.ttf"
+
                                 textbutton _("Shadows Into Light"):
-                                    action [SetFont("ShadowsIntoLight-Regular.ttf"), SetLocalVariable("font_open", False)]
-                                    text_font "ShadowsIntoLight-Regular.ttf"
+                                    action [SetFont("defaultFonts/ShadowsIntoLight-Regular.ttf"), SetLocalVariable("font_open", False)]
+                                    text_font "defaultFonts/ShadowsIntoLight-Regular.ttf"
 
                 ## Custom Font dropdown — only shown when custom fonts are present.
                 if CUSTOM_FONTS:
@@ -1662,6 +1696,30 @@ screen text_settings():
                                     action [SetTextOutline("outline"), SetLocalVariable("outline_open", False)]
                                 textbutton _("Shadow"):
                                     action [SetTextOutline("shadow"),  SetLocalVariable("outline_open", False)]
+
+                ## Talking Animation dropdown
+                vbox:
+                    spacing 4
+
+                    label _("Talking Animation"):
+                        style "pref_label"
+
+                    textbutton ("[get_talking_animation_mode_label()]  [u'▲' if talking_mode_open else u'▼']"):
+                        action ToggleLocalVariable("talking_mode_open")
+                        style "pref_label_text"
+                        ypadding 6
+
+                    if talking_mode_open:
+                        frame:
+                            padding (8, 6, 8, 6)
+                            vbox:
+                                style_prefix "radio"
+                                textbutton _("Count + Text Speed"):
+                                    action [SetField(persistent, "talking_animation_mode", TALKING_MODE_ADAPTIVE), SetLocalVariable("talking_mode_open", False)]
+                                textbutton _("Fixed Interval"):
+                                    action [SetField(persistent, "talking_animation_mode", TALKING_MODE_FIXED), SetLocalVariable("talking_mode_open", False)]
+                                textbutton _("Count + Fixed Speed"):
+                                    action [SetField(persistent, "talking_animation_mode", TALKING_MODE_MIXED), SetLocalVariable("talking_mode_open", False)]
 
             null height (4 * gui.pref_spacing)
 
@@ -2607,103 +2665,222 @@ screen change_names_menu():
         style_prefix "menu"
         xalign 0.5
         yalign 0.5
-        xsize 1150
-        ysize 720
+        xsize 1220
+        ysize 780
 
         vbox:
-            spacing 8
+            spacing 14
+            xfill True
 
-            text "Change Character info" size 26 xalign 0.5
+            text "Character Info" style "charinfo_title_text" xalign 0.5
+            text "Temporary menu for now" style "charinfo_subtitle_text" xalign 0.5
+
+            $ _role_labels = {
+                'date': 'Date',
+                'date_sis': 'Younger Sibling',
+                'date_dad': 'Lost Parent',
+                'date_mom': 'Parent',
+                'date_ghost': 'Lost Sibling',
+            }
 
             viewport:
                 scrollbars "vertical"
                 mousewheel True
                 draggable True
-                xsize 1110
-                ysize 620
+                xsize 1180
+                ysize 590
 
                 vbox:
-                    spacing 10
-                    xsize 1090
+                    spacing 16
+                    xsize 1140
 
 
                     for npc_var, npc_default, nickname_default in _NPC_DEFAULTS:
                         $ _p = _get_pronoun_dict(npc_var)
                         $ _f = _get_family_dict(npc_var)
                         $ _family_defs = _FAMILY_DEFAULTS.get(npc_var, {})
+                        $ _current_name = getattr(persistent, npc_var, npc_default)
+                        $ _current_nickname = getattr(persistent, npc_var + '_nickname', nickname_default)
+                        $ _vs_label = "Singular (she/he)" if _p.get('vs', 's') == 's' else "Plural (they/them)"
 
                         frame:
-                            background "#CCCCCC"
-                            padding (12, 10)
-                            margin (4, 4)
+                            style "charinfo_card_frame"
                             xfill True
 
                             vbox:
-                                spacing 6
+                                spacing 14
 
-                                # Label for the character section
-                                $ _role_labels = {
-                                    'date': 'Date',
-                                    'date_sis': 'Younger Sibling',
-                                    'date_dad': 'Lost Parent',
-                                    'date_mom': 'Parent',
-                                    'date_ghost': 'Lost Sibling',
-                                }
-                                text _role_labels.get(npc_var, npc_var) size 20
-
-                                ## Name + Nickname on one row
                                 hbox:
-                                    spacing 30
+                                    spacing 24
                                     xfill True
-
-                                    hbox:
-                                        spacing 8
-                                        yalign 0.5
-                                        text f"Name: {getattr(persistent, npc_var, npc_default)}" yalign 0.5 size 18
-                                        textbutton "Edit" yalign 0.5 action Show("show_name_input_screen", npc_var=npc_var, npc_default=npc_default)
-
-                                    hbox:
-                                        spacing 8
-                                        yalign 0.5
-                                        text f"Nickname: {getattr(persistent, npc_var + '_nickname', nickname_default)}" yalign 0.5 size 18
-                                        textbutton "Edit" yalign 0.5 action Show("show_nickname_input_screen", nickname_var=npc_var + "_nickname", nickname_default=nickname_default)
-
-                                ## Pronoun preview + button
-                                hbox:
-                                    spacing 16
                                     yalign 0.5
-                                    text f"Pronouns: {_p.get('sub','')} / {_p.get('obj','')} / {_p.get('pos','')} / {_p.get('ref','')} / {_p.get('pred','')}" yalign 0.5 size 17
-                                    textbutton "Change Pronouns" yalign 0.5 action Show("change_pronouns_screen", npc_var=npc_var, npc_label=npc_default)
 
-                                ## Verb singular/plural toggle
+                                    vbox:
+                                        spacing 4
+                                        xfill True
+                                        text _role_labels.get(npc_var, npc_var) style "charinfo_role_text"
+                                        text _current_name style "charinfo_name_text"
+                                        text "Nickname: [_current_nickname]" style "charinfo_nickname_text"
+
+                                    textbutton "Change Pronouns":
+                                        style "charinfo_action_button"
+                                        action Show("change_pronouns_screen", npc_var=npc_var, npc_label=npc_default)
+                                        yalign 0.5
+
                                 hbox:
-                                    spacing 16
-                                    yalign 0.5
-                                    $ _vs_label = "Singular (she/he)" if _p.get('vs', 's') == 's' else "Plural (they/them)"
-                                    text f"Verbs: {_vs_label}" yalign 0.5 size 17
-                                    textbutton "Change Verbs" yalign 0.5 action Show("change_verbs_screen", npc_var=npc_var, npc_label=npc_default)
+                                    box_wrap True
+                                    spacing 14
 
-                                ## Family terms preview + edit buttons
+                                    frame:
+                                        style "charinfo_section_frame"
+                                        xsize 520
+
+                                        vbox:
+                                            spacing 10
+                                            text "Identity" style "charinfo_section_title_text"
+
+                                            hbox:
+                                                spacing 12
+                                                yalign 0.5
+                                                xalign 0.0
+                                                text "Name" style "charinfo_label_text"
+                                                text "[_current_name]" style "charinfo_value_text"
+                                                textbutton "Edit":
+                                                    style "charinfo_action_button"
+                                                    action Show("show_name_input_screen", npc_var=npc_var, npc_default=npc_default)
+
+                                            hbox:
+                                                spacing 12
+                                                yalign 0.5
+                                                xalign 0.0
+                                                text "Nickname" style "charinfo_label_text"
+                                                text "[_current_nickname]" style "charinfo_value_text"
+                                                textbutton "Edit":
+                                                    style "charinfo_action_button"
+                                                    action Show("show_nickname_input_screen", nickname_var=npc_var + "_nickname", nickname_default=nickname_default)
+
+                                    frame:
+                                        style "charinfo_section_frame"
+                                        xsize 590
+
+                                        vbox:
+                                            spacing 10
+                                            text "Grammar" style "charinfo_section_title_text"
+
+                                            hbox:
+                                                spacing 12
+                                                yalign 0.5
+                                                xalign 0.0
+                                                text "Pronouns" style "charinfo_label_text"
+                                                text "[_p.get('sub','')] / [_p.get('obj','')] / [_p.get('pos','')] / [_p.get('ref','')] / [_p.get('pred','')]" style "charinfo_value_text" xmaximum 360 layout "subtitle"
+
+                                            hbox:
+                                                spacing 12
+                                                yalign 0.5
+                                                xalign 0.0
+                                                text "Verb Form" style "charinfo_label_text"
+                                                text "[_vs_label]" style "charinfo_value_text"
+                                                textbutton "Change":
+                                                    style "charinfo_action_button"
+                                                    action Show("change_verbs_screen", npc_var=npc_var, npc_label=npc_default)
+
                                 if _family_defs:
                                     frame:
-                                        background "#EEEEEE"
-                                        padding (8, 6)
-                                        margin (4, 2)
+                                        style "charinfo_section_frame"
+
                                         vbox:
-                                            spacing 4
-                                            text "Family Terms:" size 16 color "#444"
+                                            spacing 8
+                                            text "Family Terms" style "charinfo_section_title_text"
                                             for term_key, term_label in _family_defs.items():
                                                 hbox:
-                                                    spacing 8
+                                                    spacing 12
                                                     yalign 0.5
-                                                    text f"{term_key}: {_f.get(term_key, term_label)}" yalign 0.5 size 15
-                                                    textbutton "Edit" yalign 0.5 action Show("show_family_input_screen", npc_var=npc_var, term_key=term_key, term_label=term_key, term_default=term_label)
+                                                    xalign 0.0
+                                                    text "[term_key]" style "charinfo_label_text"
+                                                    text "[_f.get(term_key, term_label)]" style "charinfo_value_text"
+                                                    textbutton "Edit":
+                                                        style "charinfo_action_button"
+                                                        action Show("show_family_input_screen", npc_var=npc_var, term_key=term_key, term_label=term_key, term_default=term_label)
 
             hbox:
-                spacing 16
+                spacing 22
                 xalign 0.5
                 textbutton "Reset to Defaults" action [Function(reset_all_character_defaults), Function(renpy.restart_interaction)] style "menu_button"
                 textbutton "Return" action Return() style "menu_button"
+
+
+style charinfo_card_frame is frame
+style charinfo_section_frame is frame
+style charinfo_title_text is gui_label_text
+style charinfo_subtitle_text is gui_text
+style charinfo_role_text is gui_text
+style charinfo_name_text is gui_label_text
+style charinfo_nickname_text is gui_text
+style charinfo_section_title_text is gui_label_text
+style charinfo_label_text is gui_text
+style charinfo_value_text is gui_text
+style charinfo_action_button is button
+style charinfo_action_button_text is button_text
+
+style charinfo_card_frame:
+    background "#F2ECE0"
+    padding (22, 18)
+    margin (4, 4)
+
+style charinfo_section_frame:
+    background "#FBF8F1"
+    padding (14, 12)
+    margin (2, 2)
+
+style charinfo_title_text:
+    size 34
+    color gui.accent_color
+    text_align 0.5
+
+style charinfo_subtitle_text:
+    size 17
+    color "#5C5346"
+    text_align 0.5
+
+style charinfo_role_text:
+    size 15
+    color "#8D5A2B"
+
+style charinfo_name_text:
+    size 28
+    color "#241B12"
+
+style charinfo_nickname_text:
+    size 17
+    color "#6B6257"
+    italic True
+
+style charinfo_section_title_text:
+    size 20
+    color "#3B2E20"
+
+style charinfo_label_text:
+    size 16
+    color "#7A6B59"
+    xminimum 130
+    yalign 0.5
+
+style charinfo_value_text:
+    size 18
+    color "#1F1811"
+    xalign 0.0
+    text_align 0.0
+    yalign 0.5
+    xminimum 180
+    xmaximum 360
+
+style charinfo_action_button:
+    properties gui.button_properties("button")
+    xminimum 120
+    ypadding 6
+
+style charinfo_action_button_text:
+    properties gui.button_text_properties("button")
 
 
 screen change_verbs_screen(npc_var, npc_label):
@@ -2715,7 +2892,7 @@ screen change_verbs_screen(npc_var, npc_label):
         xalign 0.5
         yalign 0.5
         xsize 500
-        ysize 280
+        ysize 340
 
         vbox:
             spacing 20
@@ -2740,7 +2917,7 @@ screen change_verbs_screen(npc_var, npc_label):
                     Return(),
                 ]
 
-            textbutton "Return" action Return() style "menu_button" xalign 0.5
+            textbutton "Return" action Return() style "menu_button" xalign 0.5 top_margin 8
 
 
 screen change_pronouns_screen(npc_var, npc_label):
@@ -2788,4 +2965,24 @@ screen change_pronouns_screen(npc_var, npc_label):
                         textbutton "Edit" yalign 0.5 xalign 1.0 action Show("show_pronoun_input_screen", npc_var=npc_var, form_key=form_key, pronoun_label=form_label, pronoun_default=_p.get(form_key, ""))
 
             textbutton "Return" action Return() style "menu_button" xalign 0.5
+    
+screen retry_wall():
 
+    tag menu
+
+    # Fullscreen container
+    frame:
+        xfill True
+        yfill True
+        background "#000000"
+
+        grid 20 12:
+            xfill True
+            yfill True
+
+            spacing 10
+
+            # Fill the grid with "retry"
+            for i in range(240):
+                text "{glitch=50}{color=#ff0000}retry{/color}{/glitch}"
+                #text "retry" size 20 color "#ff4444"

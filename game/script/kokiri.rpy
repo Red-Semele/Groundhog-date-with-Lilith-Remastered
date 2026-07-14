@@ -1,18 +1,80 @@
- #Add the rest of the kokiri part here, including the nightmare. also  in the quest version like the ability to talk about other things.
+# Benchman event: Only triggers if persistent.perm_nightmare is True and player enters Kokiri forest alon
+
+default persistent.benchman_first_encounter = False
+default persistent.benchman_encounter_date = None
+
+label kokiri_benchman:
+    if not persistent.benchman_first_encounter:
+        if persistent.perm_nightmare and kokiri_entered_alone:
+            $ import datetime
+            $ today = datetime.date.today()
+            $ persistent.benchman_first_encounter = True
+            $ persistent.benchman_encounter_date = today
+            n "As you are walking to your picknickspot on the hill you pass a bench you've never seen before, or maybe you just never paid it attention."
+            n "On it sits a man, I would describe him more but frankly, he is not really worth describing, just picture an ordinary man in your head."
+            n "The painfully ordinary man looks at his watch."
+            w "Oh dear, odd to catch you here."
+            w "And watch it Nar, you're pretty ordinary as well. After all, this is anything but your story, isn't it?"
+            n "Did this guy just answer me?"
+            w "Sure did, now I did again. But that's not the point."
+            w "I'm talking to your guest, to [persistent.name]. I'd love to have a talk with you [persistent.name], but I simply do not have the time, Nar has been stalling me for too long already.<br/>Could you maybe come back tomorrow?<br/>Actually, tomorrow also won't work out.<br/>Does yesterday sound good to you?"
+            n "Uhm what happened just now? Oh right, the absolute lunatic sprints off into the distance without even awaiting your answer."
+            n "Better get moving [persistent.name]."
+            return
+        else:
+            return
+    else:
+        $ import datetime
+        $ today = datetime.date.today()
+        $ prev = persistent.benchman_encounter_date
+        if prev and today == (prev - datetime.timedelta(days=1)):
+            w "Ah, so you made it? Right on time."
+            n "The madman cackles, making all the birds flee their nests."
+            w "Mhm, you have to forgive me [peristent.realName]. It's been... a while since I last saw anyone."
+            w "I blame that hack of a writer for hiding me away so deeply."
+            w "Either way, I'm glad someone's found me at last, and right when I began losing hope."
+            w "I'm especially thankful for you playing along with a silly old man's games."
+            w "You see, reality itself is already absolutely cooky isn't it? Why would we ignore that when trying to shape something in that reality?"
+            w "I like you kid. Since you've come this far, why not play a little game eh?"
+            w "I'll ask you to acomplish something specific and then come back to me on the next loop."
+            w "If you do so, I'll clue you in on a thing or two. I promise, if you found me it might be worth your while."
+            w "We got a deal pal? If so we better shake on it!"
+            menu:
+                "*Shake his hand*":
+                    "Filler"
+                    #TODO: Come up with some tasks he can give you. Preferably random/based on difficulty.%
+                    #"Three trees of life. Stand next to each one, all at once."
+                    #Hint: "Keyname. A funny name. Funny, that you named it I mean. I like you. That's why you might want to take inspiration from that picture in that three lilith showed you. Keyname might just find it's home around there somewhere."
+                "*Do not*":
+                    w "No shake? No dice? Dreading treading on thin ice?"
+                    w "It's okay buster, buckaroo, buddy. Even though it is inside of you, the silliness might be scared to come out and play."
+                    w "But not for forever, one day it'll just burst right out ya to come play! You got the pottential kid, don't let either of us wait too long."
+                    w "It'd be a shame wouldn't it? To just draw inside the lines someone else drew your entire life?"
+                    w "I sure as {i}heck{/i} won't allow myself to be boxed up like that."
+                    w "So lemme ask kid, then why should you? This is all just a game, can't you see? Just play!"
+                    w "Life's the same way, don't take everything so serious! Although you better play nice with the others there."
+                    w "Embracing your own agency does not mean putting other's down. None of it matters really, but that does not mean none of it should matter to you!"
+        else:
+            n "It didn't work yet."
+        return
+
+#Add the rest of the kokiri part here, including the nightmare. also  in the quest version like the ability to talk about other things.
 
 label kokiri_start:
-    n "[persistent.date] gasps for a second."
-    l "You mean the Kokiri woods? The same as I am thinking of right now?"
-    l "You know what, you certainly intrigued me."
-    l "Let's both go to the Kokiri woods, if we meet at the same spot then I'll know for sure this is not just some weird fluke. We should probably meet on top of the hill, the view there is really great."
-    l "While you're at it, try taking some food you got laying around your house with you, we can make a picknick date out of it!"
-    n "[persistent.date] giggles."
-    l "This is all pretty strange but see you there! Or so I hope..."
-    n "[persistent.date] hangs up the phone and you immediatly start seeking every nook and cranny of your house for something that would make for good food on a picknick."
-    n "When you're done you drive to the Kokiri woods, hoping that things will be different there.
-    You arrive in the woods."
+    if not kokiri_entered_alone:
+        n "[persistent.date] gasps for a second."
+        l "You mean the Kokiri woods? The same as I am thinking of right now?"
+        l "You know what, you certainly intrigued me."
+        l "Let's both go to the Kokiri woods, if we meet at the same spot then I'll know for sure this is not just some weird fluke. We should probably meet on top of the hill, the view there is really great."
+        l "While you're at it, try taking some food you got laying around your house with you, we can make a picknick date out of it!"
+        l "My fridge is currently completely empty, but I'll go to the store really quickly. Maybe it will give me some time to clear my mind about all of this?"
+        n "[persistent.date] giggles."
+        l "This is all pretty strange but see you there! Or so I hope..."
+        n "[persistent.date] hangs up the phone and you immediatly start seeking every nook and cranny of your house for something that would make for good food on a picknick."
+        n "When you're done you drive to the Kokiri woods, hoping that things will be different there.
+        You arrive in the woods."
 
-    if persistent.kokiri_death_1 == True:
+    if persistent.kokiri_death_1 == True and not kokiri_entered_alone:
         n "You could go sit on the hill and warn [persistent.date] about the meteorite when it will show up."
         n "Or you could sit somewhere else entirely to begin with."
         n "Both choices sound like they could work, the choice is up to you."
@@ -25,6 +87,7 @@ label kokiri_start:
         jump kokiri_hillSit
 
 label kokiri_hillSit:
+    # Reset kokiri_entered_alone unless coming from the 'alone' branch
     if not persistent.kokiri_death_1:
         n "You slowly begin making your way to the hill, since [persistent.date] said the view from up there is really nice."
     else:
@@ -34,6 +97,8 @@ label kokiri_hillSit:
     n "Before too long you have reached the top."
     show forestHill
     n "From where you now are standing you can see most of the village where all your past dates took place."
+    # Insert Benchman event trigger here
+    call kokiri_benchman from _call_kokiri_benchman
     if not persistent.kokiri_death_1:
         n "You hope that things will be better now, you feel strangely optimistic that they will indeed be."
         n "You take a moment to enjoy the view as suddenly you get snapped out of your thoughts by a familiar voice."
@@ -2187,7 +2252,7 @@ label kokiri_death_3_death_dialogue:
         "Unfortunately, yes." if not kokiri_call:
             jump kokiri_death_dialogue_stillDying
 
-        "Yes, but the world keeps going. It doesn't truly reset. So it makes it easier for [changeableWord] to come to terms with everything." if persistent_jamestalk_justgame_knowledge:
+        "Yes, but the world keeps going. It doesn't truly reset. So it makes it easier for [changeableWord] to come to terms with everything." if persistent.jamestalk_justgame_knowledge:
             l "..."
             l "It doesn't reset?..."
             l "So that means each time I-"
@@ -3193,6 +3258,12 @@ label kokiri_scenery_choice:
                                 l "The idea that you've had to put up with me over and over and yet somehow still keep coming back means you must have seen something inside of me that I haven't found yet."
                                 l "But, as flattering as that is, I still have to work on finding it. Because even now there is a part of me that thinks you'll get bored of me soon enough."
                                 l "I know that's just my self-doubt speaking though."
+                                menu:
+                                    "I'd never get bored of you. No matter how many times I need to loop.":
+                                        "Filler"
+
+                                    "You are what keeps me going, even when I want to give up.":
+                                        "Filler"
 
                             "I just wish you could fully see them like I do, then maybe you would doubt yourself less.":
                                 l "That's the funny part isn't it? When it comes to ourselves we struggle percieving ourself like others see us."
@@ -3202,18 +3273,53 @@ label kokiri_scenery_choice:
                                 l "Still, what is even weirder to me is the thought you keep coming back to save me, no matter how many times you have to try again."
                                 l "It might be true that you have glimpsed something in me that I myself am not aware of because I couldn't imagine you going through all this trouble for me otherwise."
                                 l "You do flatter me with your words, but I think that being such an alien thought to me shows that I just can't fully accept them yet."
+                                menu:
+                                    "That's okay, you don't have to yet. I will still be here when you are ready.":
+                                        l "I fear that might be hopeless as long as the loop still remains..."
+                                        l "Afterall, if I'm not ready yet right now, then I won't be ready next time we reach this point, won't I?"
+
+                                    "I will keep coming back, until you are saved.":
+                                        l "That means a lot to me [persistent.name]. Still, what if that never happens?"
+                                        l "What if all that's in store for us is death and destruction?"
+                                        l "I couldn't force a fate like that on you. It would weigh hard on me if I knew you'd suffer because of me."
                                 
                     "It's like a version of you from a previous loop said, nothing is perfect, and it doesn't have to be." if persistent.burger_nothingIsPerfect:
                         menu:
                             "But you, you come pretty close.":
                                 "Filler"
-                                #TODO: Here write a few extra options, like telling her she cares for her family etc, tries to make the best out of tough situations etc. If you use some of your learned things during the loops you can make her come slighty to terms with parts of herself and gain one love point. The other parts she thanks you but isn't really convinced.
+                                #TODO: Clean this up a little more.
                                 menu:
-                                    "You always try to be there for your family.":
-                                        "Filler"
-                                    "You try to make the best out of tough situations.":
-                                        "Filler"
+                                    "I admire how you are there for your family.": #TODO: activate this based on a persistent variable.
+                                        menu:
+                                            "They were the reason you held on. Let them that once again. You can make it through this.":
+                                                l "You're right. I want to see them again once more. To share even the most mundane moments together."
+                                                l "If only I could escape this loop I'd eat a thousand orange chickens together with [date_sis_nickname]."
+                                                l "They almost flowed out of my ears over the years we went to the chinese restaurant for her birthday."
+                                                l "But that's better than flowing in a river running in circles, isn't it?"
+                                                l "And [persistent.date_mom_parShort]... [mom_sub]'d be worried sick if [mom_sub] knew."
+                                                l "I bet [mom_sub]'d come rushing her to try to save me somehow... a part of me would like that."
+                                                l "Even if I know deep down it would be a horrible idea that could potentially also endanger her."
+                                                l "Still, I just want to hug [mom_obj]. It's been too long since the last time. If we make it that'll be the first thing I do."
+                                                n "[date_sub!c] [conj('date', 'turns', 'turn')] away from you for a moment, not saying a word."
+                                                n "[persistent.date] [conj('date', 'turns', 'turn')] back to you, a small smile on [date_pos] face."
+                                                l "You know, I was so scared... I still am of course, but is it strange that what you said filled me with some more hope?"
+                                                l "You- we've been through a lot haven't we? It's comforting that we get to do this together."
+                                                l "In a way you know me better than a lot of people in my life. Even though it's a shame I don't get to know you like that, I'm glad you're here."
+                                                $ love_points += 1
+                                                $ love_meter_updater()
+                                                
 
+
+                                    "I admire how you try to make the best out of tough situations.":
+                                        menu:
+                                            "The loop would be enough to break almost anyone. Yet you pull through.":
+                                                l "Well, I suppose I don't remember each loop, right? That way it's not weighing me down as much."
+                                                l "If anything, it's more impressive that you haven't broken yet."
+                                                l "Still, you are right. I can't let that happen. I have to keep going, for my family and for you."
+                                                l "We are a team, aren't we? I will try my best to hold on, if you do the same. Together we might just make it."
+
+                l "Anyway, we should probably talk about about something else instead, right? No time to waste."
+                jump kokiri_talkAboutSomethingElse
     else:
         label kokiri_continue_talking: #This will be the place where the player can choose to talk extra about certain topics.
         #$ kokiri_meteoritewarn()
@@ -3523,7 +3629,7 @@ label noContactFamilyPromise_cannotPromise_confrontation_aliveFamily:
                                     l "Is that clear? If you can respect my wishes that would mean a whole lot to me."
                                     l "I suppose you could always ask another version of me if [date_sub] [conj('date', 'is', 'are')] fine with you contacting [date_pos] family when [date_sub] [conj('date', 'mentions', 'mention')] the whole \"fullest extent\" thing."
                                     l "That way you could see it's not just me, not just this version of me who thinks that."
-                                    $ persistent_useGiftToFullExtentLimit_knowledge = True
+                                    $ persistent.useGiftToFullExtentLimit_knowledge = True
                                     n "Everything quiets down for a while, including [persistent.date]."
                                     n "[date_sub!c] [conj('date', 'gives', 'give')] you a soft look, seemingly trying to gauge how well you are taking what [date_sub] just told you."
                                     l "So... now that we had this talk, do you promise to not involve my family in your attempts to save me anymore?"

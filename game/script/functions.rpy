@@ -1,11 +1,76 @@
 
 label gdwl_functions:
     init python:
+
+        def check_death_skip(death_id):
+            # Increments the seen-count for this death and returns the new total.
+            if persistent.death_seen_counts is None:
+                persistent.death_seen_counts = {}
+            count = persistent.death_seen_counts.get(death_id, 0) + 1
+            persistent.death_seen_counts[death_id] = count
+            return count
+
+        def is_death_skipped(death_id):
+            # Returns True if the player has opted in to always skip this death.
+            if persistent.death_skip_always is None:
+                persistent.death_skip_always = {}
+            return persistent.death_skip_always.get(death_id, False)
+
+        def set_death_always_skip(death_id):
+            # Marks this death to always be skipped from now on.
+            if persistent.death_skip_always is None:
+                persistent.death_skip_always = {}
+            persistent.death_skip_always[death_id] = True
+
+        def death_skip_prompt(death_id):
+            # First-time message is picked by the order this death_id was first encountered.
+            # Repeat visits to the same death use a separate set of repeat messages.
+            if persistent.death_skip_prompt_counts is None:
+                persistent.death_skip_prompt_counts = {}
+            if persistent.death_skip_id_order is None:
+                persistent.death_skip_id_order = []
+
+            # Assign an encounter-order index to this death_id the first time it appears.
+            if death_id not in persistent.death_skip_id_order:
+                persistent.death_skip_id_order.append(death_id)
+            order_index = persistent.death_skip_id_order.index(death_id)
+
+            # Track how many times THIS death's prompt has been shown.
+            count = persistent.death_skip_prompt_counts.get(death_id, 0)
+            persistent.death_skip_prompt_counts[death_id] = count + 1
+
+            # First-time messages — indexed by encounter order across all deaths.
+            first_messages = [
+                "You've been here before, haven't you? Just not quite here. Want to skip to the end?",
+                "Another ending you already know. Shall we just get to it?",
+                "You're getting quite the collection of these. Skip ahead?",
+                "At this point I'm not sure why I keep asking. Do you want to skip or not?",
+            ]
+
+            # Repeat messages — used when the player has already seen this prompt for this death.
+            repeat_messages = [
+                "You chose to see it anyway last time and the ending didn't change. Still want to go through all of it again?",
+                "Still? Alright. Though I think we both know how this ends.",
+                "I'll keep asking as long as you keep coming back. Skip to the end?",
+            ]
+
+            if count == 0:
+                if death_id == "burger_death_1" and order_index == 0:
+                    return "test"
+                return first_messages[min(order_index, len(first_messages) - 1)]
+            else:
+                return repeat_messages[min(count - 1, len(repeat_messages) - 1)]
         
+        def launch_quest_game(filename):
+            import subprocess, os
+            exe = os.path.join(renpy.config.basedir, "quest_player", "Quest.exe")
+            quest_file = os.path.join(renpy.config.gamedir, "gallery", filename)
+            subprocess.Popen([exe, quest_file])
+
         def flash_screen(color_name="red", duration=0.5): 
-            renpy.show(color_name) 
-            renpy.pause(duration, hard=True) 
-            renpy.hide(color_name)
+            renpy.show(color_name, layer="overlay")
+            renpy.pause(duration, hard=True)
+            renpy.hide(color_name, layer="overlay") #An attempt to make the screen flash also go over the foreground
 
         def love_meter_result(alwaysJump):
             if love_meter <= 0 or alwaysJump == True:
@@ -305,10 +370,10 @@ label gdwl_functions:
                 "called_phone", "burger", "cafe", "chinese", "nightmare", "kokiri_cherishAllDates", "burgerBeforeLie", "abby_phoneToldSisDies", "kokiri_griefHasNoTimeLimit", "kokiri_groundhog_lie", "kokiri_psychic_lie",
                 "car_caught", "car_free", "groundhog", "psychic", "hugRequestedBeforeDeath",
                 # Locations
-                "burger_poem_cleancheck", "burgerBeenBefore", "burger_alt", "brotherasked", "burger_nightmare", "kokiri_jamesTalkBlock",
+                "burger_poem_cleancheck", "burgerBeenBefore", "onlyBurgers", "burger_alt", "brotherasked", "burger_nightmare", "kokiri_jamesTalkBlock",
                 "cafedicecheat", "cafe_badLove_lowbar", "cafe_badLove_justafeeling", "peking", "orange", "kokiri_goalSurvive",
                 "riddle_loop", "poem_conversation", "teaseDeath", "angryLilith", "kokiri_poemBad", "kokiri_promiseCancelDate",
-                "kokiri_poems_rated_once", "kokiri_poems_rateblock", "kokiri_alternateplace", "kokiri_holdhand", "kokiri_scenery_headhurt", "kokiri_scenery_breakfrombreakingyourhead", "kokiri_scenery_gamegoal", "kokiri_meteorite_alert", "kokiri_meteorite_no_alert", "kokiri_finalTalk", "kokiri_call_death_2_check", "kokiri_call_death_1_check", "kokiri_death_4_playerResponse", "damoclesAsked", "big_sis_mode", "lilithAliveEnding", "kokiri_positiveDavidStory", "kokiri_familyContacted", "kokiri_ToldLillyHowManyRetries", "kokiriSceneryWatched", "kokiri_scenery_shutUpLackOfSelfEsteem", "kokiri_poem_time_recent", "kokiri_poem_sun_recent", "kokiri_poem_marble_recent", "kokiri_poem_beach_recent", "kokiri_griefHasNoTimeLimit", "kokiri_silentMoment",
+                "kokiri_poems_rated_once", "kokiri_poems_rateblock", "kokiri_alternateplace", "kokiri_holdhand", "kokiri_scenery_headhurt", "kokiri_scenery_breakfrombreakingyourhead", "kokiri_scenery_gamegoal", "kokiri_meteorite_alert", "kokiri_meteorite_no_alert", "kokiri_finalTalk", "kokiri_call_death_2_check", "kokiri_call_death_1_check", "kokiri_death_4_playerResponse", "damoclesAsked", "big_sis_mode", "lilithAliveEnding", "kokiri_positiveDavidStory", "kokiri_familyContacted", "called_James", "kokiri_ToldLillyHowManyRetries", "kokiriSceneryWatched", "kokiri_scenery_shutUpLackOfSelfEsteem", "kokiri_poem_time_recent", "kokiri_poem_sun_recent", "kokiri_poem_marble_recent", "kokiri_poem_beach_recent", "kokiri_griefHasNoTimeLimit", "kokiri_silentMoment",
                 # Kokiri recent poems
                 "kokiri_poem_snowwoman_recent", "kokiri_poem_shadowman_recent", "kokiri_poem_lights_recent", "kokiri_poem_bang_recent", "kokiri_poem_window_recent",
                 # Booleans to see who you ask about the most at familyask in kokiri
@@ -316,11 +381,11 @@ label gdwl_functions:
                 # Conversation trackers
                 "conversationtracker_poems", "conversationtracker_tellheraboutnarrator", "conversationtracker_questmade", "conversationtracker_abigail", "conversationtracker_david", "conversationtracker_james", "conversationtracker_lila", "conversationtracker_blamedavid", "conversationtracker_poem_window", "conversationtracker_poem_snowwoman", "conversationtracker_poem_shadowman", "conversationtracker_poem_lights", "conversationtracker_poem_bang", "conversationtracker_mayo", "conversationtracker_determinism", "conversationtracker_crosser", "conversationtracker_becomeGame", "conversationtracker_nightmares",
                 # Other flags
-                "abby_askedAboutGameTheme", "nmDetect", "mDetect", "hard_rude", "easy_rude", "demetrius", "adriel", "currentcar", "booklovertalked", "musiclovertalked", "phone_wrongPassword_graceSystem", "burger_explosion_outside", "onlyDates", "davidPromise", "abbyCalled", "lilaCalled", "jamesCalled", "davidCalled", "policeCalled", "rockMode_rockBand", "rockModeBackToStart", "reunion_davidPresent", "reunion_lilaPresent",
+                "abby_askedAboutGameTheme", "nmDetect", "mDetect", "hard_rude", "easy_rude", "demetrius", "adriel", "currentcar", "booklovertalked", "musiclovertalked", "phone_wrongPassword_graceSystem", "burger_explosion_outside", "onlyDates", "davidPromise", "abbyCalled", "lilaCalled", "jamesCalled", "davidCalled", "policeCalled", "rockMode_rockBand", "rockModeBackToStart", "reunion_davidPresent", "reunion_lilaPresent", "dumboStoryTold", 
                 # Beach
-                "beachStart_doneBook", "beachStart_doneDunes", "beachStart_doneBeach", "beachStart_doneFriterie", "beachStart_doneIce", "beachStart_doneCinema",
+                "beachStart_doneBook", "beachStart_doneDunes", "beachStart_doneBeach", "beachStart_doneFriterie", "beachStart_doneIce", "beachStart_doneCinema", "ice", "raintalked",
                 # QOL-settings
-                "no_nightmare", "perm_nightmare", "hypotheticalBurger", "fakeBurger"
+                "no_nightmare", "hypotheticalBurger", "fakeBurger"
             ]
 
             for var in global_vars:
@@ -397,6 +462,9 @@ label gdwl_functions:
             persistent.david_apology_knowledge = True
             persistent.david_apology_made_knowledge = True
             persistent.lilithOpenToReunion_knowledge = True
+            persistent.bedcheck_knowledge = True
+            persistent.joke_knowledge = True
+            persistent.quest_knowledge = True
             callKnowledge()
 
             
