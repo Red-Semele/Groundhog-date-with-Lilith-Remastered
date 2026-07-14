@@ -14,18 +14,25 @@ label beach_start:
     #$ beachstart = False (Not sure what this was used for, check it out in the code.)
     menu:
         "Bookstore" if not beachStart_doneBook:
+            $ beachStart_doneBook = True
             jump beach_bookstore
         "Dunes" if not beachStart_doneDunes:
+            $ beachStart_doneDunes = True
             jump beach_dunes
         "Beach" if not beachStart_doneBeach:
+            $ beachStart_doneBeach = True
             jump beach_beach
         "Friterie" if not beachStart_doneFriterie:
+            $ beachStart_doneFriterie = True
             jump beach_friterie
         "Icecreamshop" if not beachStart_doneIce:
+            $ beachStart_doneIce = True
             jump beach_icecreamshop
         "Cinema" if not beachStart_doneCinema:
+            $ beachStart_doneCinema = True
             jump beach_cinema
         "Walk on the sea dike" if not beachStart_doneDike:
+            $ beachStart_doneDike = True
             jump beach_seaDike
         "Spend all your time at the waterpark" if beachturn == 0:
             jump beach_waterPark
@@ -38,6 +45,7 @@ label beach_start:
                     bs "You can't just come in here with icecream!"
                     bs "Eat it outside or come back a bit later."
                     jump bookstore_foodChoice
+                n "Filler, bookstore visit."
                   
              
             if beachturn == 3 and ice == False:
@@ -69,6 +77,7 @@ label beach_start:
                 jump beach_bookstore
             
             "Come back some other time.":
+                $ beachStart_doneBook = False
                 #TODO: Add dialogue for coming back later.
                 jump beach_start
              
@@ -98,7 +107,7 @@ label beach_start:
                         $ ice = False
         
             label dune_slideOff:
-                n "[persistent.date] and you slide off the dunel."
+                n "[persistent.date] and you slide off the dune."
                 #TODO: Make this a proper part with unique text.
                 jump beach_start
             label dune_walk:
@@ -110,14 +119,17 @@ label beach_start:
                     "Filler"
                     #TODO: She already told you about the rain so she won't mention it again.
                 else:
-                    $ rain = True
+                    $ raintalked = True
                     l "You know, I secretly like the rain."
                     l "People tend to complain as soon as it rains but we really need it."
                     l "It's like life.  Rain falls and forms rivers, lakes and oceans. "
                     l "These bodies of water then slightly evaporate and go up to then become rain once more."
                     l "It's a loop of sorts. The water gives and takes as best as it can."
                     l "People tend to complain about rain but sometimes I think they should just embrace it and listen to it's words of wisdom in an ungraspable language."
-                    l "<br/><br/>I hope that what I just told you is a bit more graspable than the language of the rain.<br/>Maybe, just maybe, you might even begin thinking of the rain like I do."
+                    l "I hope that what I just told you is a bit more graspable than the language of the rain."
+                    l "Maybe, just maybe, you might even begin thinking of the rain like I do."
+                    $ persistent.rainlover_knowledge = True
+                    
                     jump dunes_sit_choices
             label dunes_sit_choices:
                 
@@ -158,12 +170,12 @@ label beach_start:
                                 l "Thank you for taking me here [persistent.name]!"
                                 l "It may not be the best weather but I'm happy to be here nonetheless."
                                 menu:
-                                    "I don't mind the rain at all. In fact, I secretly like it." if rainlover == True and rain == False:
+                                    "I don't mind the rain at all. In fact, I secretly like it." if persistent.rainlover_knowledge == True and raintalked == False:
                                         #TODO: "[persistent.date] rain dialogue.
                                         $ raintalked = True
                                     "Continue with the path.":
                                         #TODO: Add dialogue which eventually triggers falling in hole and it collapsing death.")
-                                        if hole_death == True:
+                                        if persistent.beach_hole_death == True:
                                             jump beach_holeWarnChoice
                                     
                                         else:
@@ -193,7 +205,9 @@ label beach_start:
                     "Continue walking towards the jellyfish.":
                         jump beach_jellyDeath
                     "Move slightly to the left.":
-                        n "You walk slightly to the left of the jellyfish [persistent.date] follows you.<br/>[persistent.date] has no clue about the fate she could have suffered if you didn't walk slightly more to the left.<br/>(continue walking dialogue, for now it just takes you back to beach choice)"
+                        n "You walk slightly to the left of the jellyfish [persistent.date] follows you."
+                        n "[persistent.date] has no clue about the fate she could have suffered if you didn't walk slightly more to the left."
+                        #TODO: (continue walking dialogue, for now it just takes you back to beach choice)"
                         jump beach_start
                   
             
@@ -202,7 +216,8 @@ label beach_start:
                     "Continue walking towards the hole.":
                         jump beach_holeDeath
                     "Move slightly to the left.":
-                        n "You walk slightly to the left of the hole, [persistent.date] follows you.<br/>It's like the whole hole ordeal never happened now.<br/>[persistent.date] has no clue about the gruesome death she could have suffered if you didn't walk slightly more to the left."
+                        n "You walk slightly to the left of the hole, [persistent.date] follows you. It's like the whole hole ordeal never happened now."
+                        n "[persistent.date] has no clue about the gruesome death she could have suffered if you didn't walk slightly more to the left."
                         #TODO: (continue walking dialogue, for now it just takes you back to beach choice)"
                         jump beach_start
               
@@ -446,7 +461,7 @@ label beach_start:
         
                 n "[persistent.date] and you watch the movie. (return)"
           
-            $ beacturn += 1
+            $ beachturn += 1
             
             
             jump beach_start
@@ -518,49 +533,94 @@ label beach_start:
                 
 
 label beach_waterPark:
-  
-    if keyGot == True:
-    
-        dev "For now you open the locker automatically, add an option to choose to do so."
-        jump waterPark_openLocker
-    
-    else:
-        if persistent.keyUnderBed_knowledge:
-            d "You now know that the key fits this locker, atleast you can now pick it up."
-            $ persistent.keyUse_knowledge = True
-        else:
-            n "Regular describing of the lockers and the waterpark."
-                
-              
-          
-      
-        label waterPark_openLocker:
-            # TODO: Make it possible to something else after reading the polaroids.
-            n "On the inside of the locker is written:"
-            n "\"Take a sip of the Lethe at the start of each one but find a way to remember the end of them.\""
-            n "There are three polaroids in the locker, all of them feauture a massive tree as the sole object."
-            menu:
-                "Check polaroids.":
-                    menu:
-                        "Check polaroid 1.":
-                            n "Your fond father called you Moonlight
-                            and your mother named you Sunshine
-                            and your brother, Sparkling Water
-                            and your sister, Blue Broadcloth."
-                            return
+    n "You enter the changing area of the waterpark. Rows of numbered lockers lines the wall."
+    n "Each row contains 99 lockers, some bigger than the others."
+    n "It seems that every row also has it's own letter, starting from A going up to I."
+    n "Which locker should you pick?"
+    $ locker_choice = renpy.input("A-39", length=4)
+    $ locker_choice = locker_choice.strip()
 
-                        "Check polaroid 2.":
-                            n "Float a day on easy wings to the temples of the moon,
-                            on the next day you will pass by the shoulders of the Bear,
-                            on the third day you will soar to the back of the Seven Stars"
-                            return
-                        "Check polaroid 3.":
-                            n "He began to cut the salmon, slice the fish up with his knife.
-                            Suddenly the beauty sprang and it flipped into the sea from the botttom of the red boat, from the boat of Väinämöinen.
-                            And from there it raised its head and a smooth right shoulder lifted on the fifth gust of the wind and upon the sixth high roller.
-                            Then it raised a right hand up and a left foot too appeared on the seventh billow's back riding on the ninth high roller.
-                            Then it spoke in clear words and berated Väinämöinen:\"O you, you old Väinämöinen! I did not intend to come here to be sliced up for a salmon,
-                            to serve myself as cuts of fish for your breakfast, morning snacks, salmon dinners or big suppers.
-                            ...You had not the sense to hold me, Vellamo's young water maiden, Ahto's favourite, little Aino.\""
-                            return
+    if len(locker_choice) == 0:
+        n "You need to enter a locker number."
+        jump beach_start
+
+    $ locker_choice = locker_choice.upper().replace(" ", "")
+    if "-" in locker_choice:
+        $ locker_letter, locker_number = locker_choice.split("-", 1)
+    else:
+        $ locker_letter, locker_number = locker_choice[:1], locker_choice[1:]
+
+    if not locker_letter or locker_letter < "A" or locker_letter > "I" or not locker_number.isdigit():
+        n "That locker code doesn't make sense. Try a locker from A-I and 1-99."
+        jump beach_start
+
+    $ locker_number = int(locker_number)
+    if locker_number < 1 or locker_number > 99:
+        n "That locker code doesn't make sense. Try a locker from A-I and 1-99."
+        jump beach_start
+
+    $ locker_choice = "%s-%d" % (locker_letter, locker_number)
+
+    if locker_choice == "A-22":
+        if keyGot:
+            n "You use your key and unlock locker A-22."
+            jump waterPark_openLocker
+        else:
+            n "Locker A-22 is locked tight."
+            if persistent.keyUnderBed_knowledge:
+                n "You recognize the lock. This should be the one your key can open."
+                $ persistent.keyUse_knowledge = True
+            else:
+                n "The lock looks old, but you don't have the right key with you right now."
+            jump beach_start
+    elif locker_choice == "G-33":
+        #G33s3 ;)
+        n "This locker seems to already be in use. You can hear some muffled sounds coming from inside. Is that... {b}{i}quacking{/i}{/b}?"
+    elif locker_choice == "C-83":
+        n "This locker seems to use a 4-digit code."
+        $ locker_code = renpy.input("Enter the 4-digit code:")
+        $ locker_code = locker_code.strip()
+        if locker_code == "1234":
+            n "The keypad flashes green and locker C-83 clicks open."
+            jump waterPark_openLocker
+        else:
+            n "It seems like that was the wrong code."
+            jump beach_start
+    else:
+        n "You try locker [locker_choice], but there is nothing of note there."
+        jump beach_start
+
+label waterPark_openLocker:
+    # TODO: Make it possible to do something else after reading the polaroids.
+    if locker_choice == "A-22":
+        n "On the inside of the locker is written:"
+        n "\"Take a sip of the Lethe at the start of each one but find a way to remember the end of them.\""
+        n "There are three polaroids in the locker, all of them feauture a massive tree as the sole object."
+        menu:
+            "Check polaroids.":
+                menu:
+                    "Check polaroid 1.":
+                        n "Your fond father called you Moonlight
+                        and your mother named you Sunshine
+                        and your brother, Sparkling Water
+                        and your sister, Blue Broadcloth."
+                        return
+
+                    "Check polaroid 2.":
+                        n "Float a day on easy wings to the temples of the moon,
+                        on the next day you will pass by the shoulders of the Bear,
+                        on the third day you will soar to the back of the Seven Stars"
+                        return
+                    "Check polaroid 3.":
+                        n "He began to cut the salmon, slice the fish up with his knife."
+                        n "Suddenly the beauty sprang and it flipped into the sea from the botttom of the red boat, from the boat of Väinämöinen."
+                        n "And from there it raised its head and a smooth right shoulder lifted on the fifth gust of the wind and upon the sixth high roller."
+                        n "Then it raised a right hand up and a left foot too appeared on the seventh billow's back riding on the ninth high roller."
+                        n "Then it spoke in clear words and berated Väinämöinen:\"O you, you old Väinämöinen! I did not intend to come here to be sliced up for a salmon,
+                        to serve myself as cuts of fish for your breakfast, morning snacks, salmon dinners or big suppers."
+                        n "...You had not the sense to hold me, Vellamo's young water maiden, Ahto's favourite, little Aino.\""
+                        return
+    elif locker_choice == "C-83":
+        n "Filler"
+        return
          

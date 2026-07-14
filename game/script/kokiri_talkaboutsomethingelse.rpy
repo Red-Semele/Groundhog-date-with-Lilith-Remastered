@@ -23,7 +23,7 @@ label kokiri_talkAboutSomethingElse:
                 n "[date_sub!c] [conj('date', 'puts', 'put')] [date_pos] hand on yours and [conj('date', 'gives', 'give')] you a small smile."
                 #TODO: Continue this, you can talk about certain nightmares here.
 
-            "I am a crosser, I basically travel across different realities almost exactly like this one. So I don't really undo what I caused, you died [persistent.lildeaths] times already and I can only try to make sure you won't die again. " if persistent_jamestalk_justgame_knowledge and not conversationtracker_crosser:
+            "I am a crosser, I basically travel across different realities almost exactly like this one. So I don't really undo what I caused, you died [persistent.lildeaths] times already and I can only try to make sure you won't die again. " if persistent.jamestalk_justgame_knowledge and not conversationtracker_crosser:
                 $ conversationtracker_crosser = True
                 l "Interesting... so my previous deaths weren't prevented, they all happened in another reality?"
                 l "What made you come to that conclusion?"
@@ -1336,7 +1336,7 @@ label askAboutLila_tellMeAbout_1:
                         li "Basically, I already have died before on this day."
                         li "We are in a sort of loop where I keep dying over and over."
                         li "Oh no, that's horrible."
-                        li "Not my daughter, not you..."
+                        li "Not my [date_child], not you..."
                         li "I can't lose another child, I don't think I could deal with that."
                         n "[persistent.date_mom] seems to be in a panicked state."
                         l "[mom_parShort!c], I don't have much time, please take some deep breaths and try to calm down a bit, I know it is way too much to take all at once, but can you do that for me?"

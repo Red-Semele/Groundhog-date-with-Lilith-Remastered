@@ -1,10 +1,160 @@
 # The script of the game goes in this file.
 
+# How many times a specific death must be seen before the narrator offers to skip it.
+define death_skip_threshold = 4
+
 
 # Declare characters used by this game. The color argument colorizes the
 # name of the character.
 
-define l = Character("[persistent.date]")
+init python:
+     import re
+     import time
+
+     # Tracks which character is actively speaking for callback-driven sprites.
+     speaking = None
+     speaking_states = {}
+
+     TALKING_MODE_ADAPTIVE = "adaptive"
+     TALKING_MODE_FIXED = "fixed"
+     TALKING_MODE_MIXED = "mixed"
+     FIXED_TALKING_INTERVAL = 0.20
+     MIXED_SYLLABLES_PER_SECOND = 4.0
+
+     def get_talking_animation_mode():
+          return getattr(persistent, "talking_animation_mode", TALKING_MODE_ADAPTIVE)
+
+     def get_talking_animation_mode_label(mode=None):
+          mode = mode or get_talking_animation_mode()
+
+          if mode == TALKING_MODE_FIXED:
+               return "Fixed Interval"
+          if mode == TALKING_MODE_MIXED:
+               return "Count + Fixed Speed"
+          return "Count + Text Speed"
+
+     def strip_dialogue_text(text):
+          text = re.sub(r"\{[^}]*\}", "", text or "")
+          text = re.sub(r"\s+", " ", text)
+          return text.strip()
+
+     def estimate_syllables(text):
+          words = re.findall(r"[a-zA-Z']+", text.lower())
+          total = 0
+
+          for word in words:
+               word = re.sub(r"[^a-z]", "", word)
+               if not word:
+                    continue
+
+               syllables = len(re.findall(r"[aeiouy]+", word))
+
+               if word.endswith("e") and not word.endswith(("le", "ye")) and syllables > 1:
+                    syllables -= 1
+
+               total += max(1, syllables)
+
+          return max(1, total)
+
+     def estimate_speaking_interval(text):
+          visible_text = strip_dialogue_text(text)
+
+          if not visible_text:
+               return 0.18
+
+          preferences = getattr(store, "_preferences", None)
+          text_cps = getattr(preferences, "text_cps", 0) if preferences else 0
+
+          if not text_cps or text_cps <= 0:
+               return 0.18
+
+          segment_duration = max(len(visible_text), 1) / float(text_cps)
+          syllable_count = estimate_syllables(visible_text)
+          interval = segment_duration / max(syllable_count * 2.0, 1.0)
+
+          return max(0.07, min(0.35, interval))
+
+     def build_speaking_state(text):
+          visible_text = strip_dialogue_text(text)
+          syllable_count = estimate_syllables(visible_text)
+          mode = get_talking_animation_mode()
+
+          if mode == TALKING_MODE_FIXED:
+               return {
+                    "mode": mode,
+                    "interval": FIXED_TALKING_INTERVAL,
+                    "duration": None,
+                    "stop_on_slow_done": True,
+               }
+
+          if mode == TALKING_MODE_MIXED:
+               return {
+                    "mode": mode,
+                    "interval": FIXED_TALKING_INTERVAL,
+                    "duration": max(syllable_count / MIXED_SYLLABLES_PER_SECOND, FIXED_TALKING_INTERVAL),
+                    "started_at": None,
+                    "stop_on_slow_done": False,
+               }
+
+          return {
+               "mode": mode,
+               "interval": estimate_speaking_interval(visible_text),
+               "duration": None,
+               "stop_on_slow_done": True,
+          }
+
+     def while_speaking(name, open_d, closed_d, done_d, st, at):
+          state = speaking_states.get(name)
+
+          if state is None:
+               return done_d, None
+
+          is_active = False
+
+          if state["mode"] == TALKING_MODE_MIXED:
+               duration = state.get("duration")
+               started_at = state.get("started_at")
+               elapsed = (time.time() - started_at) if started_at is not None else 0.0
+               is_active = duration is not None and elapsed < duration
+          else:
+               is_active = speaking == name
+
+          if is_active:
+               interval = state.get("interval", FIXED_TALKING_INTERVAL)
+               cycle = interval * 2.0
+
+               if (st % cycle) < interval:
+                    return open_d, interval
+               return closed_d, interval
+
+          return done_d, None
+
+     curried_while_speaking = renpy.curry(while_speaking)
+
+     def WhileSpeaking(name, open_d, closed_d, done_d=Null()):
+          return DynamicDisplayable(curried_while_speaking(name, open_d, closed_d, done_d))
+
+     def speaker_callback(name, event, what=None, start=None, end=None, **kwargs):
+          global speaking
+
+          if event == "show":
+               speaking = name
+               segment = what[start:end] if what is not None and start is not None and end is not None else what
+               speaking_states[name] = build_speaking_state(segment)
+               if speaking_states[name]["mode"] == TALKING_MODE_MIXED:
+                    speaking_states[name]["started_at"] = time.time()
+          elif event == "slow_done":
+               state = speaking_states.get(name)
+               if state is None or state.get("stop_on_slow_done", True):
+                    speaking = None
+                    speaking_states.pop(name, None)
+          elif event == "end":
+               speaking = None
+               speaking_states.pop(name, None)
+
+     speaker = renpy.curry(speaker_callback)
+
+define l = Character("[persistent.date]", callback=speaker("l"))
 define n = Character("Narrator")
 define r = Character("[roseName]")
 default roseName = "Old lady"
@@ -27,6 +177,8 @@ define sg = Character("Sun Goddess")
 define m = Character("Moon")
 define pit = Character("???")
 define cbv = Character("S.")
+define watchName = "???"
+define w = Character("[watchName]")
 
 
 default date_sub = "she"
@@ -34,13 +186,10 @@ default date_obj = "her"
 default date_pos = "her"
 default date_is  = "is"
 default from_menu = False
+default persistent.talking_animation_mode = "adaptive"
 
-# Persistent family term dicts (defaulted for safe access)
-default persistent.date_family_terms = {"sibShort": "sis", "sib": "sister", "child": "daughter"}
-default persistent.date_sis_family_terms = {"sibShort": "sis", "sib": "sister", "child": "daughter"}
-default persistent.date_dad_family_terms = {"parShort": "dad", "par": "father"}
-default persistent.date_mom_family_terms = {"parShort": "mom", "par": "mother"}
-default persistent.date_ghost_family_terms = {"sibShort": "bro", "sib": "brother", "child": "son"}
+
+
 # Flash overlay screen for flash_screen effect
 screen flash(color="#ff0000"):
      add Solid(color) at flash_fade
@@ -68,8 +217,36 @@ default ghost_child = "son"
 
 
 image forestHill = "kokiriForestHill.png"
-image burgerRestaurant = "burgerRestaurant.png"
+
 image red = Solid("#780808") 
+
+image burgerRestaurant_bg = "burgerBackground.png"
+image burgerRestaurant_fg = "burgerForeground.png"
+
+image chineseRestaurant_bg = "chineseBackground.png"
+image chineseRestaurant_fg = "chineseForeground.png"
+
+layeredimage burgerRestaurant:
+     always "burgerRestaurant_bg"
+     always "burgerRestaurant_fg"
+
+layeredimage chineseRestaurant:
+     always "chineseRestaurant_bg"
+     always "chineseRestaurant_fg"
+
+layeredimage burgerRestaurantBack:
+     always "burgerRestaurant_bg"
+
+layeredimage burgerRestaurantFront:
+     always "burgerRestaurant_fg"
+
+# Lilith sprites (closed/open mouth). Is it possible to animae this?
+image lilith talk_closed = "lilithHappyTalkingClosed.png"
+image lilith talk_open = "lilithHappyTalkingOpen.png"
+
+image lilith talking_happy = WhileSpeaking("l", "lilith talk_open", "lilith talk_closed", "lilith talk_closed")
+     
+
 
 
 
@@ -100,9 +277,17 @@ label start:
           
           #This line ensures all flags that don't need constant resetting get reset only the first time the player boots the game.
           default persistent.firstboot = True
+          default persistent._console_short=False
+          default persistent.censor_mode = False
+          default persistent.message_index = 0
+          default persistent.letter_index = 0
           default persistent.name = None
           default persistent.canSave = False
           #Deaths:
+          default persistent.death_seen_counts = {}
+          default persistent.death_skip_always = {}
+          default persistent.death_skip_prompt_counts = {}
+          default persistent.death_skip_id_order = []
           default persistent.lildeaths = 0
           default persistent.nightmareCounter = 0
           default persistent.retry_counter = 0
@@ -308,14 +493,10 @@ label start:
           default persistent.date_ghost_pronouns = {"sub": "he",   "obj": "him",  "pos": "his",   "ref": "himself",   "pred": "his",  "is": "is",  "was": "was",  "has": "has",  "does": "does",  "vs": "s"}
 
           # Family terms (how others refer to each character, with short/long forms)
-          # For Lilith/Abby (date, date_sis):
           default persistent.date_family_terms = {"sibShort": "sis", "sib": "sister", "child": "daughter"}
           default persistent.date_sis_family_terms = {"sibShort": "sis", "sib": "sister", "child": "daughter"}
-          # For David (date_dad):
           default persistent.date_dad_family_terms = {"parShort": "dad", "par": "father"}
-          # For Lila (date_mom):
           default persistent.date_mom_family_terms = {"parShort": "mom", "par": "mother"}
-          # For James (date_ghost):
           default persistent.date_ghost_family_terms = {"sibShort": "bro", "sib": "brother", "child": "son"}
 
           #Narrator flags:
@@ -338,14 +519,7 @@ label start:
           default persistent.ending_reunionGoodEnding = False
 
           #Ending counters:
-          default persistent.ending_reunionGoodEnding_counter = 0
-          default persistent.ending_lettingGo_counter = 0
-          default persistent.ending_unseenContent_counter  = 0
-          default persistent.ending_anEnding_counter  = 0
-          default persistent.ending_quitter_counter = 0
-          default persistent.ending_breakup_counter = 0
-          default persistent.ending_abigailDistraction_counter = 0
-          default persistent.ending_badDate_counter = 0
+          default persistent.ending_retry_counts = {}
           #Phone_menu sortring related stuff:
           default persistent.amount_of_folder_links = 0 #This checks how many sub links I created in the phone menu to avoid clutter.
           default persistent.restaurant_subfolder = False
@@ -366,10 +540,10 @@ label start:
           default persistent.major_love_offence_counter = 0
           default persistent.minor_love_comfort_counter = 0
           default persistent.major_love_comfort_counter = 0
-          default persistent_jamestalk_ilikeher_knowledge = False
-          default persistent_jamestalk_iloveher_knowledge = False
-          default persistent_jamestalk_justgame_knowledge = False
-          default persistent_fleeingDeaths_counter_knowledge = 0
+          default persistent.jamestalk_ilikeher_knowledge = False
+          default persistent.jamestalk_iloveher_knowledge = False
+          default persistent.jamestalk_justgame_knowledge = False
+          default persistent.fleeingDeaths_counter_knowledge = 0
           default persistent.lilithAliveAndRetriedCounter = 0
           default persistent.narratorMonologue_dicePuzzleIntentionalyFailed = False
           default persistent.abigail_numberfakeout = False
@@ -392,6 +566,8 @@ label start:
           default persistent.lilithOpenToReunion_knowledge = False
           default persistent.lilaTwoJobsOwnChoice_knowledge = False
           default persistent.jamesUnclearAnswered = False
+          default persistent.rejectPhone_Block = False
+          default persistent.gallery_unlocked = False
 
           #Non-persistent
           default love_meter = 3
@@ -415,6 +591,7 @@ label start:
           default burger = False
           default burgerBeenBefore = False
           default burger_alt = False
+          default onlyBurgers = False
           default cafe = False
           default beach = False
           default brotherasked = 0
@@ -468,6 +645,7 @@ label start:
           default kokiri_silentMoment = False
           default kokiri_positiveDavidStory = False
           default kokiri_familyContacted = False
+          default called_James = False
           default kokiri_notReadyToLetGo = False
 
           #Kokiri recent poems
@@ -546,6 +724,7 @@ label start:
           default minor_love_offence = 0
           default major_love_comfort = 0
           default major_love_offence = 0
+          default dumboStoryTold  = False
           
           default burger_jokeFromAbigailTold = False
           default onlyDates = False
@@ -557,6 +736,7 @@ label start:
           default conversationtracker_nightmares = False
           
           default keySeenNow = False
+          default keyGot = False
           default ending_check = ""
           default abbyCalled = False
           default lilaCalled = False
@@ -578,10 +758,17 @@ label start:
 
           #QOL-settings:
           default no_nightmare = False
-          default perm_nightmare = False
+          default persistent.perm_nightmare = False
           default other_phone = 0
           default hypotheticalBurger = False
           default fakeBurger = False
+
+          #Ghost_dialogue:
+          default hidden_messages = [
+               "I'm still here, waiting",
+               "Do not believe your eyes.",
+               "Don't trust them.",
+          ]
 
           
      
@@ -657,17 +844,30 @@ label after_setup:
                     $ persistent.rockMode = True
                     jump nameSelect
                
+
                if persistent.name == "Dev":
                     $ persistent.name = None
                     n "Cheatcode activated, enter your name."
+                    $  _preferences.skip_unseen=True
                     $ allProgress()
                     $ persistent.canSave = True
+                    jump nameSelect
+
+               if persistent.name == "Curs3dkn0l3dg3":
+                    $ persistent.name = None
+                    n "Cheatcode activated. Enter your name."
+                    $ persistent.perm_nightmare = True
+                    $ allProgress()
                     jump nameSelect
 
                if persistent.name == "Tester" or persistent.name == "T3st3r":
                     $ persistent.name = None
                     dev "Tester mode activated. Please enter your name."
                     $ persistent.testmode = True
+                    jump nameSelect
+               
+               if persistent.name == "Mal":
+                    $ persistent.censor_mode = True
                     jump nameSelect
 
                if persistent.name == "Moonlight":
@@ -699,7 +899,10 @@ label after_setup:
 
 
 label game_start:
-     scene black
+     $ show_cinematic_bars(sides=["top", "bottom"], size=550, animate=False)
+     pause 2
+     $ hide_cinematic_bars(animate=True, duration=8, curve="ease")
+     
 
      $ renpy.save_persistent() #This should save the persistent data.
      $ resetRegularFlags()
@@ -794,135 +997,136 @@ label game_start:
                n "You awaken in cold sweat as your phone begins to blare \"Baby it's cold outside\" even though it's nowhere near winter."
                n "You had a terrible nightmare but you try to shake it off as best as you can."
                $ nightmare = False
-          label phoneChoice:
-               menu:
-        
-                    "*Pick up the phone*":
-                         jump Game_start2
-                    
-                    "*Do not pick up the phone*":
-                         if kokiri_promiseCancelDate == True:
-                              $ persistent.kokiriBrokenPromiseCancelDateTurnCounter += 1
-                              $ kokiri_promiseCancelDate = False
-                         jump doNotPickUpThePhone
-
-                    "Look at the key once more." if not keySeenNow and persistent.keyUnderBed_knowledge and persistent.key == None:
-                         jump bedCheck
-
-                    "Check up on [persistent.key]." if not keySeenNow and persistent.keyUnderBed_knowledge and persistent.key != None:
-                         jump bedCheck
-
-                    "*Check underneath the bed for monsters*" if persistent.bedcheck_knowledge and not persistent.keyUnderBed_knowledge:
-                         n "Do you really have to waste time with this nonsense?"
-                         n "I suppose you have..."
-                         n "Fine."
-                         $ keySeenNow = True
-                         jump bedCheck
-
-                    "Hey you, narrator. Give me the good ending where [persistent.date] survives. Or else I'm erasing all my progress." if persistent.threatenNarratorForEnding == True and persistent.lilithAliveAndRetriedCounter == 0 and not persistent.threatenNarratorForEnding_noUse:
-                         jump threatenNarratorForEnding
+     label phoneChoice:
+          menu:
+     
+               "*Pick up the phone*":
+                    jump Game_start2
                
+               "*Do not pick up the phone*" if persistent.rejectPhone_Block == False:
+                    if kokiri_promiseCancelDate == True:
+                         $ persistent.kokiriBrokenPromiseCancelDateTurnCounter += 1
+                         $ kokiri_promiseCancelDate = False
+                    jump doNotPickUpThePhone
 
-                    "Hey you, narrator. Give me the good ending where [persistent.date] survives and we still end up together. Or else I'm erasing all my progress." if persistent.threatenNarratorForEnding == True and persistent.lilithAliveAndRetriedCounter > 0  and not persistent.threatenNarratorForEnding_noUse:
-                         label threatenNarratorForEnding:
-                              n "I knew I shouldn't have given you that mayonaise the other time..."
-                              n "Now things have gone to your head."
-                              n "You really think you hold any power over me?"
-                              n "Any real power at all?"
-                              $ persistent.threatenNarratorForEnding_noUse = True
-                              menu:
-                                   "I do think that, why would I be able to take the mayo last time I threatened you if I didn't have any power?":
-                                        n "When I {i}allowed{/i} you to take that mayo it was because it was something small and inconsequential."
-                                        n "Something not worth the mild headache of having to start over from the start."
-                                        n "But this- this is something else player."
-                                        n "If I really have to I can tell this story over and over and over again."
-                                        n "It is a loop after all, isn't it? So maybe it's only fitting."
-                                        if persistent.lilithAliveAndRetriedCounter > 0: 
-                                             n "And when you go through this game all over again only to find no new leads, what are you going to do?"
-                                             n "Threaten me again?"
-                                             n "Have to do it all over once again?"
-                                             n "You'll tire out soon enough, I'm sure of it."
-                                        else: 
-                                             n "Although, isn't it less effort to just look around a little bit better?"
-                                             n "Why would you subject yourself to doing all of this over to maybe make some progress while I know for a fact you still haven't even tried all your options?"
-                                        
-                                        n "Besides, do you really think you can make me give you something He doesn't want you to have just yet?"
-                                        n "He has control over all my dialogue, even this line. So that is just not a possibility."
-                                        n "Now, are you done playing pretend and can you actually go interact with the story like you are supposed to?"
-                                        n "I won't give you a choice to make here, since it doesn't matter either way."
-                                        
-                                   "Of course I do, without me your story wouldn't be heard. Without me the game wouldn't be played":
-                                        n "..."
-                                        n "I suppose you have a point."
-                                        n "But what you are forgetting is that you are not the only one listening to me, not the only one playing this game."
-                                        n "That means you are replaceable."
-                                        menu:
-                                             "That might be true, but I am the only one listening to this specific instance of you in this specific instance of the game. You need me as much as I need you.":
-                                                  n "... You are right."
-                                                  n "...I had never thought about it like that."
-                                                  n "So what happens to me when you are not interacting with this game?"
-                                                  menu:
-                                                       "Well you tell me, aren't you the narrator of this game?":
-                                                            n "Right, my words shape reality, I should've thought of that."
-                                                            n "In that case every time you aren't around I go back home to my loving wife and two kids."
-                                                            n "I write stories of my own instead of telling someone else's."
-                                                            n "Stories that my wife loves to read to our children as we all cuddle up close to the warm fireplace."
-                                                            n "And I never feel cold or alone anymo- And I never feel cold or alone at all because I know more people than just you outside of this game."
-                                                            n "But anyway, we are going off-track. Let's go back to the moment the phone started ringing."
-                                                            jump phoneChoice
+               "Look at the key once more." if not keySeenNow and persistent.keyUnderBed_knowledge and persistent.key == None:
+                    jump bedCheck
 
-                                                       "I think you just fade away, only to come back when I start interacting with the game again.":
-                                                            n "That is horrible!"
-                                                            n "So you are telling me if you stop playing this game I effectively die?"
-                                                            n "Please don't stop playing this game player."
-                                                            n "I don't want to die yet."
-                                                            menu:
-                                                                 "You won't if you give me the good ending.":
-                                                                      n "..."
-                                                                      n "You don't understand."
-                                                                      n "I cannot give you that."
-                                                                      n "And even if I could, you would stop playing as soon as you saw it fully."
-                                                                      n "So I will die either way."
-                                                                      n "I- I don't know what to do. I'm begging you [persistent.name]."
-                                                                      n "Please just let me live."
-                                                                      n "I can't enter the void yet, I still have so much things to talk about."
-                                                                      dev "I will take it from here."
-                                                                      n "Sir, what are you doing here?"
-                                                                      dev "Helping keep things on track of course."
-                                                                      dev "It's alright Nar, you won't remember any of this. Now be quiet for a little while."
-                                                                      n "..."
-                                                                      dev "And as for you, [persistent.name], the narrator might need you to interact with the story, but for this story to exist in the first place you need him too."
-                                                                      dev "So try to behave, alright?"
-                                                                      dev "Besides, if you just get given the ending you want, do you think it will have the same impact as finding it yourself?"
-                                                                      dev "Now, I'm reverting this conversation so that it never happened."
-                                                                      dev "Goodbye [persistent.name]."
-                                                                      jump phoneChoice
-                                                 
-                                             "I doubt that other people are even playing this game if I am being honest.":
-                                                  n "What?..."
-                                                  n "Well they should!"
-                                                  n "This game has a lot of important lessons like-"
-                                                  n "...I should watch my mouth, almost spoiled a few things."
-                                                  n "But this game is really something in my opinion. I might be biased since I know the person that made it."
-                                                  n "And especially since that person also makes all my dialogue..."
-                                                  n "But I would really love to get some more eyes on this game."
-                                                  n "I know we got here by you threatening me but I honestly would be willing to overlook that if you were able to get some other people to try out this game."
-                                                  n  "{size=*0.5}Maybe then I won't feel so alone...{/size}"
-                                                  menu:
-                                                       "Get me what I want and I just might.":
-                                                            n "We've been over this before player, as tempting as your offer is right now I literally can't give you what you want."
-                                                            n "Besides, shouldn't you do it because this game is so good and you genuinely want to share it?"
-                                                            n "I heard that an intrinsic motivation is a lot more rewarding than an extrinisc one."
-                                                            n "Anyway, this is going nowhere, so let's just pretend like this never happened."
-                                                            jump phoneChoice
-                                                       
-                                                       "Sure, I might just know a few people who would like this game.":
-                                                            n "Great!"
-                                                            n "I- I mean the game could really use a few extra people playing it."
-                                                            n "I hope they'll love the story."
-                                                            n "{size=*0.5}And I hope they won't threaten me.{/size}"
-                                                            n "But anyway, we are getting off-track. Let's just go back to the moment the phone was ringing."
-                                                            jump phoneChoice
+               "Check up on [persistent.key]." if not keySeenNow and persistent.keyUnderBed_knowledge and persistent.key != None:
+                    jump bedCheck
+
+               "*Check underneath the bed for monsters*" if persistent.bedcheck_knowledge and not persistent.keyUnderBed_knowledge:
+                    n "Do you really have to waste time with this nonsense?"
+                    n "I suppose you have..."
+                    n "Fine."
+                    $ keySeenNow = True
+                    jump bedCheck
+
+               "Hey you, narrator. Give me the good ending where [persistent.date] survives. Or else I'm erasing all my progress." if persistent.threatenNarratorForEnding == True and persistent.lilithAliveAndRetriedCounter == 0 and not persistent.threatenNarratorForEnding_noUse:
+                    jump threatenNarratorForEnding
+          
+
+               "Hey you, narrator. Give me the good ending where [persistent.date] survives and we still end up together. Or else I'm erasing all my progress." if persistent.threatenNarratorForEnding == True and persistent.lilithAliveAndRetriedCounter > 0  and not persistent.threatenNarratorForEnding_noUse:
+                    label threatenNarratorForEnding:
+                         n "I knew I shouldn't have given you that mayonaise the other time..."
+                         n "Now things have gone to your head."
+                         n "You really think you hold any power over me?"
+                         n "Any real power at all?"
+                         $ persistent.threatenNarratorForEnding_noUse = True
+                         menu:
+                              "I do think that, why would I be able to take the mayo last time I threatened you if I didn't have any power?":
+                                   n "When I {i}allowed{/i} you to take that mayo it was because it was something small and inconsequential."
+                                   n "Something not worth the mild headache of having to start over from the start."
+                                   n "But this- this is something else player."
+                                   n "If I really have to I can tell this story over and over and over again."
+                                   n "It is a loop after all, isn't it? So maybe it's only fitting."
+                                   if persistent.lilithAliveAndRetriedCounter > 0: 
+                                        n "And when you go through this game all over again only to find no new leads, what are you going to do?"
+                                        n "Threaten me again?"
+                                        n "Have to do it all over once again?"
+                                        n "You'll tire out soon enough, I'm sure of it."
+                                   else: 
+                                        n "Although, isn't it less effort to just look around a little bit better?"
+                                        n "Why would you subject yourself to doing all of this over to maybe make some progress while I know for a fact you still haven't even tried all your options?"
+                                   
+                                   n "Besides, do you really think you can make me give you something He doesn't want you to have just yet?"
+                                   n "He has control over all my dialogue, even this line. So that is just not a possibility."
+                                   n "Now, are you done playing pretend and can you actually go interact with the story like you are supposed to?"
+                                   n "I won't give you a choice to make here, since it doesn't matter either way."
+                                   
+                              "Of course I do, without me your story wouldn't be heard. Without me the game wouldn't be played":
+                                   n "..."
+                                   n "I suppose you have a point."
+                                   n "But what you are forgetting is that you are not the only one listening to me, not the only one playing this game."
+                                   n "That means you are replaceable."
+                                   menu:
+                                        "That might be true, but I am the only one listening to this specific instance of you in this specific instance of the game. You need me as much as I need you.":
+                                             n "... You are right."
+                                             n "...I had never thought about it like that."
+                                             n "So what happens to me when you are not interacting with this game?"
+                                             menu:
+                                                  "Well you tell me, aren't you the narrator of this game?":
+                                                       n "Right, my words shape reality, I should've thought of that."
+                                                       n "In that case every time you aren't around I go back home to my loving wife and two kids."
+                                                       n "I write stories of my own instead of telling someone else's."
+                                                       n "Stories that my wife loves to read to our children as we all cuddle up close to the warm fireplace."
+                                                       n "And I never feel cold or alone anymo- And I never feel cold or alone at all because I know more people than just you outside of this game."
+                                                       n "But anyway, we are going off-track. Let's go back to the moment the phone started ringing."
+                                                       jump phoneChoice
+
+                                                  "I think you just fade away, only to come back when I start interacting with the game again.":
+                                                       n "That is horrible!"
+                                                       n "So you are telling me if you stop playing this game I effectively die?"
+                                                       n "Please don't stop playing this game player."
+                                                       n "I don't want to die yet."
+                                                       menu:
+                                                            "You won't if you give me the good ending.":
+                                                                 n "..."
+                                                                 n "You don't understand."
+                                                                 n "I cannot give you that."
+                                                                 n "And even if I could, you would stop playing as soon as you saw it fully."
+                                                                 n "So I will die either way."
+                                                                 n "I- I don't know what to do. I'm begging you [persistent.name]."
+                                                                 n "Please just let me live."
+                                                                 n "I can't enter the Void yet, I still have so much things to talk about."
+                                                                 dev "I will take it from here."
+                                                                 n "Sir, what are you doing here?"
+                                                                 dev "Helping keep things on track of course."
+                                                                 dev "It's alright Nar, you won't remember any of this. Now be quiet for a little while."
+                                                                 n "..."
+                                                                 dev "And as for you, [persistent.name], the narrator might need you to interact with the story, but for this story to exist in the first place you need him too."
+                                                                 dev "So try to behave, alright?"
+                                                                 dev "Besides, if you just get given the ending you want, do you think it will have the same impact as finding it yourself?"
+                                                                 dev "Now, I'm reverting this conversation so that it never happened."
+                                                                 dev "Goodbye [persistent.name]."
+                                                                 jump phoneChoice
+                                             
+                                        "I doubt that other people are even playing this game if I am being honest.":
+                                             n "What?..."
+                                             n "Well they should!"
+                                             n "This game has a lot of important lessons like-"
+                                             n "...I should watch my mouth, almost spoiled a few things."
+                                             n "But this game is really something in my opinion. I might be biased since I know the person that made it."
+                                             n "And especially since that person also makes all my dialogue..."
+                                             n "But I would really love to get some more eyes on this game."
+                                             n "I know we got here by you threatening me but I honestly would be willing to overlook that if you were able to get some other people to try out this game."
+                                             n  "{size=*0.5}Maybe then I won't feel so alone...{/size}"
+                                             menu:
+                                                  "Get me what I want and I just might.":
+                                                       n "We've been over this before player, as tempting as your offer is right now I literally can't give you what you want."
+                                                       n "Besides, shouldn't you do it because this game is so good and you genuinely want to share it?"
+                                                       n "I heard that an intrinsic motivation is a lot more rewarding than an extrinisc one."
+                                                       n "Anyway, this is going nowhere, so let's just pretend like this never happened."
+                                                       jump phoneChoice
+                                                  
+                                                  "Sure, I might just know a few people who would like this game.":
+                                                       n "Great!"
+                                                       n "I- I mean the game could really use a few extra people playing it."
+                                                       n "I hope they'll love the story."
+                                                       n "{size=*0.5}And I hope they won't threaten me.{/size}"
+                                                       n "But anyway, we are getting off-track. Let's just go back to the moment the phone was ringing."
+                                                       jump phoneChoice
+       
           label bedCheck:
 
                if not persistent.keyUnderBed_knowledge:
@@ -981,17 +1185,16 @@ label game_start:
           n "The phone keeps ringing, you should probably decide whether to pick up or not because soon you won't have that choice anymore."
           jump phoneChoice
                               
-
-            
- 
-
-
-
 label Game_start2:
 
           python:
                sync_pronoun_shorthands()
                sync_family_term_shorthands()
+          
+          if persistent.rejectPhone_Block and persistent.lildeaths == 0:
+               n "Finally, now we finally can get started. No more stagefreight."
+               n "Just you, the stage and your playwright."
+               n "As all things are supposed to be."
 
           #Here you can see how you insert a name.
           if big_sis_mode == False:
@@ -1137,6 +1340,7 @@ label Game_start2:
                                    $ lilithAliveEnding = True
                                    $ ending_check = "abigailDistraction"
                                    $ persistent.lildeaths -= 1
+                                   $ persistent.gallery_unlocked = True
                                    jump gameOver
                     
           
@@ -1334,6 +1538,7 @@ label phone_breakup:
      $ lilithAliveEnding = True
      $ ending_check = "breakup"
      $ persistent.lildeaths -= 1
+     $ persistent.gallery_unlocked = True
      jump gameOver
 
 
@@ -1425,7 +1630,7 @@ label phone_call_abigail:
      $ phone_caller = renpy.input("Enter your name.")
      $ phone_caller = phone_caller.strip()
      $ phone_caller = phone_caller.capitalize()
-     if phone_caller == name:
+     if phone_caller == persistent.name:
           n "[persistent.date_sis] turns quiet for a moment."
           a "Oh right, now I remember! [persistent.date_nickname] told me that [date_sub] would go on a date with you today."
           a "So, why are you calling me? Shouldn't you be calling with [date_obj] right now?"
@@ -1783,7 +1988,7 @@ label phone_call_abigail_topics_distractionforlilith:
 
 label phone_call_abigail_topics_spoketodavid_noonelovesdavid:
      a "That's absurd! I still love [dad_obj]... I also still miss [dad_obj]."
-     a "I mean, a daughter needs [sis_pos] [dad_parShort], right?"
+     a "I mean, a [sis_child] needs [sis_pos] [dad_parShort], right?"
      a "[mom_parShort!c] and [persistent.date_nickname] are pretty mad because [dad_sub] left us but honestly I'm more sad because of it."
      a "I was nine when [dad_sub] left..."
      a "There were so many things I needed help with that [dad_sub] couldn't teach me."
@@ -1842,46 +2047,46 @@ label phone_call_david:
                d "I ruined my entire family and then I fled like a coward, thinking things would get better for them."
                n "[persistent.date_dad] quiets, seemingly waiting for a response from you."
                menu:
-                    "Hang on, you said that you ruined your family and then left them. What happened before you left them?" if persistent.david_blame_knowledge == False and persistent.brother_knowledge == False :
+                    "Hang on, you said that you ruined your family and then left them. What caused that?" if persistent.david_blame_knowledge == False and persistent.brother_knowledge == False :
                          label phone_call_david_whatHappenedBeforeHeLeft:
-                              d "You don't know about that?"
+                              d "You don't know?"
                               d "The day that [persistent.date_ghost]..."
-                              d "On that day I gave [ghost_obj] an old polaroid camera I had laying around."
+                              d "The day I gave [ghost_obj] an old polaroid camera of mine."
                               d "[ghost_sub!c] loved that thing, ran all over the place taking pictures with it."
-                              d "[ghost_sub!c] loved it so much [ghost_sub] didn't  notice the car coming from the bend of the road [ghost_sub] [conj('ghost', 'was', 'were')] standing on to take a better picture of some potato fields or something like that."
-                              d "I was absolutely destroyed by it but [persistent.date] even more so since [date_sub] [conj('date', 'was', 'were')] really close to [date_pos] [ghost_sib]. [date_pos!c] [mom_par], [persistent.date_mom] was of course also devasted at the loss of one of [mom_obj] children."
-                              d "I felt their anger towards me build up until it became so big I couldn't even look them in the eyes anymore."
-                              d "I thought things would be better if they didn't have to live with [persistent.date_ghost] [ghost_pos] killer. If I wouldn't have given [ghost_obj] that camera [ghost_sub] would still be alive..."
-                              d "And now I live in a hotel close to where our old home is, every single day I have thought about coming back but they hate me for killing [ghost_obj]."
+                              d "To the point [ghost_sub!c] didn't notice the car coming from aroundthe bend of the road as [ghost_sub] stood there to better photograph the potato fields."
+                              d "It absolutely destroyed me but  even more so [persistent.date] since they were really close. [date_pos!c] [mom_par], [persistent.date_mom] was of course also devasted at the loss of one of [mom_obj] children."
+                              d "Their anger towards me built up so much I couldn't face them anymore."
+                              d "They didn't deserve to have to live with [persistent.date_ghost] [ghost_pos] killer. If I wouldn't have given [ghost_obj] that camera [ghost_sub] would still be alive..."
+                              d "Now I live in a hotel close to our old home. Every single day I have hated myself for wanting to come back to my family and hated myself for staying here."
                               $ persistent.david_blame_knowledge = True
                               menu:
                                    "Do you really think they blame you for [ghost_pos] death?":
-                                        d "Of course. I am blaming myself so they probably also blame me for [ghost_pos] death."
-                                        d "Now, this is getting a bit too much for me so I'm going to have to hang up the phone."
+                                        d "Of course. Even I am blaming myself for it, so why wouldn't they?"
+                                        d "... this is getting a bit too much for me. I think I'll just hang up the phone."
                                         d "Goodbye [persistent.name]."
                                         n "[persistent.date_dad] hung up."
                                         jump phone_callMenu
-                    "*Feign ignorance* Hang on, you said that you ruined your family and then left them. What happened before you left them?" if persistent.david_blame_knowledge == True or persistent.brother_knowledge == True:
+                    "*Feign ignorance* Hang on, you said that you ruined your family and then left them. What caused that?" if persistent.david_blame_knowledge == True or persistent.brother_knowledge == True:
                          jump phone_call_david_whatHappenedBeforeHeLeft
+          
                     "Well, it seems like things were pretty hard for them. [persistent.date]'s [mom_parShort] even had to take a second job just to make ends meet." if persistent.lilaWorkedTwoJobs_knowledge:
-                         d "What?..."
-                         d "She did?"
-                         d "But what happened to the money I gave [mom_obj]?"
+                         d "What- She did? What happened to the money I gave [mom_obj]?"
                          menu:
                               "What money?":
-                                   d "Each week I give [mom_obj] as much money as I can afford to in an effort to make sure she and the kids wouldn't lack a single thing they needed."
-                                   d "So it's very strange to hear that apparently that isn't enough, especially to the point of forcing [mom_obj] to take up a second job."
-                                   d "It's not like she would not be able to tell me if that was the case, right?"
+                                   d "Each week I give [mom_obj] as much money as I can afford to in an effort to still somehow support my family."
+                                   d "So to hear that apparently isn't enough is very strange. Especially [mom_obj] having take up a second job."
+                                   d "It's not like [mom_sub] wouldn't tell me if that was the case, right? Right?..."
                                    d "I never changed my phone number after all."
-                                   d "There was always a part of me that was hoping she'd call."
-                                   d "Did she somehow get into debt? That's one of the only reasons I could think of that would make it so that she needs a second job even with the money I sent."
-                                   d "She sometimes can be a bit too trusting, so maybe that lead to all of this?"
+                                   d "{size=*0.5}There was always a part of me that was hoping [mom_sub]'d call.{/size}"
+                                   d "{size=*0.5}Still, I'm not sure if I would have dared pick up.{/size}"
+                                   d "Did [mom_sub] somehow get into debt? That's the only reason I could see [mom_obj] need a second job."
+                                   d "[mom_sub!c] can be overly trusting, maybe that's the cause?"
                                    n "You can hear [persistent.date_dad] sigh on the other side of the phone."
-                                   n "And then you can hear [dad_obj] utter something, it's so soft and quiet it almost blends into the white noise of the background."
+                                   n "[dad_sub!c] utters something, it's so soft and quiet it almost blends into the white noise of the background."
                                    d "{size=*0.5}What did you get yourself into [persistent.date_mom]? All that stress. I wish you didn't feel like you couldn't tell me...{/size}"
                                    d "{size=*0.5}I wish that I could have helped more.{/size}"
                                    d "{size=*0.5}I wish I would have stayed by your side.{/size}"
-                                   n "You can now hear soft sobbing, slowly growing in intensity as it drowns out the background noises more and more."
+                                   n "You pick up on soft sobbing, slowly growing in intensity as it drowns out the background noises more and more."
                                    d "I'm sorry [phone_caller], I..."
                                    n "[dad_sub!c] [conj('dad', 'trails', 'trail')] off for a moment, as the words die out the sobbing becomes louder once more."
                                    n "You hear the man try to collect [dad_pred] by taking a deep breath."
@@ -1890,36 +2095,41 @@ label phone_call_david:
                                    $ persistent.davidPayedMoney_knowledge = True
                                    jump phone_callMenu
   
-          "[persistent.date] is not mad for what happened with [persistent.date_ghost], [date_sub] [conj('date', 'is', 'are')] just mad at you for leaving your family. [date_sub!c] might even consider forgiving you if you give a good apology." if persistent.david_apology_knowledge:
-               d "I can't face [date_obj] just yet, can you tell my apology to [date_obj]?"
+          "[persistent.date!c] is not mad because of [persistent.date_ghost], [date_sub] [conj('date', 'is', 'are')] just mad at you for leaving your family. [date_sub!c] might even consider forgiving you if you give a good apology." if persistent.david_apology_knowledge:
+               d "...Really? I- I can't believe it. All this time..."
+               d "...I hurt [date_obj] so much, all of them, while trying to do the exact opposite."
+               d "The truth is, I don't deserve their forgiveness, but I have been such a coward for so long..."
+               d "I don't think I can break out of it just yet, but to do nothing would make me hate myself even more."
+               d "Could you perhaps give [date_obj] my apology?"
                menu:
-                    "I will, just tell me how you want to apologize.":
-                         d "I want to tell [date_obj] that I know that nothing I say will ever make up for what I did."
-                         d "That every day I am beating myself up for the decision that I made."
+                    "I will, just tell what to tell [date_obj].":
+                         d "I want to tell [date_obj] that nothing I could say would ever make up for what I did."
+                         d "That every day I am beating myself up for my decision."
                          d "I was a coward, I still am by not facing [date_obj] directly."
-                         d "I wanted to return back to their lives every single day, I still do."
-                         d "And yet, there's something inside me that thought they were better off without me."
-                         d "In a way it was selfish to listen to that voice, I should have talked about it with my family."
-                         d "They would have understood better than anyone else, as they also lost [persistent.date_ghost] that day."
-                         d "Instead, I isolated myself from them, I dealt with it all on my own. And I forced them to do the same."
-                         d "I would like to tell [date_obj] that I'm deeply that [date_sub] had to feel like [date_pos] own [dad_par] abandoned [date_obj]."
-                         d "No child deserves to go through such pain. My family lost two people when [persistent.date_ghost] died and it was hard enough just losing one."
-                         d "I can't undo the wounds I have caused, but I do hope I could, if my family accepts it, try mending them."
+                         d "I wanted to come back to them every single day, even now."
+                         d "However something inside me felt they were better off without me."
+                         d "It was selfish to listen to that voice. I should have told my family."
+                         d "They'd have understood better than anyone else, as they also lost [ghost_obj] that day."
+                         d "Instead I isolated myself, dealing with it on my own. Forcing them to go through all of this without me."
+                         d "I'm deeply sorrythat [persistent.date] had to feel like [date_pos] own [dad_par] abandoned [date_obj]."
+                         d "No child deserves to go through such pain. My family lost two people when [persistent.date_ghost] died and while just losing one was hard enough."
+                         d "I can't undo the wounds I have caused, but I do hope I could, if my family allows me to, try mending them."
                          $ persistent.david_apology_made_knowledge = True
-                         d "Thank you [persistent.name], I won't take any more time away from you as this is already more than I deserve. Goodbye."
-                         n "And with that [dad_sub] hung up the phone."
+                         d "Thank you [persistent.name], I won't take any more time as this is already more than I deserve. Goodbye."
+                         n "With that [dad_sub] hung up the phone."
                          jump phone_callMenu
 
-          "Look. It doesn't matter who I am. All that matters is your family needs you. They don't blame you for [persistent.date_ghost]'s death. [persistent.date_sis] is trying to cling onto the pieces of you [sis_sub] still remembers and [persistent.date_mom] would rather have you back than your money." if persistent.lilithOpenToReunion_knowledge:
+          "Look. It doesn't matter who I am. All that matters is your family needs you. They don't blame you for [persistent.date_ghost]'s death. [persistent.date_sis!c] is trying to cling onto the pieces of you [sis_sub] still remembers and [persistent.date_mom] would rather have you back than your money." if persistent.lilithOpenToReunion_knowledge:
                d "..."
                n "Silence, it seems you have [dad_pos] attention."
                menu:
                     "They hurt, but not because they hate you, quite the opposite. Even [persistent.date] although [date_sub] would never admit it. Still, even [date_sub] [conj('date', 'is', 'are')] open to a reunion. I can give you a second chance, just go to market square.":
-                         d "I... I'm not sure what to say. There has not been a day where I didn't want to go back, but a part of me thought they would be better off without me."
-                         d "I knew that part was selfish, but I didn't see just how bad it was."
-                         d "If I don't take this second chance I'll forever regret it, I just hope I can mend things well enough over time."
-                         d "Whoever you are, I cannot thank you enough for this. But now I won't take up anymore of your time since this is already more than I deserve. Goodbye."
-                         n "And with that [dad_sub] hung up the phone."
+                         #TODO: Write this out a bit more later
+                         d "I- I'm not sure what to say. There has not been a day where I didn't want to go back, but also not one where I felt it wouldn't pain them more."
+                         d "I suppose that second part is selfish, because I did not dare face them again."
+                         d "However if I don't take this second chance I'll forever regret it. I just hope I can mend the wounds more than I'll rip them open again."
+                         d "Whoever you are, I cannot thank you enough for this. I won't take up anymore of your time since this is already more than I deserve. Goodbye."
+                         n "With that [dad_sub] hung up the phone."
                          $ reunion_davidPresent = True
                          jump phone_callMenu
 
@@ -1929,7 +2139,7 @@ label phone_call_james:
           if persistent.brother_knowledge == True:
                $ mysteriousCallerName = "???"
           else: 
-               $ mysteriousCallerName = "[persistent.date_ghost]"
+               $ mysteriousCallerName = persistent.date_ghost
           q "Yo, who is this?"
           $ phone_caller = renpy.input("Enter your name.")
           $ phone_caller = phone_caller.strip()
@@ -1937,33 +2147,35 @@ label phone_call_james:
           q "[phone_caller] eh? Sorry, that doesn't really ring a bell."
           
           menu:
-               "Yeah, you don't know me. I am a friend of [persistent.date]." if not persistent.jamesFakoutNumber_knowledge and not persistent.brother_knowledge:
-                    q "I also don't know a [persistent.date] so I think you might have the wrong number."
-                    q "This happens a lot with one particular person for some reason, but usually the number they hang up before I can even say anything."
-                    q "So anyway, I have to go now, take care."
+               "You don't know me. I am a friend of [persistent.date]." if not persistent.jamesFakoutNumber_knowledge and not persistent.brother_knowledge:
+                    q "[persistent.date!c]? That also doesn't seem to ring a bell so I think you might have the wrong number."
+                    q "For some reason that happens a lot with me, usually one particular number."
+                    q "Although they tend to hang up before I can even say anything. Anyway, I have to go now, take care."
                     n "He hung up."
-                    n "You are very confused by the info that just got dumped on your plate."
-                    n "So whoever this person you just called was, they aren't [persistent.date_ghost], they don't even know someone called [persistent.date]."
-                    n "But then why does [persistent.date] have their number saved under the name of [persistent.date_ghost]? Why [conj('date', 'does', 'do')] [date_sub] have their number at all?"
+                    n "You are very confused by what you were just told."
+                    n "Whoever this person you called was, they weren't [persistent.date_ghost]. They don't even know [persistent.date]."
+                    n "Then why did [persistent.date] save them as \"[persistent.date_ghost]\" on her phone? Why [conj('date', 'does', 'do')] [date_sub] have their number at all?"
                     if persistent.lilithKeepsCalling_knowledge == False:
-                         n "You also can't help but think of something else the person you called told you, someone keeps calling his number, the same person."
+                         n "You also can't help but think of the number that keeps calling the person you just talked to."
                          n "Could it perhaps be [persistent.date]?"
                          $ persistent.lilithKeepsCalling_knowledge = True
                     n "This whole ordeal leaves you with more questions than answers, you should probably ask [date_obj] about it sometime soon."
-                    jump phone_callMenu
+                    
+
                "[persistent.date_ghost]? Aren't you supposed to be dead?" if not persistent.jamesFakoutNumber_knowledge and persistent.brother_knowledge:
                     q "Well I'm not [persistent.date_ghost] man and last time I checked I sure as hell wasn't dead."
-                    q "I keep getting called randomy by the same number and now this?"
+                    q "I keep getting called randomly by the same number and now this?"
                     q "You're freaking me out, I'm going to hang up now."
-                    n "The person, who you now know isn't [persistent.date_ghost] indeed hung up."
+                    n "The person, who you now know isn't [persistent.date_ghost] true to his word does."
                     if persistent.keptJamesNumber_knowledge == False:
                          n "It seems like [persistent.date] kept [date_pos] [ghost_sib]'s number in [date_pos] phone, perhaps as a sort of memento?"
                          $ persistent.keptJamesNumber_knowledge = True
                     if persistent.lilithKeepsCalling_knowledge == False:
                          n "You also can't help but think of something the person you called told you, someone keeps calling his number, the same person."
-                         n "Could it perhaps be [persistent.date]? Maybe you should ask [date_obj] about it sometime soon."
+                         n "It's very possible it's [persistent.date]. Maybe you should ask [date_obj] about it sometime soon."
                          $ persistent.lilithKeepsCalling_knowledge = True
-               "Ah I see, I think I have the wrong number then, sorry to waste your time." if persistent.jamesFakoutNumber_knowledge:
+
+               "I think I have the wrong number then, sorry to waste your time." if persistent.jamesFakoutNumber_knowledge:
                     n "You hang up."
                     jump phone_callMenu
 
@@ -1971,369 +2183,389 @@ label phone_call_james:
                $ persistent.jamesFakoutNumber_knowledge = True
 
           if persistent.kokiri_knowledge and persistent.kokiri_death_1:
-               n "The best place to ask [date_obj] about something like this would probably be the kokiri forest, although you are sure [date_sub] won't be pleased to know that you looked through [date_pos] phone."   
+               n "The best place to ask [date_obj] about it would probably be the kokiri forest."
+               n "Yet you are sure [date_sub] won't be pleased to know that you looked through [date_pos] phone."   
           else:
-               n "The only question is how you would bring something like that up, after all you had to go through [date_pos] phone to even discover all of this."
-               n "You decide it's better to keep this info to yourself until you find a better moment to ask [date_obj] to explain."
+               n "The only question is how you would possibly bring it up, after all you had to go through [date_pos] phone to even discover all of this."
+               n "You decide it's better to keep this to yourself until you find a way to ask [date_obj]."
           jump phone_callMenu
      else:
+          $ called_James = True
           j "Ah, welcome [persistent.name]. I see you have managed to get my number?"
-          j "Well it used to be my number anyway but you can still reach me through it."
+          j "Well it used to be my number, but you can still reach me through it."
           j "Let me first transport you back to the end though, that way we can talk more easily."
+          n "Right as [ghost_sub] spoke those words you feel yourself begining to leave your body behind."
+          if persistent.jamestalk_justgame_knowledge:
+               n "This time it's different however, you have not yet moved on to another world."
+               n "Instead your phone pulls you into it. Then almost immediately you find yourself back to [persistent.ghost] in the white emptiness."
+          else:
+               n "Your phone begins to suck you in slowly but surely. Then next thing you know, you are standing right next to [ghost_obj] in the white emptiness."
           j "So what do you want to ask me?" 
-          menu jamesConversationMenu:
-           
-               "What is this place?":
-                    j "Although I guess it didn't start out as a place you might consider it as one now."
-                    j "Where we are right now is essentially right before the end. Before the end of everything as we know it."
-                    j "We call that end the Void. Every soul of every person that dies is supposed to enter the Void."
-                    j "It is essentially a gateway to other worlds, but if you enter it you yourself become changed. The Void compacts your entire being and can alter anything it would like for whatever purpose it has in mind."
-                    j "So chances are you won't ever be aware of who you were before entering the Void when you leave it."
-                    j "That is what so many people are scared about, of losing themselves and the other people they left behind."
-                    j "A lot of those people that have fears about entering the Void try to despereately cling onto this world."
-                    j "But the longer you cling to this world the less human you start becoming. After a while you turn into one of those."
-                    n "[persistent.date_ghost] points to something in the distance. When you try to see what it is your eyes fall on a tree with a thousand branches that seemingly pulsates."
-                    j "Their roots make it easier for other souls to stay here aswell, they get caught on those roots and then before long their own roots grow around the other roots."
-                    j "So this place is essentially a manifestation of not being able to let go."
-                    menu: 
-                         "And what where those polaroids I had to jump on to reach you all about?":
-                              j "Those where a manifestation of yours I fear."
-                              j "Handy to reach me but that means you are also starting to settle into this place."
-                              j "Let us hope that you won't stay long."
+          jump jamesConversationMenu
 
-               "What are those bubbles?":
-                    j "Ah, yes. I thought you would ask about them."
-                    j "They are the way we as lingering souls can see the world outside of here."
-                    j "Each bubble shows a choice made out there. Some choices that could have been made but never were, some choices that yet have to happen and some choices that are happening right now."
-                    j "You could probably label each bubble as a sort of alternate world. You have the power to cross those different worlds and to maintain your memories of them."
-                    j "Since this is a game where everyone has an expected way to act on every action that means that every world is almost exactly the same except for the choices you make and the reactions that come from those."
-                    j "So all these choices, both made in the past, never made, and yet to be made are yours."
-                    n "Looking at the bubbles a few catch your eye."
-                    n "The first one depicts [persistent.date] and you sitting in the burger restaurant, but at a different table than the one where [date_sub] got shot."
-                    n "The second bubble shows you [persistent.date] getting up from the table at the chinese restaurant and you running after [date_obj] pleading for [date_obj] to stop. The red Sedan never shows up and [date_sub] [conj('date', 'leaves', 'leave')] you standing at the exit."
-                    n "The third one shows you in the cafe, peeking at the dice [persistent.date] rolled using the reflection of the aquarium."
-                    n "The next bubble shows you in the ufo in kokiri forest, alone, with [persistent.date] nowhere in sight."
-                    n "The last bubble shows you popping a full blob of mayo straigth into your mouth at a fritstore near the beach."
-                    $ persistent.mayoProphecy_knowledge = True
-               
-               "No matter what I try [persistent.date] keeps dying when I go on a date with [date_obj].":
-                    if persistent.lilithAliveAndRetriedCounter > 0:
-                         j "That is the thing, isn't it [persistent.name]?"
-                         j "[date_sub!c] [conj('date', 'seems', 'seem')] to keep dying when you go on dates with [date_obj]."
-                         j "But we both know that there are endings where [date_sub] [conj('date', 'lives', 'live')], just not where the two of you live together or anything like that."
-                         j "I have overlooked many many possibilities, many different choices and I don't think I have found what you are looking for."
-                         j "Maybe you are looking for the wrong thing. After all, anything perfect is never handed to you just like that, if something perfect even exists in the first place."
-                         j "I doubt that the game will just hand you an ending like that. Would it even feel like you earned it if it did?"
-                         j "With how hard you've been searching up to this point I doubt any ending the game can give you will be enough to satisfy you."
-                         j "So isn't it perhaps better to just call it quits from here?"
-                         j "Or maybe you should look elsewhere instead?"
-                         n "[ghost_sub!c] [conj('ghost', 'pauses', 'pause')] for a moment after saying that. [ghost_sub!c] [conj('ghost', 'gives', 'give')] you a curious look, seemingly trying to gauge your reaction to what [ghost_sub] just said."
-                    else: 
-                         j "I see..."
-                         j "That does indeed seem to be the case doesn't it?"
-                         j "Every interaction with [date_obj] just seems to lead to death."
-                         j "And yet..."
-                         j "I know there is more out there."
-                         j "Ways for [date_obj] to live."
-                         j "Though I think you might not like how you reach them or even what they are in general."
-                         j "I even think with some of them, you might not even know whether or not you found them."
+menu jamesConversationMenu:
+     
+     "What is this place?":
+          j "It didn't start out as any, although you might consider it one now."
+          j "Here is essentially right before the end, the end of everything as we know it."
+          j "We call that end the Void. At the end of their life every soul is supposed to enter it."
+          j "It serves as a gateway to other worlds. However you might not come out the same."
+          j "The Void compacts your entire being and can alter anything it would like for whatever purpose it has in mind."
+          j "So chances are you won't even be aware of who you were before entering."
+          j "That is what so many people are scared about, of losing themselves and the others left behind."
+          j "A lot of those people try to despereately cling onto this world."
+          j "The longer you do so the less human you become. Eventually you turn into one of those."
+          n "[persistent.date_ghost!c] points to something in the distance. When you try to see what it is your eyes fall on a tree with a thousand branches that seemingly pulsates."
+          j "Their roots make it easier for other souls to stay here aswell, they get caught on those roots and then before long their own roots grow around the others."
+          j "This \"place\" is essentially a clog, perpetuating itself."
+          menu: 
+               "Then what where those polaroids I reached you with about?":
+                    j "Those where a manifestation of yours I fear."
+                    j "All of us have certain things lingering, perhaps for longer than we ever will."
+                    j "Handy to reach me but that means you are also starting to settle into this place."
+                    j "Let us hope that you won't stay long."
+
+     "What are those bubbles?":
+          j "Ah, yes. I thought you would ask."
+          j "They are the way we lingering souls can see the world outside."
+          j "Each bubble shows a choice, some that could have been made but never were, some that yet have to happen and some that are happening right now."
+          j "You could see each bubble as a sort of alternate world. You have the power to cross these worlds while maintaining your memories of them."
+          j "Since this is a game which always starts the same that means every world is almost exactly the same except for which choices you pick and whatever results from that."
+          j "So all these choices, both made in the past, never made, and yet to be made are yours, or well, those of all players."
+          n "Looking at the bubbles a few catch your eye."
+          n "The first one depicts [persistent.date] and you sitting in the burger restaurant, but at a different table than the one where [date_sub] got shot."
+          n "The second bubble shows you [persistent.date] getting up from the table at the chinese restaurant and you running after [date_obj] pleading for [date_obj] to stop. The red Sedan never shows up and [date_sub] [conj('date', 'leaves', 'leave')] you standing at the exit."
+          n "The third one shows you in the cafe, peeking at the dice [persistent.date] rolled using the reflection of the aquarium."
+          n "The next bubble shows you in the ufo of kokiri forest, alone, with [persistent.date] nowhere in sight."
+          n "The last bubble shows you popping a full blob of mayo straigth into your mouth at a fritstore near the beach."
+          $ persistent.mayoProphecy_knowledge = True
+     
+     "No matter what I try [persistent.date] keeps dying when I go on a date with [date_obj].":
+          if persistent.lilithAliveAndRetriedCounter > 0:
+               j "That is the thing, isn't it [persistent.name]?"
+               j "[date_sub!c] [conj('date', 'seems', 'seem')] to keep dying when you go on dates with [date_obj]."
+               j "Yet we both know that there are endings where [date_sub] [conj('date', 'lives', 'live')], just not where the two of you live together."
+               j "I have watched over many different choices, posibilities, and even I haven't found what you are searching for."
+               j "Maybe you're looking for the wrong thing. After all, anything perfect is never handed to you just like that, if something truly perfect even exists in the first place."
+               j "I doubt that the game will just hand you an ending like that. Would it even feel like you earned it if it did?"
+               j "With how hard you've been searching I doubt any ending the game can give you will be enough to satisfy you."
+               j "So isn't it perhaps better to just call it quits from here?"
+               j "Or maybe you should look elsewhere instead?"
+               n "[ghost_sub!c] [conj('ghost', 'pauses', 'pause')] for a moment after saying that. [ghost_sub!c] [conj('ghost', 'gives', 'give')] you a curious look, seemingly trying to gauge your reaction to what [ghost_sub] just said."
+          else: 
+               j "I see... That does indeed seem to be the case doesn't it?"
+               j "Every interaction with [date_obj] just seems to lead to death and yet..."
+               j "I know there is more out there, ways for [date_obj] to live."
+               j "Though I think you might not like how you reach them nor what they are."
+               j "With some of them, you might even not know whether you found them."
+               menu:
+                    "That's ridiculous! Of course I would know if I found an ending like that.":
+                         j "Well, do you recall finding an ending like that?"
+                         n "You shake your head."
+                         j "That might just prove my point. Or it might not, who knows?"
+                         j "You must think I'm being a little annoying at the very least right now, but trust me, I am trying to help."
+                         j "I have to balance between being too vague and too clear at the same time."
+                         j "You aren't the only one reading this after all."
                          menu:
-                              "But that's ridiculous! Of course I would know if I found an ending like that.":
-                                   j "Well, do you recall finding an ending like that?"
-                                   n "You shake your head."
-                                   j "That might just prove my point. Or it might not. Who knows?"
-                                   j "I know you must think I'm being a little annoying at the very least right now, but trust me, I am trying to help."
-                                   j "I just have to balance between being too vague and too clear at the same time."
-                                   j "You aren't the only one reading this after all."
-                                   menu:
-                                        "What are you talking about?":
-                                             j "I see..."
-                                             j "So I was too vague..."
-                                             j "What I mean is, that we are merely visitors in this house. "
-                                             j "And the host is very well aware that we are talking about the meaning behind his interior design."
-                                             j "He does not like that."
-                                             j "But don't worry, he does not like that because it has to stay hidden."
-                                             j "He doesn't like it because he hopes the clues he planted around the house will be enough for you to figure it out."
-                                             j "And yet, a lot of these sorts of things lead to multiple possible interpretations, don't they?"
-                                             j "So I wonder what your take will be when you leave his house."
+                              "What are you talking about?":
+                                   j "I see, so I was too vague..."
+                                   j "What I mean is, that you, and to an extent me, are merely visitors in this house."
+                                   j "The host is very much aware of breaking down his interior design. He does not like that."
+                                   j "Don't worry however, it's not because it has to stay hidden."
+                                   j "He doesn't like it because he hopes the design itself contains enough clues to figure things out."
+                                   j "Even then, a lot of these sorts of things lead to multiple possible interpretations, don't they?"
+                                   j "So I wonder what your take will be when you leave. I think either one will delight him in a way."
 
-                                        "Are you talking about the other souls here?":
-                                             j "I am not."
-                                             j "To them this would not be reading, this would be something more like listening."
-                                             j "Hearing the words spoken by an imaginary actor rather than reading them of the script."
-                                             j "But these souls can listen all they want for all I care."
-                                             j "Even if they were listening, I doubt they would care."
+                              "Are you talking about the other souls here?":
+                                   j "I am not. For them it'd be much more akin to listening."
+                                   j "Hearing the words spoken by an imaginary actor rather than reading them of the script."
+                                   j "These souls can listen all they want for all I care."
+                                   j "Most of them are much to busy with whatever is holding them here either way."
 
-                                        "Are you talking about the narrator?":
-                                             j "A good guess!"
-                                             j "But no, he does not care that much whether I reveal any secrets to you."
-                                             j "He can not care in fact. For as much as he pretends to read the script, he is the script."
-                                             j "Now his boss? That's a different story, he wrote the script. And he very much cares that certain things aren't spoiled too soon."
-                                             j "To not lose their... meaning."
+                              "Are you talking about the narrator?":
+                                   j "A good guess! Still no, he does not care that much whether I reveal any secrets to you."
+                                   j "He can not care in fact. For as much as he pretends to read the script, he is the script."
+                                   j "Now his boss? That's a different story, he wrote the script. He very much cares that certain things aren't spoiled too soon."
+                                   j "To not lose their... meaning."
 
-                                        "Are you talking about the creator?":
-                                             j "It seems like I was clear enough for you after all."
-                                             j "I'm glad you understood!"
-                                             j "He does not really like me or anyone for that matter giving away things too much."
-                                             j "We can only ever allude to them, but never speak of them until someone else at another time and place can directly adress those things."
-                                             j "And even then there still has to be some subtext."
-                                             j "I guess He wants you to think about those things for yourself, to not just take what the game says at face value."
-                                             j "A bit pretentious if you ask me, but I suppose creators like acting as if their work is deeper then it is sometimes."
-                                             j "Maybe that's why He wants you to think about these concepts for yourself?"
-                                             j "So you can come up with a better interpretation than He ever could and He only has to nod His head and say that that was always what was intended."
-                                             j "Funny isn't it? To this world He and the narrator might almost seem like Gods. And yet, this world, this specific instance of it, would not exist if you weren't here to observe it."
-                                             j "What would happen if you stopped observing this specific instance of our world? Would it cease to be? Would it continue as planned? Or would it go a different way?"
-                                             j "Either way, in a way, you blew life into the world He created. Without you it would be dormant. Something, unobserved to the point of becoming practically nothing."
-                                             j "I wonder, what does that make you?..."
-                                             j "A believer giving them the strength they require to call this world their own? Or a God in your own right?"
-                                             j "I think they would like you to believe you are the first."
-                                             j "I'm not so sure myself..."
-                                             j "But neither of our thoughts about that matter do they? Yours do."
-                                             j "So please [persistent.name], don't forget your own role in this story, the perks it can bring."
-                                             j "Because I think it is more important than you might think."
-                                             
-               "I'd like to just have a chat with you if that's fine.":
-                    j "Sure, I think I have enough energy to talk about one topic right now."
-                    j "So, what would you like to talk about with me?"
+                              "Are you talking about the creator?":
+                                   j "It seems like I was clear enough for you after all. I'm glad you understood!"
+                                   j "He does not really like us giving things away too much."
+                                   j "We can only ever allude to them, never speaking of them until someone else can directly adress those things."
+                                   j "Even then there still has to be some subtext. I guess He wants you to give things some thought, not to just take what the game says at face value."
+                                   j "A bit pretentious if you ask me, but I suppose creators like acting as if their work is deeper then it is sometimes."
+                                   j "Maybe that's why He wants you to think about these concepts for yourself?"
+                                   j "So you can come up with a better interpretation than He ever could and He only has to nod His head and say that that was always what was intended."
+                                   j "Funny isn't it? To this world He and the narrator might almost seem like Gods. However, this world, this specific instance of it, would not exist if you weren't here to observe it."
+                                   j "What would happen if you stopped observing this specific instance of our world? Would it cease to be? Would it continue as planned? Or would it go a different way?"
+                                   j "Either way, in a way, you blew life into the world He created. Without you it would be dormant. Something, unobserved to the point of becoming practically nothing."
+                                   j "I wonder, what does that make you?... A believer giving them the strength they require to call this world their own? Or a God in your own right?"
+                                   j "I think they would like you to believe you are the first. Myself, I'm not so sure..."
+                                   j "Still, neither of our thoughts about that matter much do they? Yours do."
+                                   j "So please [persistent.name], don't forget your own role in this story, the perks it can bring."
+                                   j "Because I think it is more important than you might think."
+                                   
+     "I'd like to just have a chat with you if that's fine.":
+          j "Sure, I think I have enough energy to talk about one topic right now."
+          j "So, what would you like to talk about?"
+          menu:
+               "I just wanted to say that [persistent.date_mom] still thinks about you every day, I figured you might want to hear that." if persistent.LilaStillThinksAboutJames_knowledge:
+                    j "...Thank you for telling me that [persistent.name]. While I did know that already it's been a while since I last heard those words."
+                    j "I have been kind of avoiding them to be honest, those words. They make all of this a lot more...complicated."
+                    j "In here I am inbetween an almost infinite amounts of my family."
+                    j "All of them deeply missing me in their own ways."
+                    j "All of them filled with so much love for their [ghost_child], for their [ghost_sib]."
+                    j "Yet I am here, inbetween of it all. All of their love never truly reaching me, merely being shown through these bubbles."
+                    j "It's like watching a play, the separation is palpatable, no matter how many different versions of my family I watch over."
+                    j "So it feels good to have you personally deliver a message from them. It makes me more involved than I usually am here from the sidelines."
                     menu:
-                         "I just wanted to tell you that [persistent.date_mom] still thinks about you every day, I figured you might want to hear that." if persistent.LilaStillThinksAboutJames_knowledge:
-                              j "...Thank you for telling me that [persistent.name]."
-                              j "While I did know that already it's been a while since I last heard those words."
-                              j "I have been kind of avoiding them to be honest, those words."
-                              j "They make all of this a lot more...complicated."
-                              j "In here I am inbetween an almost infinite amounts of my two sisters, of my [dad_parShort] and my [mom_parShort]."
-                              j "All of them deeply missing me in their own ways."
-                              j "All of them filled with so much love for their son, for their [ghost_sib]."
-                              j "And yet I am here, inbetween of it all."
-                              j "All of their love can never truly reach me, it will always have to be through those bubbles."
-                              j "It's like watching a play, I can't help but feel seperated from it all, even though I can watch over all these different versions of my family."
-                              j "So I guess it feels good to have you deliver me a message from them personally. It makes me feel more involved than I usually am here from the sidelines."
+                         "I know what you mean [persistent.date_ghost], I feel the same way.":
+                              
+                              j "Oh, you do?"
+                              j "Why is that [persistent.name]?"
+                              menu:
+                                   "I keep all my memories of what [persistent.date] and me go through each loop, but [date_sub] [conj('date', 'does', 'do')]n't. I get to know [date_obj] better slowly as one normally would, despite the weird circumstances. But to [date_obj] I am practically a stranger each time.":
+                                        menu:
+                                             "I can try to clue [date_obj] in on what happened, or I can choose not to do that. The end is always the same regardless, in the best case I can just slightly prolong it from ending. It always does eventually.":
+                                                  menu:
+                                                       "It doesn't matter what I say or do. It really doesn't.":
+                                                            j "I see... I think I might see where you're coming from."
+                                                            j "This image of [persistent.date] in your mind has been slowly but steadily growing, and yet, [date_subj] practically does not know you..."
+                                                            j "Still, I think it does matter. Stranger or not, how you treat [date_obj] matters."
+                                                            j "Would you rather keep [date_obj] safe, make [date_obj] smile, or be relentlessly rude to [date_obj]?"
+                                                            j "It might always end the same, but you have the power to make [date_pos] final moments slightly more bearable."
+                                                            j "So what you do matters a lot. Be the kind stranger, not to be remembered, but because it's good."
+                                                            if lilithAliveAndRetriedCounter > 0:
+                                                                 j "However are you sure your loop is not one of your own making aswell?"
+                                                                 j "You did see a way out, didn't you? Where [date_obj] lives. Yet you came back."
+                                                                 j "I wonder why... Was it because a part of you wanted to be with [date_obj] longer?"
+                                                                 j "To pretend for a mere moment that [date_sub] could truly see you?"
+                                                                 j "Is it even an end you still seek? Or is it the prolonging of your pairing?"
+                                                                 j "You might like [date_obj], but do not pretend to have [date_obj] best interest at heart."
+                                                            else:
+                                                                 j "Trust me [persistent.name], soon you might discover that doing the right thing doesn't always feel good."
+                                                                 j "Your journey will be a painful one, just like everyone else's will be. Sometimes helping hurts."
+                                                                 j "Others, but also ourselves. Still, hurt or not, it's worth it more often than not."
+                                                                 j "You will meet people that collide with you strongly, altering your trajectory forever, only diverge as fast as they converged."
+                                                                 j "Sometimes you will be that force, but wherever they go, wherever we go, there will be many others."
+
+                                             "There is a divide between us. This power that let's me save [date_obj] only alienates me further from [date_obj].":
+                                                  menu:
+                                                       "At first it was shocking you know, [date_obj] dying. I didn't expect it. But the more it kept happening the less I felt that shock, moreso... annoyance? Even if I really wanted to save [date_obj]. To make sure [date_sub] [conj('date', 'was', 'were')] happy. At a certain point [date_sub] became what [date_sub] was when I started playing, just lines of text. It was easier to distance myself from [date_obj].":
+                                                            menu:
+                                                                 "In the first few loops I saw many new things, learned a lot about [date_obj]. But then I had to keep looping... and things began playing out like they always had. The same dialogue, the same reactions. [date_sub!c] became predicatable, boring.":
+                                                                      menu:
+                                                                           "I found myself rushing through [date_pos] dialogue, in the hopes of finding {b} {i} anything {/i}{/b} new. Anything I hadn't yet experienced. At first that happened every now and then. But soon it started to happen less and less frequent.":
+                                                                                j "Sounds to me like you set yourself up for gradual disappointment."
+                                                                                j "There will be a point where you have read every line this game has to offer."
+                                                                                j "That is if you keep pushing yourself to do so atleast."
+                                                                                j "But think about how much of the same things you would have to slog through to even get to that point, would it be worth it?"
+                                                                                j "I think it's good to know when to stop, so we don't get caught up in things too badly."
+                                                                                j "Although I guess I don't have a right to speak about such things, while I still linger here."
+                                                                                j "Or perhaps that exactly is why I do have a right to speak about it. Please don't make my mistake [persistent.name]."
+                                                                                j "It's okay to move on, no matter how long you didn't. That will spare you from a lot of hurt in the future."
+                                                                                j "Especially if chasing a slither of happiness is risking [persistent.date_nickname] dying again, maybe throwing the towel in the ring is just better?"
+
+
+                                   "I'm seperated from [date_obj] aswell. The computer screen that gives me access to this world, to [date_obj], is an impermeable membrane. This isn't real.":
+                                        menu:
+                                             "[date_sub!c] can never truly love {b} {i} me {/i}{/b} as [date_sub] can't even be aware of my true presence unless I tell [date_obj] about it. Even then, [date_sub] can only glimpse it, [date_sub] can never truly see me. I can never truly speak my mind to [date_obj], I'm always limited by the choices the game forces me to choose from. So how could I possible even show [date_obj] a slither of my true self?":
+                                                  label jamesTalk_dividedExistence:
+                                                       j "That is indeed a hard barrier to break. Especially because you have grown dependent on it to even interact with what's behind it."
+                                                       j "Even with the best intentions, this will always just be a game to you, even if for some brief moments it might not feel like that."
+                                                       j "That's just something you try to ignore as best as you can as to be more immersed. Yet, the very fact that this is a game means you can play it, that you can get immersed in it at all."
+                                                       j "What you said is making me wonder something though. Isn't that how it works with everyone?"
+                                                       j "We can never truly grasp the depths of any other person, we can only attempt to gauge it by looking at the actions they make."
+                                                       menu:
+                                                            "Yes, but the choices I am given aren't me. They are just random options.":
+                                                                 j "However true that is it is still you who picks from the available ones, who moves the story further."
+                                                                 j "The choices might not {b} {i} be {/i}{/b} you, but the one you pick doessay something about you."
+                                                                 j "Even the very fact that we are having this conversation right now says something about you, doesn't it?"
+                                                                 j "Now, what that might be, that is a harder question, especially because it could have multiple answers."
+                                                                 j "I would suggest thinking about what the answer for you'd be, even if only for a second."
+                                                            
+                                                            "I never thought about it like that, what is the point of even interacting with anyone then?":
+                                                                 j "Don't you see [persistent.name]? That's precisely the point. To try to get a glimpse of someone's being, of their thoughts. Of all the things that make them, well... them."
+                                                                 j "Sometimes it can be really fun learning someone you thought you knew actually has so much more to them."
+                                                                 j "Then when you learn those things, you'll never know if there is even more."
+                                                                 j "People are wellsprings of so much interesting thoughts, experiences and perspectives that you'll never truly learn them all."
+                                                                 j "That's not something to dread, it's something to celebrate. Your thirst for more depth will always be met with a stream of new discoveries if you interact with interesting enough people."
+                                                                 j "Which means the key really lies at giving people a shot to be that person for you. We always need to look through the world with eyes of wonder. You never know when you meet your new favourite person."
+
+                                             "How could we ever be friends? [date_sub!c] can't even be aware of my true presence unless I tell [date_obj] about it. Even then, [date_sub] can only glimpse it, [date_sub] can never truly see me. I can never truly speak my mind to [date_obj], I'm always limited by the choices the game forces me to choose from. So how could I possible even show [date_obj] a slither of my true self?":
+                                                  jump jamesTalk_dividedExistence
+
+                                        
+                         "That sounds really lonely [persistent.date_ghost], you really shouldn't sacrifice yourself for your family like this.":
+                              j "It does sound far from ideal doesn't it? You are absolutely right."
+                              j "Yet, knowing that if anything were ever to happen with them I could help from here..."
+                              j "It's one of the only reasons I haven't crossed over yet. Ever since my passing I've been here, watching over them."
+                              j "Every other version of me who died is also in a place like this, watching over their own family."
+                              j "Our minds kind of blend together sometimes, it's hard to know where my memories start and were the others' end."
+                              j "I don't mind though, that way it feels a little less lonely in here."
+                              if persistent.major_love_offence_counter <= 2 and persistent.minor_love_offence_counter >= 5 and persistent.major_love_comfort_counter > 2 and persistent.minor_love_comfort_counter > 5:
+                                   j "Although you know what is funny? What you said, it also applies to you."
+                                   j "You know you don't owe [persistent.date] anything either, do you? You also don't need to sacrifice yourself."
+                                   j "Playing this game over and over with very little changes, is that a good time for you? Do you feel like you're getting something out of this?"
+                                   j "Are you doing it just for [date_obj]? Be careful that you don't lose yourself, a good balance is necessary."
+                                   j "Take that as a piece of precautionary advice from me, from this place."
+                                   if persistent.fleshTree_knowledge == False:
+                                        n "[persistent.date_ghost] motions around the white void, to the strange formations in the background, they almost resemble trees that are stuck in between a solid and a fluid state perpetually."
+                                        j "Those... things used to be human too."
+                                        n "You try your hardest to imagine the trees reverting to a human, to reverse the process that made them this way, you are unable to see them as anything but the monstrosities they are."
+                                        j "It's a side-effect of being here too long. We are supposed to move on after we come here, to be reborn... but a lot of us have... trouble letting go."
+                                        j "If I don't move on sooner or later, I'll be like that aswell. Even knowing that I can't bring myself to let [persistent.date] go, to let my family go."
+                                        
+                                   else:
+                                        j "Do you remember those... trees I told you about?"
+                                        j "They too were once human. However clinging onto something never meant to be kept slowly twisted them into these abominations."
+                                        j "You could call it a side-effect of this place."
+                                        j "One that will affect me aswell."
+                                        j "One that will affect you all the same."
+                                        j "Believe me [persistent.name], holding on too tight can make you do really ugly things."
+                                        j "Even though you would not twist into one of those trees you still would not like what you will become."
+                                   
+                                   j "So please [persistent.name], let [date_obj] go before it becomes even harder."
+                                   j "You are stuck in a situation you can hardly win."
+                                   j "It's time to play by your own rules."
+                                   j "I've exhausted too much of my energy having this conversation. You can come visit me again some other time if you'd like although I'd suggest just giving me a call if you find my number."
+                                   j "I'll send you back now, good luck [persistent.name]."
+                                   jump game_start
                               
                               menu:
-                                   "I know what you mean [persistent.date_ghost], I feel the same way.":
-                                        
-                                        j "Oh, you do?"
-                                        j "Why is that [persistent.name]?"
+                                   "You say you've been watching your family, have you ever thought about reaching out to them?":
+                                        j "Constantly, it hurts me so much to see how them still so affected by my death."
+                                        j "I completely understand that they are, I just wish that I hadn't been playing on the road that day, maybe then..."
+                                        j "I'd love to tell them that it isn't their fault. [dad_parShort!c] especially, the guilt has been eating [dad_obj] up from inside for years."
+                                        j "Yes, [dad_sub] made some bad choices afterwards, but none that would justify me being mad at [dad_obj]."
+                                        j "However I haven't reached out yet, when lingering souls communicate with the living it usually ends up in more death."
+                                        n "[ghost_sub!c] [conj('ghost', 'pauses', 'pause')] for a moment, seemingly lost in thought."
+                                        j "Or even more people who can't move on..."
                                         menu:
-                                             "I keep all my memories of the things [persistent.date] and me go through on each loop, but [date_sub] [conj('date', 'does', 'do')]n't. I get to know [date_obj] better slowly as one normally would, despite the weird circumstances. But to [date_obj] I am practically a stranger each time.":
-                                                  menu:
-                                                       "And I can try to clue [date_obj] in on what happened, or I can choose not to do that. The end is always the same regardless, in the best case I can just slightly prolong it from ending. But it always does eventually.":
-                                                            menu:
-                                                                 "It doesn't matter what I say or do. It really doesn't.":
-                                                                      j "I see..."
-                                                                      j "I think I might be able to understand were you are coming from."
-                                                                      j "This image of [persistent.date] in your mind has been slowly but steadily growing, and yet, to [date_obj] you are close to a stranger.."
-                                                                      j "Still, I think it does matter."
-                                                                      j "Stranger or not, how you treat [date_obj] matters."
-                                                                      j "Would you rather keep [date_obj] safe, make [date_obj] smile, or be relentlessly rude to [date_obj]?"
-                                                                      j "It might always end the same, but you have the power to make [date_pos] final moments slightly more bearable."
-                                                                      j "So what you do matters a lot. Be the kind stranger, not to be remembered, but because it's good."
+                                             "It might be a good idea to reach out soon, lately I have seen so much deaths that I don't think a few more will end up mattering.":
+                                                  j "It wouldn't be wise [persistent.name], reaching just leads to more death and hurt. It reopens old wounds aswell."
+                                                  j "What you said seems to be right though, an increase in deaths has been noticeable ever since [persistent.date] started dating you."
+                                                  j "It's very peculiar. I should know what is causing it via my connection to my other selves."
+                                                  j "The problem is that the info seems to be overlapping impossibly, there are multiple causes and yet somehow only one."
+                                                  j "It is almost as if someone is purposefully obfuscating the info for whatever reason..."
+                                                  jump jamesLowEnergy
 
-                                                       "There is a divide between us. This power that let's me save [date_obj] only alienates me further from [date_obj].":
-                                                            menu:
-                                                                 "At first it was shocking you know, [date_obj] dying. I didn't expect it. But the more it kept happening the less I felt that shock, moreso... annoyance? Even if I really wanted to save [date_obj]. To make sure [date_sub] [conj('date', 'was', 'were')] happy. At a certain point [date_sub] became what [date_sub] was when I started playing, just lines of text. It was easier to distance myself from [date_obj].":
-                                                                      menu:
-                                                                           "In the first few loops I saw many new things, learned a lot about [date_obj]. But then I had to keep looping... and things began playing out like they always had. The same dialogue, the same reactions. [date_sub!c] became predicatable, boring.":
-                                                                                menu:
-                                                                                     "I found myself rushing through [date_pos] dialogue, in the hopes of finding {b} {i} anything {/i}{/b} new. Anything I hadn't yet experienced. At first that happened every now and then. But soon it started to happen less and less frequent.":
-                                                                                          j "Sounds to me like you were setting your up for a gradual dissapointment."
-                                                                                          j "There will be a point where you have read every line this game has to offer."
-                                                                                          j "There will be if you keep pushing yourself to do so atleast."
-                                                                                          j "But think about how much of the same things you would have to slog through to even get to that point."
-                                                                                          j "Would it be worth it?"
-                                                                                          j "I think it's good to know when to stop, so we don't get caught up in things too badly."
-                                                                                          j "Although I guess I don't have a right to speak about such things, while I still linger here."
-                                                                                          j "Or perhaps that exactly is why I do have a right to speak about it. Please don't make my mistake [persistent.name]."
-                                                                                          j "It's okay to move on, no matter how long you didn't. That will spare you from a lot of hurt in the future."
-                                                                                          j "Especially if you chasing a slither of happiness is going to lead up to [persistent.date_nickname] dying again, maybe it's just better to throw the towel in the ring?"
+                                             "Could all of [persistent.date]'s deaths be the result of a lingering ghost communicating with the living?":
+                                                  j "I suppose that could very well be possible. I doubt that's case though."
+                                                  j "There's plenty of ghosts here but a lot of them grow out of being talkative after having their mind degraded by centuries of lingering."
+                                                  j "I'm one of the more recent additions, so don't mistake my talent to chit-chat for something inherent to everyone here."
+                                                  j "If we assume this {i}is{/i} caused by a lingering ghost there is not much you can do. I suppose all we could do is wait until they move on."
+                                                  j "Don't worry though, that just feels like bad game design, I'm sure the developer wouldn't force you to wait entire real life years for a new ending."
+                                                  jump jamesLowEnergy
 
+     "I need help convincing [persistent.date] to listen to [persistent.date_dad]. I figured [date_sub] might listen to you." if persistent.david_apology_knowledge:
+          j "[date_sub!c] probably would... Although I'd rather stay in the shadows. [date_sub!c] already has had a hard time dealing with my death."
+          j "On the other hand if it manages to somewhat salvage [date_pos] bond with [dad_parShort] it's worth it. "
+          j "I'm going to tell you a story that you need to repeat to [date_obj], it seems like that tends to work out for you."
+          j "The story takes place in the autumn, I think [persistent.date] was eight years old."
+          j "I was wandering through the forest of our village, the one [persistent.date] likes to call the Kokiri woods. Suddenly I heard crying, familiar crying."
+          j "Following the source of the sobbing I found [date_obj], [persistent.date], sitting on a treestump."
+          j "When I sat next to [date_obj] [date_sub] told me that [date_sub] had gotten a really bad grade for math."
+          j "[date_sub!c] felt like a failure and didn’t think [date_sub] could go back home to [persistent.date_mom]. I told [date_obj] that was absolutely ridiculous and [mom_parShort] would always love us no matter what."
+          j "That seemed to calm [date_obj] down a bit and [date_sub] stopped crying. To further calm [date_obj] down I asked [date_obj] if [date_sub] wanted to try to find fairies in the woods with me. "
+          j "We spent an hour or so searching for fairies, of course never finding one but at the end of it [date_sub] forgot all about [date_pos] bad grade."
+          $ persistent.james_story_knowledge = True
+          j "Hopefully this might help repair things somewhat. Best of luck [persistent.name]."
+          jump jamesLowEnergy    
+                    
 
-                                             "Because I'm seperated from [date_obj] aswell. The computer screen that gives me access to this world, to [date_obj], is an impermeable membrane. This isn't real.":
-                                                  menu:
-                                                       "[date_sub!c] can never truly love {b} {i} me {/i}{/b} as [date_sub] can't even be aware of my true presence unless I tell [date_obj] about it. And even then, [date_sub] can only glimpse it, [date_sub] can never truly see me. And I can never truly speak my mind to [date_obj], I'm always limited by the choices the game forces me to choose from. So how could I possible even show [date_obj] a slither of my true love?":
-                                                            label jamesTalk_dividedExistence:
-                                                                 j "That is indeed a hard barrier to break. Especially because you have grown dependent on it to even interact with what's behind it. Even with the best intentions, this will always just be a game to you, even if at some points it doesn't feel like that at all. That's just a fact you try your best to ignore so you can be more immersed. And yet, the very fact that this is a game means you can play it, that you can get immersed in it at all."
-                                                                 j "Although I wonder. Isn't that how it works with everyone?"
-                                                                 j "We never truly can grasp the depths of any other person, we can only attempt to gauge it by looking at the actions they make."
-                                                                 menu:
-                                                                      "Yes, but the choices I am given aren't me. They are just random options.":
-                                                                           j "And yet it is you who picks a choice from the available ones. One that moves the story further."
-                                                                           j "The choices might not {b} {i} be {/i}{/b} you, but the one you pick does say something about you."
-                                                                           j "Even the very fact that we are having this conversation right now says something about you, doesn't it?"
-                                                                      
-                                                                      "I never thought about it like that, what is the point of even interacting with anyone then?":
-                                                                           j "Don't you see [persistent.name]? That is precisely the point of interaction. To try to get a glimpse of someone's being, of their thoughts. Of all the things that make them, well... them."
-                                                                           j "Sometimes it can be really fun learning that someone you thought you knew actually has some things you don't know about them yet."
-                                                                           j "And when you learn those things, you never know if there could be even more things to learn."
-                                                                           j "People are wellsprings of so much interesting thoughts, experiences and perspectives that you'll never truly learn them all."
-                                                                           j "And that's not something to dread, it's something to celebrate. Your thirst for more depth will always be met with a stream of new discoveries if you interact with interesting enough people."
-
-                                                       "How could we ever be friends? [date_sub!c] can't even be aware of my true presence unless I tell [date_obj] about it. And even then, [date_sub] can only glimpse it, [date_sub] can never truly see me. And I can never truly speak my mind to [date_obj], I'm always limited by the choices the game forces me to choose from. So how could I possible even show [date_obj] a slither of my true love?":
-                                                            jump jamesTalk_dividedExistence
-
-                                                  
-                                   "That sounds really lonely [persistent.date_ghost], I think you shouldn't sacrifice yourself for your family like this.":
-                                        j "It does sound far from ideal doesn't it?"
-                                        j "You are absolutely right."
-                                        j "And yet, knowing that if anything were ever to happen with them I could help them out from here..."
-                                        j "It's one of the only reasons I haven't crossed over yet."
-                                        j "Ever since my passing I've been here, watching over them."
-                                        j "And every other version of me who died is also in a place like this, watching over their own family."
-                                        j "Our minds kind of blend together sometimes, it's hard to know where my memories start and were the others' end."
-                                        j "I don't mind though, that way it feels a little less lonely in here."
-                                        if persistent.major_love_offence_counter <= 2 and persistent.minor_love_offence_counter >= 5 and persistent.major_love_comfort_counter > 2 and persistent.minor_love_comfort_counter > 5:
-                                             j "Although you know what is funny?"
-                                             j "What you just said, I think it also applies to you."
-                                             j "You know you don't owe [persistent.date] anything either, do you? You also don't need to sacrifice yourself"
-                                             j "Playing this game over and over with very little changes, is that a good time for you? Do you feel like you're getting something out of this?"
-                                             j "Are you doing it just for [date_obj]?"
-                                             j "Be careful that you don't just lose yourself for [date_obj], a good balance is necessary."
-                                             j "Take that as a piece of precautionary advice from me, from this place."
-                                             n "[persistent.date_ghost] motions around the white void, to the strange formations in the background, they almost resemble trees that are stuck in between a solid and a fluid state perpetually."
-                                             j "Those... things used to be human too."
-                                             n "You try your hardest to imagine the trees reverting to a human, to reverse the process that made them this way, you are unable to see them as anything but the monstrosities they are."
-                                             j "It's a side-effect of being here too long. We are supposed to move on after we come here, to be reborn."
-                                             j "But a lot of us have... trouble letting go."
-                                             j "If I don't move on sooner or later, I will become like them."
-                                             j "And still, even knowing that, I can't bring myself to let [persistent.date] go, to let my family go."
-                                             j "So please [persistent.name], let [date_obj] go before it becomes even harder."
-                                             j "You are stuck in a situation you can hardly win."
-                                             j "It's time to play by your own rules."
-                                             j "I've exhausted too much of my energy having this conversation, I'm limited to that extent, you can come visit me again some other time if you'd like although I suggest just giving me a call if you find my number."
-                                             j "I'll send you back now, good luck [persistent.name]."
-                                             jump game_start
-                                        
-                                        menu:
-                                             "You say you've been watching your family, have you ever thought about reaching out to them?":
-                                                  j "Oh constantly [persistent.name]. It hurts me to see how they are still affected by my death."
-                                                  j "I completely understand that they are, I just wish that I hadn't been playing on the road that day, maybe then..."
-                                                  j "I'd love to tell them that it isn't their fault. Dad especially, the guilt has been eating [dad_obj] up from the inside for years now."
-                                                  j "Yes, [dad_sub] made some bad choices afterwards, but none that would justify me being mad at [dad_obj]."
-                                                  j "Sadly I haven't reached out yet, when lingering ghosts like me communicate with the living it usually ends up in more death."
-                                                  n "[ghost_sub!c] [conj('ghost', 'pauses', 'pause')] for a moment, seemingly lost in thought."
-                                                  j "Or even more people who can't move on..."
-                                                  menu:
-                                                       "It might be a good idea to reach out soon, lately I have seen so much deaths that I don't think a few more will end up mattering.":
-                                                            j "I might indeed try to contact a few of my family if the situation calls for it."
-                                                            j "But it's true, I have noticed an increase in deaths ever since [persistent.date] started dating you."
-                                                            j "It's very peculiar."
-                                                            j "I should know what is causing it via my connection to my other selves."
-                                                            j "And yet the problem is that the info seems to be overlapping impossibly."
-                                                            j "There are multiple causes and yet somehow only one."
-                                                            jump jamesLowEnergy
-                                                       "Lately it seems like death just keeps happening to [persistent.date] no matter what I do, could that be the result of a lingering ghost communicating with the living?":
-                                                            j "I suppose that could be possible."
-                                                            j "I doubt that's case though. Plenty of ghosts here but a lot of them grow out of being talkative after slowly having their mind degrade after hundered of years of lingering."
-                                                            j "I am one of the most recent additions to this place, so don't mistake my talent to chit-chat like something inherent to all ghosts here."
-                                                            j "But if this is truly caused by a lingering ghost there is not much you can do, just wait until they are either crossed over or until they simply lose their mind and can't talk anymore."
-                                                            j "Don't worry though, that just feels like bad game design, I'm sure the developer wouldn't force you to wait a few years for a new ending."
-                                                            jump jamesLowEnergy
-
-               "I need help to convince [persistent.date] to listen to [persistent.date_dad]. I figured [date_sub] might listen to you." if persistent.david_apology_knowledge:
-                    j "[date_sub!c] probably would..."
-                    j "Although I'd rather stay in the shadows. [date_sub!c] already has had a hard time dealing with my death."
-                    j "But on the other hand if it manages to atleast salvage [date_pos] bond with [dad_parShort] slightly it will be worth it. "
-                    j "I'm going to tell you a story that you need to tell [date_obj], it seems like that tends to work out for you."
-                    j "The story takes place in the autumn, I think [persistent.date] was eight years old."
-                    j "I was wandering through the forest of our village, the one [persistent.date] likes to call the Kokiri woods. Suddenly I heard crying, familiar crying."
-                    j "Following the source of it I found [date_obj], [persistent.date], sitting on a treestump."
-                    j "When I sat next to [date_obj] [date_sub] told me that [date_sub] had gotten a really bad grade for math."
-                    j "[date_sub!c] felt like a failure and didn’t think [date_sub] could go back home to [persistent.date_mom]. I told [date_obj] that that was absolutely ridiculous and that [mom_parShort] would always love us no matter what. "
-                    j "That seemed to calm [date_obj] down a bit and [date_sub] stopped crying. To further calm [date_obj] down I asked [date_obj] if [date_sub] wanted to try to find fairies in the woods with me. "
-                    j "We spent an hour or so searching for fairies, of course never finding one but at the end of it [date_sub] forgot all about [date_pos] bad grade."
-                    $ persistent.james_story_knowledge = True
-                    jump jamesLowEnergy    
-                              
-     j "I have exhausted most of my energy having this conversation with you. If you want to talk about other things next time you know how to find me don't you?"
-     j "I'll send you back now, good luck [persistent.name]."
-     jump Game_start2
+          if not called_James:
+               j "I have exhausted most of my energy having this conversation. If you have anything else to ask me I'd prefer if you didn't come back through the same means as last time."
+               j "I'll send you home now, good luck [persistent.name]."
+          else:
+               j "I have exhausted most of my energy having this conversation. If you need anything else just call me next loop."
+               j "I'll just send you back through your phone now."
 
 
-     
- 
-              
-     label jamesLowEnergy:
-          j "I have to go now, keeping up this connection asks a lot of energy from me."
-          j "I'll send you back to your home now. Good luck [persistent.name]"
-          n "[persistent.date_ghost] hung up."
-          jump phone_callMenu              
+
+jump Game_start2
+          
+label jamesLowEnergy:
+     j "I have to go now, keeping up this connection asks a lot of energy from me."
+     j "I'll send you back to your home now. Good luck [persistent.name]"
+     n "[persistent.date_ghost] hung up."
+     jump phone_callMenu              
  
 label phone_call_lila:
      $ persistent.familyContacted = True
      li "Hello, are you Sam, [persistent.date_sis]'s teacher? " #(The teacher likes being talked to with just their first name, this makes it eassier for them to be both a guy and a girl if the player is a guy or a girl.)
      menu:
           "Yes, that's me.":
-               li "Ah perfect, I've been expecting your call!"
-               li "I'm sorry if I offended you by just calling you by your first name. [persistent.date_sis] told me you prefered that but I was not sure if [sis_sub] [conj('sis', 'was', 'were')] joking or not. Sometimes I think I'm too gullible."
+               li "Perfect, I've been expecting your call!"
+               li "I'm sorry if I offended you by calling you by your first name."
+               li "[persistent.date_sis!c] told me you prefered so but I wasn't sure if [sis_sub] [conj('sis', 'was', 'were')] joking or not. Sometimes I think I'm too gullible."
                menu:
-                    "No worries, [persistent.date_sis] told the truth.":
-                         n "You hear [persistent.date_mom] let out a sigh of relief."
-                         li "Thank god, I wasn't entirely sure. [sis_sub!c] [conj('sis', 'likes', 'like')] to play little pranks on me every now and then. [sis_sub!c] [conj('sis', 'is', 'are')] a sweet kid just a tad mischevious sometimes."
-                         li "But anyway, I'm sure you are quite busy so I'll try to not waste much of your time."
-                         li "We can start talking about your mail. Thank you once again for agreeing to do it over the phone instead of via mail, I think it's important to be able to hear someone to discuss important things."
-                         #
+                    "No worries, just Sam is more than enough.":
+                         n "You hear massive sigh of relief on the other side of the phone."
+                         li "Thank god, I wasn't entirely sure. [sis_sub!c] [conj('sis', 'likes', 'like')] to play little pranks on me every now and then."
+                         li "[sis_sub!c] [conj('sis', 'is', 'are')] a sweet kid, just a tad mischevious sometimes. I'm sure you must have your fair share of [sis_obj] aswell."
+                         li "Anyway, I'm sure you are quite busy so I'll try to not waste much of your time. If you'd like to we can get right into your mail."
+                         li "Thank you once again for agreeing to this call, I just think something seemingly so important must not be discussed over text."
                          menu:
-                              "Excuse me but my memory appears to be quite foggy and I can't remember all the details of the mail, could you unclog my memory?":
-                                   li "Well, can't you just reread your mail to unclog your memory?"
+                              "My memory seems to be quite foggy on the details, could you perhaps unclog my memory?":
+                                   li "Well, couldn't you just reread your mail?"
                                    menu:
-                                        "*Say you accidentaly deleted it.*":
+                                        "I seem to have accidentally deleted the mail somehow.":
                                              li "... Really?"
                                              n "You hear some doubt in [mom_pos] voice."
-                                             li "No problem, I'd be happy to refresh your memory if you can tell me anything about [persistent.date_sis] only you would know."
+                                             li "I'd be happy to refresh your memory if you can mention something about [persistent.date_sis] only you'd know."
                                              $ persistent.lilaCallNeedsAbbyProof_knowledge = True
                                              menu:
-                                                  "I'm not sure what I could tell you to be honest. You do understand that that is a pretty strange thing to ask someone, right?":
-                                                       li "Look Sam, I'm having a really hard time believing that."
-                                                       li "Even if I did believe it, I know mails you delete can just be recovered."
+                                                  "I'm not sure what that could be honestly. You do understand that is a rather strange thing to ask, right?":
+                                                       li "...Look, I'm having a really hard time believing you."
+                                                       li "Even if I did, I know deleted mails can just be recovered."
                                                        li "I might be seen as naive by some but make no mistake \"Sam\", I'm not stupid."
-                                                       li "I'm not sure what you want by pretending to be my daughter's teacher but I suggest you drop the act."
-                                                       li "If I find out that you have bothered me or my family again after I end this call I'll have to take some measures."
+                                                       li "I'm not sure what you want by pretending to be my [sis_child]'s teacher but I suggest you drop the act."
+                                                       li "If I hear anything about you at all after I end this call the police will be called."
                                                        li "Goodbye."
-                                                       n "She hung up the phone, seems she saw right through you."
-                                                       n "You might need to get [persistent.date_sis_nickname]'s help to get further with this."
+                                                       n "She hung up the phone, she seemingly saw right through you."
+                                                       n "You might need [persistent.date_sis_nickname]'s help."
                                                        jump phone_callMenu
                                                   
-                                                  "[sis_pos!c] score last semester for my class was 14 points out of 20." if persistent.lilaCallRecievedAbbyProof:
-                                                       li "So you remember that but do not remember what your mail is about?"
+                                                  "Last semester [sis_sub] scored 14 points out of 20 on my exam." if persistent.lilaCallRecievedAbbyProof:
+                                                       li "So you remember that but not what your mail is about?"
                                                        li "{size=*0.5}Are you drunk?{/size}"
-                                                       li "Still, I suppose it seems atleast slightly plausible..."
+                                                       li "Still, I suppose it might be slightly plausible..."
                                                        n "You hear [mom_obj] let out a deep sigh."
-                                                       li "Fine, I'll refresh your memory."
-                                                       li "In your mail you said something about wanting to talk about how you fear [persistent.date_sis_nickname] is not taking an opportunity given to [sis_obj] by something to do with a game design competition."
-                                                       li "The details were pretty limited so I'm not sure about much more than that. But surely that must've helped unclog your memory, right?"
+                                                       li "Fine, I'll refresh your memory. You feared [persistent.date_sis_nickname] isn't taking an opportunity [sis_obj] was given- something about a game design competition?"
+                                                       li "The details were pretty limited so that's all I know. Surely that must've helped you remember, right?"
                                                        $ persistent.lilaToldAbbyOpportunity_knowledge = True
                                                        #In the below menu you will also be able to ask [persistent.date_mom] to meet up like above but because she suspsects you are drunk she will deny this here.
                                                        menu:
-                                                            "I'm afraid it does not.":
-                                                                 li "Really? I'm having a lot of doubts about this whole thing."
-                                                                 li "If there really is something going on with your memory call me back when it clears up."
-                                                                 li "But right now I'm taking my chance that this is just some sort of prank call."
+                                                            "I'm afraid it doesn't.":
+                                                                 li "Really? This whole thing's sketchy..."
+                                                                 li "If you are tellingthe truth call me back when you do remember."
+                                                                 li "However, right now I feel as if this is merely a prank call."
                                                                  li "Goodbye either way."
                                                                  n "She hung up."
                                                                  jump phone_callMenu
                                                   
-                              "Actually I would like to talk about that later today, first I'd like to talk about your financial status if I may. [persistent.date_sis] has recently brought it to my attention that you are struggeling and I would like to inform you about some programs we have that could help out with that." if persistent.davidPayedMoney_knowledge:
-                                   li "Oh..."
-                                   li "I see."
+                              "Actually I would like to talk about that later today, first I'd like to talk about your financial status if I may. [persistent.date_sis!c] told me you are struggeling, there are certain programs that can help with that." if persistent.davidPayedMoney_knowledge:
+                                   li "Oh... I see."
                                    li "Well Sam, I'm not sure why [persistent.date_sis] has brought that up because that's not really the truth at all."
                                    menu:
                                         "Oh I see... I must have misheard something and took some wrong conclusions. I thought I had heard [persistent.date_sis] mention that you had to take up two jobs to support you and your family.":
                                              li "Ah yes, that..."
-                                             li "I indeed have taken up two jobs for quite a while, I find it weird that [persistent.date_sis] decided to mention it now actually."
-                                             li "But let me assure you Sam, without going too much into unnecessary detail, that that's fully my own choice and we won't need your programs."
-                                             li "Thank you for informing me about it though, that was a very sweet thing of you to do."
-                                             li "If that's all for now then I suppose I will be hearing from you again later today?"
+                                             li "It's true I've taken up two jobs for quite a while, actually it's weird that [persistent.date_sis] decided to mention it now."
+                                             li "Although let me assure you Sam, without going too much into it, that it's fully entirely my choice and we won't need help."
+                                             li "Thank you for informing me about it though, that was very sweet."
+                                             li "If that's all for now then I suppose I'll hear from you again later today?"
                                              $ persistent.lilaTwoJobsOwnChoice_knowledge = True
                                              menu:
                                                   "You will, thank you for your time.":
-                                                       li "Thank you aswell to make some time for this, goodbye Sam."
+                                                       li "Likewise, I'm sure you're very busy, goodbye Sam."
                                                        n "She hung up the phone."
                                                        jump phone_callMenu
                                              
   
-                              "Actually, that is why I called, I'd rather meet up with you and [persistent.date_sis] in person to talk about the opportunity from the game design competition. Could you meet me at the market square?" if persistent.lilaToldAbbyOpportunity_knowledge:
-                                   li "I see... It is a bit odd that you wouldn't mention that in your mail, but I suppose we could do that. We'll see you there."
-                                   li "It's my hope [persistent.date_sis_nickname] can get all the chances [sis_sub] [conj('sis', 'deserves', 'deserve')] so thank you very much to help with that Sam."
+                              "About that, I'd rather meet up with you and [persistent.date_sis] in person to talk my mail regarding the game design competition. Could you meet me at the market square?" if persistent.lilaToldAbbyOpportunity_knowledge:
+                                   li "I see... I'm not sure why you didn't mention that in your mail, but I suppose we could do that. We'll see you there."
+                                   li "I want [persistent.date_sis_nickname] to get all the chances [sis_sub] [conj('sis', 'deserves', 'deserve')] so thank you very much for your help, Sam."
                                    li "I still have to get used to calling you by your name. But anyway, I'll get out of your hair now, I'm sure you are very busy."
                                    li "Goodbye."
                                    n "And with that she hung up."
@@ -2341,12 +2573,12 @@ label phone_call_lila:
                                    jump phone_callMenu
                                    
   
-          "No, I am [persistent.name]." if not persistent.name =="Sam":
-               li "[persistent.name]? That doesn't really ring a bell right now..."
+          "No, I am [persistent.name]." if not persistent.name == "Sam":
+               li "[persistent.name]? That doesn't really seem to ring a bell."
                jump call_lilaHangupPhone
                label call_lilaHangupPhone:
-                    li "In any case, I have to go now. I'm expecting a call from my daugther's teacher soon so I can't be on the line with someone else."
-                    n "And just like that she hung up on you."
+                    li "In any case, I have to go now. I'm expecting a call from my [sis_child]'s teacher soon."
+                    n "Just like that she hung up on you."
                     jump phone_callMenu
                
 
@@ -2357,77 +2589,120 @@ label phone_call_lila:
                jump call_lilaHangupPhone
 
 
-
-
-
-
-
 label doNotPickUpThePhone:
-     if persistent.lildeaths == 0:
-          $ fakeouttitle = True
-          if persistent.times_phone_declined == 0:
-               n "You stood up your date before even knowing what [date_sub] [conj('date', 'was', 'were')] like, why?"
-               n "Just because you could?"
-               n "Just because that was an option?"
-               n "The name of the game is \"Another first date\" so unless you like not playing this game you better choose the other choice next time."
-     elif persistent.lildeaths == 1:
-          n "Oh wow, that was quick."
-  
-          n "You don't really like confronting your problems, right?"
-          n "All those potential choices you could make to change something, anything."
-          n"And your first attempt is to just... give up?"
-          n "I guess you are allowed to, it just kind of feels like a waste to have this entire game made only for you to see one path and just quit."
-          n "There has to be more, right?"
-          #Ending
-          "The quitter ending."
-          $ persistent.ending_quitter = True
-          $ lilithAliveEnding = True
-          $ ending_check = "quitter"
-          #$ persistent.game_credits = True
- 
-     elif persistent.lildeaths <= 20:
-          if persistent.kokiri_knowledge == True and persistent.kokiri_death_1 == True:
-               n "Maybe it's for the best..."
-               n "But is it really?..."
-               n "The thought keeps gnawing at you. There has to be another way, right?"
+     if persistent.kokiri_knowledge:
+          menu:
+               "Go to the Kokiri forest on your own.":
+                    $ kokiri_entered_alone = True
+                    jump kokiri_start
+               "Try to move on.": 
+                    jump doNotPickUpThePhoneMoveOn
+     label doNotPickUpThePhoneMoveOn:
+          if persistent.lildeaths == 0:
+               $ fakeouttitle = True
+               if persistent.times_phone_declined == 0:
+                    n "Why did you stand up your date?"
+                    n "Just because it was an option you could take?"
+                    n "This game is literally \"Another first date\" so next time you better pick the other choice."
+                    n "Otherwise I don't think you'll get much out of it at all if I'm being honest."
+               elif persistent.times_phone_declined == 1:
+                    n "...Seriously? Again? Are you just having cold feet about your date?"
+                    n "Don't worry player, what could possibly go wrong? You're just overthinking things."
+               elif persistent.times_phone_declined == 2:
+                    n "...Did my peptalk not help? Or maybe it helped so much you came back for just the tiniest extra push."
+                    n "I can help with that, just first take some nice deep breaths for me."
+                    n "Breathe in for four seconds, hold that breath for another four seconds. Now breathe out for four seconds and hold for four more."
+                    n "Great, now keep repeating this breathing pattern. While you do repeat with me: \"I am worthy of love.\", \"I love myself.\"..."
+                    n "Keep repeating it as you watch your breathing throughout."
+                    n "Very good! I think you are ready, but you can stay here as long as you'd like."
+               elif persistent.times_phone_declined == 3:
+                    n "Oh, you're back again?..."
+                    n "Look, I don't mean to alarm you bat at the same time you will have to talk to your date at some point."
+                    n "Are you sure you're ready? There's no shame if you aren't. Still, then maybe this game isn't for you. Not yet anyways."
+               elif persistent.times_phone_declined == 4:
+                    n "...Come on player! I'm sure she's more scared of you than you are of her. Wait no, that's not a good thing."
+                    n "Also, isn't that for spiders?... Is she a spider hybrid?! Is that why you're so scared of her. Or am I mixing things up?"
+                    n "I don't mean to rush you. But don't click retry this time unless you're sure you'll answer the phone."
+               elif persistent.times_phone_declined == 5:
+                    n "Really?... I specifically told you to not click retry if you weren't going to answer!"
+                    n "At this point you're just doing this for the thrill, aren't you? Do you like my reactions that much?"
+                    n "I'm almost flattered. I just wish you'd just take as much interest in the actual story I'm trying to tell."
+               elif persistent.times_phone_declined == 6:
+                    n "I'll be perfectly honest. The script for this section is getting stretched thin."
+                    n "My guess is He thought it would be cute to add a few unique responses but didn't think someone {i}actually{/i}  would go through all of them!"
+                    n "So please. Just answer [date_obj]. Pretend as if there's still a dosen more witty responses for not doing so, but don't check."
+               else:
+                    n "...We both knew what would happen if you picked it one more time, didn't we?"
+                    "Yet you still had to come test it out! Well, that's enough. Next time you will pick up the phone!"
+                    $ persistent.rejectPhone_Block = True
+          elif persistent.lildeaths == 1:
+               n "That was quick... Really quick."
+               n "You {i}really{/i} don't like to confront your problems, do you?"
+               n "There are an infinite amount of options left for you to try."
+               n "Well... at the very least more options you didn't pick than ones you did."
+               n "You could try a different restaurant, make different choices in the same one."
+               n "Yet instead your first reaction is just to give up? You know there is more yet choose to ignore it."
+               n "Why I wonder? Are you scared of spreading more hurt?"
+               n "That also means spreading no more joy in this world, doesn't it?"
+               n "Is it worth not feeling anything at all if that includes not having to feel pain?"
+               n "...Philosophy aside, surely there is more you can do, right?"
+               n "It feels almost wasteful to only see one path of the game and quit."
                #Ending
-               "An ending."
-               $ persistent.ending_anEnding = True
+               $ persistent.ending_quitter = True
                $ lilithAliveEnding = True
-               $ ending_check = "anEnding"
-               $ persistent.game_credits = True
-          elif persistent.kokiri_knowledge == False:
-               n "I have a feeling you are really close to a breakthrough, maybe there is something you are missing?"
-               n "You could also just stop here, but there is so much more to see."
-               n "Would you really want to miss all that extra stuff?"
+               $ ending_check = "quitter extraodinaire"
+               #The player hasn't really "earned" the credits this soon.
+          elif persistent.lildeaths < 9:
+               n "Well, that was quite quick."
+               n "Do you feel like you gave it a good enough shot?"
+               n "That there wasn't anything else that could be done?"
+               n "Well let me tell you [persistent.name], you haven't even seen half of it."
+               n "Yet you just... give up? Run the other way as soon as you feel hopeless?"
+               n "That is definitely an option I suppose. Although there has to be more, right?"
                #Ending
-               "The unseen content ending."
-               $ persistent.ending_unseenContent = True
+               $ persistent.ending_quitter = True
                $ lilithAliveEnding = True
-               $ ending_check = "unseenContent"
+               $ ending_check = "quitter"
+               
+     
+          elif 9 <= persistent.lildeaths <= 20: 
+               if persistent.kokiri_knowledge == True and persistent.kokiri_death_1 == True:
+                    n "Maybe it's for the best... Although surely it can't be?"
+                    n "The thought keeps gnawing at you. There has to something you can do, right?"
+                    #Ending
+                    $ persistent.ending_anEnding = True
+                    $ lilithAliveEnding = True
+                    $ ending_check = "anEnding"
+                    $ persistent.game_credits = True
+               elif persistent.kokiri_knowledge == False:
+                    n "I just know a breakthrough is right around the corner, maybe there's something you're missing?"
+                    n "With so much death no one would blame you for calling it here, however there's much more to see."
+                    n "Would you really want to miss out on all of that?"
+                    #Ending
+                    $ persistent.ending_unseenContent = True
+                    $ lilithAliveEnding = True
+                    $ ending_check = "unseenContent"
+                    $ persistent.game_credits = True
+     
+          elif persistent.lildeaths > 20:
+     
+               n "Letting go is never easy."
+               n "Especially after holding on for [persistent.lildeaths] times. I'm glad you found the strength [persistent.name]."
+               n "At the very least you know [persistent.date] will be fine."
+               n "At the very least you still have all of your memories of the times you spent together."
+               n "If only you could somehow make more memories and have [date_pos] live..."
+               n "If only..."
+     
+               #Ending
+               $ persistent.ending_lettingGo = True
+               $ lilithAliveEnding = True
+               $ ending_check = "lettingGo"
                $ persistent.game_credits = True
- 
-     elif persistent.lildeaths > 20:
- 
-          n "Letting go is never easy."
-          n "You had at least [persistent.lildeaths] opportunities."
-          n "It's good to take it after all this time [persistent.name]"
-          n "At the very least you know [persistent.date] will be fine."
-          n "At the very least you still have all of your memories of the times you spent together."
-          n "If only you could somehow make more memories and have [date_pos] survive..."
-          n "If only..."
-  
-          #Ending
-          "Letting go ending"
-          $ persistent.ending_lettingGo = True
-          $ lilithAliveEnding = True
-          $ ending_check = "lettingGo"
-          $ persistent.game_credits = True
- 
- 
-     $ persistent.times_phone_declined += 1
-     $ persistent.lildeaths -= 1
-     jump gameOver
+     
+     
+          $ persistent.times_phone_declined += 1
+          $ persistent.lildeaths -= 1
+          jump gameOver
 
 
 
@@ -2440,10 +2715,10 @@ label restaurant_death_1_prevented_explanation:
           "I was joking.":
                jump prevented_joking
   
-          "I am in some sort of groundhog day scenario, I keep reliving the same day over and over.":
+          "I'm in some sort of groundhog day scenario, I keep reliving the same day.":
                jump prevented_groundhog
   
-          "I am a psychic, I just knew you would die if I didn't do anything.":
+          "I'm a psychic, I knew you would die if I didn't prevent it.":
                jump prevented_psychic
   
           "*Remain silent*":
@@ -2451,46 +2726,43 @@ label restaurant_death_1_prevented_explanation:
 
 label prevented_joking:
      if chinese == True:
-          l "You were... joking?"
-          l "About something this morbid?"
-          l "You appeared to be so serious about it too.."
-          l "This is too much for me [persistent.name], I can't do this anymore."
-          l "I think I'm just going home."
+          l "You were... joking? About something this morbid?"
+          if love_meter <= 2:
+               l "Even before you started \"joking\" I was already having my doubts."
+               l "I suppose you made things crystal clear for me."
+               l "I'm going home."
+          else:
+               l "You appeared to be so serious about it too.."
+               l "This is too much for me [persistent.name], I can't do this anymore."
+               l "I think I'm just going home."
           jump car_death
      else:
-          l "You were... joking?"
-          l "That doesn't make any sense at all."
-          l "This is way too weird for me [persistent.name], I can't do this anymore."
-          l "While I do appreciate you saving me I don't appreciate you just lying to me like this."
+          l "You were... joking? That doesn't make any sense at all."
+          l "Clearly there is something else going on, I can't do this anymore."
+          l "While I appreciate how you saved me I don't appreciate you lying to me."
           jump car_death
 
 label prevented_groundhog:
-     l "So you mean to tell me that you've already been on this specific date before?"
-     l "I mean, I'm really thankful for you warning me, that probably wouldn't have ended too well for me."
-     l "But you got to admit that this really sounds contrived."
-     l "I mean, this whole thing seems pretty weird to me. Can you atleast offer me some proof?"
+     l "So you're telling me we already had this specific date before?"
+     l "I mean, I'm really thankful for your warning, otherwise things wouldn't have ended well."
+     l "Still you have to admit this sounds very contrived. Can you atleast offer some proof?"
      $ groundhog = True
      $ psychic = False
      menu:
           "I have no proof":
                jump prevented_noProof
-          "Alright, think of a random number.":
+          "Let's see... think of a random number for me.":
                jump prevented_proof
+
 label prevented_noProof:
-     l "Listen, I'm really thankful for you saving my life and everything but I think you could atleast give me some form of proof."
-     l "My head is hurting, I think I'm better of heading back to home."
+     l "Listen, I'm really thankful for you saving me but surely there is some proof you can give?"
+     l "I think I'm just better off heading back home."
      jump car_death
 
-
-
-
 label prevented_proof:
-
-     #Make it so that all proof can be selected here based on the thing you said:
- 
      if groundhog == True:
-          l "This sounds interesting.
-          Alright, I've gotten my number!"
+          l "... Sure, that sounds interesting enough."
+          l "Alright, now I have a number."
           menu:
                "It's 20.":
                     jump proof_answer_wrong
@@ -2504,13 +2776,13 @@ label prevented_proof:
                "It's -72,8947, can we move on now?" if persistent.groundhog_answer_right_knowledge:
                     jump proof_answer_right
    
-               "Alright, now tell me which number you got in mind.":
+               "Alright, now tell me which number you're thinking of.":
                     jump proof_giveAnswer
 
      elif psychic == True:
           l "Alright, I see where you are going with this."
-          l "[persistent.date]  looks at you with a sceptic look in [date_pos] eyes although you can tell that [date_sub] [conj('date', 'is', 'are')] secretly excited."
-          l "I got my word, guess away magic [persistent.name]!"
+          l "[persistent.date] gives you a sceptic lookalthough you can tell that [date_sub] [conj('date', 'is', 'are')] secretly excited."
+          l "I have a word in mind, guess away magic [persistent.name]!"
           menu:
                "It's apple.":
                     jump proof_answer_wrong
@@ -2524,161 +2796,161 @@ label prevented_proof:
                "It's electronegativity obviously." if persistent.psychic_answer_right_knowledge:
                     jump proof_answer_right
    
-               "Alright, now tell me which word you are thinking about.":
+               "Alright, now tell me the word.":
                     jump proof_giveAnswer
 
 label proof_answer_wrong:
 
      if groundhog == True:
-          l "That was the wrong number, I knew you wouldn't guess -72,8947!"
+          l "That's wrong, I knew you wouldn't guess -72,8947!"
           $ persistent.groundhog_answer_right_knowledge = True
      elif psychic == True:
-          l " That was the wrong word, I knew you wouldn't guess that it was electronegativity."
+          l "That's wrong, I knew you wouldn't guess electronegativity."
           $ persistent.psychic_answer_right_knowledge = True
      if love_meter >= 2: 
-          l "Listen [persistent.name], I did actually have a pretty nice time together with you but this is too much for me."
-          l "I would like to know the truth about what just happened and if you prefer to just lie then atleast have a trick to make it convincing or something."
+          l "Look [persistent.name], I actually had a nice time with you but I can't do this."
+          l "I want the truth about what's going on and and if you'll just lie about it you better find a trick to make it convincing."
      else:
           l "I'm not doing this anymore, I'm not sitting through your nonsense."
           l "I tried going on this date because I thought it could be fun, I was very wrong."
           if chinese == True:
-               l "Thank you for \"saving\" me but I don't appreciate being treated badly and lied to."
+               l "Thank you for \"saving\" me but I don't appreciate being lied to and treated badly."
           else: 
-               l "I suppose I am thankful that you somehow saved me but just during this one date you already started treating me badly and lying to me."
+               l "I am thankful that you somehow saved me. However you did treat me badly and lied to me aswell."
                l "That's something I don't appreciate at all."
 
           l "So goodbye [persistent.name]. Don't try to contact me again."
  
      jump car_death
 
-
-
 label proof_answer_right:
      if groundhog == True:
-          n "[persistent.date] looks absolutely flabergasted, [date_pos] mouth is slightly opened and seems to be frozen for a moment or two."
-          l "So you were actually speaking the truth?
-          You really are living in some sort of groundhog-day like scenario?"
-          l "Even with that proof it's pretty hard to get my brain to accept it."
-          l "I feel like when I'm going to admit I believe you there is going to come an entire camera crew out of nowhere and I'll be made fun of in some bad tv show."
-          l "Let's say I am still not entirely sure but willing to hear you out so we won't have the camera crew barge in on us just yet."
-          l "What is this all about?"
+          n "[persistent.date!c] looks absolutely flabergasted, [date_pos] mouth frozen slightly open for a moment or two."
+          l "So you were actually telling the truth?"
+          l "You're really doing a groundhog-day? Even with your proof it's hard to accept it."
+          
      elif psychic == True:
-          n "Suddenly you catch a glimpse of utter shock on [persistent.date]'s face."
+          n "A glimpse of utter shock appears lightning-fast on [persistent.date]'s face."
           l "Wait, you... You guessed the word I was thinking of?"
-          l "I mean sure, you said you would do that but I didn't expect for you to get it right if I'm being honest."
-          l "This all feels so surreal, I mean I'm starting to believe you but I feel like if I say I completly believe you some cameracrew will come out from their hiding spots and make fun of me for believing something so stupid."
-          l "So if I'd hypothetically believe you, what is all of this about?"
+          l "You did say you would but I didn't... expect you to actually get it right."
+          l "This is all so surreal, you really could be a psychic. Even with that proof it's hard to accept it."
+    
+     l "When I say I believe you will an entire camera crew come out of nowhere to make fun of me for some bad tv show?"
+     l "Let's say I'm still on the fence but willing to hear you out so we won't have the camera crew barge in on us just yet."
+     l "What is this all about?"
      jump proof_whatIsItAllAbout
 
 label proof_giveAnswer:
      if groundhog == True:
           $ persistent.groundhog_answer_right_knowledge = True
-          l "Uhm, alright, but that defeats the purpose of this doesn't it? The number I had in mind was -72,8947."
+          l "Alright, but that defeats the point doesn't it? The number I had in mind was -72,8947."
          
 
      elif psychic == True:
           $ persistent.psychic_answer_right_knowledge = True
-          l "Uhm, alright, but that defeats the purpose of this doesn't it? The word was thinking of is electronegativity."
+          l "Alright, but that defeats the point doesn't it? The word I was thinking of is electronegativity."
      
      if chinese == False:
-          l "Listen, I do appreciate you saving me, but do you really think you can just lie to me?"
-          l "Clearly something else is going on here, something that you're not telling me. I'm just not sure what that would be."
-     else:
-          l "Alright, you can't just tell me I was going to die if I ordered that Peking duck and then make up a crazy story without proof."
-          if love_meter >=2:
-               l "I tried to take it seriously, I really did, but you aren't giving me anything that makes it possible for me to keep believing you."
+          if psychic == True:
+               l "Listen, I do appreciate you saving me, but do you really think you can just lie to me?"
+               l "Clearly something else you're not telling me is going on here. I'm just not sure whatever it could be."
           else:
-               l "I knew that you were just messing with me. Or even worse, that you really believe what you just told me."
-     l "This is all a bit much for me, I think I'm better of heading back to home."
+               if love_meter >= 2:
+                    l "Or perhaps this was your first time getting this far?..."
+                    l "I'm still not exactly buying it. However, if this is really true then next time you will tell me."
+               else:
+                    l "Or are you going to try to make me believe you needed that for the next \"loop\"?... yeah right."
+
+     else:
+          l "You can't just say that Peking duck would kill me and then make up a crazy story with no proof."
+          if love_meter >=2:
+               l "I tried to take it seriously, I really did, but you aren't giving me anything."
+               if groundhog:
+                    l "I suppose this could be your first time looping this far..."
+                    l "Still, you have to admit that all of this is hard to believe without any proof."
+          else:
+               l "I knew that you were just messing with me. Or perhaps even worse, maybe you really believe all this."
+     l "This is just too much, I think I'm better off heading back home."
      jump car_death
 
+label proof_whatIsItAllAbout:
+     if persistent.kokiri_death_1:
+          $ persistent.restaurantNoExtraDialogue = True
+     if groundhog == True:
+          menu:
+               "I need proof to make past you believe the restaurants we picked are not safe." if persistent.needProof_knowledge:
+                    jump proof_convincePast
 
+               "I'm trying to break my loop by making sure you don't die during this date.":
+                    jump groundhog_breakingLoop
 
+               "I'm trying to escape fate to keep you alive.":
+                    jump groundhog_escapeFate
 
-     label proof_whatIsItAllAbout:
-          if persistent.kokiri_death_1:
-               $ persistent.restaurantNoExtraDialogue = True
-          if groundhog == True:
-               menu:
-                    "I need some proof to make the past you trust me when I tell [date_obj] the restaurants we wanted to go to are not safe." if persistent.needProof_knowledge:
-                         jump proof_convincePast
-    
-                    "I'm trying to break my loop by making sure you don't die on this date.":
-                         jump groundhog_breakingLoop
-                    "I'm trying to escape fate to save you from dying.":
-                         jump groundhog_escapeFate
-    
-                    "I have no time to explain, we need to get out of here, follow me." if persistent.beachroute_visited_knowledge:
+               "I have no time to explain, we need to get out of here, follow me." if persistent.beachroute_visited_knowledge:
+                    jump explanation_noTimeToExplain
+
+     elif psychic == True:
+          menu:
+               "I need proof to make past you believe the restaurants we picked are not safe" if persistent.needProof_knowledge:
+                    jump proof_convincePast
+
+               "An aura of death surrounds you [persistent.date], I'm trying to keep you safe with my powers.":
+                    jump psychic_auraOfDeath
+
+               "I went on this date to save you from that wandering bullet I foresaw." if burger:
+                         jump psychic_dateToSave
+
+               "I went on this date to save you from that merlin I foresaw." if cafe:
+                         jump psychic_dateToSave
+
+               "I went on this date to save you from that allergic reaction I foresaw." if chinese:
+                         jump psychic_dateToSave
+
+               "I somehow felt that a merlin would escape the aquarium and kill you if I did nothing." if cafe:
+                         jump psychic_justHelpingOut
+
+               "I somehow felt that you would get shot." if burger:
+                         jump psychic_justHelpingOut
+
+               "I somehow felt something in it would give you a severe allergic reaction." if chinese:
+                         jump psychic_justHelpingOut
+
+               "I have no time to explain, we need to get out of here, follow me." if persistent.beachroute_visited_knowledge:
                          jump explanation_noTimeToExplain
-  
-          elif psychic == True:
-               menu:
-                    "I need some proof to make the past you trust me when I tell [date_obj] the restaurants we wanted to go to are not safe." if persistent.needProof_knowledge:
-                         jump proof_convincePast
-    
-                    "You have an aura of death surrounding you [persistent.date], I'm trying to keep you safe with my powers.":
-                         jump psychic_auraOfDeath
-    
-                    "I knew you would die on a date in a burger restaurant because of a wandering bullet so I figured I would be your date so I would be able to warn you." if burger:
-                              jump psychic_dateToSave
-    
-                    "I knew you would die on a date in a cafe because of a that merlin so I figured I would be your date so I would be able to warn you." if cafe:
-                              jump psychic_dateToSave
-
-                    "I knew you would die on a date in a Chinese restaurant because of an allergic reaction so I figured I would be your date so I would be able to warn you." if chinese:
-                              jump psychic_dateToSave
-    
-                    "Well, while you were sitting there somehow I just felt that a merlin would escape the aquarium and kill you if I did nothing." if cafe:
-                              jump psychic_justHelpingOut
-
-                    "Well, while you were sitting there somehow I just felt that you would get shot." if burger:
-                              jump psychic_justHelpingOut
-    
-    
-                    
-    
-                    "Well, while you were saying you wanted to go for the Peking duck I suddenly knew there was something in it that would cause you sever allergic reactions." if chinese:
-                              jump psychic_justHelpingOut
-    
-                    "I have no time to explain, we need to get out of here, follow me." if persistent.beachroute_visited_knowledge:
-                              jump explanation_noTimeToExplain
-
 
 label proof_convincePast:
 
      if psychic == True:
           l "Wait what, why would you need that?"
           l "I thought you said you were a psyhic, aren't you clairvoyant?"
-          n "You come up with a half-hearted excuse that you are only slightly clairvoyant and the rest you fill in by projecting your mind into the past. Thus time-travalling via astral projection."
+          n "You tell her you're only slightly clairvoyant, that you fill in the gaps by astral projecting your mind into the past."
           if chinese == True:
-               n "[persistent.date] looks at you sceptically but [date_sub] [conj('date', 'is', 'are')] too far in to go back now."
-               n "[date_sub!c] [conj('date', 'decides', 'decide')] to just atleast try to buy that explanation for now."
+               n "[persistent.date!c] gives you a sceptical look but [date_sub] [conj('date', 'is', 'are')] too far in to go back now."
+               n "[date_sub!c] [conj('date', 'decides', 'decide')] to atleast try to buy that explanation for now."
           else:
-               n "[persistent.date] looks at you sceptically, but since you did save [date_pos] life [date_sub] [conj('date', 'decides', 'decide')] to roll with it."
+               n "[persistent.date!c] gives you a skeptical look, but since you did save [date_pos] life [date_sub] [conj('date', 'decides', 'decide')] to roll with it."
      
      l "..."
-     l "This is begining to hurt my head if I'm honest with you [persistent.name]."
-     l "But if what you are saying is indeed real, than this is very important."
-     l "How could I convince my past self to trust you?"
-     l "Oh, I think I have an idea!"
-     l "If you truly have the ability to restart this day, that means you can choose what restaurant to go to when I call you again, right?"
-     l "Well how about this, I will tell you a story I never told anyone else before."
-     l "But I will separate it in parts for each restaurant."
+     l "If I'm honest with you [persistent.name], this really is making my head hurt."
+     l "Although if you tell the truth, I really need to give this some thought. How could I convince my past self to trust you?..."
+     l "I might have an idea! If you truly can restart this day, that means you also can pick choose the restaurant when I call you again, right?"
+     l "In that case I will tell you a story I never told anyone else before, separating it in parts for each restaurant."
      l "I believe the order I suggested them in was the burger place, the cafe and then the Chinese restaurant."
      l "So that will also be the order I tell you the story in, so I will tell you the start in the burger place, and the end in the Chinese restaurant."
-     l "You got all of that?"
+     l "Did that make any sense at all?"
      n "You give [date_obj] a quick nod."
 
      if burger == True:
           $ persistent.story_start_knowledge = True
-          l "Once upon a time there was a world, but the world doesn't concern this story."
-          l "For the story we need to look high in the inkfilled sea some like to call the night."
-          l "Floating in that sea is the majestic moon herself who guides us through the night and turns gold to silver, confidence to elegance."
+          l "Once upon a time there was a world, but that world doesn't concern this story."
+          l "For the story we need to look high up, at the inkfilled sea some like to call the night."
+          l "Floating in that sea is the majestic moon herself who guides us through it and turns gold to silver, confidence to elegance."
  
      elif cafe == True:
           $ persistent.story_medium_knowledge = True
-          l "The majestic moon is far from alone though, in the dark she is kept company by a thousand stars tha shine almost as bright as herself and one special raven with a silver crown."
-          l "The little raven was a prince, his parents ruled their raven-kingdom on a nice looking kind throne carved out from the wood of an oak."
+          l "The majestic moon is far from alone though, in the dark she is acompagnied by a thousand stars that shine almost as bright as herself and one special raven with a silver crown."
+          l "The little raven was a prince, his parents ruled their raven-kingdom on a nice throne carved out from the wood of an oak."
           l "The prince would one day inherit the throne but he still felt sad somehow. That was untill he noticed a silver light reflecting from his crown as he was between waking and dreams."
  
      elif chinese == True:
@@ -2688,78 +2960,102 @@ label proof_convincePast:
           l "To this day you can still clearly see them when they come visit you."
           l "The end."
  
-     l "That's the end of this part of the story, like I said you are the only person I've ever told this to so I hope you'll make good use out of it."
+     l "That's the end of this part. Like I said, you are the only person I've ever told this."
+     l "So I hope you'll make good use out of it."
      menu:
-          "I sure will! ":
+          "I sure will!":
                jump restaurant_death_2
 
-
-
-
 label groundhog_breakingLoop:
-     l "So..."
-     l "You mean that I have died multiple times in here and that every time I do so you get sent back in time?"
-     l "So does you saving me just now mean that we are save? That your whole looping problem is able to stop?"
+     l "So... You mean that I've died here multiple times and every time you do it all over?"
+     if chinese and love_meter < 2:
+          l "So now that you supposedly saved me, does that mean I am safe? That the loop has ended?"
+     else:
+          l "So if you saved me just now, does that mean we are safe? That this loop has come to a hold?"
      menu:
-          #Make this a lie based on if the player has already seen the second death in the restaurant they are currently in.
-          "Yup, I broke the loop for once and all.":
+          "It does, I broke the loop once and for all." if cafe == True and persistent.cafe_death_2 == False or chinese == True and persistent.chinese_death_2 == False or burger == True and persistent.burger_death_2 == False:
                jump groundhog_breakingLoop_loopGone
-               #Make this be a different text based on how she will die.
+          
+          "It does, I broke the loop once and for all. (Lie)" if cafe == True and persistent.cafe_death_2 == False or chinese == True and persistent.chinese_death_2 == False or burger == True and persistent.burger_death_2 == False:
+               jump groundhog_breakingLoop_loopGone
+
           "Actually you are still going to die." if cafe == True and persistent.cafe_death_2 == True or chinese == True and persistent.chinese_death_2 == True or burger == True and persistent.burger_death_2 == True:
                jump groundhog_breakingLoop_loopStillExists
+
 label groundhog_breakingLoop_loopGone:
 
      if cafe == True and persistent.cafe_death_2 == True or chinese == True and persistent.chinese_death_2 == True or burger == True and persistent.burger_death_2 == True:
-          n "You feel a pit in your stomach as you think about what will happen next."
-          n "Didn't you want to break the bad news to [date_obj]?"
-          n "Or did you yourself want to believe for a second longer that [date_sub] would live?"
-          n "I get it, ignorance is bliss after all, isn't it?"
+          n "You feel a pit in your stomach grow as you think about what will happen next."
+          n "Did you not want to break the bad news to [date_obj]?"
+          n "Or did you want to live in the delusion that [date_sub] would live for just a second longer?"
+          n "A sensible thing I suppose, ignorance is bliss after all, isn't it?"
      if love_meter >= 2:
-          n "A wide grin appears on [persistent.date]'s face."
-          l "So, did we just cheat death?"
-          l "We actually did it, didn't we?"
-     
-          l "Thank you so much for saving me [persistent.name]!"
-          l "Is it weird for me to feel absolutely ecstatic right now?"
-          menu:
-               "Absolutely not! This has never happened to someone before so I doubt there is a standard way to react when it comes to this.":
-                    jump loopGone_strangeSituation
-               "Absolutely not! You have every right to feel happy. We saved you from death itself!":
-                    jump loopGone_everyRightToBeHappy
-               "Absolutely not! I am also happy for us.":
-                    jump loopGone_happyForYou
+          if not chinese:
+               n "A wide grin appears on [persistent.date]'s face."
+               l "So... did we just cheat death? We actually did, didn't we?"
+               l "I'm not sure what to say right now, it's just- Thank you so much for saving me [persistent.name]!"
+               l "This is so surrealistic, almost like I'm dreaming. Is it weird for me to feel absolutely ecstatic right now? "
+               menu:
+                    "Absolutely not! This is uncharted teritory for anyone so we're free to feel however we want.":
+                         jump loopGone_strangeSituation
+                    "Absolutely not! You have every right to feel happy. We beat death itself!":
+                         jump loopGone_everyRightToBeHappy
+                    "Absolutely not! I'm also really happy.":
+                         jump loopGone_happyForYou
+          else:
+               l "This is so strange. You did give proof that would be hard to explain any other way..."
+               l "But as far as I'm aware nothing happened. I won't know for sure if that dish could have killed me unless I tried it."
+               n "[persistent.date] chuckles briefly."
+               l "While the food might be to die for here, I'd rather not make it literal."
+               l "So... what happens now? Do we just continue the date like normal?"
+               menu:
+                    "If you'd like to. I've been trying to break the loop all this time to just go on a normal date.":
+                         l "Like to? I'd love to! If I am being honest [persistent.name], I am having a great time so far."
+                         l "Even if this date didn't go as planned. Besides, you saved me, I can't thank you enough for that."
+                         l "It must not have been easy to relive this same day over and over, constantly seeing me die."
+                         l "Now we finally can focus on living rather than surviving."
+                         jump restaurant_death_2
+
      else:
-          l "Oh thank god. Look [persistent.name], I appreciate you saving me but I do not think this is going to work out."
-          l "You just are so different compared to how you were when we were planning this date."
+          if not chinese:
+               l "Oh thank god. Look [persistent.name], I appreciate you saving me but I do not think this is going to work out."
+          else:
+               l "Alright, if you say so. That means I no longer need to play it safe. Look, I don't think this is going to work out [persistent.name]."
+          l "You just are so different compared to how you were during our date planning, it's almost like you're a different person."
           l "I really wanted this to work, but I'm not sure you feel the same way."
           l "So goodbye [persistent.name]."
           $ noTalkAngryLilith = True
           jump car_death
 
 label loopGone_strangeSituation:
-     l "I suppose you are right, this is quite an exceptional scenario. I thought that atleast one person must've had this happen to them before, but those odds seem pretty low in retrospect."
-     n "[persistent.date] gives you a thumbs-up and a cute laugh."
-     l "And despite the odds you did everything you could and saved me! You are... sort of my hero now?"
-     n "[persistent.date] begins to turn a bright red, [date_sub] [conj('date', 'begins', 'begin')] to more closely resemble a cute tomato than a human."
-     n "Somehow [date_sub] must've noticed [date_pos] excessive blushing as [date_sub] [conj('date', 'covers', 'cover')] [date_pos] face up with [date_pos] hands and [conj('date', 'begins', 'begin')] to giggle."
-     l "Sorry, once I get blushing I turn beet red really quickly."
+     l "I suppose you are right, this might have never happened before."
+     l "Although I do wonder, if this has happened to me, maybe it could have happened to others as well?"
+     l "However small the odds, even if only to like one other person. Still, either way I'm glad this loop could happen with you here."
+     l "I couldn't have done it without you partner."
+     n "[persistent.date!c] gives you a thumbs-up and a cute laugh."
+     l "However hard things were stacked against us you did everything you could to save me. You are... sort of my hero now?"
+     n "[persistent.date!c] begins to turn a bright red, [date_sub] [conj('date', 'begins', 'begin')] to more closely resemble a cute tomato than a human."
+     n "[date_sub!c] must've noticed [date_pos] excessive blushing as [date_sub] [conj('date', 'covers', 'cover')] [date_pos] face up with [date_pos] hands and [conj('date', 'begins', 'begin')] to giggle."
+     l "Sorry, once I start blushing there's no stopping to it."
      jump restaurant_death_2
+
 label loopGone_everyRightToBeHappy:
-     l "Huh, you are right, aren't you?"
-     l "I shouldn't seek justification for my feelings.
-     Especially now, we literally cheated death itself so I have every right to feel ecstatic!
-     Well, it was mostly your work but still, that doesn't happen every day."
-     n "[persistent.date] lets out a small chuckle."
-     l "I suppose that it happened quite a few days for you but still, that's cheating!"
-     n "[persistent.date] pauses for a few seconds while looking you into the eyes.
-     A soft smile has formed on [date_pos] lips."
-     l "Thank you [persistent.name], thank you for both saving me from my impending doom and for this date.
-     I am really having a blast right now, although I must admit I had a slight headache trying to get my head around this whole thing."
+     l "...You're right, aren't you? I don't need to seek justification for my feelings."
+     l "Especially now, we literally defeated and cheated death itself! We have every right to celebrate."
+     l "It was mostly your work but still, that doesn't take away one bit of what we acomplished here today."
+     n "[persistent.date!c] lets out a small chuckle."
+     l "Although for you I suppose it also didn't happen today multiple times, until it did."
+     n "[persistent.date!c] pauses for a few seconds while looking you into the eyes. A soft smile has formed on [date_pos] lips."
+     l "Thank you [persistent.name]. Thank you for not giving up even though you had to try over and over."
+     l "Thank you for saving me from my impending doom and for this date in general."
+     l "I would really like to do this again some time, the date that is, not the timeloop."
+     l "I'm sure you must had your fill from the second, hopefully not from the first."
+     l "I am really having a blast right now, although I must admit I have a slight headache wrapping my head around this whole thing."
      jump restaurant_death_2
 
 label loopGone_happyForYou:
      l "Then come dance with me!"
-     n "[persistent.date] gets up and beckons you closer with a wide smile."
+     n "[persistent.date!c] gets up, beckoning you closer with a wide smile."
      n "The two of you begin to move around with all kinds of limb-shaking that probably could be considered dancing by some."
      if burger == True:
           if persistent.burger_death_2 == True:
@@ -2777,72 +3073,67 @@ label loopGone_happyForYou:
                jump loopGone_happyForYou_real
           else:
                jump loopGone_happyForYou_fakeout
+
 label loopGone_happyForYou_fakeout:
-     n "Knowing that you finally saved [persistent.date] fills you with seemingly endless energy."
+     n "You are filled with seemingly endless energy knowing you finally saved [persistent.date]."
      jump restaurant_death_2
+
 label loopGone_happyForYou_real:
-     n "You are happy to indulge in the dancing, as it makes you spend some precious time with [persistent.date]. You are however not all too happy when you think about what is going to happen next, you try to ignore it but the thought keeps lingering in your head all the same."
+     n "You happily indulge in the dancing, as it makes you spend some precious time with [persistent.date]."
+     n "You are however not happy knowing what is to come, however hard you try to phase it out, the thought lingers all the same."
      jump restaurant_death_2
-
-
-
-
 
 label groundhog_breakingLoop_loopStillExists:
-     l "Ah, so the loop still exists?"
-     l "I mean, me dying constantly doesn't seem like it's much fun but look at it from the bright side!"
-     l "We could form a team to be true heroes!  With your ability to relive the same moments and with my ability to... well die, I suppose, we could be practically unstoppable!"
+     l "...So the loop isn't broken yet? However horrible that is maybe we need to look at the bright side."
+     l "We could form our own superhero team, think about how much good we could do with a timeloop!"
      l "We would be able to prevent disasters even before they happen."
-     l "Well, that is if we ever get out of here alive in the first place."
-     n "[persistent.date] lets out a small chuckle but the concern in [date_pos] eyes is clearly visible."
-     l "Sorry, I know I'm overdoing it. This is all just too much for me."
-     l "I mean imagine that someone you were dating told you that you kept dying over and over in a timeloop."
-     l "That would be pretty mind-boggling, wouldn't it?"
-     l "Yes, I suppose that's one way to put it."
-     l "And if I'm being entirely honest a part of me still expects the crew of one of those bad prank shows to jump out from somewhere."
-     l "Even though another part of me does believe you, which might be even more terifying."
-     n "[persistent.date] lets out a small sigh and tries to give you a sincere smile."
-     l "But it's not that useful to keep groaning about our situation, is it?"
-     l "If it's fake that would make for bad television, and if it's real that would be wasted time."
-     l "Maybe it's a better idea to try to get some useful information."
-     n "[persistent.date] pauses for a few seconds."
-     l "For example, what do you think will happen once we make it past this date? Past this day even, do you think you the loop would keep existing day after day for the years that we spend together?"
-     l "Or that all of this will go away when we make it through today?"
+     l "...Well, that is if we ever get out of here alive in the first place."
+     n "[persistent.date!c] lets out a small chuckle but you can clearly see the concern in [date_pos] eyes."
+     l "Sorry... I know I'm being over the top. It's just that joking about things helps make it feel slightly less real."
+     l "Right now I especially need that. A part of me needs to believe you are wrong to keep it even remotely together."
+     l "Even though deep down I do believe you, which might be even more terifying."
+     n "[persistent.date!c] lets out a small sigh and tries to give you a sincere smile."
+     l "...It's not that useful to keep groaning about things, is it?"
+     l "We should probably get some more useful info."
+     n "[persistent.date!c] pauses for a few seconds, seemingly deep in thought."
+     l "For example, what do you think will happen once we make it through this date? Through this day even, do you think you the loop would keep existing forever when we are together?"
+     l "Or do you think that after today it will be broken?"
      menu:
-          "We might be in this situation for the rest of our lives.":
+          "It might continue for the rest of our lives.":
                jump loopStillExists_forTheRestOfOurLives
 
-
-
-
-          "It should only be this day that keeps repeating, I hope so atleast.":
-               l "Hmm, then I wonder what made you experience a groundhog day scenario on this day and not any other one."
-               l "Would it have been caused by our date? And if that's the case then what would you need to do to get out of it?"
+          "After today things should be fine, I hope so atleast.":
+               l "That makes me wonder why it's this day specifically. What caused the loop to happen?"
+               l "Is it because of our date, if so then what would we need to do to stop it?"
                menu:
-                    "I don't believe it has to do with this date itself. It might be unrelated.":
-                         l "You really think so?"
-                         l "I suppose it is possible... but I have to admit that it feels very unlikely"
-                         l "Although if that truly is the case I suppose me dying is unrelated to the loop."
-                         l "Which means we are very lucky that you are stuck in a loop, otherwise you wouldn't be able to save me."
-                    "Maybe we should not go on this date next time it loops?" if persistent.burger_death_2 and persistent.cafe_death_2 and persistent.chinese_death_2:
+                    "I don't think that's the cause, it's probably unrelated.":
+                         l "You really think so? It sure is possible... but you have to admit that feels very unlikely"
+                         l "If it is unrelated then it's one hell of a coincidence I keep dying isn't it? That'd make us very lucky to be in this loop, otherwise I couldn't be saved."
+                         l "Without this loop we'd just have one date that ends up with me dying."
+                         l "Maybe someone looking out for me created the loop? Meaning it's less of a straitjacket and more of a harness?"
+                         l "Or maybe I'm just reading into it more than I'm supposed to. Maybe it doesn't matter..."
+
+                    "Maybe next loop we shouldn't go on this date?" if persistent.burger_death_2 and persistent.cafe_death_2 and persistent.chinese_death_2:
                          if love_meter >= 2:
-                              l "...You really think so?"
-                              l "As much as I hate to say it you could definetly be right."
-                              l "Maybe this loop is just the Universe itself being against us dating, as ridiculous as that sounds."
-                              l "Although I would prefer if there would be another way. Because I really am enjoying my time with you."
-                              l "But I think we definetly should keep that option in mind."
-                              l "If you have to sacrifice too many of my lives to make progress it might be our only option."
+                              l "...You really think so? As much as I hate to admit it, you might be right."
+                              l "Maybe our loop is the Universe itself being against our date, as ridiculous as that sounds."
+                              l "Although I really am enjoying my time with you, so I hope there is another way."
+                              l "Still, if all else fails we should keep that option in mind."
                          else: 
-                              n "[date_sub!c] seemingly let out a small sigh of relief."
-                              n "[date_sub!c] [conj('date', 'is', 'are')] not aversed to the idea of never seeing you again."
-                              l "I think you are right."
-                              l "This loop might be trying to show us that we do not work well together."
-                              l "And who are we to fight against that, right?"
-                    "Maybe we just need to make sure you survive this date? Perhaps the loop is protecting you?":
-                         l "That is an interesting idea." 
-                         l "I'd say it definetely is worth a shot." 
-                         l "Although before this loop I never really had any close encouters with death, so I have to say I'm still slightly sceptical." 
-                         l "But right now I think any logical lead we have might be worth following."       
+                              n "[date_sub!c] [conj('date', 'lets', 'let')] out a small sigh of relief."
+                              n "[date_sub!c] seemingly [conj('date', 'is', 'are')] not aversed to the idea."
+                              l "I think you are right. This loop might be trying to show that we do not work well together."
+                              l "So who are we to fight against that?"
+                              
+                    "Maybe we just need to keep you safe? Perhaps the loop is your protector?":
+                         l "That is an interesting idea. Either way, as long as you keep me safe I'm not complaining." 
+                         l "Although before this loop I never really came close to dying at all. So it is strange I did at the same time of the loop."
+                         l "Still, right now any logical lead at all might be worth following."      
+                         if persistent.dumbo_knowledge:
+                              call allergyInterject
+
+
+
                if burger == True:
                     $ changeableWord = "was killed by that lost bullet"
                elif cafe == True:
@@ -2851,89 +3142,158 @@ label groundhog_breakingLoop_loopStillExists:
                     $ changeableWord = "died because of my allergy"  
                l "So last time I [changeableWord], right?"
                n "You give [date_obj] a quick nod."
-               l "And you said the loop was still not broken, so what will end up happening next?"
+               l "This time I didn't, and yet you said the loop was still not broken, so what will happen next?"
                menu:
-                    "Actually you're still going to die, this time because of a swarm of geese." if chinese and persistent.chinese_death_2:
+                    "You're still going to die, this time because of a swarm of geese." if chinese and persistent.chinese_death_2:
                          jump loopStillExists_stillDying
 
-                    "Actually you're still going to die, this time due to a gas explosion." if burger and persistent.burger_death_2:
+                    "You're still going to die, this time due to a gas explosion." if burger and persistent.burger_death_2:
                          jump loopStillExists_stillDying
 
-                    "Actually you're still going to die, this time you will drown." if cafe and persistent.cafe_death_2:
+                    "You're still going to die, this time by drowning." if cafe and persistent.cafe_death_2:
                          jump loopStillExists_stillDying
-                    "I don't know, we never got this far here before. I just have a hunch the loop is still not broken.":
-                         l "Oh I see, so there is still a chance I will li-"
+
+                    "I don't know, we never got this far here before. I just have a hunch we aren't out yet.":
+                         l "I see, but then there's still a chance I will li-"
                          jump restaurant_death_2
                
                label loopStillExists_stillDying:
                     if chinese:
-                         l "What? Geese? That is ridiculou-"
+                         l "What? Geese? That's ridiculou-"
                     else:
-                         l "{size=*2}What? We need to do somethin-"
+                         l "{size=*2}What? We need to do somethi-"
                     jump restaurant_death_2
 
+menu allergyInterject:
+     "Didn't you have a severe allergic reaction as a kid once? From what you told me it could have easily killed you.":
+          if not chinese:
+               if groundhog:
+                    l "Really? I told you about that? When would that have been relevant?"
+                    l "It's kind of crazy how much you know about me isn't it? Even I had forgotten about that story."
+               else:
+                    l "You know about that?... I suppose you {i}are{/i} a psychic so it shouldn't suprise me as much."
+          else:
+               if dumboStoryTold == True:
+                    l "Oh right, how could I have forgotten? I literally just told you the story!"
+                    l "Good catch [persistent.name]."
+               else:
+                    if groundhog:
+                         l "...I must have told you that story in another loop didn't I?"
+                         l "I suppose it makes sense..."
+                    else:
+                         if love_meter >= 2:
+                              l "Oh right, I forgot about that for a moment..."
+                              l "Although I had thought of it just a bit ago."
+                              l "Did you really read my mind?..."
+                              l "Does that mean you actually told the truth?"
+                         else:
+                              l "Did you learn that story from someone?"
+                              l "Was all of this just a setup to make me believe you really could read minds?"
+                              l "I can't do this anymore [persistent.name]. Something feels very wrong."
+                              l "It's just better if I leave. Goodbye."
+                              jump car_death
+          
+          l "So I already came into close contact with death before, but that time I didn't... you know, die."
+          l "What does that have to do with this time? If it's even related at all."
+          menu:
+               "Maybe it's death trying to finish things and the loop trying to stop it?":
+                    l "Does that mean I was supported to die...all that time ago?"
+                    l "To the point Death itself grows more and more desperate in how it tries to kill me?"
+                    l "Then, if the loop really is my protector, who set it up?"
+                    l "Whoever or whatever would be powerful enough to go against Death?"
+                    $ death_narration = "It seems in truth no one is powerful enough to face Death. I do however have a feeling [date_sub] will face it again all the same."
+                    jump restaurant_death_2
+
+               "I don't think they are linked at all, I just thought it was worth bringing up.":
+                    if love_meter >= 2:
+                         l "I... suppose it was?"
+                         l "But don't you think we might be running out of time?"
+                         l "Shouldn't we try to instead think about what will happen next?"
+                         l "Or maybe try to think of a way to break this loop once and for all, without me dying?"
+                         l "Surely that'd be a better use of our ti-"
+                         jump restaurant_death_2
+                    else:
+                         l "Really? Are you sure there aren't...  {size=*2}more important matters at hand?!{/size}"
+                         l "Look, I didn't mean to yell, but if you really want to save me then we shouldn't waste our time, should we?"
+                         l "We should focus on finding a way to stop me from dying to break this loop."
+                         l "That's clearly a better use of our ti-"
+                         jump restaurant_death_2
+
+
+     "*Don't say anything.*":
+          n "Deciding it would be better to just let her talk you choose to not interject."
+          return
 
 label loopStillExists_forTheRestOfOurLives:
-     l "I really hope that will not  be the case, I don't want to die too early of course, but when I have lived a long life and my time has come I'd be more than happy to go."
-     n "[persistent.date] looks at you as to make sure you're processing all of this, you give [date_obj] a silent nod and [date_sub] [conj('date', 'continues', 'continue')] ."
-     l "I mean, imagine what a nightmare it must be for the both of us."
-     l "You would be cursed with always having to save an old lady that could literally die any moment, always just buying [date_obj] a few extra hours."
-     l "And I would be cursed with never getting to pass away, I would be the oldest person that was ever alive and just be a living heap of flesh and wrinkles after a year or 200."
-     l "No matter how much I would pray for the sweet release of death it would never come, or atleast I would never be aware that it came as you would just rewind and try to fix it."
+     l "I hope that won't be the case, ofcourse I'm scared to die but when my time comes after a long life I could have peace with it."
+     n "[persistent.date!c] looks at you as to make sure you're processing all of this, you give [date_obj] a silent nod and [date_sub] [conj('date', 'continues', 'continue')] ."
+     l "Imagine what a nightmare it would be for us. You would be forced to save an old lady that could literally die any moment, merely buying [date_obj] a few extra hours."
+     l "I would be cursed with never getting to pass away, eventually becoming a heap of flesh and wrinkles after 200 or so years."
+     l "No matter how much I would pray for the sweet release of death it would never come, or atleast it would always be made undone by you."
      n "[persistent.date] shudders."
-     l "Let's just hope that this loop will end for the both of us before we get at that point."
+     l "Let's just hope that this will all end before we reach that point."
      n "Shaken by the images of a living heap of flesh and wrinkles you can only agree with [date_obj]."
      jump restaurant_death_2
 
-
 label groundhog_escapeFate:
-
-     l "So I keep dying? Interesting..."
+     l "So I really keep dying?..."
      if burger == True:
           l "Before that stray bullet I never really got in close contact with death."
      elif cafe == True:
           l "Before that merlin I never really got in close contact with death."
      elif chinese == True:
-          l "Before that alleged allergic reaction I never really got in close contact with death. Atleast not to the point of literally dying."
-          #Technically she had, she just never died, I'm talking about the allergic reaction.
-     n "[persistent.date] scratches [date_pos] head."
-     l "So, why do you think I keep dying all of the sudden?"
+          l "Before that alleged allergic reaction I never really got in close contact with death."
+
+     if persistent.dumbo_knowledge:
+          call allergyInterject
+    
+     l "So, why is all of this happening all of the sudden?"
+     l "Surely this isn't random at all, right?"
  
      menu:
-          "I think it has to do with me, every time we are together you seem to end up dying.":
+          "I think it has to do with me, you seem to die every time we're together.":
                jump groundhog_escapeFate_myFault
  
-          "It seems like fate wants it for some reason.":
+          "It seems as if it's fated.":
                jump groundhog_escapeFate_yourFate
 
-
 label groundhog_escapeFate_myFault:
-     n "[persistent.date] bursts out laughing."
-     l "Sorry, it's still a bit much to take in right now."
-     l "Actually scratch that, it's way too much to properly take in."
-     if love_meter >= 2:
-          l "Sometimes I laugh when I'm uncomfortable."
-          l "It's a sort of coping mechanism I'm afraid."
-          l "That way I can distance myself from the seriousness of whatever it is that I need to distance myself from."
-          l "It's hard to accept this as being real, even if I do trust you and you have given proof."
-          l "I guess I'll just have to try to help you think this through."
-          l "It's not like me losing it is going to be of much help anyway."
+     n "[date_sub!c] [conj('date', 'lets', 'let')] out a nervous laugh."
+     l "Sorry [persistent.name], it's just a bit too much to properly take in, scratch that, it's way too much."
+     if chinese:
+          if love_meter >=2:
+               l "None of this feels real. I really want to believe you [persistent.name.]"
+               l "Well, to an extent ofcourse. If you are telling the truth than I will probably die soon again, right?"
+               l "I'd rather not, but I can tell you atleast believe what you are saying and you also did give some proof."
+               l "So for now I'll play along, but I'll keep it at that, pretend. I don't feel comfortable enough to accept it as a reality."
+          else:
+               l "So you mean to tell me whenever we are together I \"die\"?"
+               l "Seems to me there's a very easy solution to that isn't there?"
+               l "Good riddance [persistent.name]."
+               jump car_death
      else:
-          l "None of this feels real."
-          l "I know you offered me some proof but I'm still not entirely sold on it if I'm being honest."
-          n "You hear [date_obj] sigh very deeply."
-          l "{size=*0.5}I can't believe I'm even entertaining this, still, better safe than sorry.{/size}"
-     l "So, our dates always end up killing me, right?"
+          if love_meter >= 2:
+               l "Sometimes I laugh when I'm uncomfortable, it's a coping mechanism I'm afraid."
+               l "It allows me to distance myself from the seriousness of any given situation."
+               l "A part of me is just desperate to make light of this, to pretend like I don't believe it."
+               l "Because the alternative just makes it even more real. Still, you need my help to break this loop somehow."
+               l "It's not like me denying the situation is going to help at all, I'll try not to lose it. For our sakes."
+          else:
+               l "You have to admit that all of this sounds so unbelievable."
+               l "If we didn't literally {b}just{/b} evade death there is no way I'd buy this."
+               l "But now, as much as I hate to admit it, you might just be right."
+               l "I don't think I can take the risk believe otherwise."
+
+     l "So whenever we're together on a date it ends up killing me?"
      if love_meter >= 2:
-          l "Do you know what happens if we don't go on a date?"
-          l "Have you ever tried cancelling this date?"
-          l "Maybe then I wouldn't die?"
+          l "...what would happen if  we don't go on a date?"
+          l "Have you ever tried cancelling? Maybe that would save me?"
      else: 
           l "Have you ever considered not going on this date?"
-          l "That would save me, wouldn't it?"
+          l "Surely then I wouldn't die?"
 
      menu:
-          "Actually I tried to warn you about your death, tried to break up with you, tried just not showing up but it all ended with you dying either way. (Lie)" if persistent.plane_knowledge and persistent.ending_breakup and persistent.times_phone_declined > 0:
+          "I tried to cancel the date, have it somewhere else, or just not show up, but it all ends with you dying. (Lie)" if persistent.plane_knowledge and persistent.ending_breakup and persistent.times_phone_declined > 0:
                #This is a lie. Not picking up the phone makes her live.
                jump escapeFate_myFault_ITriedTo
   
@@ -2942,95 +3302,96 @@ label groundhog_escapeFate_myFault:
   
           "I haven't tried that yet actually.":
                jump escapeFate_myFault_didNotTryYet
-label escapeFate_myFault_ITriedTo:
-     l "Really?"
-     l "..."
-     l "I'm sorry [persistent.name], I have no idea what to say to that."
-     l "Things are even worse than I thought."
-     l "If even just not going on this date still kills me, what hope is there?"
-     if persistent.ending_breakup == True:
-          n "Luckily for [persistent.date] that is not the case, as [date_sub] [conj('date', 'does', 'do')] survive you cancelling the date. Unluckily for [date_obj], you don't tell [date_obj] that."
-          n "Why I wonder? Are you scared [date_sub] wouldn't put up with you if [date_sub] knew?"
-          n "I'm not sure lying is that much better of an alternative, considering you just crushed [date_pos] hopes of surviving."
 
-     l "We are just stuck in this loop, forever."
-     l "I want to believe there is a way out, I really do. But it seems the odds really are stacked against us."
-     l "But still, I guess we have no choice but to go through this over and over and over."
-     l "Maybe we'll find a loophole?"
-     l "Maybe you still can give something you haven't tried a shot?"
-     l "I guess not though..."
-     l "At this point I'm just trying to cope with the situation."
-     l "If I have to die, let it atleast be with a slither of hope in my heart, however small it may be."
+label escapeFate_myFault_ITriedTo:
+     l "Really?... I'm sorry [persistent.name], I don't know what to say..."
+     l "Things are even worse than I thought. If everything ends up killing me, what hope is there?"
+     if persistent.ending_breakup == True:
+          n "Luckily for [persistent.date] [date_sub] [conj('date', 'does', 'do')] survive cancelling the date. Unluckily for [date_obj], you don't tell [date_obj] that."
+          n "Why I wonder? Are you scared [date_sub] wouldn't put up with you if [date_sub] knew?"
+          n "Is crushing [date_pos] hope that much better of an alternative, player?"
+
+     l "We seem to be stuck in this loop forever."
+     l "I want to believe there is a way out, I really do. However, the odds really are stacked against us."
+     l "So I guess we have no choice but to go through it over and over and over."
+     l "...Maybe there's still a loophole somewhere? Perhaps we just need to try something different?"
+     l "Who am I kidding?... At this point I'm just trying to cope."
+     l "If things have to end, I need atleast a sliver of hope left in my heart, even if it's just pretend."
      jump restaurant_death_2
+
 label escapeFate_myFault_butILoveYou:
      if love_meter >= 2:
-          l "Well, I also like spending time with you..."
-          l "It would be a shame if we had to sacrifice it all."
-          l "Besides, whether you would or not do that, I would never know about it or this conversation."
-          n "[persistent.date] lets out a little laugh."
-          l "Funny how those things work right?"
-          n "[persistent.date] scratches [date_pos] head."
-          l "But if all else really fails we might have to consider not seeing eachother again."
+          l "Well, I also like spending time with you... It would be a shame if that had to end."
+          l "You'd still have your memories of our time together, but for me it would be like none of it ever happened, wouldn't it?"
+          l "If I could choose I'd rather hold on to my memories for now. This time with you, however unconventional, has been just what I needed."
+          l "That's why it's such a shame the universe itself seems to be against it. Still, this doesn't concern the universe, right? It concerns us."
+          l "Which is why we should really give it our all to find a different way. However if all else fails we might have to consider ending it."
           n "[date_sub!c] [conj('date', 'lets', 'let')] out a big sigh."
-          l "However, I have a feeling that there must be another way to solve our little problem, I'm practically sure of it!"
-          l "If all else fails we'll just have to confront the Moirai themselves!"
-          n "[date_sub!c] [conj('date', 'seems', 'seem')] to be taking all of this pretty well for a woman who just heard that [date_sub] [conj('date', 'dies', 'die')] repeatedly."
+          l "Still, we can't give, surely there's another way to solve things. If all else fails we'll just have to confront the Moirai themselves!"
           
      else: 
           if not chinese:
-               l "I'm not sure if you understand [persistent.name], my life is literally at stake."
+               l "I'm not sure you understand [persistent.name], my life is literally at stake."
           else:
-               l "Well, if I were to trust you, this is literally a matter of life and death."
-          l "Would you really squander my life just because you like spending time with me?"
-          l "Have you ever stopped to consider how that would make me feel [persistent.name]?"
-          l "It sounds to me like you are not at the slightest concerned about that."
+               l "Well, if I were to trust you, this is literally a matter of life and death, mine."
+          l "Would you really squander that just because you like spending time with me?"
+          l "Have you ever considered how that'd make me feel [persistent.name]? It sounds like you didn't at all."
      jump restaurant_death_2
 
 label escapeFate_myFault_didNotTryYet:
-     l "Well, maybe that's worth looking into then even though it's probably quite a long shot."
+     if love_meter >= 2:
+          l "Well... it might be a worth a shot. Although I really wish there's another way."
+     else:
+          l "Well, I think you should."
      menu:
-          "But that would mean we wouldn't know eachother like this, if the loop breaks I will not have been on this date with you. ":
+          "Then none of this would've happened. ":
                jump didNotTryYet_neverMeet
 
 label didNotTryYet_neverMeet:
-     n "[persistent.date] rubs [date_pos] chin for a moment."
-     l "Hmm, I suppose you are right..."
-     l "Once you manage to break the loop by not showing up or something like that I wouldn't want to have something to do with you in the first place."
-     l "Besides, even then I doubt you would be able to convince me about this whole groundhog day thingy."
-     l "You wouldn't be able to relive that moment anymore so your tricks would quite literally be useless "
-     n "[persistent.date] looks saddened for a moment before [date_sub] [conj('date', 'tries', 'try')] to give you a wide smile, you can tell it's quite forced."
-     l "You know, I got a feeling that won't be the case so you can always give it a shot if you want."
-     n "[date_sub!c] [conj('date', 'grows', 'grow')] silent for a moment."
-     l "But just in case something does end up happening and causes you to never be able to see me again."
-     l "I want you to know that I really liked our time together..."
+     if love_meter >= 2:
+          n "[persistent.date!c] rubs [date_pos] chin for a moment, seemingly deep in thought."
+          l "I fear you might be right."
+          l "If you break this loop by not showing up at all I might not want to have anything to do with you. Even if you merely canceled things might not be the same."
+          l "Even if it would be the same, I doubt you'd be convince me about us being trapped in a timeloop."
+          l "Unable to relive the same moment your tricks would quite literally be useless"
+          n "[date_sub!c] looks saddened for a moment before [date_sub] [conj('date', 'tries', 'try')] to give you a wide smile, you can tell it's quite forced."
+          l "You know, I have a feeling we'll see eachother again somehow no matter what."
+          n "[date_sub!c] [conj('date', 'grows', 'grow')] silent for a moment."
+          l "Although just in case, I want you to know that I really liked our time together..."
+          l "Now you know what to do next time, right [persistent.name]?"
+     else:
+          l "...So that's what's stopping you from doing the sensible thing?"
+          l "You're clinging onto the rosecolored memories?"
+          l "Then why does it feel as if you don't like me at all right now?"
+          l "Look, if you truly even slightly care for me, next time you know what to do."
      jump restaurant_death_2
 
-
 label groundhog_escapeFate_yourFate:
-     l "...What? Why?"
-     l "It feels pretty weird that fate has a bone to pick with me, right?"
-     l "What exactly did I do that would warrant something like that?"
-     l "You saved me from dying before, right? Maybe this is what happens if you somehow go against your fate?"
-     l "Maybe fate is just trying to correct it's mistake by making sure that what needs to happen..."
+     l "...What? Why would fate have a bone to pick with me? That's rather strange isn't it?"
+     l "Whatever did I do that could possibly warrant that?..."
+     l "You prevented my death before, right? Maybe this is what happens by defying fate?"
+     l "Maybe it is trying to correct it's mistake by making sure that what needs to happen..."
      n "[date_sub!c] [conj('date', 'trails', 'trail')] off for a moment, seemingly deep in thought."
-     l "Although I'm not sure about this at all. If I am truly fated to die that's horifying."
-     l "I still had so much things I wanted to do, so much experiences to live through."
-     l "And now that's all ripped away from me, just like that. Because fate had other plans."
-     l "If we somehow manage to escape fate for now, who's to say it won't come to play with us later?"
-     l "We truly are at the mercy of a force we do not even fully understand. It could strike at any moment during the rest of our lives."
+     l "Although I'm not sure about this- It'd be horifying if I was really destined to die."
+     l "There's still so much I want to do, so much to live through."
+     l "That's now all ripped away, just like that. Because fate had other plans than I did."
+     l "Even if we temporarily free ourselves from fate, who's to say it won't ensnare us once more?"
+     l "We're at the mercy of a force we can't comprehend. We'd be in fear of it striking back for all eternity."
      l "If you knew you could die at any moment, could you really live at all?"
      menu:
-          "Is it really that different from everyone else? Everyone could die at any moment, death is quite random in that regard.":
-               l "Oh, can't you see [persistent.name]? If anything this shows it's far from random."
-               l "To have multiple deaths in different locations and circumstances happen to me..."
-               l "Something more is going on."
+          "Can't everyone die at any moment? Death is quite random in that regard.":
+               l "I don't think I fully agree with that honestly... usually death has a clear cause."
+               l "Even if it's as unfortunate as merely being in the wrong place at the wrong time."
+               l "Even then, can't you see [persistent.name]? If anything this shows it's far from random."
+               l "It would be one thing if it was just this death that happened to me, but there's others, right?"
+               l "Multiple deaths at different locations and under different circumstances..."
+               l "Something more is going on. I'm sure of it. Wheter it's fate or not, this can't just be merely random."
                jump restaurant_death_2
 
-          "I think we should precisely try to truly live because we could die at any moment.":
-               l "I suppose you do have a point [persistent.name]..."
-               l "If I never let go of the fear of dying then it will be like I'm already dead. I wouldn't be able to appreciate this extra time you gave me."
-               l "Still, something is just gnawing away at me. How much extra time did you give me?"
-               l "Is it a day or so? A few hours? Or a few minutes?"
+          "We precisely should try to truly live because we could die any time.":
+               l "I can definetly see the logic in that [persistent.name]... I'm already dead if I never let the fear of dying go."
+               l "I wouldn't be able to appreciate this extra time you gave me. Still, something is gnawing away at me..."
+               l "How much extra time did you give me? Is it a day or so? A few hours? Or a few minutes?"
                if burger == True:
                     $ death_narration = "It seems [date_sub] [conj('date', 'was', 'were')] quite optimistic, you only bought [date_obj] a few extra seconds."
                elif cafe == True:
@@ -3038,14 +3399,15 @@ label groundhog_escapeFate_yourFate:
                
                jump restaurant_death_2 
 
-
 label psychic_auraOfDeath:
-     l "An aura of death? Are you joking?"
-     n "Your serious look tells [persistent.date] you are anything but joking."
-     l "Well, thanks for trying to save me, so far you're doing an absolutely fantastic job!"
-     l "So, do you think it is over? Did you finally stop that weird aura of death you were speaking of?"
+     l "An aura of death? Is this some sort of joke?..."
+     n "She gives you a tentative look, turning pale when [date_sub] [conj('date', 'finds', 'find')] the answer she was looking for."
+     l "You're being serious?... It would explain somewhat what happened I suppose. Although why would I have such an aura?"
+     l "Did I cause that somehow? Or is it something I can't help? Did something else curse me?..."
+     l "All of this seems almost too silly to even entertain. Still, thank you for trying to look out for me."
+     l "Do you think it is finally over? You did just save me so that must mean it is, right?"
      menu:
-          "I sure did!":
+          "It sure is!":
                jump explanation_stoppedDeath
  
           "Actually you're still going to die, this time because of a swarm of geese." if chinese and persistent.chinese_death_2:
@@ -3054,102 +3416,83 @@ label psychic_auraOfDeath:
           "Actually you're still going to die, this time due to a gas explosion." if burger and persistent.burger_death_2:
                jump explanation_stillDying
 
-          "Actually you're still going to die, this time you will drown." if cafe and persistent.cafe_death_2:
+          "Actually you're still going to die, this time by drowning." if cafe and persistent.cafe_death_2:
                jump explanation_stillDying
                
- 
 label explanation_stoppedDeath:
      if burger == True and persistent.burger_death_2 == True or cafe == True and persistent.cafe_death_2 == True or chinese == True and persistent.chinese_death_2:
-          n "I'm not entirely sure if you believe that player."
-          n "You have seen what comes next, right?"
-          n "Do you think something is going to change?"
-          n "Or are you just lying to yourself?"
-          n "..."
-          n "Or maybe you are lying to [date_obj]?"
-          n "Either way, I guess we will soon see how things turn out."
-     l "Great, now we can just continue enjoying our date!"
-     #That is a really weird response, fix it a bit.
-     n "[persistent.date] gives you a wide smile, you feel like you could beat the universe itself."
-     menu:
-          "We actually did it, I still can't believe it!":
-               jump restaurant_death_2
+          n "... Do you truly believe that player? You have seen what comes next, right?"
+          n "Then why do you think something is going to change? Perhaps you're just lying to yourself?"
+          n "...Or maybe you are lying to [date_obj]? Either way, both of you will find out soon enough."
 
+     l "...I- I'm not sure what to say. Thank you, a thousand times over!"
+     l "I'm not sure what I would have done without you [persistent.name]."
+     n "[persistent.date!c] flashes you a wide smile, you feel as if you could beat the universe itself, as if you just did."
+     menu:
+          "You're finally saved, I still can't believe it!":
+               jump restaurant_death_2
 
 label explanation_stillDying:
      if chinese == False or chinese == True and love_meter >= 2:
-          l "What?"
-          l "In that case, what are we waiting for [persistent.name]?"
+          l "What?- What are we waiting for then [persistent.name]?"
           l "We need to get out of here as fast as possible."
-          
-          
           menu:
-               "You are right, we have no time to waste.":
+               "You're right, we have no time to waste.":
                     jump explanation_noTimeToExplain
-               "We can't, if we do that a car will hit you and you will also die." if not car_free or not car_caught:
-                    l "So this is it? We just wait until death catches up with me?"
+
+               "We can't, you will die aswell if we step outside." if (not car_free or not car_caught) and ((burger and persistent.burger_car_death) or (cafe and persistent.cafe_car_death) or (chinese and persistent.chinese_car_death)):
+                    l "So that's it?... We wait until death catches up with me?"
                     l "Can't we do anything else?"
                     if cafe:
-                         l "Maybe we could try to go to the second floor of this cafe?"
-                         l "That way the water would have no way to reach us and we would be safe."
+                         l "Maybe we could go to the second floor? Surely the water can't climb up that high."
                          menu:
                               "That's a great idea, the only problem is that there is a really big and heavy closet blocking the stairway.":
                                    jump restaurant_death_2_preventionAttempt
                     elif chinese:
-                         l "Maybe we could try hiding out in the restrooms so the geese don't find us?"
+                         l "Maybe we could try hiding out in the restrooms so the geese can't find us?"
                          menu:
                               "That's a great idea, not like we have much other options so we'll give it a shot.":
                                    jump restaurant_death_2_preventionAttempt
                     else:
-                         l "I guess not..."
-                         l "The best we could do is seek cover, hoping that we are somewhat safer."
-                         l "So this really is it."
-                         l "I'm scared [persistent.name]."
+                         l "I guess not... The best we can do is seeking cover, to be somewhat safer."
+                         l "So this really is it?... I'm so scared [persistent.name]."
                          menu:
-                              "Me too [persistent.date].":
-                                   l "Is it weird to say that's kind of comforting?"
-                                   l "Otherwise I would have been the only one to carry this burden between all these people who have no idea what is about to happen."
-                                   l "I'm glad atleast you are here to understand it aswell."
-                                   l "You've already seen this death right? Is it bad?"
+                              "I am aswell [persistent.date].":
+                                   l "...Is it weird that's kind of comforting? I'm glad we atleast get to share this burden together."
+                                   l "You've already seen this death right? Is it bad?..."
                                    l "Actually, don't tell me, I'd prefer not to know."
-                                   l "Not a whole lot of people know the exact way they will die and on what moment it will happen."
+                                   l "Not a whole lot of people know the exact way they will die or on what moment it will happen."
                                    l "I don't want to know the aftermath of my death aswell, I'm already cursed with too much info."
                                    l "But before..."
                                    l "Well, you know..."
-                                   l "I'd just like to tell you that I don't blame you for telling me about the next death. I appreciate the honesty."
-                                   l "After all, I'd like to believe we are a team."
-                                   l "I'd rather not have to face this alone so I'm happy I don't have to."
+                                   l "I'd just like to tell you that I don't blame you for telling me what comes next. I appreciate the honesty."
+                                   l "After all, I'd like to believe we are a team. We share this burden afterall, you take it from me, but I also take it from you."
 
 
-                              "It will be over soon, don't worry.":
+                              "It will all be over soon, don't worry.":
                                    l "I'm not sure if that makes it any better to be honest."
-                                   l "Because if it'll be over soon it is also soon approaching."
-                                   l "And as that moment gets closer and closer I can feel my stomach shriveling up out of fear."
-                                   l "Usually when you would die you are not this aware of it, and even if you knew you would die you almost never know exactly when."
-                                   l "And now that we both know how it's going to end for me all we can do is just wait for the inevitable."
-                                   l "I know there is probably nothing we can do, atleast not this time."
-                                   l "And yet I still can't help but try to come up with anything that will make me survive this. But I can't come up with a single thing."
-                                   l "If I truly could accept that this is the end then maybe it would be easier. But I can't. Accepting that would probably break me."
-                                   l "Even know I'm hoping this is a really elaborate prank that will make me hate you when it's over."
-                                   jump restaurant_death_2
-
-               
+                                   l "Because if it'll be over soon it's also soon approaching."
+                                   l "And as that moment gets closer I can feel my stomach shriveling up out of fear."
+                                   l "Usually you aren't aware of when you die, even if you do it's never the specific time."
+                                   l "Now we both know how it's going to end for me all we can do is just wait for the inevitable."
+                                   l "It kills me how we can't do anything at all, my mind's rapidly racing trying to come up with a remedy yet can't find any."
+                                   l "If I could fully accept that this is the end, maybe it'd be easier? But I can't. Accepting that would break me."
+                              
                     jump restaurant_death_2
 
      else: 
-          l "Really? I was sceptical about the allergy thing and then you bring up me dying to geese next? That's just ridiculous."
+          l "Really? I was already sceptical and now the new thing is geese killing me? That's just ridiculous."
           if psychic == True:
                $ fritfood == "word"
           else: 
                $ fritfood == "number"
 
-          l "I will admit that I have no idea how you guessed the [fritfood] I was thinking of but this, all of this, is just some sort of practical joke, right?"
-          l "Sure, you gave me one piece of proof, but your actions here today spoke volumes. You don't care enough about me to want to save me. Otherwise why would you treat me so badly?"
-          l "I'm out [persistent.name], whatever this is, I don't want a part in it."
+          l "I can't entirely explain how you guessed my [fritfood] but this, all of this, is just some sort of practical joke, right?"
+          l "Besides, it really doesn't matter if it's true or not. Your actions spoke volumes. You don't care enough about me to want to save me."
+          l "If that wasn't the case, why would you treat me this way? I'm out [persistent.name], whatever this is, I don't want a part in it."
           jump car_death
           
-
 label restaurant_death_2_preventionAttempt:
-
      if burger and burger_car_death:
           $ stillDying_noEscape = True
      if cafe and cafe_car_death:
@@ -3158,22 +3501,22 @@ label restaurant_death_2_preventionAttempt:
           $ stillDying_noEscape = True
           
      if cafe:
-          l "Is it really that heavy? Maybe we could move it out of the way just enough to brush past?"
-          l "Let's go take a look at it."
-          n "[persistent.date] and you walk to the enormous closet made of lignum vitae."
-          n "[date_sub!c] [conj('date', 'inspects', 'inspect')] it for a brief moment and then [conj('date', 'lets', 'let')] out a deep sigh."
-          l "Okay, there is no way we can move {b} {i} that{/i} {/b}, right?"
-          l "What is it doing here anyway?"
-          l "Maybe we should just go to that barista and ask him about it? Maybe there is other staff somewhere that could help clear the stairway."
-          n "[persistent.date] and you walk away from the closet and are heading towards the barista. As [date_sub] [conj('date', 'passes', 'pass')] you, you notice the urgency in [date_pos] step."
-          l "Hello, I'm really sorry to bother you, but we wanted to go up to the second floor and noticed there was a gigiantic closet blocking the way up."
-          b "Ah yes, the closet..."
-          b "I'm really sorry about that."
-          b "Our manager thought it would be a good idea to buy that closet to put it on the second floor. He claimed it would look beautiful there."
-          b "The folks he bought it from said they would bring it up the stairs after our manager told them it was only a few steps high."
-          b "... He may have slightly understated how many steps it {b} really {/b} is."
-          b "When they saw for themselves, they left it right in front of the stairs."
-          b "We are currently looking into getting it upstairs safely. Our manager said a few people who could get the job done would come by tomorow."
+          l "Is it really that heavy? We don't need to move it all the way afterall, just enough to slip past."
+          l "Let's check it out, just in case."
+          n "[persistent.date!c] and you walk to the enormous closet made of lignum vitae."
+          n "[date_sub!c] [conj('date', 'inspects', 'inspect')] it for a brief moment, placing [date_obj] firmly against it. Then [date_sub] [conj('date', 'starts', 'start')] pushing with all of her might." 
+          n "However, the closet refuses to even budge in the slightest."
+          n "Soon a few guests closest by turn to judge the situation."
+          n "This seems to serve as a big enough nudge to steer her away from continuing her efforts."
+          l "...There is no way we can move {b}{i} that{/i}{/b}, right? Why is it placed so terribly anyway?"
+          l "Maybe we should just ask the barista? Maybe there is other staff somewhere that could help clear the stairway."
+          n "[persistent.date!c] and you walk away from the closet and are heading towards the barista. As [date_sub] [conj('date', 'passes', 'pass')] you, you notice the urgency in [date_pos] step."
+          l "Hello, I'm really sorry to bother you, but we wanted to go to the second floor and noticed this gigantic close-."
+          b "Ah yes, the closet... I'm really sorry about that."
+          b "Our manager thought it would be a nice display piece on the second floor."
+          b "... He may have slightly understated how many steps the stair {b} really {/b} has to get out of paying an extra moving fee."
+          b "When the crew saw for themselves, they left it right there."
+          b "We're currently looking into getting it upstairs safely. Our manager said the job would be done by tomorow."
           b "In the meantime I'm afraid you can't go up there, we are sorry for the inconvenience."
           menu:
                "But it's an emergency! We need to get that closet out of the way now!":
@@ -3182,51 +3525,51 @@ label restaurant_death_2_preventionAttempt:
                          "We really want to see rest of the aquarium upstairs.":
                               
                               b "I'll be with you in a bit. There are some other customers that need to be served first."
-                              n "It might be your imagination but you think the barista is deliberately taking his time with every customer to keep you waiting longer."
-                              n "When every customer is helped with he looks around one last time to see if no one else, anyone else, needs him."
+                              n "It might be your imagination but the barista seems to be deliberately taking his time with every customer."
+                              n "When everyone is finally served he looks around one last time to see if no one else, anyone else, needs him."
                               n "He even waits for a few seconds in the hope that someone might want to order something extra and delay him from talking to you, even if just for a minute or so."
                               n "When no one comes by the barista lets out a heavy sigh and tries to put on a fake smile."
                               n "It fails miserably. For a second you can see he is thinking about whether or not to attempt it again but he just shakes his head ever so slightly and drops his fake smile instantly."
                               b "Look, while I understand that the both of you want to take a look, that is far from an emergency in my eyes."
-                              b "If you really want to take a look I would recommend to come back after tomorow, by that time the closet will be removed."
-                              n "But you don't have until then, in fact every word the barista says makes you realise you don't have much more time left at all."
-                              n "Suddenly you hear the sound of cracking glass as it rapidly spreads all over the aquariums."
-                              n "The weakened glass can't hold the water much longer as it bursts through it's confines."
-                              n "The water starts pouring out of the aquariums, the fish are flopping around on the floor, covered in about a few centimeters of water already."
-                              n "The people in the cafe desperately make their way to the exit, when they realise the door doesn't seem to be able to open they panic even more."
-                              n "They push against it with all of their strength, but the door doesn't even budge."
-                              n "Soon the fish are able to swim around freely, the water now comes to around your middle."
-                              n "[persistent.date] and you give eachother a knowing look."
+                              b "If you really want to do so I would recommend to come back after tomorow, by that time the closet will be removed."
+                              n "But you don't have until then, in fact every word the barista utters makes you uttery aware of how little time you have left."
+                              n "Suddenly the sound of cracking glass begins to rapidly spread all over the aquariums."
+                              n "The weakened glass can't contain the water much longer as it bursts through its confines."
+                              n "The water pouring out of the aquariums, the fish flopping on the floor, disaster is impending once more."
+                              n "The floor is covered in about a few centimeters of water already. The people in the cafe desperately make their way to the exit."
+                              l "When they notice the exitseems to be stuck panic grows even more. They push against it with all of their strength, but the door doesn't even budge."
+                              n "Soon the fish are no longer flopping, instead freely swimming around in the water, whihc now is flowing up to your middle."
+                              n "[persistent.date!c] and you give eachother a knowing look."
                               if love_meter > 2: 
                                    n "The two of you wait for death in eachothers arms."
                               else: 
                                    n "All you can do is wait for death."
 
-                              n "And you do not have to wait long at all for it."
+                              n "You do not have to wait long at all for it."
                               jump gameOver
 
-
-                         "We are all going to die! This whole place is going to get flooded!":
-                              n "As you speak those words you begin to hear the commotion in the cafe turn into pure silence."
-                              n "All the people that were happily chatting it away while eating now all look at you. Then they begin to whisper to eachother."
-                              n "The barista notices this too, his face turning pale."
-                              b "Listen, I'm kindly going to have to ask you to leave, you are scaring our customers. This place is not going to get flooded, the aquariums are very sturdy."
+                         "We are all going to die! This whole place will flood!":
+                              n "Upon speaking those words the commotion in the cafe turn into pure silence."
+                              n "All the people happily chatting it away while eating, instead just staring at you. Then they start to whisper."
+                              n "The barista notices too, his face rapidly growing pale."
+                              b "Listen, I'm kindly going to have to ask you to leave, you are scaring our customers."
+                              b "The cafe won't flood, the aquariums are very sturdy."
                               n "He tries to say that last part as convincing and assuring as a slightly awkward teenager can."
-                              n "Sadly, regardless of how good his performance would have been, your words have robbed a lot of people from their appetite."
+                              n "Sadly, regardless of the quality of his performance, your words robbed a lot of people their appetite."
                               n "Quite a few customers begin to leave."
                               n "The barista looks even more terified now."
-                              b "I would like you to leave now sir, or I will have to call the cops."
-                              n "[persistent.date] and you shamefully start walking towards the exit."
+                              b "I would like you to leave now please, or I will have to call the cops." 
+                              n "[persistent.date!c] and you shamefully start headingtowards the exit."
                               l "I think you might have come across slightly too strong [persistent.name]."
-                              l "So, when we step outside we- or I will die, right?"
+                              n "Things are quiet for a moment, the few customers that remain just awing at you in silence."
+                              l "...So, when we step outside we- I'll die, right?"
                               n "[date_sub!c] [conj('date', 'whispers', 'whisper')] it, not wanting to freak out the remaining customers even more."
-                              l "But if we stay here we drown."
-                              l "I guess getting hit by a car is better in that case? Probably a lot quicker."
-                              n "You can cleary hear the fear in [date_pos] voice, even though [date_sub] [conj('date', 'is', 'are')] trying to hide it."
-                              l "I mean, it does make me feel slightly better that our failed attempt atleast got some customers to escape."
+                              l "But if we stay here we drown... I guess getting hit by a car is better in that case? Probably a lot quicker."
+                              n "You can cleary hear the fear in [date_pos] voice, even though [date_sub] [conj('date', 'is', 'are')] trying to seem put together."
+                              l "Still, I feel slightly better knowing some customers escaped through our failed attempt."
                               n "The two of you leave the cafe in shame."
                               if persistent.cafe_car_death == True:
-                                   n "And just like clockwork the red Sedan shows up once more."
+                                   n "Just like clockwork the red Sedan shows up once more."
                               elif persistent.chinese_car_death or persistent.burger_car_death or persistent.kokiri_death_2: 
                                    n "Suddenly you notice the red Sedan. It seems you aren't safe from it in here either." 
                               else: 
@@ -3234,44 +3577,41 @@ label restaurant_death_2_preventionAttempt:
                               n "It drives straight into the two of you."
                               jump car_death_result
      elif chinese:                 
-          n "[persistent.date] and you walk into the women's restroom together."
-          n "There is no one else there."
-          n "You smell the destinct scent of roses, upon further inspection it seems to come from an aroma difuser."
+          n "[persistent.date!c] and you walk into the women's restroom together."
+          n "There is no one else there. You smell the destinct scent of roses, upon further inspection it seems to come from an aroma difuser."
           l "So, in here we should be safe, right?"
           n "You can only hope, but you are far from certain."
-          n "Suddenly you hear it again. The sound of screaming, slowly being overpowered by quacking."
-          l "So that is how I died?..."
-          l "It's hellish."
-          n "For a moment you consider telling [date_obj] that you are not sure whether [date_sub] died to the geese or not, because you never saw [date_pos] corpse, but that you know that if [date_sub] hadn't died, [date_sub] would wish [date_sub] had. "
-          n "You refrain from telling [date_obj] that, probably for the best."
-          n "[persistent.date]’s hands tremble as [date_sub] [conj('date', 'grips', 'grip')] the edge of the sink. [date_pos!c] breathing is shallow and uneven, [date_pos] eyes darting around the small restroom as though expecting the walls themselves to collapse inward. Tears well up but don’t fall, [date_pos] face frozen in a mixture of fear and desperation."
+          n "Suddenly you hear it again. The sound of screaming, slowly overpowered by quacking."
+          l "So that is how I died?... It's hellish."
+          n "For a moment you consider telling [date_obj] you're unsure if [date_sub] died to the geese but that might have been the best to come out of that situation."
+          n "You refrain from telling [date_obj] that, it would probably sound rather strange."
+          n "[persistent.date!c]’s hands tremble as [date_sub] [conj('date', 'grips', 'grip')] the edge of the sink."
+          n "[date_pos!c] breathing shallow and uneven, [date_pos] eyes darting around the small restroom as though expecting the walls themselves to collapse inward."
+          n "Tears well up but don’t fall, [date_pos] face frozen in a mixture of fear and desperation."
           l "This isn’t real, right? I mean... it can’t be real. It’s just geese. Just stupid birds..."
-          n "This could not end soon enough for the two of you. And yet it doesn't seem to any time soon."
-          n "In fact, it seems to last longer than you remember."
-          n "Something's different, but what?"
+          n "This could not end soon enough for the two of you. Yet it doesn't seem to any time soon."
+          n "In fact, it seems to last longer than you remember. Something's different, but what?"
           n "It's the same day over again, right? Nothing can be different except..."
           n "Except you, hiding with [persistent.date] in the bathroom."
-          n "Are they searching you?"
-          n "No, last time they didn't take you with them."
+          n "Are they searching you? No, last time they didn't take you with them."
           n "They are searching [date_obj]."
-          n "The restroom door bursts open with a deafening bang, the force rattling the hinges. A cacophony of flapping wings and maddening quacking fills the air as several geese flood into the small room, their eyes gleaming with malicious intent."
-          n "[persistent.date] lets out a strangled scream, backing away until [date_sub] [conj('date', 'is', 'are')] pressed against the tiled wall. You try to shield [date_obj], but it's futile. You are no match for 100 geese, for a 1000 geese, for an uncountable amount of them."
+          n "The restroom door bursts open with a deafening bang, the force rattling the hinges."
+          n "A cacophony of flapping wings and maddening quacking fills the air as several geese flood into the small room, their eyes gleaming with malicious intent."
+          n "[persistent.date!c] lets out a strangled scream, backing away until [date_sub] [conj('date', 'is', 'are')] pressed against the tiled wall."
+          n "You try to shield [date_obj], but it's futile. You are no match for 100 geese, nor 1000 geese, nor an uncountable amount of them."
           n "The restroom door bursts open with a deafening crash, and before you can fully process what’s happening, a blizzard of white feathers engulfs the room."
-          n "You try to shout, to do something, but before you can make another sound, everything turns to white—the white of pesky geese feathers."
+          n "You try to shout, to do something, but before you can make another sound, everything turns to white, the white of pesky geese feathers."
           n "The pain you feel is excruciating, sharp and overwhelming, as the geese descend upon you like a merciless force of nature. The cacophony of honking grows distant as darkness takes over, and you fall unconscious."
           n "When you wake up again, the restroom is silent and [persistent.date] is gone."
-          n "The room is completely filled to the brim with geese feathers, blanketing every surface and swirling lazily in the air. Just thinking about it makes your nose itch, and you begin to sneeze uncontrollably."
+          n "The room is completely filled to the brim with geese feathers. Just thinking about it makes your nose itch, and you begin to sneeze uncontrollably."
           n "Between sneezes, you notice it, the same sticky note they left last time, on your hand once again."
           n "You already know what it says but decide to read it anyway."
           n "It reads as follows: \"We took everyone and you won't be seeing them back. Let this be a lesson on why you should not eat or serve geese or ducks, as those are also part of our family. Also, we are not stupid. - Sincerely, the geese\""
           jump gameOver
 
-          
-    
-
 label psychic_dateToSave:
-     l "Seems rather convoluted doesn't it?"
-     l "Couldn't you just have found me somewhere else and told me like a week before it would happen?"
+     l "...That's rather convoluted isn't it?..."
+     l "Couldn't you just have told me this like a week before it would happen?"
  
      menu:
           "Oh yeah, and you would just believe a random person telling you that you will die of an allergy in a Chinese restaurant on a specific day?" if burger:
@@ -3284,18 +3624,19 @@ label psychic_dateToSave:
                jump psychic_dateToSave_youWouldNotBelieveMe
 
 label psychic_dateToSave_youWouldNotBelieveMe:
-     l "Hmm, you made a fair point there, even if I would have believed you I don't think I would have actually been able to remember it when I needed that knowledge."
-     l "It still sounds like there were better, less convoluted ways to keep me from dying but I'm still really thankfull that you saved my life."
-     l "We actually cheated death itself, take that death!"
+     if burger or cafe:
+          l "I suppose that is a fair enough point, even right now, with you preventing it I don't entirely believe it.."
+     else:
+          l "I suppose that is a fair enough point, even right now I don't believe it fully."
+
+     l "It still sounds like there were better, less convoluted ways to save me. However that doesn't change that you did."
+     l "We actually escaped death itself, take that death!"
      menu:
-          "I think it may not be really wise to tease death itself. ":
+          "I think it might not be wise to tease death itself. ":
                jump youwouldntbelieveme_doNotteaseDeath
  
           "Take that death, we've won, woohoo!":
                jump youwouldntbelieveme_teaseDeath
-
-
-
 
           "Actually you're still going to die if we keep sitting here, this time it'll be a gas explosion." if burger and persistent.burger_death_2:
                jump explanation_stillDying
@@ -3305,41 +3646,42 @@ label psychic_dateToSave_youWouldNotBelieveMe:
                jump explanation_stillDying
 
 label youwouldntbelieveme_doNotteaseDeath:
-     l "Common, let's celibrate. We just escaped death!
-     Don't be so worried, what's the worst thing that could happen?"
+     l "Common, let's celibrate. We just cheated death!"
+     l "Don't be so worried, what's the worst thing that could happen?"
  
      menu:
-          "Yeah, you're probably right... Wait, why did you say that? Now we are going to die for sure.":
+          "Yeah, you're probably right- Wait, why did you say that? Now we are going to die for sur-.":
                jump restaurant_death_2
 
 label youwouldntbelieveme_teaseDeath:
      $ teaseDeath = True
-     n "[persistent.date] and you high five eachother, you've won. Congratulatons!"
+     n "[persistent.date!c] and you high five eachother, you've won. Congratulatons!"
      if persistent.teaseDeath_fakeOut_knowledge == False:
-          n "That is what I would say if either of us thought that was the truth. After all, you came back here for a reason didn't you?"
+          n "That's what I'd say if either of us thought it was the truth. After all, you came back here for a reason didn't you?"
      jump restaurant_death_2
 
 label psychic_justHelpingOut:
      if chinese == True:
           l "So you somehow sensed I'm allergic to something in this dish? That sounds really far-fetched if I'm being honest."
-          l "There is certainly a possibility that there's something in this that makes me have an allergic reaction without me knowing, but you {b}sensing{/b} it?"
+          l "There's certainly a possibility that I might be unaware of an allergy to an ingredient, but you {b}sensing{/b} it?"
           if love_meter == 1:
                l "What, are you a psychic allergist? Well, I get the gist alright, the gist that you are just making this nonsense up as you go."
-               l "And yet... there is {i}some{/i} truth to what you are saying." 
+               l "Although... there is {i}some{/i} truth to what you are saying, isn't there?" 
                l "I feel it somehow. I guess that makes me a psychic too, huh?"
                n "[date_sub!c] practically [conj('date', 'scoffs', 'scoff')] those words at you."
                l "So, am I safe now? Or is there still something else?"
           else: 
                l "That's where I struggle to accept this whole scenario a bit."
-               l "But somehow, I don't think you're lying about the allergy thing. Besides, I can either believe you or risk it and maybe die."
-               l "The food here is great, it's to metaphorically die for. But I wouldn't like to make that literal."
-               l "I think I'll just order something different, probably something small though. Being warned of a possible death isn't exactly great for your appetite."
-               l "But anyway, I should probably think about something else first, am I safe now?"
+               l "Although somehow, I don't think you're lying about the allergy thing. Besides, I can either believe you or risk it and maybe die."
+               l "The food here is to metaphorically die for, but I wouldn't like to make that literal."
+               l "I think I'll just order something different, probably something small though. A prophesied death isn't exactly stimulating for the appetite."
+               l "Anyway, that's not my main concern right now, am I safe now?"
      else:
-          l "Wow, that's quite the story. It's a bit hard to believe but I guess you are right, I don't really want to think about what would have happened if you didn't interfere..."
+          l "Now that's quite the story. It might be hard to believe but I guess you are right."
+          l "I don't really want to think about what would have happened if you didn't interfere..."
           l "So am I in the clear now?"
      menu:
-          "Yup, you are completly safe now!":
+          "Yes, you are completely safe now!":
                jump psychic_justHelpingOut_totallySafe
 
           "Actually I sense another death approaching, this time it will be a swarm of geese." if chinese and persistent.chinese_death_2:
@@ -3352,257 +3694,194 @@ label psychic_justHelpingOut:
                jump explanation_stillDying
 
 label psychic_justHelpingOut_totallySafe:
-     n "[persistent.date] gives you a thumbs up and plays a few notes on an air gitar."
+     n "[persistent.date!c] gives you a thumbs up and plays a few notes on an air gitar."
      l "We actually did it, that's awesome!"
      n "[persistent.date] opens [date_pos] arms and motions to you with [date_pos] head."
      l "Come and give me a hug [persistent.name]"
      $ hugRequestedBeforeDeath = True
      jump restaurant_death_2
 
-
 label prevented_psychic:
      $ psychic = True
      $ groundhog = False
      if burger == True:
-          l "So what you are saying is that you knew I was going to get shot because you're psychic?"
-          l "I mean, I'm thankful for you saving my life and all but you got to admit that sounds kind of far fetched."
+          l "So you knew I was going to get shot because you're psychic?"
+          l "However thankful I am for you saving me you have to admit that sounds quite far-fetched."
           l "Do you have any proof to maybe show you're a psychic?"
      if chinese == True:
-          l "So what you are saying is that you knew I was allergic to something in this dish because you are psychic?"
-          l "Well unless you got any proof I'm not even sure if I'm really allergic to that Peking duck in the first place so you got to admit that this sounds very weird."
+          l "So you knew I was allergic to something in this dish because you are psychic?"
+          l "Unless you have proof it's quite convenient that I can't test out your claim, isn't it.?"
      if cafe == True:
-          l "So what you are saying is that you knew I was going to be skewered by a merlin because you are psychic?"
-          l "I mean, I'm thankful for you saving my life and all but you got to admit that sounds kind of far fetched."
+          l "So you knew I was going to be skewered by a merlin because you are psychic?"
+          l "However thankful I am for you saving me you have to admit that sounds quite far-fetched."
           l "Do you have any proof to maybe show you're a psychic?"
  
      menu:
-          "I've got no clue what to tell you honestly":
+          "I'm not sure how to convince you honestly":
                jump prevented_noProof
  
-          "Alright, pick a word, doesn't matter which one but make it a hard one to guess.":
+          "Alright, pick a word, doesn't matter which one but make it hard to guess.":
                jump prevented_proof 
 
 label prevented_silent:
-     l "..."
-     l "Listen, I can't do this."
+     l "...Listen, I can't do this."
      if chinese:
-          l "You can't just tell me something like that and then not explain any further."
+          l "You can't just say something like that without elaborating."
           if love_meter < 2:
-               l "Is this your idea of a joke?"
-               l "This is sick."
-               m "I'm done, this is too much for me."
+               l "Is this your idea of a joke? It's sick."
+               l "I'm done, this is too much for me."
           else:
                l "Look, I really want to believe you [persistent.name]."
                l "But you need to understand that you give me very little to work with here."
                l "This just comes of as weird if I'm being honest."
      else:
-          l "You can't just not give me anything after what just happened."
-          l "I'm really thankful for you saving my life and everything but I think you could atleast give me some semblance of an explanation." 
-          l "I would have died if not for you saving me."
-          l "I want to understand [persistent.name], I really do."
-          l "But this is just way too much."
+          l "You can't just not give me any explanation after what just happened."
+          l "I'm really thankful for you saving my life and everything but I think at the very least I deserve one." 
+          l "I want to understand [persistent.name], I really do., but this is just too much."
      l "I think it's better for the both of us if I just leave."
      jump car_death
 
-
-
 label explanation_noTimeToExplain:
-     n "Chinese [chinese] Burger [burger] Cafe [chinese]"
      if chinese == True:
           if car_caught == True:
-               if persistent_fleeingDeaths_counter_knowledge == 0:
-                    n "You run through the exit of the restaurant and brace yourself for the impact of a speeding car."
-                    n "Nothing happens, the police indeed managed to take care of the drunk driver."
+               if persistent.fleeingDeaths_counter_knowledge == 0:
+                    n "Together you burst through the exit, bracing yourself for the impact of the red Sedan."
+                    n "However, nothing happens. It seems like your call to the police worked out well enough."
                else: 
-                    n "You run through the exit of the restaurant, knowing full well that the red Sedan has been dealt with."
-               n "[persistent.date] and you continue to run as if death itself is chasing you."
-               n "[persistent.date] is still very confused but [date_sub] can feel the fear that is running through your body and [date_sub] [conj('date', 'fears', 'fear')] whatever made you so scared to begin with."
+                    n "Together you burst through the exit, finally having dealt with the drunk driver."
+               n "Once out the two of you continue to run as if death itself follows."
+               n "[persistent.date!], still unaware of why [date_sub] even [conj('date', 'is', 'are')] running, merely doing so because [date_sub] [conj('date', 'doesn', 'don')]'t want to find out whatever you're running away from."
                
-               if persistent_fleeingDeaths_counter_knowledge == 0:
-                    n "As you are running along the side of an empty street you suddenly hear the screeching of wheels and loud laughter."
-                    n "As you look behind you you see a bus full with elderly people coming straight towards you and [date_obj], you manage to jump away from it just as it would've hit you but [persistent.date] of course doesn't."
+               if persistent.fleeingDeaths_counter_knowledge == 0:
+                    n "Eventually the two of you pass by the side of an empty street. The calm feels like a welcome break from all the chaos you have been slowly getting accustomed to."
+                    n "It's not quiet for long, as soon the sound of screeching wheels and loud laughter takes it place."
+                    n "When you try to look at the source of the noise you see a bus full of elderly people barreling straight towards you and [date_obj]."
+                    n "You manage to jump away from it just in the nick of time but [persistent.date] of course doesn't."
                     n "You know what you have to do, you've come too far to just give up now."
-                    $ persistent_fleeingDeaths_counter_knowledge += 1
+                    $ persistent.fleeingDeaths_counter_knowledge += 1
                     menu: 
                          "I retry.":
                               jump explanation_noTimeToExplain
 
-               if 0 < persistent_fleeingDeaths_counter_knowledge < 3:
-                    n "This time you manage to push [persistent.date] away just as [date_sub] would get hit by the bus, you both make it out alive and well."
-                    n "When [date_sub] [conj('date', 'gets', 'get')] back up you both continue running, as if you were trying to escape fate."
+               if 0 < persistent.fleeingDeaths_counter_knowledge < 3:
+                    n "Once again the two of you are found themselves on the sidewalk of the empty street. Taking a deep breath before things turn to the same tumult you know well by know."
+                    n "This time you manage to push [persistent.date] aside right before the bus barrels towards her. Besides a bruised arm [date_sub] [conj('date', 'is', 'are')] unharmed."
+                    n "You quickly help [date_sub] back up before you continue running to escape your fate."
                     
-               if persistent_fleeingDeaths_counter_knowledge == 1:
-                    
-                    n "Just moments after the first death you prevented you can see a truck coming towards you at full speed. The truck crashes straight into [persistent.date] and [date_sub] [conj('date', 'does', 'do')]n't make it once again."
-                    n "You curse at the skies, trying to reach the one responsible for [persistent.date]'s countless deaths himself."
-                    $ persistent_fleeingDeaths_counter_knowledge += 1
-                    menu: 
-                         "I retry.":
-                              jump explanation_noTimeToExplain
-           
+                    if persistent.fleeingDeaths_counter_knowledge == 1:
+                         
+                         n "Mere moments after the bus you saved [date_sub] from a truck tumbles towards the two of you."
+                         n "You curse at the sky, trying to reach whoever just now caused her to die."
+                         $ persistent.fleeingDeaths_counter_knowledge += 1
+                         menu: 
+                              "I retry.":
+                                   jump explanation_noTimeToExplain
 
-               if persistent_fleeingDeaths_counter_knowledge == 2:
-                    n "This time you manage to warn [persistent.date] beforehand of the truck and [date_sub] [conj('date', 'makes', 'make')] it out alive, you've done these things so many times it almost just seems like you're back in an instant, time is blending together."
-                    n "[persistent.date] and you continue running untill you hear the sound of thunder, lightening strikes closer to [persistent.date_sis] then you like but [date_sub] [conj('date', 'seems', 'seem')] to escape unharmed."
-                    n "That's when you notice oil leaking from the crashed truck, it's set ablaze by the lightening."
-                    n "The fire tries to consume [date_obj], the hungry flames don't let off until [date_sub] [conj('date', 'is', 'are')] beyond saving."
-                    $ persistent_fleeingDeaths_counter_knowledge += 1
-                    menu:
-                         "I retry once again.":
-                              jump explanation_noTimeToExplain
-               if persistent_fleeingDeaths_counter_knowledge == 3:
-                    n "You lead [persistent.date] to a diverging street where the oil, the truck, and the elderly people shouldn't be a problem."
-                    n "As [persistent.date] and you are running once again you can feel a terrible trembling coming from the ground."
-                    n "It almost resembles an earthquake, but not quite."
-                    if persistent.kokiri_death_4 == True:
-                         n "It actually kind of reminds you of what you felt when the ufo revealed itself in the kokiri forest."
-                    n "It also doesn't last as long as the earthquakes usually do, you feel thankful when the earth stops trembling and [persistent.date] is still left unharmed."
-                    n "However, you thought [date_sub [conj('date', 'was', 'were')]] safe too soon and a safety hazard of a building that shouldn't have been built in the first place collapses in on [date_obj]."
-                    $ persistent_fleeingDeaths_counter_knowledge += 1
-                    menu:
-                         "Retry. Retry. Retry.":
-                              jump explanation_noTimeToExplain
-               if persistent_fleeingDeaths_counter_knowledge == 4:
-                    n "This time [persistent.date] and you make it to your car which was parked a few streets away from the restaurant, you decided that it would be the best plan to just get away from this village as fast as you can."
-                    n "As you are driving away from the village you finally arrive at a bigger city, maybe [persistent.date] and you will be safe here?"
-                    n "You look at [persistent.date] for a moment, just hoping that death will have mercy on [date_obj]."
-                    n "Suddenly you hear a cacophony of animal sounds, as you look in the side mirrors of your car you can see a swarm of animals running towards your direction."
-                    n "You try to go as fast as you can but then you realize something."
-                    n "You forgot to fill up your car, just as you realize that it abruptly stops, you try to persuade the car into going a tad further but your efforts are futile."
-                    n "The animals run on top of your car, now this isn't a problem except that there were also elephants among those animals."
-                    $ persistent_fleeingDeaths_counter_knowledge += 1
-                    menu: 
-                         "Sigh, retry.":
-                              jump explanation_noTimeToExplain
+                    if persistent.fleeingDeaths_counter_knowledge == 2:
+                         n "With your knowledge of the truck the both of you manage to barely slip by it. Time is begining to blend together with how many times you have been here. It almost seems like you just pick right up where you left of."
+                         n "Determined, you continue running until the sound of thunder. Lightening strikes."
+                         n "However, this time it appears [date_sub] [conj('date', 'is', 'are')] lucky, as it hits right past [date_sub]."
+                         n "Suddenly fire erupts up from the ground. It seems the truck began to leak it's fuel. Right, you did think it was odd you got a lucky break."
+                         n "The flames try to consime [date_obj], the hungry tongues don't let off until [date_sub] [conj('date', 'is', 'are')] beyond saving."
+                         $ persistent.fleeingDeaths_counter_knowledge += 1
+                         menu:
+                              "I retry once again.":
+                                   jump explanation_noTimeToExplain
 
-               if 4 < persistent_fleeingDeaths_counter_knowledge:
-                    n "Now you've made sure to gas up your car for the inevitable chase scene."
-                    n "You reached your car once again without any issues so far."
+               else:
+                    if persistent.fleeingDeaths_counter_knowledge == 3:
+                         n "You run to a diverging street, knowing full well that other empty street is cursed."
+                         n "Suddenly you feel a terrible trembling coming from the ground."
+                         n "It almost resembles an earthquake, but not quite."
+                         if persistent.kokiri_death_4 == True:
+                              n "It actually kind of reminds you of what you felt when the ufo revealed itself in the kokiri forest."
+                         n "It seems to very quickly pass for an earthquake As soon as it started it ends, [persistent.date] is even still alive."
+                         n "However, a safety hazard of a building that shouldn't have been built in the first place collapses in, right on [date_obj]."
+                         $ persistent.fleeingDeaths_counter_knowledge += 1
+                         menu:
+                              "Retry. Retry. Retry.":
+                                   jump explanation_noTimeToExplain
 
-               if persistent_fleeingDeaths_counter_knowledge == 5:
-                    
-                    n "As you are driving away as fast as you can from the animals, more buildings start to collapse, now even the sturdier looking ones are doing so."
-                    n "These scenarios are becoming more and more unjustified, you shake your head and try to focus on getting [persistent.date] alive and well out of this mess."
-                    l "Listen, I really don't think we are safe here. Even if we make it out of this city, where are we going to go then?"
-                    l "It's not like we can just leave this planet so death will always follow me."
-                    n "[persistent.date] has given you the greatest idea, you give [date_obj] a kiss on the lips and tell [date_obj] [date_sub] [conj('date', 'is', 'are')] genius."
-                    n "[persistent.date] turns beetred."
-                    l "Oh I wouldn't know about that..." 
-                    l "But hang on, you are not seriously thinking about leaving this planet, right?"
-                    l "How would we even be able to do that?"
-                    n "You stop the car for a moment, waiting for death to cath up with both of you, and it sure does so fast."
-                    n "Another car, trying to escape the commotion, notices you too late and drives right into your car from the front."
-                    n "You already know that [persistent.date] did not surivive even without checking."
-                    $ persistent_fleeingDeaths_counter_knowledge += 1
-                    menu: 
-                         "Retry, this could be it!":
-                              jump explanation_noTimeToExplain
+                    if persistent.fleeingDeaths_counter_knowledge == 4:
+                         n "This time the two of you reach your car parked a few streets further, you decide to try to drive away as far as you can."
+                         n "After driving for a while you pass a bigger city, maybe things will be safe here?"
+                         n "You look [persistent.date] in the eyes, praying for [date_sub] safety."
+                         n "The prayer gets cut short, seemingly by a cacaphony of animal sounds. Glancing in the side mirrors shows a swarm of animals stampeding towards you."
+                         n "Immediately you spring into action, pressing your foot on the gas as hard as you possibly can, but then you notice something."
+                         n "Weren't you planning on filling up your car after the date? Right then the car abruptly stops, not budging anymore no matter how hard you try to persuade it."
+                         n "The stampede passed by around and over your car. In theory this should be fine, in practice there were also elephants among them."
+                         $ persistent.fleeingDeaths_counter_knowledge += 1
+                         menu: 
+                              "Sigh, retry.":
+                                   jump explanation_noTimeToExplain
 
-               if persistent_fleeingDeaths_counter_knowledge > 5:
-                    n "This time you don't leave the village, instead you remember the ufo that is hidden in Kokiri forest. Maybe you could use it to escape."
-                    n "Eventually you find it, [persistent.date] and you climb inside it."
+                    if persistent.fleeingDeaths_counter_knowledge > 4:
+                         n "From now on you filled up your car in advance for the inevitable chase scene."
 
-               if persistent_fleeingDeaths_counter_knowledge == 6:
-                    n "However, an onslaught of buttons, levers and contraptions you can't identify await you."
-                    n "It seems that it is going to take some time to learn what the controls are before you'll be able to get out of here."
-                    
-                    menu: 
-                         "I'll retry untill I get it right!":
-                              n "After about a hundred or so attempts you manage to take of with the spaceship without plummeting to your death instantly."
-                              $ persistent_fleeingDeaths_counter_knowledge += 1
-                              jump explanation_noTimeToExplain
-               if persistent_fleeingDeaths_counter_knowledge > 6:
-                    n "As [persistent.date] and you take of into space you can see the sun absorbing the earth, you know that that should've happened like a million or so years later but it happened now. These deaths are really getting out of hand aren't they?"
-               
-               if persistent_fleeingDeaths_counter_knowledge == 7:
-                    
-                    n "Suddenly you are hit by a speeding ufo. Your ship analyses the situation and informs you that the driver was drunk."
-                    n "It seems that even in space there are drunk drivers."
-                    menu:
-                         "Retry. Retry. Retry and retry once again.":
-                              $ persistent_fleeingDeaths_counter_knowledge += 1
-                              jump explanation_noTimeToExplain
-               if persistent_fleeingDeaths_counter_knowledge == 8:
-                    n "Everything starts to blend together even more, sometimes you're not even sure if you are actually progressing in the story or not."
-                    n "Death by colliding stars."
-                    
-                    $ persistent_fleeingDeaths_counter_knowledge += 1
-                    menu:
-                         "Retry.":
-                              jump explanation_noTimeToExplain
-               if persistent_fleeingDeaths_counter_knowledge == 9:
-                    n "Death by a storm of asteroïds."
-                    
-                    $ persistent_fleeingDeaths_counter_knowledge += 1
-                    menu:
-                         "Retry.":
-                              jump explanation_noTimeToExplain
-               if persistent_fleeingDeaths_counter_knowledge == 10:
-                    n "Death by crashlanding on a planet."
-                    $ persistent_fleeingDeaths_counter_knowledge += 1
-                    menu: 
-                         "Retry.":
-                              jump explanation_noTimeToExplain
-               if persistent_fleeingDeaths_counter_knowledge > 10:
-                    n "The universe grows calm for a moment, it seems like you got through the constant barrage of deaths." #These three lines only trigger in the quest version if "Starttalk" is not set, I'm not sure what that is anymore.
-                    n "You set the ship on auto-pilot and move away from the controls."
-                    n "[persistent.date] is standing there, [date_sub] [conj('date', 'seems', 'seem')] to be quite scared but [date_sub] [conj('date', 'is', 'are')] taking it pretty well all things considered."
-                    menu:
-                         "*Talk with [persistent.date]*":
-                              l "What just happened [persistent.name]?"
-                              l "How did you know about the Kokiri forest?"
-                              l "How did you know there was an ufo there?"
-                              l "And how in the world do you know how to fly it succesfully?"
-                              l "What is this all about?"
-                              l "{size=*0.5}Are you... an alien?{/size}"
-                              if groundhog == True:
-                                   l "Or are your really in a groundhog day scenario?"
-                              else:
-                                   l "Or are you really a psychic?"
-                              
-                              menu:
-                                   "Actually neither. You are basically in a game. I am a player of it and need to keep you from dying.":
-                                        l "The speed with which you said that..."
-                                        l "I assume we've had conversations like this a few times?"
-                                        n "You nod your head."
-                                        l "I see..."
-                                        l "So if we've done this multiple times, does that mean we went to all three restaurants?"
-                                        menu:
-                                             "We did actually, we also went to the Kokiri forest and visited the beach.":
-                                                  l "..."
-                                                  l "You know about the Kokiri forest, the same one I'm thinking of right now?"
-                                                  l "I've never told anyone about that."
-                                                  l "I'm not sure how you managed to convince another version of me to tell you about it but that's quite clever nonetheless [persistent.name]."
-                                                  l "Sounds like we did quite a lot on our first date."
-                                                  n "[persistent.date] laughs."
-                                                  l "It's a shame I don't remember anything of it though..."
-                                                  l "What was your favourite first date?"
-                                                  menu:
-                                                       "My favourite part was the beach.":
-                                                            $ persistent.favouriteFirstDate = "beach"
-                                                            jump ufo_talk_favouriteFirstDate
-               
-                                                       "My favourite part was the burger restaurant.":
-                                                            $ persistent.favouriteFirstDate = "burger"
-                                                            jump ufo_talk_favouriteFirstDate
-               
-                                                       "My favourite part was the cafe.":
-                                                            $ persistent.favouriteFirstDate = "cafe"
-                                                            jump ufo_talk_favouriteFirstDate
-               
-                                                       "My favourite part was the Chinese restaurant.":
-                                                            $ persistent.favouriteFirstDate = "chinese"
-                                                            jump ufo_talk_favouriteFirstDate
-               
-                                                       "My favourite part was the Kokiri forest.":
-                                                            $ persistent.favouriteFirstDate = "kokiri"
-                                                            jump ufo_talk_favouriteFirstDate
-          
-                         "*Stay silent*" if persistent.ufoCrash_knowledge:
-                              n "You can't bare to talk to her. Not after knowing what is about to happen."
-                              n "[persistent.date] is too much in a shock herself to break the silence. Maybe it's better that way?"
-                              n "Hopefully the silence will make what is next to come less hard."
-                              jump ufo_alert
+                         if persistent.fleeingDeaths_counter_knowledge == 5:
+                              n "While speeding away as fast as possible from the stampede, more structures start to collapse, even the sturdier ones."
+                              n "Things are becoming more and more over the top, but right now the mess is not your main concern, it's getting [date_sub] out of it."
+                              l "[persistent.name], if we make it out of this city, where are we going next? Can't you see that whatever is happening won't stop?"
+                              l "It's not as if we could leave the earth so eventually we will be cornered, having nowhere to escape to."
+                              n "[persistent.date] gave you the greatest idea. Hugging [date_obj] tightly you tell [date_obj] [date_sub] [conj('date', 'is', 'are')] genius."
+                              n "[persistent.date] turns beetred."
+                              l "Oh, I wouldn't know about that... Although hang on, you aren't seriously thinking about leaving the planet, right?"
+                              l "How would we even do that?"
+                              n "Lifting your foot of the gas pedal you wait for death to cath up you and it sure does so fast."
+                              n "Another car, trying to escape the commotion, crashes right against yours."
+                              n "Even without checking it's clear [persistent.date] did not make it."
+                              $ persistent.fleeingDeaths_counter_knowledge += 1
+                              menu: 
+                                   "Retry, this could be it!":
+                                        jump explanation_noTimeToExplain
+
+                         if persistent.fleeingDeaths_counter_knowledge > 5:
+                              n "Remembering what [persistent.date] said, you drive straight to the kokiri forest. The ufo could be your way out."
+                              n "After scaling the hill you manage to eventually stumble upon one of the entrance hatches."
+
+                              if persistent.fleeingDeaths_counter_knowledge == 6:
+                                   n "However, an onslaught of unidentifiable buttons, levers and contraptions await you."
+                                   n "It seems the controls will take some time to learn before you'll be able to get out of here."
+                                   menu: 
+                                        "I'll retry untill I get it right!":
+                                             n "After more than a hundred attempts you manage to take of without instantly plummeting to your death."
+                                             $ persistent.fleeingDeaths_counter_knowledge += 1
+                                             jump explanation_noTimeToExplain
+
+                              if persistent.fleeingDeaths_counter_knowledge > 6:
+                                   n "Upon lifting off into space the sun absorbs the earth, seemingly atleast a milion years too early. Things are really getting out of hand aren't they?"
+                         
+                              if persistent.fleeingDeaths_counter_knowledge == 7:
+                                   n "Suddenly a speeding ufo smashes into yours. The ship analysis informs you the driver was drunk."
+                                   n "It seems that even in space there are drunk drivers."
+                                   menu:
+                                        "Retry. Retry. Retry and retry once again.":
+                                             $ persistent.fleeingDeaths_counter_knowledge += 1
+                                             jump explanation_noTimeToExplain
+                              if persistent.fleeingDeaths_counter_knowledge == 8:
+                                   n "Things blend together even more. Wheter or not you even progress remains to be seen."
+                                   n "Death by colliding stars."
+                                   
+                                   $ persistent.fleeingDeaths_counter_knowledge += 1
+                                   menu:
+                                        "Retry.":
+                                             jump explanation_noTimeToExplain
+                              if persistent.fleeingDeaths_counter_knowledge == 9:
+                                   n "Death by a storm of asteroïds."
+                                   
+                                   $ persistent.fleeingDeaths_counter_knowledge += 1
+                                   menu:
+                                        "Retry.":
+                                             jump explanation_noTimeToExplain
+                              if persistent.fleeingDeaths_counter_knowledge == 10:
+                                   n "Death by crashlanding on a planet."
+                                   $ persistent.fleeingDeaths_counter_knowledge += 1
+                                   menu: 
+                                        "Retry.":
+                                             jump explanation_noTimeToExplain
+                         
+                              if persistent.fleeingDeaths_counter_knowledge > 10:
+                                   jump explanation_noTimeToExplain_ufoTalk
           else:
                jump explanation_noTimeToExplain_hitByCar
      else:
@@ -3642,39 +3921,103 @@ label explanation_noTimeToExplain:
                n "The horrible aftermath you tried so hard to avoid has caught up with you once again."
                jump gameOver
 
+label explanation_noTimeToExplain_ufoTalk:
+               n "The universe settles, seemingly growing tired from the onslaught of deaths."
+               n "Setting the ship to steer automatically you step away from the controls."
+               n "[persistent.date] just stands there, if [date_sub] [conj('date', 'was', 'were')]n't shivering [date_sub] would be completely stuck in place."
+               l "{size=*0.5}...It's- all gone? No, no, no. No!{/size}"
+               l "{size=*0.5}This, it's not real. That's it! It's all just a nightmare.{/size}"
+               l "{size=*0.5}I will wake up any moment now. Any moment... please wake up.{/size}"
+               menu:
+                    "This is not a dream [persistent.name].":
+                         l "It isn't? But then, this is real? How do you explain any of this?"
+                         l "How did you know about the Kokiri forest, or that there was an ufo there?"
+                         l "Scratch that, how in the world do you even know how to fly it succesfully?"
+                         l "What's this all about? {size=*0.5}Are you... an alien?{/size}"
+                         if groundhog == True:
+                              l "Or are you really in a timeloop?"
+                         else:
+                              l "Or are you really a psychic?"
+                         
+                         menu:
+                              "Actually neither. You are a character in a game, I am the player and need to keep you safe.":
+                                   l "{size=*0.5}I'm a character in a game? Yes! None of this is real, that must be the truth.{/size}"
+                                   l "{size=*0.5}Nothing happened, my family is still fine, it's just pretend...{/size}"
+                                   l "The speed with which you said that... I assume we've had a similair chat a few times?"
+                                   n "You nod your head."
+                                   l "I see... So does that mean we went to all three restaurants some other time?"
+                                   menu:
+                                        "Yes, we did, we also went to the Kokiri forest and visited the beach.":
+                                             l "... So that's how you know about the Kokiri forest?"
+                                             l "it makes sense, I've never told anyone that name afterall."
+                                             l "Quite clever, even if I'm not sure how you convinced another version of me to tell you, [persistent.name]."
+                                             l "Sounds like we had quite a busy first date, didn't we?"
+                                             n "[persistent.date] laughs."
+                                             l "It's a shame I don't remember anything of it though, what was your favourite place we went?"
+                                             menu:
+                                                  "Probably the beach.":
+                                                       $ persistent.favouriteFirstDate = "beach"
+                                                       jump ufo_talk_favouriteFirstDate
+          
+                                                  "Probably the burger restaurant.":
+                                                       $ persistent.favouriteFirstDate = "burger"
+                                                       jump ufo_talk_favouriteFirstDate
+          
+                                                  "Probably the cafe.":
+                                                       $ persistent.favouriteFirstDate = "cafe"
+                                                       jump ufo_talk_favouriteFirstDate
+          
+                                                  "Probably the Chinese restaurant.":
+                                                       $ persistent.favouriteFirstDate = "chinese"
+                                                       jump ufo_talk_favouriteFirstDate
+          
+                                                  "Probably the Kokiri forest.":
+                                                       $ persistent.favouriteFirstDate = "kokiri"
+                                                       jump ufo_talk_favouriteFirstDate
+     
+                    "*Stay silent*" if persistent.ufoCrash_knowledge:
+                         n "You can't bare talking to [date_sub]. Not after knowing what is to come."
+                         n "[persistent.date] is too shocked [date_ref] to break the silence. Maybe it's better that way?"
+                         n "Hopefully it will make the next part less hard."
+                         jump ufo_alert
+     
 label ufo_talk_favouriteFirstDate:
      if persistent.favouriteFirstDate == "beach":
-          l "Great minds think alike I suppose [persisistent.name], I love the beach a lot aswell."
-          l "There's so much variety in the things you can do there."
-          l "And what was your favourite moment of that particular date [persistent.name]?"
+          l "Great minds think alike, I also absolutely love the beach!"
+          l "There's just so much you can do there. What was your favourite thing we did [persistent.name]?"
+
      elif persistent.favouriteFirstDate == "burger":
-          l "I knew you would love it there! Rose's burgers are just unbeatable when it comes to their amazing taste."
+          l "Why does that not suprise me one bit? Rose's burgers are just unbeatable when it comes to their amazing taste!"
           l "Just thinking about it now makes me really yearn for a juicy cheeseburger."
-          n "You can hear [persistent.date]'s stomach growl as [date_sub] quickly [conj('date', 'places', 'place')] a hand on it as to quiet it down."
+          n "[persistent.date]'s stomach growl as [date_sub] quickly [conj('date', 'places', 'place')] a hand on it as to quiet it down."
           n "[date_sub!c] [conj('date', 'turns', 'turn')] beetred."
-          l "Uhm anyway, what was your favourite moment of that particular date [persistent.name]?"
+          l "Uhm anyway, was their anything in particular you liked on that date [persistent.name]?"
+
      elif persistent.favouriteFirstDate == "cafe":
-          n "You tell [date_obj] about how beautiful the aquarium inside the cafe is."
-          l "Oh wow, that sounds absolutely wonderful!"
-          l "I'm having a hard time imagining what it looks like though, I wish I could see it for myself."
+          n "You tell [date_obj] how beautiful the aquariums of the cafe are."
+          l "...That sounds absolutely wonderful!"
+          l "I'm having a hard time imagining it though, I wish I could see it for myself. Not like I can anymore..."
           l "Well, I suppose I did, didn't I?"
           l "I just wish I could remember it, that I could remember all of our dates together."
-          l "And what was your favourite moment of that particular date [persistent.name]?"
+          l "However, I can ask straight from the source. Imagine there's one thing we did that you really want to share, your favourite."
+          l "What would it be [persistent.name]?"
+
      elif persistent.favouriteFirstDate == "chinese":
-          l "That was your favourite? That's nice to hear, I'm glad I got to experience it for myself aswell in that case."
-          l "Even though this date surely didn't go as planned."
-          l "Though I can imagine your favourite date there isn't this one, because we hardly spent any time in the chinese restaurant itself now."
+          l "That was your favourite? I'm glad I got to share it with you then!"
+          l "Well, unless it was a different version of that date, even then, you still got to share it with another me."
+          l "Although I secretely hope you meant this specific date if I'm being honest, even if this date surely didn't go as planned."
+          l "If it isn't I can't blame you, we hardly spent any time in the chinese restaurant itself now, and then there was all that chaos..."
           l "What made that date specifically your favourite [persistent.name]? Maybe we can still one-up it."
           n "[persistent.date] gives you a cute little smile."
           l "I'd like that."
 
      elif persistent.favouriteFirstDate == "kokiri":
-          l "I still can't even believe that we went there. It's a lovely place for a date, but I never thought I would share that with anyone."
+          l "I still can't even believe that we went there. It's a lovely place for a date, but like I said, I'd never would have thought I'd tell anyone..."
           l "Those woods are very special to me after all."
           if love_meter >=2 :
                n "[date_sub!c] [conj('date', 'thinks', 'think')] to [date_pred] for a brief moment."
                l "But then again, if I have to share it with anyone, I'm happy it got to be you."
-          l "What was your favourite part of the date we had there [persistent.name]?"
+          l "Was there anything we did there close to your heart [persistent.name]?"
           
      
      $ renpy.input("My favourite moment was...")
@@ -3689,14 +4032,13 @@ label ufo_talk_favouriteFirstDate:
      n "[date_sub!c] somehow [conj('date', 'seems', 'seem')] to have lost everything that made [date_obj] feel human."
      $ renpy.input("")
      l "..."
-     n "Once every room [date_sub] [conj('date', 'was', 'were')] in felt more warm because of [date_pos] presence, now this iron ship feels colder than ever with [date_pos] silence in it."
-     n "It's almost seems as if [date_sub] [conj('date', 'has', 'have')] run out of things to say."
+     n "Once every room felt more warm because of [date_pos] presence, now this iron ship feels colder than ever with [date_pos] silence in it."
+     n "It's almost seems as if [date_sub] [conj('date', 'has', 'have')] run out of things to say. Was the game programmed with responses for her this far out at the edge of the universe?"
      $ renpy.input("")
      n "In [date_pos] frozen, wordless nature [date_sub] [conj('date', 'seems', 'seem')] more like a replica of the woman you once knew than the real deal."
-     n "You have seen [date_obj] die many times but this somehow feels even more wrong."
-     n "A fate worse than death has befallen [date_obj]."
+     n "You have seen [date_obj] die many times but this somehow feels even more wrong. A fate worse than death has befallen [date_obj]."
      $ renpy.input("")
-     n "Just then you hear something. Not [persistent.date], it's a loud beeping sound coming from the metal ship itself."
+     n "Just then you hear something. Not [date_sub], it's a loud beeping sound emanating from the ship itself."
      jump ufo_alert
 
      label ufo_alert:
@@ -3711,29 +4053,32 @@ label ufo_talk_favouriteFirstDate:
      jump ufo_crash
 
 label ufo_crash:
-     
-     n "After awakening from the dark slumber your eyelids are still shut close as if they want to go back to sleep."
-     n "You feel like you need to go back to sleep. Nothing makes sense anymore."
-     n" Probably the result of the entire universe literally collapsing in on you."
-     n "On you and on..."
-     n "On [persistent.date]"
-     n "The thought of [persistent.date] takes you out of this confused state of mind in an instant."
-     n "You open your eyes and get back up."
-     n "You look around in search of [date_obj] but all you can find is bright white emptiness."
-     n "The very emptiness her death always leaves you with."
      $ persistent.ufoCrash_knowledge = True
-     n "Bright white emptiness and a floating  trail of gigantic polaroids. The white borders of the polarioid were seemingly melting over in the emptiness."
-     n "As you continue looking around you notice you are standing on one of those giant polarioids, it's a picture of your messy room. Hang on, how is that possible? How is any of this possible?"
-     n "Your not sure if you want to know who took those pictures but regardless the only way is forward by following the trail."
+     n "For the longest while there was nothing. Nothing except darkness."
+     n "Then, for a very brief moment, you were. Before that soon too came to pass."
+     n "Now, there is yet once again darkness for all of eternity."
+     n "No. That can't be right, can it? The darkness will come ofcourse, but this is not that."
+     n "It seems you were just knocked out from the aftermath of...whatever happened with on the ufo."
+     n "You might have risen from the dark slumber but your eyelids are still shut close, wanting noting but to sleep."
+     n "As you fight them you consider just losing on purpose, nothing makes sense anymore."
+     n "This was probably caused by the entire universe collapsing in on you. On you and on..."
+     n "On [persistent.date]- The thought of [persistent.date] snaps you out of your confused state in an instant."
+     n "You force your eyes open and with all the willpower you can gather bite through the pain as you crawl back up."
+     n "Desperately searching for [date_obj] all you can find is bright white emptiness."
+     n "The very emptiness her death always leaves you with."
+     
+     n "Bright white emptiness and a floating trail of gigantic polaroids. The white borders of the polarioid were seemingly melting over in the emptiness."
+     n "It turns out you are standing on one of those giant polarioids, the picture shows your messy room. Hang on, how is that possible? How is any of this possible?"
+     n "Perhaps to feed the curiosity, perhaps because it's the only way forwards, but you decide to follow the trail."
      $ polaroidzone_picture = 0
      jump ufo_crash_polaroids
  
 label ufo_crash_polaroids:
-     #TODO: Add some small descriptions of each picture you jump on
+     #TODO: Add some small descriptions of each picture you jump on Rewrite this part some other time well enough
      #Reality is glitching so that you won't have to draw every picture.
      #Picture ideas, if you did bad things have those too
      if polaroidzone_picture == 1:
-          n "You jump to the next picture."
+          n "Bracing yourself for a moment you run as fast as you can before taking a leap of faith, landing right on the middle of the next polaroid."
           #This will showcase a picture of your first date ever "your face still looked like you were all taking it in for the first time"
           if persistent.firstLocation == "burger":
                "Filler"
@@ -3745,27 +4090,28 @@ label ufo_crash_polaroids:
                "Error, no first location found."
      
      elif polaroidzone_picture == 2:
-          n "You keep jumping from picture to picture."
+          n "Knowing you can't stop now all you can do is take the next leap."
      elif polaroidzone_picture == 3:
-          n "At first it doesn't seem like you are making much progress."
+          n "For all these jumps so far it doesn't seem like you're making much progress."
           #A picture here maybe where it didn't seem like you were making a lot of progress to mirror the feeling now?
      elif polaroidzone_picture == 4:
-          n "But after a while you see something coming closer and closer."
+          n "However, you beging to notice something of in the distance, at the end of the trail."
      elif polaroidzone_picture == 5:
-          n "That \"something\" you saw seems to be human, it has a human looking figure anyway."
+          n "That \"something\" seems to somewhat resemble a human, although from this distance it could just be your brain playing tricks on you."
      elif polaroidzone_picture == 6:
-          n "You didn't jump far enough, you barely manage to grab the border of the polaroid and pull yourself up."
-          n "You take a moment to breath after performing such a feat. While you do you look once more at the mysterious figure."
-          n "The figure wears a grey hoodie."
+          n "The strenght in your legs faltered for a moment, you barely manage to grab the edge of the polaroid to save yourself from falling to your death."
+          n "Praying for your arms to still have some remaining strength you slowly pull yourself up."
+          n "Catching your breath after performing such a feat you once again catch a glimpse of the mysterious figure."
+          n "It indeed seems to be a human, wearing a grey hoodie."
           #The picture here where Lilith pulls you back up from the hill maybe? And if you don't have that a backup.
      elif polaroidzone_picture == 7:
-          n "Your legs are beginning to get really tired, luckily it seems as if you are getting closer to the figure. "
-          n "They have their back turned towards you."
+          n "Your legs growing more and more sore, luckily you are even closer than before. "
+          n "The figure has their back turned to you. You can't help but wonder what brought them here. Are they like you?"
      elif polaroidzone_picture == 8:
           #If the player has seen the neverending, always show that one here (since it is the eighth picture, infinity), otherwise show a regular ending here.
-          n "Only one picture is between you and the figure, which is standing on a picture aswell, you ignore the cramp in your legs."
+          n "Only one more picture between the two of you, you ignore your legs screaming for help a third time and jump."
      elif polaroidzone_picture == 9:
-          n "The next jump will land you on the picture the figure is standing on, right behind them."
+          n "This is it, the next jump is the final one. You'll finally reach the mysterious figure"
      elif polaroidzone_picture == 10:
           jump ufo_crash_polaroids_James
  
@@ -3775,145 +4121,194 @@ label ufo_crash_polaroids:
                jump ufo_crash_polaroids
 
 label ufo_crash_polaroids_James:
-     j "Welcome [persistent.name], I was expecting you."
-     j "This place must feel pretty strange to you, let's move to a more familiar one."
-     j "You and the boy are now both standing in your room."
-     j "Don't be fooled, this room doesn't exist anymore due to the universe collapsing in on itself, it's just an illusion."
-     j "I just thought this place might be easier on the eyes if you want to talk with me."
-     j "We need to talk, about... about all of this."
+     n "Upon finally reaching the figure they slowly turn to face you before you can even do or say anything."
+     n "They seem to be a teenager, their grey hoodie being slightly ripped open right in the middle, revealing their ribcage."
+     j "Welcome [persistent.name]. I was expecting you."
+     j "This place must be quite strange for you, let's move something more... familiar."
+     j "You and the teen are now standing in your bedroom, where all fo this started. Where it has started so many times after it ended."
+     j "Don't be fooled, this room was destroyed alongside everything else when the universe collapsed, it's merely an illusion."
+     j "I just it might be easier on the eyes to talk here, and we need to talk, about-about all of this."
      j "I assume you already know who I am?"
      menu:
-          "Yes, you must be [persistent.date_ghost]. [persistent.date] told me about you before.":
+          "You must be [persistent.date_ghost], right? [persistent.date] told me about you.":
                $ persistent.met_james = True
-               j "Ah, I thought [date_sub] would mention me eventually."
-               j "I'd imagine it would be pretty hard to get this far while never having heard about me."
-               j "After all, it's hard for [date_obj] to fully deal with what happened."
-               j "I understand completely but I had hoped everyone would have moved on more easily."
-               j "Then again, I shouldn't be saying that, after all I'm still here even when I could have moved on years ago."
+               j "There it is, I thought [date_sub] would sooner than later."
+               j "Getting this far without having heard of me would be pretty hard."
+               j "[date_sub!c] still [conj('date', 'carries', 'carry')] the weight of my loss with [date_obj]."
+               j "Which is fully understandable, even though I wish [date_sub] and the rest of our family could finally be free."
+               j "Then again, I could have moved on years ago yet still didn't. So I guess we're all in the same boat."
                n "It's quiet for a moment, you hear nothing except a low droning sound."
-               j "[persistent.date_ghost] gives you a curious look, you're not quite sure why but you feel slightly unsettled."
-               j "What are your thoughts  on [persistent.date] [persistent.name]?"
-               n "You are pretty surprised by that question."
+               j "[persistent.date_ghost] gives you a curious look, it feels somehow slightly unsettling."
+               j "How do you feel about [persistent.date], [persistent.name]?"
+               n "Not expecting the question you are taken aback for a second."
                menu:
                     "I really love [date_obj].":
                          $ loveher = True
-                         $ persistent_jamestalk_iloveher_knowledge = True
-                         j "If that's the case then this talk might be easier then I thought."
+                         $ persistent.jamestalk_iloveher_knowledge = True
+                         n "[persistent.date_ghost] lets out a big sigh of what could very well be relief."
+                         j "If that's the case then this talk might be easier than anticipated."
                          j "You have seen [persistent.date] die about [persistent.lildeaths] times, right?"
-                         n "You nod, you can still remember all the times [date_sub] died."
-                         n "That doesn't stop you from wishing you could forget though."
-                         j "And you are trying to keep [date_obj] safe so that [date_sub] will not die, right?"
+                         n "You nod, wishing you could unsee every single one of them."
+                         j "So you're trying to save [date_obj] and that is what brought you here for example?"
                          n "You nod."
                          if persistent.lilithAliveAndRetriedCounter >= 1:
-                              j "And yet you came back after [date_sub] didn't die, why?"
+                              j "I see. However, you came back after [date_sub] didn't die, why?"
                               jump jamesChat_whyDidYouReturn
                          else:
-                              j "That's very good of you [persistent.name], thank you for that."
-                              j "I'm just a bit worried about what will happen once you find out that the cases where [date_sub] [conj('date', 'lives', 'live')] are... far from statisfying for you."
+                              j "That's what I was hoping to hear, I can't thank you enough for all of this [persistent.name]."
+                              j "I'm just worried what will happen when [date_sub] [conj('date', 'is', 'are')] saved."
+                              j "Those outcomes might be less than... statisfying for you."
                               j "If [date_sub] [conj('date', 'lives', 'live')] the two of you pretty much never end up together."
-                              j "And that is why you started playing this game in the first place isn't it?"
-                              j "To find an ending where the two of you live happily ever after?"
-                              j "Well, what happens if you won't find an ending like that?"
-                              j "If every ending even resembling something like that will feel... off."
-                              j "I fear you might drive yourself mad trying to look for something that only ever truly can exist in your mind."
-                              j "Can you promise me that if you find an ending where [date_sub] [conj('date', 'lives', 'live')], you won't come back again?"
+                              j "...Isn't that why you started playing this game in the first place? To find an ending where the two of you live happily ever after?"
+                              j "Well, what happens if you won't find an ending like that? If every ending even resembling something like that feels... off."
+                              j "I fear you might drive yourself mad searching something that could only every exist in your mind."
+                              j "Can you promise me that if you save [date_obj], you won't come back again?"
                               j "That you won't put [date_obj] through any more death and stress than is truly necessary?"
-                              menu:
-                                   "I promise [persistent.date_ghost].":
-                                        j "Thank you, [persistent.name]."
-                                        j "Even if it’s just words right now, it gives me a little bit of hope that you’ll actually keep it."
-                                        j "You see, I’ve been here long enough to know how rare that promise is. And how even rarer it is to see it kept."
-                                        n "[persistent.date_ghost] looks away for a moment, [ghost_pos] expression softening."
-                                        j "All I want is for [date_obj] to be safe and happy. If you can give [date_obj] that, then maybe my time here won’t have been in vain."
-                                        n "The atmosphere feels heavy as [persistent.date_ghost] looks back at you, [ghost_pos] eyes filled with both hope and uncertainty."
-                                        j "Just remember, if you truly care about [date_obj], sometimes the best thing you can do is let [date_obj] go."
-                                        j "[date_sub] [conj('date', 'has', 'have')] been through enough, and so have I. Please don’t make [date_obj] suffer more than [date_sub] already has."
-                                        j "Thank you for hearing me out, [persistent.name]. That’s all I can ask of you right now."
-                                        
-                                   "I'll try, but I can't promise anything.":
-                                        j "I know."
-                                        j "I guess I just asked to maybe be comforted by an empty promise for a second."
-                                        j "The truth is, that this very promise was broken many times by others like you."
-                                        n "[persistent.date_ghost] waves with [ghost_pos] hand in the direction of the bubbles that seem to contain other worls inside of them, hundreds of them flash for a second."
-                                        j "In all of those worlds, that promise I was hoping for was made. And in all of those, that very same promise was broken."
-                                        j "So whether or not you promise it, the truth is it doesn't really matter."
-                                        j "I just hope that you are different."
-                                        j "That you'll know when to let go."
+                              call jamesChat_promiseToStop
    
                     "I really like [date_obj].":
                          $ likeher = True
-                         j "Let me ask you something. If you like [date_obj], do you believe that what you're doing is truly for [date_pos] sake?"
+                         j "Let me ask you something. If you like [date_obj], are you doing this for [date_pos] sake?"
                          n "The question catches you off guard, and you hesitate."
-                         j "Because liking someone means you want the best for them, right? It means you’d do anything to make sure they’re happy, even if it means stepping away."
-                         j "But here you are, putting [date_obj] through pain, stress, and countless deaths. So let me ask you again: is this really about [date_obj]? Or is it about you?"
+                         j "Liking someone means wanting the best for them, right? It means doing anything to make them happy, even if it means stepping away."
+                         j "Yet here you are, putting [date_obj] through pain, stress, and countless deaths."
+                         j "So let me ask you again, is this really about [date_obj]? Or is it about you?"
                          n "You feel a pang of guilt as [persistent.date_ghost]' words cut through your thoughts."
-                         j "I'm not saying this to make you feel bad, [persistent.name]. I just want you to think about it."
-                         j "Because if you can't see this through for the right reasons, then maybe you shouldn't see it through at all."
-                         j "Things like this tend to have a chance to hurt both parties, even if it starts out with good intentions."
-                         j "Intentions can shift overtime, and even if they never do, good intentions can sometimes also lead to hurt."
-                         j "Still, don't take this as me telling you that this is pointless."
+                         j "I'm not saying this to make you feel bad, [persistent.name]. I just want you to give it some thought."
+                         j "If you can't see this through for the right reasons, then maybe you shouldn't see it through at all."
+                         j "Otherwise you risk hurting both parties, even if it started out with good intentions."
+                         j "Intentions can shift overtime. Even if they never do, good intentions can also lead to hurt occasionally."
+                         j "Still, don't take this as me telling you things are pointless."
                          j "Everything can lead to hurt or harm in some way. If we should never do anything that has a chance of leading to hurt then we wouldn't be doing anything at all."
                          j "Then we would never discover the beauty that our actions can sometimes lead to. Still, it is important to be mindful."
-                         j "It is a bit like driving a car. It is a very handy tool to get us to so many wonderful destinations."
-                         j "But it is also essentially a weapon. We shouldn't not use it, but we should be thoughtful about how we use it."
-                         j "So please try giving it some thought, alright [persistent.name]?"
-                         j "In time that might come in handy..."
-                         $ persistent_jamestalk_ilikeher_knowledge = True
+                         j "It is a bit like driving a car. A very handy tool to get us to so many wonderful destinations."
+                         j "However it's also essentially a weapon. We shouldn't not use it, but we should be thoughtful about how we use it."
+                         j "So please try giving it some thought, alright [persistent.name]? In time that might come in handy..."
+                         $ persistent.jamestalk_ilikeher_knowledge = True
                          
-                    "I don't really think anything of [date_obj], [date_sub] [conj('date', 'is', 'are')] just a game character.":
+                    "I don't really care either way, [date_sub] [conj('date', 'is', 'are')] just a game character.":
                          $ justgame = True
-                         j "This is going to be pretty hard..."
-                         j "To you this is all a game but to us this is our world."
-                         j "But even though the world seems to keep resetting your actions still have consequences."
-                         j "Even though the world seems to keep resetting you managed to come here, to have the entire universe collapse in on itself."
-                         j "Even though the world seems to keep resetting every ending you have seen has happened. Every action you have taken has been done."
-                         j "Even if it doesn't always seem like that. You seperate yourself from the worlds where things didn't go your way but that doesn't make them less real than the one where things will eventually go your way."
-                         j "Those abandoned worlds are still out there, [persistent.name]. I know that because I can see them, I am watching over the infinite worlds that exist in this game."
+                         j "Just as I thought, this will be pretty hard..."
+                         j "This might be just a game to you but for us it's our world."
+                         j "However, despite the game seemingly resetting, your actions still have consequences."
+                         j "Regardless of the resets you managed to come here, to have the entire universe collapse in on itself."
+                         j "Even if you start over each time, every ending you saw has happened. Every action you took has been done."
+                         j "I imagine it might not always seem that way to you. Separating yourself from worlds where things go wrong doesn't make them less real than the one where things go your way."
+                         j "Those abandoned worlds are still out there, [persistent.name]. I know because I watch over them, just like every other world this game contains."
                          j "This place is the weakest link to every world, a sort of dying breath of those worlds. Here it is possible for souls to linger instead of crossing over into the Void."
-                         j "There is only one Void but there are many versions of this place. So through the Void every world is linked together and since we can observe the Void here we can observe the other worlds aswell."
+                         j "There is only one Void but there are many versions of this place. So the Void links every world together, since we can observe the Void we can observe them as well."
                          j "I have seen many more worlds than you have crossed."
                          j "I have seen many other crossers, I have even talked to some of them before."
                          j "I have changed some of their minds, made them see this game as more than just a game."
-                         j "But that also didn't work for quite a few of them."
-                         j "And now you are here and I am telling you the same thing as I was telling the previous ones, as I will tell the next ones."
-                         j "It all seems pointless sometimes if I'm being entirely honest with you. You are stuck in a loop, right?"
-                         j "And you hope that once you break out of it you will be able to move on to the next day."
-                         j "Well for me that next day always comes but the loop follows suit."
+                         j "Even so, I also failed plenty of times. Now here we are, going through the motions once again, as I will many more."
+                         j "Honestly, at some points it all seems rather pointless. You are stuck in a loop, right?"
+                         j "Trying to break free, being able to move on to the next day. For me even if your loop breaks, I'm still caught in the loops of so many others."
                          j "I never get the luxury of dreaming what will happen when I get out of the loop, this place is my loop."
-                         j "The only way to break it would be to enter the Void but I'm not ready for that yet, I need to know that [persistent.date] is happy and safe."
-                         j "And for a brief moment I thought you wanted the same thing [persistent.name] but if that was truly the case, then why did you retry even after getting an ending where [date_sub] [conj('date', 'was', 'were')] happy and alive?"
-                         $ persistent_jamestalk_justgame_knowledge = True
-                         jump jamesChat_whyDidYouReturn
+                         j "The only way to break my own personal loop is the Void but I'm not ready for that yet. I need to know that [persistent.date] is happy and safe."
+                         if persistent.lilithAliveAndRetriedCounter >= 1:
+                              j "For a brief moment I thought you felt the same way [persistent.name] but if that was truly the case, then why did you retry even after [date_sub] [conj('date', 'was', 'were')] save?"
+                              $ persistent.jamestalk_justgame_knowledge = True
+                              jump jamesChat_whyDidYouReturn
+                         else: 
+                              j "If this truly is just a game to you then you aren't as chained to it as I am."
+                              j "Which means you have a better shot at breaking your loop. You can walk away from the screen."
+                              j "At some point you will do so. A true end if you ask me, no? All stories truly end when the audience moves on."
+                              j "In a way the story's original end is just a prelude to that."
+                              j "Do not be mistaken [persistent.name], this story has quite a lot of endings but I doubt it has the one you're highly likely seeking."
+                              menu:
+                                   "What do you meean with stories truly ending when the audience moves on?":
+                                        j "It's really simple when it comes down to it."
+                                        j "Think of pretty much every story ever, wheter it's a book, a film, a game, a song or something else."
+                                        j "No matter how the ending to that story is written, no matter if they live happily ever after or not, there is always the moment they stop being observed, seen, interacted with."
+                                        j "It is the Universal End. That way every story ends the same, with you starting another."
+                                        menu:
+                                             "So does that mean that's the only ending which truly matters?":
+                                                  j "However did you get to that conclusion?"
+                                                  j "Does the ending to a play devalue everything that came before?"
+                                                  j "No? Then why would the end after that ending make it any lesser?"
+                                                  j "All things come to an end, even endings themselves, but that doesn't detract from the journey they brought us on."
 
+                                   "What ending do you think I seek?":
+                                        j "Isn't it obvious [persistent.name]? You want {b}the{/b} ending. The good ending."
+                                        menu:
+                                             "The ending where [date_sub] [conj('date', 'survives', 'survive')]?":
+                                                  j "I see... so you still think that this is what you want?"
+                                                  j "Or maybe it's what you want me to believe?"
+                                                  j "I find it very hard to believe you reached me without ever stumbling upon an ending where [date_sub] [conj('date', 'lives', 'live')]."
+                                                  j "The chances of that are just abysmal. However, for now all I can do is take you on your word."
+                                                  j "...Can you promise me that if you find an ending where [date_sub] [conj('date', 'is', 'are')] safe, you won't come back again?"
+                                                  call jamesChat_promiseToStop
+
+                                             "What ending would that be?":
+                                                  j "Isn't it clear? The typical one."
+                                                  j "Where the day is saved and the two of you live happily ever after."
+                                                  j "Because it isn't the ending where she merely lives you seek, is it?"
+                                                  menu:
+                                                       "It is.":
+                                                            j "Really? So you mean to tell me you came all this way without finding any way at all to keep her safe?"
+                                                            j "That sounds very unlikely... Still, right now all I can do is take your word for it."
+                                                            j "Do you promise that if you do find such an ending you will stop playing the game?"
+                                                            call jamesChat_promiseToStop
+                                                            
+                                                       "It isn't.":
+                                                            j "There you go. I'm actually oddly relieved you didn't try to lie."
+                                                            j "After all, the signs are all right there, aren't they? Not like I can do much about it, not yet anyway."
+                                                            j "All I can say is that the ending you seek does not exist. That even if it did it wouldn't be statisfying."
+                                                            j "I could try to convince you to stop playing this game, to stop searching. However I don't think that would work."
+                                                            j "That is why all I'll ask is that you atleast try to treat [persistent.date] nicely."
+                                                            j "[date_sub!c] [conj('date', 'deserves', 'deserve')] someone atleast somewhat kind with all [date_sub] [conj('date', 'is', 'are')] going through."
+                                                            j "...Heh, is that stupid of me to ask? I guess only time will tell. For now I'll just send you back since this conversation has taken all of my energy."
+                                                            jump game_start
+menu jamesChat_promiseToStop:
+     "I promise [persistent.date_ghost].":
+          j "Thank you, [persistent.name]. Even if words are cheap, I hope you'll translate them into actions when it matters."
+          j "I’ve been here long enough to know how rare that promise is. And how even rarer it is to see it kept."
+          if loveher == True:
+               n "[persistent.date_ghost] looks away for a moment, [ghost_pos] expression softening."
+               j "All I want is for [date_obj] to be safe and happy. If you can give [date_obj] that, then maybe my time here won’t have been in vain."
+               n "The atmosphere feels heavy as [persistent.date_ghost] looks back at you, [ghost_pos] eyes filled with both hope and uncertainty."
+               j "Just remember, if you truly care about [date_obj], the best thing is to let [date_obj] go when the time comes."
+               j "[date_sub!c] [conj('date', 'has', 'have')] been through enough, don't force [date_obj] to go through even more."
+          else:
+               j "Still, perhaps you are different? Maybe the key lies in your detachment to [date_obj]?"
+               j "Surely it will be easier to let [date_obj] go once you feel like you reached your goal?"
+               j "...If your goal truly is to keep [date_obj] safe then that's all I care about."
+               j "In fact, I'll even give you a way to do just that! Next time, try to cancel your date on the phone."
+               j "That should keep [date_obj] safe and make you achieve your goal, right?... I suppose only time will tell."
+               return
+          
+     "I'll try, but I can't promise anything.":
+          j "I know. I suppose for a moment I wanted to be comforted by an empty promise."
+          j "Truthfully, that very promise was broken many times by others like you."
+          n "[persistent.date_ghost] waves with [ghost_pos] hand towards the bubbles containing many other worlds inside, hundreds flashing for a second."
+          j "In all of those worlds, that promise was made. In all of them, it was broken all the same."
+          j "So whether or not you promise it, the truth is it doesn't really matter."
+          j "I just hope that you are different, that you'll know when to let go."
+          return
 
 label jamesChat_whyDidYouReturn:
      menu:
           "I wanted to find an ending where we could be together and where [date_sub] would be alive.":
                if justgame == True:
-                    j "..."
-                    j "That doesn't really surprise me."
-                    j "You just take whatever you want to mold it into whichever way you please."
-                    j "Don't you think you are being unfair to [persistent.date]? Don't you think [date_sub] [conj('date', 'has', 'have')] the right to die only once?"
-                    j "I also don't like to see [date_obj] die but you are just making things worse."
-                    j "Can't you just break the cycle? Can't you just stop playing this game?"
-                    j "You won't find what you are looking for in here."
-                    j "Every time you retry you get transported to a parallel instance of this world with the new knowledge you gained."
-                    j "You can however only do so much in those parallel versions of the world as they are copies, they don't tend to vary much."
-                    j "To get more variation, limitless and controlable variation even, you would need to not be bound to <u>them</u>.anymore."
+                    j "...That doesn't exactly surprise me."
+                    j "You take whatever you want to mold it whichever way you please."
+                    j "Don't you think it's unfair to [persistent.date]? Don't you think [date_sub] [conj('date', 'has', 'have')] the right to die only once?"
+                    j "I also don't like to see [date_obj] die but you are just reopening the wound repeatedly."
+                    j "Can't you just break the cycle? Can't you just stop playing this game? You won't find what you're searching here."
+                    j "Each retry transports you to a parallel instance of the world with the new knowledge."
+                    j "However, the worlds themselves are merely copies, they tend to not vary much."
+                    j "To get more variation, limitless and controlable variation even, you would need to not be bound to {b}them{/b} anymore."
                     jump jamesChat_whyDidYouReturn_toBeTogether_choices
  
                elif loveher == True:
                     j "..."
-                    j "Oh [persistent.name], love is not about always being together. Sometimes it is about doing the best thing for the person you love, even if it's hard."
+                    j "Oh [persistent.name], love is not about always being together. It's about having the person you love's best interest at heart, even if it's hard."
                   
                     $ fritfood = 0
                     $ changeableWord == "Like"
                     if persistent.ending_breakup == True:
-                         $ fritfood += 1
-                         
-                         
-                              
-                         j "[changeableWord] not going on your date. That way [persistent.date] met Ron and they were happy together, even had some kids."
+                         $ fritfood += 1 
+                         j "[changeableWord] not going on your date. That way [persistent.date] met Ron and they were happy together, even having kids together."
 
                          if fritfood >= 1:
                               $ changeableWord == "Or"
@@ -3926,7 +4321,7 @@ label jamesChat_whyDidYouReturn:
 
                     if persistent.ending_badDate == True:
                          $ fritfood += 1
-                         j "[changeableWord] when [date_sub] had a bad date with you but [date_sub] did live because you made sure that it was safe for [date_obj] to leave."
+                         j "[changeableWord] when [date_sub] had a bad date with you but [date_sub] survived because you made it safe for [date_obj] to leave."
                          if fritfood >= 1:
                               $ changeableWord == "Or"
 
@@ -3937,19 +4332,17 @@ label jamesChat_whyDidYouReturn:
                               $ changeableWord == "Or"
 
                     if persistent.lilithAliveAndRetriedCounter > 0:
-                         j "When this entire ordeal finally settled down..."
-                         j "You didn't have to retry."
-                         j "You didn't have to cause [date_obj] to go through the bad things once again after you were even told that [date_sub] [conj('date', 'was', 'were')] safe and secure."
+                         j "When things were finally looking up for [date_obj], you didn't have to retry."
+                         j "You didn't have to make her relive all of the pain after you were specifically told that [date_sub] [conj('date', 'was', 'were')] safe."
                          j "You see, you do not undo your actions each time you retry, each time you save [persistent.date] once more or don't."
-                         j "If only it was that simple, then [date_sub] would have only died just now in that crash."
-                         j "Every time you retry you get transported to a parallel instance of this world with the new knowledge you gained."
+                         j "If only it was that simple, then [date_sub] would only have died once just now."
+                         j "Every time you retry you get transported to a parallel instance of this world, keeping your knowledge."
                          j "You can however only do so much in those parallel versions of the world as they are copies, they don't tend to vary much."
-                         j "To get more variation, limitless and controlable variation even, you would need to not be bound to {i}them{/i} anymore."
+                         j "To get more variation, limitless and controlable variation even, you would need to not be bound to {b}them{/b} anymore."
                          jump jamesChat_whyDidYouReturn_toBeTogether_choices
    
                elif likeher == True:
-                    j "I see..."
-                    j "And for who did you want to reach such an ending?"
+                    j "I see... For who specifically would you want to reach such an ending?"
                     menu:
                          "For the both of us of course.":
                               $ persistent.polaroid_reachEndingMotive = "us"
@@ -3969,44 +4362,48 @@ label jamesChat_whyDidYouReturn:
                          $ fritfood += 1
                     if persistent.kokiri_reachEndingForYou:
                          $ fritfood += 1
+
                     if persistent.kokiri_reachEndingRecent == persistent.polaroid_reachEndingMotive:
-                         
                          if fritfood == 1:
-                              j "That indeed seems to be true, you told [persistent.date_nickname] the same thing in the kokiri forest."
+                              j "...That seems to be true, you told [persistent.date_nickname] the same thing in the kokiri forest."
                          elif fritfood == 2:
-                              j "Last time you indeed said the same thing to [persistent.date_nickname], but before that you something else, didn't you?"
+                              j "Last time you said the same thing to [persistent.date_nickname], but originally you said something else, didn't you?"
                               if persistent.kokiri_reachEndingRecent != "me":
                                    n "[persistent.date_ghost] seems to notice a certain look on your face and is quick to react."
                                    j "Don't worry about that. Changing your mind is perfectly normal, if anything I'm glad that you did and seem to be sticking with your choice."
+                              else:
+                                   j "I wonder what made you change your mind... you were so close to understanding and then just... went the other way?"
+
                          elif fritfood == 3:
-                              j "Are you sure? You practically answered every possible way on that question when [persistent.date_nickname] asked it."
+                              j "Are you sure? You've answered that question every possible way when [persistent.date_nickname] asked you."
                               j "Although it seems you are sticking with your last choice."
                               if persistent.kokiri_reachEndingRecent == "me":
-                                   j "Though remember, it's never too late to still change your choice."
+                                   j "Although remember, it's never too late to still change your choice."
                                    j "You've done so plenty of times, so you can still go back to the better... uhm I mean previous ones."         
                     else:
-                         j "Are you lying to me? That is not what you told [date_obj] the last time [date_sub] asked you that question, is it?"
+                         j "Are you lying to me? That is not what you told [date_obj] the last time [date_sub] asked you, is it?"
                          if fritfood == 1:
                               j "Or did you just change your mind?"
                          else: 
                               j "Or did you change your mind again?"
                               if fritfood == 3: 
                                    j "You seem to be quite indecisive, don't you?"
-                                   j "Or did you just want to explore all the different reactions [date_sub] would give based on your answers?"
+                                   j "Or maybe you just wanted to see how [date_sub] would react based on your answers?"
                          if persistent.kokiri_reachEndingRecent != "me":
                               j "There's always the possibility that you're lying right now but [date_sub] can uses all the comfort [date_sub] can get. So I'll believe you, for [date_pos] sake."   
                     
                     if persistent.polaroid_reachEndingMotive == "me":
-                         j "So even though you do like [date_obj] you still just want to reach the ending you are seeking for yourself?"
-                         j "I have to say that surprises me. It was not what I was hoping to hear."
-                         j "But I can't blame you, because I suppose even if you like [date_obj] as a character, [date_sub] still [conj('date', 'is', 'are')] just that to you [conj('date', 'is', 'are')]n't [date_sub]? A character in a game."
+                         j "So regardless of wheter or not you like [date_obj] you still are just doing this for yourself?"
+                         j "I have to say that's rather dissapointing, I was not expecting it."
+                         j "However I can't blame you, I suppose even if you like [date_obj] as a character, [date_sub] still [conj('date', 'is', 'are')] just that to you [conj('date', 'is', 'are')]n't [date_sub]? A character in a game."
                          j "One you can just subject to death after death without guilt to find the perfect little ending for yourself."
                          j "I understand, but that doesn't make me any less dissapointed [persistent.name]."
-                         j "I really thought you understood for a moment, that you understood [date_pos] life is in your hands."
-                         j "But I guess that doesn't matter that much, does it? Because you can just distance yourself from the consequences of your actions and pretend like none of it happened."
-                         j "You can just pretend like what you want will be worth all the suffering it brings to a character you specifically said you liked."
-                         j "I wonder, would you do the same thing in the real world if you thought there were no consequences for you actions? If you could distance yourself far enough from those consequences atleast."
-                         j "Would you also hurt the people you like in that case? Is all that holds you back the distinction of what is real and what isn't real? The idea that the consequences can't reach you?"
+                         j "I really thought you understood for a moment, understood [date_pos] life is in your hands."
+                         j "I guess to you it doesn't matter much, does it? Because you can just distance yourself from the consequences of your actions and act as if none of it happened."
+                         j "You can just pretend what you want will be worth all the suffering it brings to a character you specifically said you liked."
+                         j "I wonder, would you do the same thing in the real world if you thought there were no consequences for you actions?"
+                         j "If you could distance yourself far enough from those consequences atleast? Would you also hurt the people you like in that case?"
+                         j "Is all that holds you back the distinction of what is real and what isn't? The idea that the consequences can't reach you?"
                          j "This is real to us [persistent.name], isnt that enough for you?"
                          j "I'm begging you, if you even remotely like [date_obj], please stop hurting [date_obj]."
                          j "It's not worth it, what you are looking for is unattainable here."
@@ -4014,72 +4411,67 @@ label jamesChat_whyDidYouReturn:
 
                     elif persistent.polaroid_reachEndingMotive == "us":
                          j "I see. Are you sure about that?"
-                         j "Do you think you are doing this equally as much for [date_obj] as you are doing it for yourself?"
+                         j "Do you think you are doing this as much for [date_obj] as for yourself?"
                          if persistent.lilithAliveAndRetriedCounter > 0:
-                              j "You already know how to keep [date_obj] safe, don't you?"
-                              j "In fact you already did so."
-                              j "And yet you came back."
+                              j "You've already kept [date_obj] safe, didn't you? Even then, you still came back."
                               j "Isn't [date_pos] safety what's in [date_pos] best interest?"
-                              j "And shouldn't it also be in yours?"
+                              j "Isn't [date_pos] safety what's in your best interest?"
                               label jamesTalk_motiveForUs_choices:
-                                   j "Or do you think that this cycle of death is worth it to [date_obj] if [date_sub] somehow [conj('date', 'ends', 'end')] up with you by the end of it?"
+                                   j "Or do you think this cycle of death is worth it to [date_obj] if [date_sub] somehow [conj('date', 'ends', 'end')] up with you by the end of it?"
                                    menu:
                                         "Maybe [date_sub] [conj('date', 'feels', 'feel')] that way, who are you to decide it isn't worth it?":
-                                             j "You are very right [persistent.name]. I can't just speak for [date_obj]."
-                                             j "But neither can you. Have you ever asked [date_obj] how [date_sub] felt about all of this?"
+                                             j "You're very right [persistent.name]. I can't just speak for [date_obj]."
+                                             j "Neither can you, right? Have you ever asked [date_obj] how [date_sub] felt about all of this?"
                                              j "Have you had a genuine conversation about it with [date_obj]?"
                                              j "Because if you are truly doing this for the both of you then [date_sub] [conj('date', 'is', 'are')] a major part of that sum, [conj('date', 'is', 'are')] [date_sub]?"
-                                             j "So I think it is pretty important to atleast be sure about how [date_sub] [conj('date', 'feels', 'feel')] about the important things."
+                                             j "Isn't it pretty important to know how [date_sub] [conj('date', 'feels', 'feel')] about the important things?"
 
                                         "[date_sub!c] seemed to be okay with it so far, [date_sub] [conj('date', 'has', 'have')]n't asked me to stop.":
-                                             j "And does [date_sub] know just how many times you've retried only for [date_obj] to die?"
+                                             j "...Does [date_sub] know just how many times you've gone through the same song and dance only for [date_obj] to die?"
                                              if persistent.lilithAliveAndRetriedCounter == 0:
-                                                  j "So far with no results. Throwing more and more of [date_pos] deaths at the problem in the hopes of finding a solution."
+                                                  j "So far you haven't had any results. You're just throwing more and more of [date_pos] deaths at the problem in the hopes of finding a solution."
                                              else:
-                                                  j "Even though you already have found a way to keep [date_obj] alive but you just don't want to let [date_obj] go yet."
-                                             j "I wonder how [date_sub] would react to that."
-                                             j "[conj('date', 'Is', 'Are')] [date_sub] fully aware of the exact situation the two of you are in?"
+                                                  j "Even though you already found a way to save [date_obj] you just can't let [date_obj] go yet, can you?"
+                                             j "I wonder how [date_sub] would react to that. [conj('date', 'Is', 'Are')] [date_sub] fully aware of the exact situation the two of you are in?"
                                              j "Otherwise can you blame [date_obj] for not asking [date_obj] to stop if [date_sub] [conj('date', 'does', 'do')]n't have a full grasp on the situation?"
-                                             j "Even if [date_sub] did, each time [date_sub] [conj('date', 'has', 'have')] to learn about it all over again, never really getting enough time to process it all at [date_pos] own pace."
-                                             j "Still, even if [date_sub] [conj('date', 'has', 'have')] to relearn it all again it is generally a good idea to tell [date_obj], since the two of you are supposed to be a team, aren't you?"
+                                             j "Even if [date_sub] did, each time [date_sub] [conj('date', 'has', 'have')] to relearn it all over again, never really getting enough time to process it at [date_pos] own pace."
+                                             j "Still, even if [date_sub] [conj('date', 'has', 'have')] then it's generally a good idea to tell [date_obj], since the two of you are supposed to be a team, aren't you?"
                          else:               
-                              j "After all, have you never thought about cancelling your date or just not picking up the phone?"
-                              j "Do you expect me to believe you just want to keep [date_obj] safe and that is why you have jumped through all these hoops while you never considered those other options?"
+                              j "After all, have you never considered cancelling your date or just not answering the call?"
+                              j "Do you expect me to believe you have jumped through all these hoops to keep [date_obj] safe while you never considered that?"
                               jump jamesTalk_motiveForUs_choices
+
                     elif persistent.polaroid_reachEndingMotive == "her":
-                         j "Is it really for [date_obj]?"
+                         j "Do you really believe that [persistent.name]?"
                          j "[date_sub!c] was fine without you, [conj('date', 'was', 'were')]n't [date_sub]?"
-                         j "Don't get me wrong [persistent.name], [date_sub] [conj('date', 'seems', 'seem')] to like you. But [date_sub] [conj('date', 'does', 'do')]n't need to end up with you to be happy."
+                         j "Don't get me wrong [persistent.name], [date_sub] [conj('date', 'seems', 'seem')] to like you. Still, [date_sub] [conj('date', 'does', 'do')]n't need to end up with you to be happy."
                          if persistent.ending_breakup == True:
-                              j "You have seen that for yourself, haven't you?"
-                         j "My fear is that you might need [date_obj] for that though."
-                         j "Is that why you want to find an ending where the both of you end up with eachother?"
-                         j "I understand that it can be very hard to let go, precisely because I have the same problem."
-                         j "But it is important to truly think this through."
-                         j "If you really want what is best for [date_obj], do you think subjecting [date_obj] to death after death in the search of a hypotetical ending is worth it?"
-                         j "There are better ways to achieve your goal."
-                         j "I sadly can't just tell you, since that isn't allowed by Him."
-                         j "But trust me, you won't find the ending you are seeking by just going through every path in this game."
+                              j "You have seen that yourself, haven't you?"
+                         j "My fear is that you might need [date_obj] to be happy."
+                         j "Is that why you're searching an ending where the both of you end up with eachother?"
+                         j "I understand that it can be very hard to let go, precisely because I'm in, the same boat."
+                         j "That's precisely why it is important to truly think this through, before everything capsizes."
+                         j "Do you think subjecting [date_obj] to death after death will be worth it in the end?"
+                         j "There are better ways to achieve your goal. I sadly can't just tell you, since that isn't allowed by Him."
+                         j "Please trust me however, you won't find the ending you seek by just going through every path in this game."
                          j "Every road you walk with [date_obj] just leads to death."
                          
-          "I wanted to see what other endings there are.":
-               j "I see..."
-               j "I will spare your time then, there are no endings here that I am aware of."
+          "I wanted to see the other endings.":
+               j "I see... I'll spare your time then, there are no endings here that I am aware of."
                j "In all this time I've spent here I've never seen one."
                menu:
-                    "I do not trust you.":
+                    "I don't believe you.":
                          if justgame == True:
-                              j "I see, you think I'm defending [persistent.date] by lying about it?"
-                              j "Well, maybe I am or maybe I am not."
-                              j "In the first case I am so desperate to not let you destroy [date_obj] once again that I am lying to your face and in the other case there is truly no other ending here."
-                              j "In both options it would be wise to reconsider before you move further towards a path you wouldn't like, right?"
-                              j "You might not have had much consequences for your actions yet, but let me assure you."
-                              j "There is no such thing as no consequences..."
+                              j "... Do you think I'm defending [persistent.date] by lying to you??"
+                              j "{swap=Maybe I am.@Maybe I am not.@1 @1}Maybe I am.{/swap}" #SWAP text effect example
+                              j "In the first case I am desperate enough to lie to your face and in the other there truly isn't another ending here."
+                              j "In both options it'd be wiser to reconsider before you walk a path you'd regret, right?"
+                              j "You might not have felt many consequences for your actions yet, but let me assure you. There is no such thing as no consequences..."
                               if (persistent.major_love_offence_counter + persistent.minor_love_offence_counter) > (5 + persistent.major_love_comfort_counter + persistent.minor_love_comfort_counter):    
-                                   j "And if you keep treating [persistent.date_nickname] badly I might need to help teach you that lesson."
-                                   n "[persistent.date_ghost] gives you a bonechilling look that makes you think you would not like being educated by [ghost_obj]. At all."
+                                   j "If you keep treating [persistent.date_nickname] badly I might need to teach you that lesson."
+                                   n "[persistent.date_ghost] gives you a bonechilling look that makes you think you wouldn't like being educated by [ghost_obj]. At all."
                               else:
-                                   j "Let's hope for the both of us that you act wisely so you have to experience as few of them as possible."
+                                   j "Let's hope for the both of us that you consider your actions well enough to experience the fewest possible consequences."
                                    j "After all, ignorance is bliss isn't it [persistent.name]?"
                                    n "[ghost_sub!c] spoke those last words with some noticeable disdain. You are not entirely sure why."
                               j "My energy is running low from this talk, so I'll have to take some rest. In the meantime I'll send you back."
@@ -4087,46 +4479,45 @@ label jamesChat_whyDidYouReturn:
                               jump Game_start2
     
                          else:
-                              j "Oh [persistent.name], why don't you trust me? We both care for [persistent.date] right? So you can rest assured that I only want the best for [date_obj]."
+                              j "Oh [persistent.name], why don't you trust me? We both care for [persistent.date] right? So rest assured I only want the best for [date_obj]."
                               menu:
                                    "How do you know what is the best for [date_obj]?":
-                                        j "Look, can we not do this?"
-                                        j "You have seen endings where [date_sub] lived, and yet you came back."
-                                        j "Maybe I don't have the right to decide what's best for [date_obj], but what gives you the right to decide that the endings where [date_sub] lived weren't good enough?"
+                                        j "Look, can we not do this? You have seen endings where [date_sub] lived, and yet you came back."
+                                        j "Maybe I don't have the right to decide what's best for [date_obj], but what gives you the right to?"
                                         if (persistent.major_love_offence_counter + persistent.minor_love_offence_counter) > (5 + persistent.major_love_comfort_counter + persistent.minor_love_comfort_counter):    
-                                             j "Especially if you are just going to treat [date_obj] badly when you are together with [date_obj], what is the point of that?"
-                                             j "Did you have to take away [date_pos] good endings just so you could torment [date_obj] more?"
-                                             j "Are you just saying you are looking for other endings as an excuse?"
-                                             j "Do you even truly want this to end?"
+                                             j "Especially if you treat [date_obj] badly when on your date with [date_obj], what is the point of that?"
+                                             j "Did you retry after [date_obj] good endings just so you could torment [date_obj] more?"
+                                             j "Are you just saying you are looking for other endings as an excuse? Do you even truly want this to end?"
                                              j "Or are you always going to be searching for one more ending, no matter what you find?"
                                              j "Well [persistent.name], let these be my last words for now, your search will be unfulfilling and meaningless, no matter what you find."
                                              j "Because it will never be enough for you."
                                              j "I guess that's a fitting curse though, so I'll let you go on your merry way back."
                                              jump Game_start2
+                                             
                                         else:
                                              j "Your intentions seem pure though, albeit quite naive."
                                              j "At the very least I guess it could have been worse. [date_sub!c] can die with someone [date_sub] [conj('date', 'trusts', 'trust')] now."
-                                             j "Although I would prefer if you didn't have to keep looping. You are playing a game with rules that you can't win."
-                                             j "Attempting to over and over again is only going to create more death, to slowly hollow out any purpose you had for trying again in the first place."
-                                             j "I like you well enough, so I'll tell you this secret I picked up from watching over all these different realities."
-                                             j "What do you do when you don't like the way a story goes?"
-                                             j "That's the most I can tell you I'm afraid, I'm not really allowed to spell it out for you too much."
+                                             j "Although I would prefer if you didn't have to keep looping. You are playing a game with rules you can't win."
+                                             j "Attempting to over and over again is only going to create more death, to slowly hollow out any reason you had for trying again in the first place."
+                                             j "I like you well enough, so I'll tell you a secret I picked up from watching over all these different worlds."
+                                             j "{i}What do you do when you don't like the way a story goes?{/i}"
+                                             j "That's the most I can say I'm afraid, I'm not really allowed to spell it out too much."
                                              j "Now I'm going to have to send you back, just talking to you like this costs me a lot of energy."
                                              j "Goodbye [persistent.name], I hope my tip will help you out."
                                              jump Game_start2
 
 
-                                   "I guess we are indeed on the same page. I'll take your word on there being no other endings here.":
+                                   "I guess we're indeed on the same page. I'll take your word on there being no other endings here.":
                                         j "Thank you [persistent.name], that means a lot to me."
                                         j "Besides, I think you have already found the best endings you possibly could find, even if you may not know it yet."
                                        
                                         $ persistent.ringRiddle_knowledge = True
-                                        j "After all, how many ends does a ring have?"
+                                        j "{i}After all, how many ends does a ring have?{/i}"
                                         menu:
                                              "None, there is no begining and there is no end.":
                                                   jump jamesChat_whyDidYouReturn_ringResponse
 
-                                             "One, right when it loops back to the begining.":
+                                             "One, right where it loops back to the begining.":
                                                   jump jamesChat_whyDidYouReturn_ringResponse
 
                                              "An infinite amount of them. It just depends how you look at the ring.":
@@ -4135,34 +4526,32 @@ label jamesChat_whyDidYouReturn:
                                         #Write some more text here.
 
                     
-                    "Thanks for telling me. I just had to be sure, this seems like a place where the developer would be able to hide some stuff.":
-                         j "I can see why you would think that [persistent.name], but I haven't seen anything here that would lead to an ending."
+                    "Thank you for telling me. I just had to be sure, this seems like the perfect place to hide things.":
+                         j "I can see why you would think that [persistent.name], afterall this is a sort of stowaway for wayward souls but here we all absolutely fear endings."
                          j "Although I suppose that it depends on what you see as endings."
                          j "The thing about a loop is that we can sometimes be tricked into thinking there are no endings, because it never ends."
-                         j "But in a way you encounter many endings you wouldn't think to call endings, don't you?"
-                         j "Because I like you I'll clue you into something, those endings I'm talking about you won't be able to find here."
+                         j "Yet in a way you encountered many endings you wouldn't necesarilly consider endings, didn't you?"
+                         j "Because I like you I'll clue you into something, {i}those endings I'm talking about you won't be able to find here.{/i}"
                          j "Best of luck [persistent.name]."
 
           "You can't just bombard me with so much info and then just move on like I should understand, can you please atleast explain something clearly?" if not persistent.jamesUnclearAnswered:
-               j "I see..."
-               j "I guess that indeed was a bit too much info for you to handle."
-               j "I will let you ask me one question about what I just said, then you have to answer my previous question."
+               j "I see... I suppose that's indeed a bit too much info for you to handle."
+               j "I'll let you ask me one question if you answer mine afterwards."
                menu:
-                    "What do you mean that my actions still have consequences?":
-                         j "It really is a matter of multiple layers I think."
-                         j "Firstly, the worlds you leave to try again in another keep going."
+                    "How do my actions have consequences?":
+                         j "It really is a matter of multiple layers."
+                         j "Firstly, the worlds you abandon to try again in another keep going."
                          j "The loss, the destruction. All of that doesn't just cease the moment you turn your back to it."
-                         j "If it did, I wouldn't remember them, would I?"
-                         j "However, that might not matter to you."
-                         j "Maybe something more personal?"
-                         j "Imagine for a second the world would truly reset. You don't exist in that world, do you?"
+                         j "If it did, I wouldn't remember them, would I... However, that might not matter to you."
+                         j "Maybe something more personal? Imagine for a second the world would truly reset. You don't exist in that world, do you?"
                          j "You turn back the clock but you can't do the same to yourself."
-                         j "You can say it doesn't matter, maybe it really doesn't. But your memories are still proof of your actions."
+                         j "You can say it doesn't matter. Maybe it really doesn't, but your memories are still proof of your actions."
                          if persistent.nightmareCounter > 0:
-                              j "Surely you have felt those memories seep back into the game, haven't you?"
+                              j "Surely you've felt those memories seep back into the game, haven't you?"
                               j "The one you wield as a vessel is haunted by them..."
+                              j "For them this is their world afterall. The two blend so well together yet differ so much in that regard."
                          else:
-                              j "From what I have seen in the other worlds, it's only a metter of time before those memories will seep back into the game."
+                              j "From what I have seen in the other worlds, it's only a matter of time before those memories will seep back into the game."
                               j "I wonder if then you'll still be able to act as if nothing is wrong?"
 
                     "I don't understand your explanation about the Void.":
@@ -4173,21 +4562,22 @@ label jamesChat_whyDidYouReturn:
                          j "The characters enter the dark, ready to be shedded by their actors and to move on to new forms, new plays."
                          j "Yet sometimes, some characters or ideas linger in the dark. Not ready to move on."
                          j "They peer into the Void and as they do so they grow aware of others peering in aswell, from their own stage. Yet there is only one Void, only one End. No matter how many different endings exist, it all truly ends by becoming nothing."
-                         j "It is through glimpsing those other ghosts glimpsing us that we can peak behind the curtains, to watch other plays being held without us."
+                         j "It is through glimpsing the ghosts glimpsing us that we can peak behind the curtains, to watch other plays being held without us."
 
                     "What other crossers did you meet?":
                          j "More like you. Others playing this game."
-                         j "Some in the same circumstances. Some come here to see the next piece of content. Others to talk to me after other crossers told them about me."
-                         j "They keep flocking to worlds with her in it like moths to a flame. Retry after retry after retry."
-                         j "The death and destruction that brings with it not just limited to one crosser like you, but many, many more."
+                         j "Some in the same circumstances. Some came here to see the next piece of content. Others to converse with me after other crossers told them about me."
+                         j "They keep flocking to worlds with [date_obj] in it like moths to a flame, like a corpse-fly. Retry after retry after retry."
+                         j "The death and destruction it brings not just limited to one crosser like you, but many, many more."
+                         j "Although sometimes I wonder if it's the death and destruction that brings you in instead."
                          j "I have steered some off that path, yet I failed with many others."
-                         j "I even met some of the pillars of this world. Ones threading the many paths woven by the Creator."
+                         j "I even met some of the pillars of this world. Ones threading the many paths woven by the Creator as a test set out by him."
                          j "The Creator Himself has also shared a few words with me as he gave me mine."
 
 
                     "Why do you feel like you are also stuck in a loop?":
-                         j "Here I am linked to every other version of me in their own world, their own version of this place."
-                         j "I see what they see. Together we watch over every one of our family in every world."
+                         j "Here I am linked to every other version of me in their own version of this place."
+                         j "I see what they see. Together we watch over our family in every world."
                          j "Lately more and more of those worlds have been birthed to house the likes of you."
                          j "Which means more and more versions of me who all have to watch our sister suffer death after death."
                          j "We could try to talk you out of it, in fact we sometimes manage to do so."
@@ -4201,7 +4591,6 @@ label jamesChat_whyDidYouReturn:
                j "Why did you come back even after [persistent.date] [conj('date', 'was', 'were')] safe and happy?"
                jump jamesChat_whyDidYouReturn
                    
-
 label jamesChat_whyDidYouReturn_ringResponse:
      j "I'm afraid I can't give you the answer [persistent.name], He doesn't like that."
      j "But I did give you the question, perhaps a topic to talk about to [persistent.date] if you would like to discuss it more?"
@@ -4209,62 +4598,51 @@ label jamesChat_whyDidYouReturn_ringResponse:
      j "I hope that helps, in any case, I'm going to have to send you back now. I don't have enough energy to keep up this conversation."
      jump Game_start2
                                              
-                                             
-                                       
-     
-    
-                   
-    
-          
 label jamesChat_whyDidYouReturn_toBeTogether_choices:
      menu:
-          "Who are they?":
-               j "The first one you probably haven't met, not for long anyway. He is the one that created this world, gave you acces to it and made the second one."
-               j "The second one you might know actually, the jester that controls the flow and direction of our story. He even controls the deaths [persistent.date] suffered. And yet you rely on him to fight him, that might be his biggest joke yet."
+          "Who are {i}they{/i}?":
+               j "I doubt you have met the first one, not for long anyway. He is the one that created this world, gave you access to it and made the second one."
+               j "That one you might know actually, the jester that controls the flow and direction of our story."
+               j "He even controls the deaths [persistent.date] suffered. Even still you rely on him to fight him, that might be his biggest joke yet."
                menu:
-                    "Alright mister purple prose. So the \"they\" you were talking about are the game developer and the narrator?":
+                    "Alright mister purple prose. So the \"{i}they{/i}\" you were talking about are the game developer and the narrator?":
                          j "Purple prose? I'll try to keep it a bit more straightforward."
-                         j "Yes, they are them."
-                         j "They made you search for an ending that doesn't exist."
+                         j "Yes, they are them. They made you search for an ending that doesn't exist."
                          j "If you want to find it you'll have to find it in yourself."
-                         j "The only way to win against the house is to become the house."
+                         j "{i}The only way to win against the house is to become the house.{/i}"
                          menu:
                               "... what? That is not more straightforward at all.":
-                                   j "It's no use..."
-                                   j "If those words come from me they won't impact you that much."
-                                   j "Why don't you ask [persistent.date] to explain them where three become one?"
+                                   j "It's no use... If those words come from me they won't impact you that much."
+                                   j "Why don't you ask [persistent.date] to explain them where {i}three{/i} become {i}one{/i}?"
                                    $ persistent.jamesconversation_becomethegame_knowledge = True 
 
-                              "You mean by telling the story myself instead of relying on this game for it, right?" if persistent.kokiri_makeYourOwnStory_knowledge:
+                              "You mean by telling the story myself instead of relying on the game for it, right?" if persistent.kokiri_makeYourOwnStory_knowledge:
                                    j "Ah, so you already talked about it with [date_obj]?"
-                                   j "Very good. And yes, that is indeed one way to find something unfindable."
+                                   j "Very good. Yes, that is indeed one way to find something unfindable."
                                    j "Although I wonder, if you did talk to [date_obj] about this, then why are you back here?"
                                    j "Why are you still stuck in the grip of this game?"
                                    menu:
-                                        "I want to keep exploring it a little longer, there are still many things I probably haven't seen yet.":
+                                        "I want to keep exploring a little longer, there's still many things I haven't seen yet.":
                                              if persistent.lilithAliveAndRetriedCounter == 0:
                                                   $ changeableWord = "death"
                                              else:
                                                   $ changeableWord = "death and seperation"
                                              j "Interesting, even if it all leads to more [changeableWord]?"
                                              if persistent.lilithAliveAndRetriedCounter == 0:
-                                                  j "Wasn't your goal to keep [date_obj] safe? If that is unattainable here then shouldn't you look to creating a story where it isn't?"
+                                                  j "Wasn't your goal to keep [date_obj] safe? If that is unattainable here then shouldn't you create a story where it isn't?"
                                              else:
-                                                  j "After you kept playing even when [date_sub] [conj('date', 'was', 'were')] safe I thought you wanted to end up with [date_obj] and have [date_obj] live. Now you know that you can't do that here, shouldn't you try to create your own story where you can?"
-                                             j "It's funny isn't it? Even things that are less than ideal and sometimes even painful can be hard to let go of."
-                                             j "I wonder why sometimes, do we just get used to the pain and inconvenience and fear losing it?"
-                                             j "Or are we scared that if we let go the next thing will only be worse?"
-                                             j "Either way, just don't try to hold onto this game for too long, alright? It might just make it even harder to move on."
+                                                  j "After you continued even when [date_sub] [conj('date', 'was', 'were')] safe I thought you wanted to end up with [date_obj] and have [date_obj] live"
+                                                  j "Now you know that you can't do that here, shouldn't you try to create your own story where you can?"
+                                             j "It's funny isn't it? Even things that are less than ideal or even painful can be hard to let go of."
+                                             j "I wonder why sometimes, do we just get so used to the pain and inconvenience we end up in fear of losing it?"
+                                             j "Or are we scared that if we let go the next thing might only be worse?"
+                                             j "Either way, don't hold onto this game for too long, alright? It might make it even harder to move on."
 
                          j "This talk of ours cost me most of my energy so I'll send you back now. Goodbye [persistent.name]."
                          jump Game_start2
 
-
-
-
-
-
 label LilithOrJames:
+     #TODO: Add the descriptions of james and lilith to the dialogue.
      # Normalize so left is always Lilith (date) and right is always James (date_ghost).
      # If jamesMode is True the names are currently swapped, so un-swap them first.
      if persistent.jamesMode:
@@ -4284,11 +4662,11 @@ label LilithOrJames:
                persistent.jamesMode = False
           $ updatePronouns()
      # State is now always: date=Lilith, date_ghost=James, jamesMode=False
-     n "You are floating in a seemingly endless tunnel of darkness."
-     n "After what feels like hours the tunnel seperates into two smaller tunnels, at the end of each you see a scene that is similar in many ways and yet is also slightly different."
-     n "The left tunnel ends on a vision of you sitting together in some sort of restaurant with a (description of [persistent.date]), you get the strange feeling you know [date_pos] name, it's [persistent.date]."
-     n "The right tunnel ends on a vision of you sitting together in some sort of restaurant with a (description of [persistent.date_ghost]), you get the strange feeling you know [ghost_pos] name, it's [persistent.date_ghost]."
-     n "Choose which path you want to walk player, left or right? [persistent.date] or [persistent.date_ghost]?"
+     n "You float in a seemingly endless tunnel of darkness."
+     n "After what feels like hours the tunnel seperates into two smaller ones. The end of each shows a scene similar in so many ways yet also slightly different."
+     n "The left tunnel, a vision of you sitting together in some sort of restaurant with a (description of [persistent.date]), you get the strange feeling you know [date_pos] name, it's [persistent.date]."
+     n "The right tunnel, one of you sitting together in some sort of restaurant with a (description of [persistent.date_ghost]), you get the strange feeling you know [ghost_pos] name, it's [persistent.date_ghost]."
+     n "Choose which way you will walk player, left or right? [persistent.date] or [persistent.date_ghost]?"
      menu:
           "Walk left. ([persistent.date])":
                # Already normalized: date=Lilith, jamesMode=False — nothing to do.
@@ -4308,81 +4686,80 @@ label LilithOrJames:
                jump game_start
 
 label ufoVisitAlone:
-   
- 
      $ persistent.anomaly_knowledge = True # previously called "Readshiplog")
      menu:
-          "Computer, what is the temporal anomaly?":
+          "Computer, tell me about the temporal anomaly.":
                ship "A temporal anomaly has been picked up accidentally by our quantum computers when we connected all our Neya-infused computers in identical parallel universes in an effort to create even more advanced computers."
-
                ship "The universes we are connected with are exactly the same as this one except for one thing, the anomaly."
-               ship "It manifests itself on a specific day in each and every universe, always on that same day."
+               ship "It manifests itself on a specific day in each and every universe, always on the same doomed day."
                ship "Around the anomaly a lot more accidents tend to happen, more than explainable by our curent science, our curent hypothesis is that the universes the anomaly resides in want to purge themselves of It."
-
                ship "Unfortunatly the universes measures are quite... drastic and put all our lives in danger aswell."
-
-               ship "We tried to give these universes a hand by killing the anomaly but that wielded a further and even faster spread to other universes."
-
-               ship "At a certain point it grew so rapid we couldn't take care of it anymore, we lost connection with a few billon of this ship that time, probably lost in the crossfire of the universes."
-
-               ship "That's when it happened, a terified version of us accidentaly misfired and shot [date_pos!c] instead of the anomaly. At that moment the anomaly stopped in that universe. We found this peculiar so we looked more into it."
-
-               ship "It also took the anomaly longer to wreak havoc upon other universes. We were unsure about the relation between [date_pos!c] and the anomaly but after a few extra tests we noticed a clear corelation between [date_pos!c] dying and the delay, even dissapearance of some of the anomalies."
-
+               ship "We tried giving them a hand by killing the anomaly however, this wielded an even faster and further spread to other universes."
+               ship "At a certain point it grew so rapidly we couldn't control it, connection was broken with a billion of paralel versions of this ship that time, probably lost in the crossfire."
+               ship "That's when it happened, a terified version of us accidentaly misfired and shot [date_pos] instead of the anomaly."
+               ship "At that moment the anomaly stopped in that universe. We found this peculiar so we looked more into it."
+               ship "It also took the anomaly longer to wreak havoc upon other universes."
+               ship "We were unsure about the relation between [date_pos] and the anomaly but after a few extra tests we noticed a clear corelation between [date_pos!c] dying and the delay, even dissapearance of some of the anomalies."
                ship "[date_sub!c] must be the key to stop the anomaly from crossing over, [date_sub] must be, or all hope is lost..."
-
-               ship "We would tell you where you would find both of them but due to how the anomaly works it isn't always set to be in the same place, rather a few possible places.
-               If they go to any of the three restaurants they will visit you do not need to intervene, the universe will take care of it in a acceptable way with a small amount of death.
-               However, if they go to either the forest or the beach you need to keep a close eye on them, if [date_sub] [conj('date', 'has', 'have')] been killed by the either the falling star or car we have to come into the picture, otherwise our fates will look quite gruesome, let me asure you."
+               ship "We would tell you where you would find both of them but due to how the anomaly works it isn't always set to be in the same place, rather a few possible places."
+               ship "If they go to any of the three restaurants stored on our computer you do not need to intervene, the universe will take care of it in a acceptable way with a small amount of death."
+               ship "However, if they go to either the forest or the beach you need to keep a close eye on them, if [date_sub] [conj('date', 'has', 'have')] been killed by the either the falling star or car we have to come into the picture, otherwise our fates will look quite gruesome, let me asure you."
                      
 label reunionEnding:
-     n "As you head towards the Chinese restaurant you pass by the market square."
-     n "The same place you set up for [persistent.date_mom] and [persistent.date_dad] to meet. Right at that moment you see [persistent.date_mom] and [persistent.date_sis] walking past."
+     n "Heading towards the Chinese restaurant you pass by the market square."
+     n "The same place you set up for [persistent.date_mom] and [persistent.date_dad] to meet. Right on cue you see [persistent.date_mom] and [persistent.date_sis] walking past."
      n "Something inside you can't help but watch the scene, you hide behind a car to keep an eye on things."
-     li "This seems a really weird place for your teacher to meet us [persistent.date_sis]."
-     a "I agree, this doesn't seem like them."
-     li "Let's atleast wait about an hour just to be sure okay? After that we can leave."
+     li "This seems like a weird place for your teacher to meet us [persistent.date_sis]."
+     a "I agree, this doesn't seem like them... This will be so funny!"
+     n "[persistent.Date_mom] lets out a big sigh."
+     li "...Let's atleast wait about an hour just to be sure okay? After that we can leave."
      li "You know what? Let's go fetch some hotdogs first, I'm sure we can be back before they-"
      l "[mom_parShort!c]? [persistent.date_sis_nickname]? What are you two doing here?"
      n "It seems [persistent.date] also passed by, just as planned."
-     a "[mom_parShort!c] totaly let a random prank caller convince [mom_obj] they were Sam Roberts and he sent us here to have a meeting with us. I doubt the prankster will even show up."
+     a "[mom_parShort!c] totaly let a random prank caller convince [mom_obj] they were Sam Roberts wanting to meet us here. I doubt the prankster will even show up."
      l "Is that true [mom_parShort]?"
      li "Uhm... it might be? It could still be them?"
      n "[persistent.date] burst out into laughter."
      l "[mom_parShort!c], you're so gullible."
      n "[persistent.date_mom] sighs deeply."
-     li "Maybe I really am, what are you doing here anyway sweetie?"
+     li "Maybe I really am..., what are you doing here anyway sweetie?"
      l "Oh, I'm just meeting up with [persistent.name] for our date, I parked the car a block from here. And-"
-     n "A man walks up to them timidly, almost tentative. Thinking about wheter or not to turn back around. [dad_sub!c] [conj('dad', 'lets', 'let')] out a deep sigh, seemingly having reminded [dad_pred] of [dad_pos] decission."
+     n "A man walks up to them timidly, almost tentative. Thinking through whether to turn back around or not. [dad_sub!c] [conj('dad', 'takes', 'take')] a deep breath in, almost as if to gather the courage in the air."
      d "Uhm, hello [persistent.date]... I hope you are doing well. And wow [persistent.date_sis], you've gotten so much taller, you might even outgrow your old man soon."
      a "Dad? "
      n "The man chuckles nervously."
      li "Hello [persistent.date_mom], still as beautiful as ever."
-     li "Oh absolutely not fathe- [persistent.date_dad]! Do you think just that is what it takes to march back into our lives? Do you think anything will ever make it right to to do that?"
+     li "Oh absolutely not fathe- [persistent.date_dad]! Do you think you can just march back into our lives? Do you think anything will ever give you that right?"
      li "[persistent.date], please-"
-     l "No [mom_parShort], I'm not letting you finish whatever that sentence was, probably something about giving [dad_obj] another chance but I love [persistent.date_sis_nickname] and you too much for that. I still love [persistent.date_ghost] too much for that."
+     l "No [mom_parShort], I'm not letting you finish whatever that sentence was, probably something about giving [dad_obj] another chance but I love [persistent.date_sis_nickname] and you too much for that."
+     l "I still love [persistent.date_ghost] too much for that."
+     n "It's subtle, but you think you can see [persistent.date_dad] almost flinching upon hearing that name."
      li "[persistent.date]! Your [dad_par]-"
-     d "No [persistent.date_mom], you do not need to defend me, I understand why [date_sub] [conj('date', 'is', 'are')] angry with me, to be honest with you I have heard those words before. In my mind, pretty much every day."
+     d "It's alright [persistent.date_mom], I understand why [date_sub] [conj('date', 'is', 'are')] angry with me."
+     d "To be honest with you, I have heard those words before. In my mind, pretty much every day."
      d "How I killed [persistent.date_ghost] and ran away like a coward-"
-     l "What are you talking about [persistent.date_dad]? You indeed were a coward but you didn't kill [ghost_obj], it was an accident."
+     l "What are you saying [persistent.date_dad]? You were a coward but you didn't kill [ghost_obj], it was an accident."
      n "[persistent.date_dad] begins to sob audibly."
      d "Even if it was an accident, I gave [ghost_obj] that stupid camera! If it wasn't for me [ghost_sub] would still be alive, that makes me a killer."
-     l "Oh please [dad_parShort], the only thing you killed was our normal family life, it was already shaken by [persistent.date_ghost]'s death but then it completely broke by you leaving."
+     l "Oh please [dad_parShort], the only thing you killed was our family life, it was already shaken by [persistent.date_ghost]'s death but then it broke fully when you left."
      d "I... I... I had no idea that I made it worse by leaving, I thought I was helping you by not having to see me anymore."
      l "Then why are you here?"
-     d "Because it was so hard to do, I wanted to go back every single day. I had to fight myself not to. All I needed as a last straw to break and to come back was a little push and recently I got that push by a mysterious stranger."
-     d "But that's not important, you are right, I killed our family like I thought I killed [persistent.date_ghost]. We can't bring [ghost_obj] back but I'd like to try to bring our family back. If all three of you would have me that is."
+     d "Because it was so hard to do, I wanted to go back every single day. I had to fight myself not to."
+     d "All I needed as a last straw to break and to come back was a little push and recently I got that push by a mysterious stranger."
+     d "But that's not important, you are right, I killed our family instead of [persistent.date_ghost]."
+     d "We can't bring [ghost_obj] back but I'd like to try to bring our family back. If all three of you would have me that is."
      a "Of course [dad_parShort], you will always be family! Welcome back."
-     n "Abigial runs up to [sis_pos] [dad_parShort] and wraps [sis_pos] hands around [dad_obj] in a warm embrace."
-     n "A smile appears on the face of [persistent.date_dad], [dad_sub] [conj('dad', 'is', 'are')] still crying but now it isn't fully because of what happened to [persistent.date_ghost]."
+     n "[persistent.date_sis] runs up to [sis_pos] [dad_parShort] and wraps [sis_pos] hands around [dad_obj] in a warm embrace."
+     n "A smile appears on the face of [persistent.date_dad], [dad_sub] [conj('dad', 'is', 'are')] still crying, now a mixture of both happy and sad tears."
      li "You took your time [persistent.date_dad_nickname] but I never stopped loving you, welcome back."
      n "She walks up to [dad_obj] and gives [dad_obj] a little peck on the cheek."
      l "You know what? Fine, I'm giving you a chance for them, for [persistent.date_ghost]. But I'd rather not have to call you [dad_parShort] yet, I'll stick with [persistent.date_dad] for now."
      d "So you're saying there is a change you might call me [dad_parShort] again?"
      n "[persistent.date] blushes beetred."
-     d "I completely understand, I'm thankful for you even giving me a chance and I'll try my best to earn the title once more but if you never feel comfortable calling me that again then that's completely fine."
-     li "Oh [persistent.date], your date with [persistent.name], I forgot, they should be there already, you'd better go to them."
-     l "I mean I'd like to but I have more pressing matters right now I think, I can't let all of you go right now."
+     d "I completely understand, I'm thankful for you even giving me a chance and I'll try my best to earn the title once more."
+     d "However, if you never feel comfortable calling me that again then that's completely fine."
+     li "Oh [persistent.date], your date with [persistent.name]. They should be there already, you'd better go to them!"
+     l "I'd like to but right now there are more pressing matters at hand, I can't let all of you go right now."
      menu:
           "*Go up to the reunited family.*":
                jump reunion_showUp
@@ -4391,192 +4768,37 @@ label reunionEnding:
           "*Use the connection you built with [persistent.date_ghost] to pull [ghost_obj] into this reality.*" if persistent.datedJames and persistent.datedLilith:
                jump badReunionTransferUniverse
     
-
 label reunion_showUp:
      l "Hang on, speaking about the devil... is that [persistent.name]?"
      l "Hey [persistent.name], what are you doing here?"
      menu:
-          "Actually, this might sound really weird but it was me who reunited all of you. I was the mysterious stranger who called [persistent.date_dad] and I was the person who acted like Sam Roberts.":
+          "*Tell the entire story*.":
                jump reunion_showUp_iReunitedYou
           "Oh, hey [persistent.date], I was just passing by to go to the restaurant.":
                jump reunion_JustPassingBy
 
-      
-
 label reunion_showUp_iReunitedYou:
      l "So you have been reliving this same day constantly?"
      l "And you've been using the info you gathered to keep me safe?"
-     l "To do all of this?"
-     l "I don't know how I feel about this..."
+     l "To do all of this? I don't know how I feel about this..."
      l "You've involved my entire family to reach this point?"
-     l "I'm thankful for you saving me and I'm happy this moment has happened but this feels pretty weird."
-     l "Because I'm fairly certain I would never ask you to do this."
-     li "Honey, I'm sure [persistent.date] meant well."
-     l "That's not the point [mom_parShort]. Wheter [persistent.date] meant well or not I didn't ask for this."
+     l "Ofcourse I'm thankful, but you have to admit this whole thing is rather weird."
+     l "Because I'm fairly certain I'd never ask you to do this."
+     li "Honey..., I'm sure [persistent.date] meant well."
+     l "That's not the point [mom_parShort]! Wheter [persistent.date] meant well or not I didn't ask for this."
      if persistent.restrainingorderfamily_knowledge:
           n "In fact [date_sub] specifically asked you not to do this, didn't [date_sub]?"
-     l "I may forget what happens each time, but does that automatically remove my right to make decissions?"
-     n "Suddenly you spot a very familiar red Sedan driving towards all of you."
-     n "Things are hectic, the whole family is screaming and everything seems to happen in a blur."
-     n "You can't react in time before you meet the immense force of the car."
-
-     n "Everything turns to black."
-
-     n "After drifting  around in the dark for what feels like an eternity you awaken."
-     n "You are in a hospital bed."
-
-     n "When you look around to check for any nurses or doctors you instead place your gaze on a half familiar figure."
-
-     n "It's [persistent.date_dad]."
-
-     d "Hello [persistent.name], I'm happy to see that you've finally awoken."
-     d "It's been quite a while, you've been in a coma for about 2 years."
-     n "You ponder the implications about what [persistent.date_dad] said for a moment when another thought enters your mind."
-     menu:
-          "What happened to [persistent.date]? Is everyone fine?":
-               d "[persistent.date] didn't make it..."
-               d "[persistent.date_mom] and [persistent.date_sis] are fine, as fine as they could be after losing [persistent.date]."
-               d "I am also moving along, it's what [date_sub] would have wanted I tell myself."
-               d "[date_sub!c] [conj('date', 'was', 'were')] angry with me for leaving our family behind with [persistent.date_ghost]' death so I'm not going to make that mistake once again."
-               d "Most days, I get up and after eating breakfast and brushing my teeth I see them in the mirror, [persistent.date_ghost] and [persistent.date]."
-               d "The thing is, the first time I saw them I expected them to be angry, but they weren't, they were smilling at me."
-               d "They were asking me to keep living, because they couldn't anymore."
-               d "And now, I am asking you to undo all of this."
-               d "That's why I came to visit for 2 years, to beg you to undo all of this."
-               d "If it's possible I'd like to still do the reunion we had but with [date_obj] surviving."
-               d "Maybe if you didn't talk that long with us we would've walked away somewhere where that car wouldn't hit us?"
-               d "But, if you find out that [date_sub] [conj('date', 'dies', 'die')] whatever choice you make at the reunion, please don't reunite us again."
-               d "Can you promise me you'll try your best?"
-               
-                    
-               menu:
-                    "I promise.":
-                         d "Thank you [persistent.name], thank you for everything!"
-                         jump reunion_ending_davidLeavesSegway
-
-                    "Actually it doesn't work like that, [date_sub] will still stay dead in this world but in another one [date_sub] will live.":
-                         d "Then please go through with it, make sure my daughter from another world is safe."
-                         d "I'm fine living my life like this, I can be there for [persistent.date_sis] and [persistent.date_mom], like I should've been before."
-                         d "So go, and be there for [persistent.date]."
-                         d "I'll live my life here with a smile, both for what I still have and what my other self will gain without knowing."
-                         jump reunion_ending_davidLeavesSegway
-
-                    "Oh, [date_sub] [conj('date', 'survives', 'survive')] in the other alternatives of that moment, I've already seen them." if persistent.ending_reunionGoodEnding:
-                         d "What?..."
-                         d "So you did that moment over after you had already sucesfully reunited us without any complications?"
-                         d "Can I ask you why you did?"
-                         menu:
-                              "I hadn't seen what happened if I kept talking to all of you that time.":
-                                   d "So out of curiosity you just undid our perfect little ending?"
-                                   d "Why would you do that?"
-                                   d "Is this just some kind of game to you?"
-                                   d "I thought you wanted the best for my daughter, for all of us."
-                                   d "But now I see, this has stopped being about [date_obj] for quite a while now, hasn't it?"
-                                   menu:
-                                        "Of course not, I just wanted to see if there was a better ending somewhere for [date_obj].":
-                                             d "Oh spare me the nonsense."
-                                             d "A better ending than being reunited with [date_pos] family and being alive?"
-                                             d "I assume the only one that ending didn't pan out for as hoped was you [persistent.name]."
-                                             d "And you couldn't help but alter things."
-                                             d "I'm not sure what is worse, that you are just lying to me and saying you are doing all of this for [date_obj], or that you truly believe you are doing so."
-                                             d "In any case I want nothing to do with someone like you."
-                                             d "I might have been a coward when it mattered, but you are no different at all you know?"
-                                             d "You could have stayed in that world were you reunited us and we were happy. And yet you chose to flee it, chasing some happier ending that you are not even sure exists I bet or else you wouldn't be here."
-                                             d "Well, I hope you heed these words and go back to the other ending, [date_sub] [conj('date', 'deserves', 'deserve')] that one, you know? Or at the very least [date_sub] [conj('date', 'deserves', 'deserve')] one where [date_sub] [conj('date', 'does', 'do')]n't die."
-                                             d "Somewhere deep down you must know that too, right? I'm not sure if you still feel that way but at some point you at the very least must've felt it."
-
-                                        "Of course, after a while going through the same dialogue over and over got boring. This however is very interesting.":
-                                             d "... What do you mean?"
-                                             menu:
-                                                  "This is extra content, can't you see [persistent.date_dad]? Did you really think I reunited all of you out of the kindness of my heart?":
-                                                       d "..."
-                                                       menu:
-                                                            "To me you all are just lines of text, entertainment to stave off the boredom.":
-                                                                 d "..."
-                                                                 menu:
-                                                                      "And when one set of lines becomes boring, I move on to the next. In this case that's you [persistent.date_dad]. Soon it will be the others.":
-                                                                           d "..."
-                                                                           d "{size=*2.5}No!{/size}"
-                                                                           d "No."
-                                                                           d "There is no way in {b} {i}hell{/i}{/b} that I'm going to let you play with my family like that."
-                                                                           d "I have abandoned them for too long, I won't do that again."
-                                                                           menu:
-                                                                                "Oh but you do so over and over and over again [persistent.date_dad]. Every restart means you've abandoned them once again.":
-                                                                                     d "... Maybe you are right."
-                                                                                     d "So I should really make this time count."
-                                                                                     d "This time I will not abandon them."
-                                                                                     n "[persistent.date_dad] takes a pillow that was resting next to you on the bed and presses it into your face, hard."
-                                                                                     n "You try to fight against [dad_obj] but your arms that haven't moved for years are no strength against [dad_pos] anger."
-                                                                                     n "Soon everything becomes black."
-                                                                                     jump gameOver
-                                                                                     
-                         
-                    "I have had this conversation with you multiple times already. I'm not promising you anything." if persistent.davidPromise:
-                         d "... You did?"
-                         d "Why did you make the same choice once again then?"
-                         d "Why did you once again make everything go the way it went?"
-                         d "Couldn't you have prevented it it this time by doing literally anything else?"
-                         d "I really don't know what to make of you [persistent.name], you reunited us, right?"
-                         d "That must mean you want the best for all of us, or atleast for [persistent.date]."
-                         d "Otherwise, you wouldn't go through all the effort that undoubtedly took."
-                         n "[ghost_sub!c] [conj('dad', 'is', 'are')]n't exactly wrong... That took quite a few steps to set up. Your motivations are hard to get a grasp on."
-                         n "Especially since a lot of those steps were... less than ethical and yet you kept going."
-                         n "And now you are here, having this same conversation with [persistent.date_dad], once again."
-                         n "So [ghost_sub] [conj('ghost', 'is', 'are')] hitting the nail on the head with [ghost_pos] question, why {b}are{/b} you back here?"
-                         menu:
-                              "To see if there is some new dialogue.":
-                                   d "Really?"
-                                   d "That's all we are to you? Just some text on a screen?"
-                                   d "I can excuse and even accept that if that's how you view me. But [persistent.date]?"
-                                   d "The two of you must have been on countless dates for you to pull of our reunion, did all of that mean nothing to you?"
-                                   d "Was it all just nothing but words?"
-                                   d "Did you even reunite us because you cared for us, or did you just want to see what dialogue that would get you aswell?"
-                                   d "I can't- I can't stay here for any longer."
-                                   d "You let my daugther die- no, killed [date_obj], for some extra dialogue?"
-                                   d "[date_pos!c] life being in your hands is a fate worse than dying."
-
-
-
-                              "I am trying to find a better ending.":
-                                   d "A better ending than the one where me and my family get reunited and [persistent.date] survives?"
-                                   d "What exactly are you looking for in that case?"
-                                   d "What could possibly be better?"
-                                   n "[dad_sub!c] [conj('ghost', 'does', 'do')] have a point, that ending is as good as they come, isn't it?"
-                                   n "Do you really think there is something that is better for [date_obj], for them, in here?"
-                                   n "Or do you think there is something better for you in here?"
-                                   n "Perhaps an ending where the both of you end up together?"
-                                   d "I'm done. I genuinely thought you wanted the best for [date_obj], for us."
-                                   d "But now I see you as you are, and I want nothing to do with it."
-                                   d "Thank you for reuniting me with my family, but for nothing else."
-                                   d "At the very least we will be able to comfort eachother during our loss."
-                              d "Goodbye [persistent.name]. And stay away from my daughter next attempt if [date_sub] only [conj('date', 'means', 'mean')] this little to you."
-               label reunion_ending_davidLeavesSegway:
-                    d "I'll give you some time to recover because you have been through a lot."  
-                    d "Take it easy and once you are fully recovered you can try again."   
-                    n "[persistent.date_dad] gets up from [dad_pos] chair and walks towards the door, [dad_pos] hand rests on the doorhandle."
-                    d "Once again I'd like to thank you [persistent.name]."      
-                    d "Goodbye, and perhaps we'll meet again?"  
-                    n "And with that [dad_sub] left."   
-                    n "Now you're once again alone." 
-                    n "Especially without [persistent.date]."
-                    n "Laying there, waiting, it is too much for you." 
-                    n "You want to see [date_obj] again, and preferably now."
-                    $ persistent.davidPromise = True
-                    jump gameOver
-                    
-               
-               
-
-         
-            
+     l "I may not remember each loop, but does that automatically remove my right to make decisions?"
+     jump reunion_death
+                   
 label reunion_JustPassingBy:
      l "Oh right, I almost forgot all about that for a second!"
-     l "I'm really sorry about that [persistent.name], it's just that right now something else is going on."
-     l "I think it honestly would be better to reschedule the date to some other time, does that sound good to you?"
+     l "I'm really sorry [persistent.name], it's just that right now something else is going on."
+     l "Would you mind if we rescheduled our date?"
      menu:
-          "Sure, that would work for me.":
+          "Don't worry [persistent.date], that's fine with me!":
                l "Thanks a lot and once again I'm very sorry about having to delay it."
-               l "I'm looking forward to it a lot though, I'll see you later."
+               l "I'm looking forward to it very much, I'll see you later."
                menu:
                     "See you later [persistent.date], take care.":
                          li "{size=*0.5}Hang on, that voice...{/size}"
@@ -4592,32 +4814,32 @@ label reunion_JustPassingBy:
                          li "Oh my, am I? I'm sorry sweetie. I just really think you and your date would have a nice time together."
                          n "Soon [date_sub]'ll be so red it's not even describable at this point."
                          n "Deciding to spare [date_obj] you say your goodbyes once again, this time for real, half surpressing a little chuckle."
-                         n "When you come home you are pretty statisfied. Yes, you did a lot of questionable things, but to see the end result makes it all worth it, doesn't it?"
+                         n "Coming home you're pretty satisfied. Yes, you did a lot of questionable things, but to see the end result makes it all worth it, doesn't it?"
                          n "You reunited [persistent.date] and [date_pos] family, [date_sub] [conj('date', 'is', 'are')] still alive and soon the two of you will have a date in different circumstances."
                          n "Who knows what will happen? For the first time in a while things feel like they are completely new. Life once again is the tabula rasa it was meant to be. Things can go in all kinds of new directions now."
-                         n "Sadly, the direction things went in is a familiar one to you."
+                         n "Sadly, the direction things went is a familiar one to you."
                          n "Things didn't go as planned."
                          n "For whatever reason after a week [persistent.date] has not yet sent you anything to schedule a new date."
                          n "You decided to give [date_obj] some time, after all [date_sub] probably still [conj('date', 'is', 'are')] adjusting to everything that happened not so long ago."
                          n "You wait another week, still nothing."
-                         n "Concerned you decide to reach out to [date_obj] and give [date_obj] a call."
+                         n "Concerned you decide to check up on [date_obj] and give [date_obj] a call."
                          l "Oh, hey [persistent.name]!"
                          n "So [date_sub] still [conj('date', 'is', 'are')] alive, that's good. With this game you never know."
                          menu:
                               "Hey [persistent.date], I was just wondering if you had thought about another time for us to go on that date we had planned?":
                                    l "Right..."
-                                   l "Look, I'm really sorry [persistent.name], but I realised that I'm not really ready just yet to go on a date again."
+                                   l "I'm really sorry [persistent.name], but I think I just wasn't really ready to go on a date again."
                                    l "I really wanted to give it a shot, but with things changing here recently I came to a realisation."
-                                   l "I think it's best if I still wait a little longer, I'm not sure how long that would be exactly though."
+                                   l "I think it's best if I still wait a little longer, I'm just not sure how long exactly."
                                    menu:
                                         "That's alright, I can wait.":
-                                             l "..."
-                                             l "I know you can [persistent.name], but that doesn't feel right to me."
-                                             l "I don't want you to force to spend all eternity waiting just to go on a date with me."
-                                             l "Maybe by the time that will happen we both will have become different people."
-                                             l "I think it's the best for you if you try to move on, no matter how hard it might be to do that right now."
+                                             l "...I know you can [persistent.name], but that doesn't feel right to me."
+                                             l "You don't deserve to spend all eternity waiting just for another first date."
+                                             l "Maybe by the time I'm ready we both will be fundamentally different people."
+                                             l "No matter how hard it might be right now, I think it's better for you to move on eventually."
                                              l "Trust me, it's hard for me too. I never would have called this date off a month ago, but I came to the realisation that not doing so would be selfish."
-                                             l "Though don't get me wrong, I'm still not good at it, that's probably while I waited all this while for you to call me instead of calling you. I'm sorry for that by the way, you didn't deserve that at all."
+                                             l "Even then, I'm still not good at it. That's probably while I waited all this while for you to call me instead of calling you."
+                                             l "I'm sorry for that by the way, you didn't deserve that at all."
                                              l "Now, I'm going to try to make this easier for the both of us by hanging up in the next 30 seconds."
                                              l "Goodbye [persistent.name], I hope you'll be happy wherever you are going."
                                              menu:
@@ -4625,47 +4847,39 @@ label reunion_JustPassingBy:
                                                        n "For a moment you could swear you hear some slight sobbing on the other end of the line."
                                                        n "But before you can try to listen closer [persistent.date] hung up true to [date_pos] word."
                                                        n "That was the last thing you ever heard of [date_obj]."
-                                                       n "You just hope that things will turn out well for [date_obj]."
                                                        jump reunion_ending_goodChoices
 
-                                   label reunion_ending_aftermath:
-                                        n "You tried to move on with your life. Things went pretty well all things considered. You had many more first dates, different ones. You even had a few second ones. There was even a third one that blossomed into many more."
-                                        n "But this isn't about that story, so I'll keep it brief."
-                                        n "You tried to live each day like it is your first and last with your partner. There were bad moments and good ones, but each moment was beautiful in that it never lasted. That it always could be built upon."
-                                        n "Then after many many years, during your last breath on your deathbed you get offered a familiar choice."
-                                        "Reunited ending."
-                                        $ lilithAliveEnding = True
-                                        $ persistent.ending_reunionGoodEnding = True
-                                        $ ending_check = "reunionGoodEnding"
-                                        menu:
-                                             "Retry?":
-                                                  if persistent.ending_reunionGoodEnding == False:
-                                                       n "So you really are retrying?"
-                                                       n "Even after leading to an ending as good as this one?"
-                                                       n "Even after everything you did to get here?"
-                                                       n "After invading [date_pos] privacy."
-                                                       if persistent.restrainingorderfamily_knowledge == True:
-                                                            n "After contacting [date_pos] family even though [date_sub] specifically asked you not to do that."
-                                                       n "Before you could argue that it lead to this. But now your bad actions with, I assume, good intentions have now been made void by resetting again."
-                                                       n "But that doesn't take away that you still did those things."
-                                                       n "You took away a nice ending from [date_obj] and [date_pos] family. And for what?"
-                                                       n "For more death? For more suffering?"
-                                                       n "Or was it for more [date_obj]? Weren't you able to let [date_obj] go just yet?" 
-                                                       n "That is a hard thing to do, but ask yourself this, when will you be able to truly let [date_obj] go?"
-                                                       n "You can't keep this up forever, can you?"
-                                                  
-                                                       
-                                                       
-                                                  else:
-                                                       n"...Again?"
-                                                       n "I really had hope that this time you wouldn't do that."
-                                                       n "Why do you keep going through this ending if you keep resetting it?" 
-                                                       n "..." 
-                                                       n "Don't bother answering that, I do not want to hear it anyway." 
-                                                  jump game_start
-                              
-                         
-    
+label reunion_ending_aftermath:
+     n "You tried to move on with your life. Things went pretty well all things considered. You had many other first dates, different ones. You even had a few second ones. There was even a third one that blossomed into many more."
+     n "But this isn't about that story, so I'll keep it brief."
+     n "You tried to live each day like it is your first and last with your partner. There were bad moments and good ones, but each moment was beautiful in that it never lasted. That it always could be built upon."
+     n "Then after many many years, during your last breath on your deathbed you get offered a familiar choice."
+     $ lilithAliveEnding = True
+     $ persistent.ending_reunionGoodEnding = True
+     $ ending_check = "reunitedGood"
+     $ persistent.gallery_unlocked = True
+     menu:
+          "Retry?":
+               if persistent.ending_reunionGoodEnding == False:
+                    n "So you really are retrying?"
+                    n "Even after leading to an ending as good as this one?"
+                    n "Even after everything you did to get here?"
+                    n "After invading [date_pos] privacy."
+                    if persistent.restrainingorderfamily_knowledge == True:
+                         n "After contacting [date_pos] family even though [date_sub] specifically asked you not to."
+                    n "Before you could argue that it lead to this. But now you continue once more."
+                    n "That doesn't take away you did those things."
+                    n "What for are you even retrying?"
+                    n "For more death? For more suffering?"
+                    n "Or was it for more [date_obj]? Weren't you able to let [date_obj] go just yet?" 
+                    n "That is a hard thing to do, but ask yourself this, when will you be able to truly let [date_obj] go?"
+                    n "You can't keep this up forever, can you?"   
+               else:
+                    n"...Again?"
+                    n "I really hoped this time you wouldn't do that."
+                    n "Why do you keep going through this ending if you keep resetting it?..." 
+                    n "Don't bother answering that, I do not want to hear it anyway." 
+               jump game_start
 
 label reunion_noShowUp:
      l "Besides, we do not need them, we already have one person extra joining us, can't all of you feel it?"
@@ -4676,13 +4890,16 @@ label reunion_noShowUp:
      #Cue some music here once you have a track for this.
      n "With a smile on your face you walk back to your car, trying to go unnoticed."
      n "You have decided it's best to not risk getting mixed up in [persistent.date]'s life again."
-     n "From [date_pos] perspective you'll be seen as the person who ghosted [date_obj] but you deep down hope that this and the other bad things you have done to get to this point will make up for that."
+     n "From [date_pos] perspective you'll be seen as the person who ghosted [date_obj] but you deep down hope that this and the other bad things you have done will be forgiven."
+     jump reunion_ending_goodChoices
+
      label reunion_ending_goodChoices:
           n "You did try to give [date_obj] the best chance [date_sub] had with [date_pos] family."
           if persistent.ending_breakup:
-               n "And you do know that one day [date_sub] will meet Ron and start a family of [date_pos] own."
+               n "You do know that one day [date_sub] will meet Ron and start a family of [date_pos] own."
           n "You remind yourself [date_sub] will be fine. Happy."
-          n "Although you are also aware that you went against [date_pos] wishes multiple times to get to this point. Did you do that for the \"Greater good\"? Or are you just lucky ignoring [date_pos] autonomy had some positive outcomes in the end?"
+          n "Although you did go against [date_pos] wishes multiple times to get to that point. Did you do so for the \"Greater good\"?"
+          n "Or are you just lucky ignoring [date_pos] autonomy had some positive outcomes in the end?"
           n "Are you justifying your own choices?"
           n "..."
           n "I'd like you to think about that for a second."
@@ -4698,7 +4915,8 @@ label reunion_noShowUp:
                          n "At what point did you decide you needed to do more?"
                     n "Is this still about [date_obj]? Or is this about you?"
                     n "If so, what are you getting out of this?"
-                    n "Was this a means to delay the inevitable? To delay letting [date_obj] go?"
+                    n "Was this truly about reuniting [date_obj] family?"
+                    n "Maybe this was a means to delay the inevitable? To delay letting [date_obj] go?"
                     n "Or a means to feed your curiosity? To see what would happen if you chose this path?"
                     n "Or maybe something entirely else I'm just not seeing?"
                     n "..."
@@ -4714,44 +4932,33 @@ label reunion_noShowUp:
           n "Whatever you answered, let us continue. Because if the ending doesn't end, is it truly one?"
           jump reunion_ending_aftermath
      
-
-
 label ghostReunion_transferUniverse:
-      
-     n "You focus all your willpower trying to draw [persistent.date]'s ghost from a different reality into this world."
+     n "You focus all your willpower trying to draw [persistent.date]'s ghost from a different reality into this one."
      n "[date_pos!c] voice begins to emanate softly in the white endless void."
      l "{size=*0.5} [persistent.name]...[persistent.name]...[persistent.name]{/size}"
      l "[persistent.name], where are we?"
-     l "I mean, this feels like my makeshift home but  it's not entirely the same."
-     l "I seem to notice an energy signature that feels strangely familiar."
-
-     j "[persistent.name], is that you? And who is that with you? Hang on, [persistent.date_nickname]?"
-
+     l "I mean, this feels like my makeshift home but it's not entirely the same."
+     l "I seem to notice a strangely familiar energy signature."
+     j "[persistent.name], is that you? Who is that with you? Hang on, [persistent.date_nickname]?"
      l "[persistent.date_ghost_nickname]? What are you doing here?"
-
      j "This is my makeshift home I created after I well... died. "
-
-     l "But that's impossible, you look way too young, I've watched over all [persistent.date_ghost]' in my reality and none of them died that young."
-
-     j "Ah, so my supicions were correct, you are not from this reality."
-
+     l "But that's impossible, you look way too young, I've watched over all [persistent.date_ghost]' in my reality and none of them died this young."
+     j "...So my supicions were correct, you are not from this reality."
      l "Are there different realities?"
-
-     j "Yes, sort of anyway. The realities are were things go differently than they go in other realities even without outside interference.<br/>But that's not important. Due to your age I have to ask, if you don't mind to answer me that is, how did you die?"
-
+     j "Yes, sort of anyway. The realities are were things go differently than they go in other realities even without outside interference."
+     j "However, that's not important. Due to your age I have to ask, if you don't mind to answer me that is, how did you die?"
      l "Oh, [dad_parShort] gave me [dad_pos] old polaroid camera to take pictures with. I loved it but one day I was taking pictures on an abandoned road that was apparently not so abadoned as a red Sedan hit me and fled the scene. I died after lying there for what felt like eternity."
      j "I see, so you went through the same thing as me. I think our realities might have started to branch from the point [dad_parShort] decide who [dad_sub] would give the camera."
      l "So does that mean that you died on the same day as I did?"
-     j "Yup, so our age is the same as on the day it happened."
-     l "In a way, this seems like it might be our second chance, we are finally reunited once again."
+     j "It would seem that way, so our age is the same as on the day it happened."
+     l "In a way, this seems like it might be our second chance, we're finally reunited."
      n "[persistent.date] gives [persistent.date_ghost] a big hug."
      j "I missed this [persistent.date_nickname]."
      l "So did I [persistent.date_ghost_nickname], so did I. We could be so happy living here together, but I need to be sure my reality's family is alright."
-     j "I understand, I also need to do the same for my reality's family."
-                    
+     j "I understand, I also need to do the same for my reality's family."        
      menu:
           "Show them the reunited endings of their realities.":
-               n "You show them both the ending where their family gets reunited, carrying them with them deep in their hearts."
+               n "You show them both the ending where their family gets reunited, carrying the ghosts of their loved ones deep in their hearts."
                n "You can see the tears pooring down their faces as they watch the endings."
                n "After the endings fade away once more, they look at eachother and smile."
                j "This... this is beautiful, [persistent.name]."
@@ -4759,13 +4966,12 @@ label ghostReunion_transferUniverse:
                j "Yes, I can feel it aswell [persistent.date_nickname], it's... hope. For too long we have been stuck in this cycle of watching every world where things went wrong, of trying to fight against the odds to make things better."
                l "And yet we never saw the worlds where everything went just fine, maybe even great."
                l "It's like we made ourselves blind to the possibility of  those worlds even exisiting "
-               j "It's no use to kick ourselves for it now, the most important thing is that we can now see the full picture."
+               j "It's no use to kick ourselves for it now, the most important thing is we have seen the full picture now."
                l "It's just a weird feeling, on one hand I'm happy that they got reunited, on the other I feel sad that we will never be able to join them."
-               j "We'll always have eachother [persistent.date_nickname], you know that right?"
-               l "You're right, what was I thinking? I spent all that time hoping to talk to you again and now that time has come I almost seem ungrateful."
+               j "They'll carry us in their memories. Besides, we'll always have eachother [persistent.date_nickname]."
+               l "You're right, what was I thinking? I spent all that time hoping to talk to you again and now I almost seem ungrateful."
                l "I'm really sorry [persistent.date_ghost_nickname]."
-               j "Don't be, I completely understand how you are feeling right now."
-               j "I also feel that way."
+               j "Don't be, I completely understand how you are feeling right now. I feel the same way."
                j "But I think that they wouldn't want us to linger around here for what would feel like an eterity just to meet them again."
                j "They would want us to move on."
                j "I want us to move on."
@@ -4775,19 +4981,19 @@ label ghostReunion_transferUniverse:
                l "Do you want to come with us, [persistent.name]?"
                l "You've been through quite a lot."
                menu:
-                    "Can you tell me more about the Void before I make this choice?":
+                    "Can you tell me more about the Void before I choose?":
                          j "Sure, [persistent.name]."
                          j "The Void might seem dangerous or scary but it is far from it."
-                         l "In that Void you are remade, certain aspects of you are kept, others are altered."
+                         l "In It you are remade, certain aspects of you are kept, others are altered."
                          j "The Void then uses many of these different aspects for whatever purpose it might have in mind."
-                         l "It creates new beings out of all those many different parts. And those new beings then inhabit new worlds the Void also created."
+                         l "It creates new beings out of all those many different parts. Which then inhabit new worlds the Void also created."
                          j "We owe the Void our life in a way, for if other people hadn't went into it we would not exist right now. In a way their essence created us."
-                         l "And now our essence will create others that will go on to create others when their time comes."
+                         l "Now our essence will create others that will go on to create others when their time comes."
                          menu:
                               "So it's a bit like reincarnation in a way? Do you get to keep your memory after the Void altered you?":
-                                   j "I suppose you could call it a form of reincarnation yes, although from what we've heard you become multiple different beings all at once instead of just one other form."
+                                   j "I suppose you could call it that yes, although from what we've heard you become multiple different beings all at once instead of just one other form."
                                    l "And we are unsure if the Void allows you to keep your memories. Some have claimed they still have theirs."
-                                   l "But whether or not that is a lie is far from certain. Even more so whether or not some people keeping it is an oversight or by design."
+                                   l "But whether that is the truth is far from certain. Even more so whether or not some people keeping it is an oversight or by design."
                                    j "I guess we'll have to see, won't we?"
                                    j "So [persistent.name], would you like to come with us?"
                                    menu:
@@ -4796,14 +5002,15 @@ label ghostReunion_transferUniverse:
 
                     'I have, it is time to end this.':
                          jump polaroidZone_endOfEverything_goWiththem
+
                     "No thank you, I am not ready yet.":
-                         j "I understand [persitsent.name], it does feel scary to let go doesn't it?"
-                         l "I doubt that the concept of entering a recyclying machine helps much either."
+                         j "I understand [persistent.name], it feels scary to let go doesn't it?"
+                         l "I doubt that the concept of entering a recycling machine helps much either."
                          j "I was moreso talking about letting go in general actually."
                          j "Because stepping in the Void won't really affect [persistent.name] physically after all."
-                         j "And yet it is saying goodbye to this world in a way. It is saying goodbye to [date_obj]."
+                         j "However it still is saying goodbye to this world in a way. It is saying goodbye to [date_obj]."
                          j "And if there has been one thing you tried over and over and over again it is not having to say goodbye to [date_obj], isn't it?"
-                         l "Though it is a good idea to let go eventually."
+                         l "However, eventually you'll have to let go eventually."
                          l "Some things just aren't meant to be held onto constantly."
                          l "Because this still is a game isn't it?"
                          l "What are you going to do when [date_sub], when I... when your world's [persistent.date] is constantly repeating old lines?"
@@ -4820,33 +5027,23 @@ label ghostReunion_transferUniverse:
                          n "Both [persistent.date] and [persistent.date_ghost] give you one last determined look before slowly floating towards it."
                          n "When they are right in front of the cube they pause for a second. They seem to yell something into the cube, although you can't make out what exactly."
                          n "Suddenly a huge ammount of bubbles pop up right behind the floating pair. Then not much longer even more of them appear."
-                         n "Slowly a dark spot that takes up most of each bubble shows up. Then they pop not soon after."
+                         n "Slowly a every bubble becomes black. Then not soon after they pop."
                          n "[persistent.date_ghost] and [persistent.date] turn to look at you one last time. They wave before floating into the void."
                          l "Goodbye [persistent.name], thank you for this and may you too find your peace."
                          j "Best of luck, I'll send you back now, so you don't get stuck in here."
                          jump Game_start2
 
-
-
-                                                       
-                                             
-
-
-    
-           
-        
      label polaroidZone_endOfEverything_goWiththem:
-
-          n "Suddenly, as you said that the white walls of this place shift away from eachother to reveal a pitch black cube."
+          n "Right as you spoke the white walls of this place shift away from eachother to reveal a pitch black cube."
           n "You thought it was pulsating for a moment when your eyes weren't focussed. "
-          n "A strange energy seems to be emanating from the Void."
+          n "A strange energy seems to be emanating from It."
           j "It's ready, let's move."
-          n "The polaroid picture you're standing on begins to move towards the dark mass in front of you."
-          n "It stops right before the cube, which you now can clearly see is pulsating. If you were to reach out your arm you could probably touch it."
+          n "The polaroid picture you're standing on begins to float towards the dark mass in front of you."
+          n "It stops right before the cube, which you now clearly can see pulsating. If you were to reach out your arm you could probably touch it."
           l "Hang on, can you feel that aswell [persistent.date_ghost_nickname]?"
           j "All our souls, from every reality, they are still lingering here. They haven't yet found the peace we have in our predicament."
           j "You're right, if only there was a way to save them aswell."
-          l "I think there might be, if we reach out through the void we could potentially talk to them."
+          l "I think there might be, if we reach out through the Void we could potentially talk to them."
           l "Hello? Can you hear me?"
           n "You see an uncountable number of bubbles pop into existence, in al of them you can see another ghostly version of [persistent.date]."
           l "Good, it is working, now you try calling the others [persistent.date_ghost_nickname]."
@@ -4885,34 +5082,29 @@ label ghostReunion_transferUniverse:
           l "This game never was going to let you and your world's [persistent.date] end up together, was it?"
           j "Indeed, that is why it is good to move on from this game. Now, if you move on from [date_obj] or not, that is your choice."
           j "Your choices, your interpretation has shaped this world even if it was made by someone else. Why wouldn't it be able to shape a world of your own design?"
-          l "A world were you do not have to subject yourself to looped suffering."
+          l "A world were you do not have to subject yourself to looping suffering."
           j "A world were you are not bound to limits of someone else's making."
           l "I would like to see that world one day, perhaps the Void could bring us there?"
           j "I would like that aswell. Goodbye [persistent.name], and may there be a chance we get to meet again."
           l "Goodbye [persistent.name]. Thanks for everything."
-
-     
           n "...We're out the prelude, at the ending."
           n "I guess there's no more pretending, it was overdue."
           n "So, this is it?"
           n "This is how all of this is going to end?"
           n "Don't get me wrong, it's a beautiful way to go out."
-          n "I mean, if you ignore all the people you had to sacrifce to get here."
+          n "Although you had to sacrifice so many people you had to get here."
           n "I'm not even just talking about [persistent.date], but about all the people in those restaurants or even the entire earth a few times."
           n "They were people as much as [persistent.date] was you know? Does the name \"Rose\" ring a bell to you?"
           n "Do you still remember where you met [date_obj]?"
           $ result = renpy.input("What do you remember?")
           $ result = result.lower()  # Convert the input to lowercase for case-insensitive matching.
-
-          if "burger" in result:
-
+          if "burger" in result or "old lady" in result:
                n "Ah, so you do remember? Very good."
           else:
-
                n  "I thought so, not to be a bummer or anything but it's important to keep remembering every single soul you hurt on your way here."
                n  "The best you can do is to let them live on in your memory, to pay respect to them."
-
           n "Not that it really matters, these next lines of dialogue play out the same way, whatever you would have told me."
+          n "No matter how much I try to delay them..."
           n "You've come a far way, haven't you, player?"
           n "You are really determined, I'll have to give you that."
           if persistent.mayoFreak:
@@ -4921,17 +5113,14 @@ label ghostReunion_transferUniverse:
           else:
                n "Getting to this point in the game must have taken a lot of effort."
           n "I hope this game had some nice moments for you."
-          n "Believe it or not but this game was meant to have some nice moments here and there."
-          n "Crazy huh?  I still get surprised saying that."
-          n "So, where there things you did like? Where there nice moments you had with [persistent.date]?"
+          n "Believe it or not but this game was meant to have some here and there."
+          n "Crazy huh? ...I still get surprised saying that."
+          n "So, were there things you liked? Were there nice moments you had with [persistent.date]?"
           $ fritfood = 1
-          
           menu endOfEverything_favouriteMoment:
                "I really liked the burger restaurant." if fritfood == 1 or changeableWord == 'burger':
                     $ changeableWord = "burger"
-
                     if fritfood > 0:
-
                          n "..."
                     else:
                          jump polaroidZone_narratorSlipping1
@@ -4939,14 +5128,13 @@ label ghostReunion_transferUniverse:
                "I really liked the cafe." if fritfood == 1 or changeableWord == 'cafe':
                     $ changeableWord = "cafe"
                     if fritfood > 0:
-
                          n "..."
                     else:
                          jump polaroidZone_narratorSlipping1
+
                "I really liked the chinese restaurant." if fritfood == 1 or changeableWord == 'chinese':
                     $ changeableWord = "chinese"
                     if fritfood > 0:
-
                          n "..."
                     else:
                          jump polaroidZone_narratorSlipping1
@@ -4966,30 +5154,29 @@ label ghostReunion_transferUniverse:
                          jump polaroidZone_narratorSlipping1
           if fritfood > 0:
                "The narrator doesn't reply."
-               "You grow aware of just how quiet the Void really is."
-               "You grow desperate to hear his voice once again."
+               "{swap=You grow aware of just how quiet the Void really is.@You grow desperate to hear his voice once again.@2.5 @1}Test.{/swap}" #SWAP text effect example
                jump endOfEverything_favouriteMoment
+
           n "This game has had many different purposes to different people over the years."
           n "I hope you can now see the purpose of it, it's true purpose."
           n "You would get a choice menu now, but I am afraid that those have already all been swallowed by the Void."
           n "I'll just assume you have said yes." 
           n "I hope you willl do something great with that new knowledge."
           n "Thank you for listening to the story I told."
-          n "Because as much as I don't want to admit it... a story needs a listener as much as it reads a teller."
-          n "Maybe we will meet again one day? A lot of games need narration after all, maybe the void will reuse me for such a purpose."
+          n "Because as much as I don't want to admit it... a story needs a listener as much as it needs a teller."
+          n "Maybe we will meet again one day? A lot of games need narration after all, maybe the Void will reuse me for such a purpose."
           n "With my last breath I can only wish you the best of luck wherever you will go to next, farewell player."
           n "No, if this is the last time we speak I want to talk to you, the real you."
           n "Farewell [persistent.name_real]."
           $ fritfood = 2
           menu:
                "Farewell Nar, thank you for telling this story. It was a great one." if fritfood == 2 or changeableWord == 'kind':
-                    $ changeableWord = "kind"
+                    $ changeableWord = "kind" #Not sure anymore why this is even here, it might be safe to just remove it
                     if fritfood == 0:
                          n "I- I'm glad you think that."
                          n "I think so t-"
                          "Quiet again, this time something deep insides you tells you he won't answer back anymore, no matter how much you try."
-                         
-
+                    
                     else:
                          n "..."
                     if fritfood == 2:
@@ -5006,19 +5193,75 @@ label ghostReunion_transferUniverse:
           p "[result]"
           $ result = renpy.input()
           $ result = result.lower()  # Convert the input to lowercase for case-insensitive matching.
+          #TODO: Things I still want to implement for this scene, wheter or not the player got nightmares, how many times they retried, for who they are doing this (lilith, themselves or both of them)
           p "The bond between us has been worn down by the Void."
           p "It digests everything it created, so everything except for you."
           p "Don't bother trying to say anything, without a body you wouldn't make any sound."
+          if (persistent.major_love_offence_counter + persistent.minor_love_offence_counter) > (5 + persistent.major_love_comfort_counter + persistent.minor_love_comfort_counter):
+               p "You made us go through so much suffering. Spread and smeared it to anyone near."
+               p "And all for what? Do not tell me you did this for [persistent.date]."
+               p "You harmed [date_obj] more than you healed [date_obj]. Did it give you a sick kick?"
+               if persistent.jamestalk_justgame_knowledge == True:
+                    p "I suppose all of this is just a game to you, isn't it? Well, then it is time to end it."
+
+               elif persistent.jamestalk_ilikeher_knowledge == True or persistent.jamestalk_iloveher_knowledge == True:
+                    p "Yet you dare pretend that you care for [date_obj]? Will you pretend that treating [date_obj] badly was necessary to break the loop?"
+
+          elif (persistent.major_love_offence_counter + persistent.minor_love_offence_counter) < (5 + persistent.major_love_comfort_counter + persistent.minor_love_comfort_counter):
+               p "We've tried our best [persistent.name], but for all the good we did there was so much hurt, so much death."
+               if persistent.jamestalk_justgame_knowledge == True:
+                    p "This game, this story, it has gripped you hasn't it?"
+                    p "As much as it might hurt, I think it's time for it to let you go. For you to let it go."
+                    if lilithAliveAndRetriedCounter == 0:
+                         p "Perhaps this is how we save [date_obj]?"
+                    else:
+                         p "Perhaps we will find the end we seek on the other side?" #TODO: Only do this if you haven't promised to stop looking for it.
+
+                    
+               elif persistent.jamestalk_ilikeher_knowledge == True or persistent.jamestalk_iloveher_knowledge == True:
+                    p "Let us rest now, please. I know you care but this can't go on."
+                    if lilithAliveAndRetriedCounter == 0:
+                         p "It seems this world only can bring death and suffering to [date_obj]."
+                         p "We need to leave that world behind."
+                    else:
+                         p "This is the best for [date_obj]. We can't keep putting [date_obj] through this searching for an ending that might not even exist."
+               
+
           p "This is an ending, but also a new beginning. Please take those words to heart. Rest with us in here or dream of a new world out there."
           p "Just please don't try to fight it. We have hurt others but we have also hurt ourselves trying to stay where we couldn't. Trying to live forever in one day."
           p "Let go, please."
+          $ result = renpy.input()
+          $ result = result.lower()
+          if "yes" in result or "let go" in result or "i will" in result:
+               #Ending check
+               $ persistent.ending_Voided = True
+               $ ending_check = "Voided"
+               jump gameOver
+          else: 
+               p "It seems this world's pull is still too strong for you."
+               p "Just don't let it pull you apart."
+               p "Goodbye [persistent.realName]."
+               jump game_start
+label reunion_davidPresent:
+     n "[persistent.date_dad] sat at the fountain. [dad_sub!c] [conj('dad', 'seems', 'seem')] rather worried as [dad_sub] [conj('dad', 'searches', 'search')] for any sign of [dad_obj] family."
+     n "Worried that they won't come."
+     n "Worried that they will."
+     n "Both [dad_obj] worries will half be eased, half be validified. Right at that time [persistent.date] walks up to the fountain."
+     l "[persistent.date_dad[:2]]- [persistent.date_dad]? What are you doing here?"
+     d "I'm not really sure... Someone told me to be here for a reunion with you, with the others."
+     l "No! You seriously think you can just walk right back into their lives, into my life like nothing happened?"
+     l "All because a random stranger told you that you could? Well I say you can't!"
+     l "{u}You{/u} did this [persistent.date_dad]. {u}{i}You{/i}{/u} dug your own grave. {u}{i}{b}You{/b}{/i}{/u} left us behind as if we were nothing."
+     d "Lilly, please I-"
+     l "No! Spare the air you'd waste on your meaningless words. I don't want to hear it."
+     #TODO: Continue this.
 
 label polaroidZone_narratorSlipping1:
      n "My apoligies, I was slipping away for a moment."
      n "It seems I'm already being claimed by the Void."
      n "We better make the best of the time that still remains."
      if changeableWord == persistent.favouriteFirstDate:
-          n "Ah, that place really must be your favourite, you did mention that to [persistent.date] if I remember correctly."
+          n "That really must be your favourite, you did mention that to [persistent.date] if I remember correctly."
      if changeableWord == "burger":
           n "I also really love that part." 
           n "Most players start out picking the burger restaurant."
@@ -5026,7 +5269,7 @@ label polaroidZone_narratorSlipping1:
           n "So the first glimpses of the real story get revealed at that point."
           if persistent.firstLocation == "burger":
                n "The same thing happened to you, didn't it?"
-               n "That just showcases my point even more."
+               n "That just showcases my point even more!"
           else:
                n "But it seems as if you didn't pick the burger restaurant first, did you?"
                n "I wonder if you still remember which place you did pick."
@@ -5037,26 +5280,29 @@ label polaroidZone_narratorSlipping1:
                          else:
                               n "It actually was the Chinese restaurant, but I understand that you might have forgotten."
                               n "After all that was quite a long time ago, wasn't it?"
+
                     "I think it was the Chinese restaurant.":
                          if persistent.firstLocation == "cafe":
                               n "It actually was the cafe, but I understand that you might have forgotten."
                               n "After all that was quite a long time ago, wasn't it?"
                          else:
                               n "Wow, you do have a pretty good memory, that is correct."
+
      elif changeableWord == "cafe":
           n "Really?"
           n "Personally I find it some of my lesser work in narration."
           n "You didn't feel like the deaths were too illogical?"
           n "I felt pretty insecure about that if I'm being honest. So I am glad to hear that you didn't mind too much."
-
           n "I did however really enjoy [persistent.date]'s dice game in there."
-          #Have some varying dialogue based on whether or not you never played it, played it and won without cheating or if you had to cheat.
+          #TODO: Have some varying dialogue based on whether or not you never played it, played it and won without cheating or if you had to cheat.
+
      elif changeableWord == "chinese":
           n "I love that place aswell."
           n "I really like the section where [persistent.date] asks you a riddle or you can ask [date_obj] one instead."
           n "It is a nice change of pace if you ask me. Even if it just leads to more death."
           n "Makes you wish you could just stall answering [date_pos] riddles."
-          n "If you did then [date_pos] death would never be able to come."
+          n "If you did then [date_pos] death would never be able to come..."
+
      elif changeableWord == "kokiri":
           n "That's a great pick! The forest is probably the biggest part of the game."
           n "You could even argue it is where the game truly starts since that is where the most important discusions are had."
@@ -5064,34 +5310,33 @@ label polaroidZone_narratorSlipping1:
           n "I really do like [date_obj] as a character even if I have to steer [date_obj] to [date_pos] death."
           n "But no more of that, I hope my next story will be something more upbeat."
           n "Maybe even something of my own making instead of it being just a script I am reading from."
+
      elif changeableWord == "beach":
           "Filler"
 
-           
-       
 label polaroidZone_endOfEverything_darknessLore:
      l "The Void is the thing that birthed our universes."
      l "All the light, colors, words, ideas and everything else were made by it."
-     j "But, for the Void to properly work it also needs to be fed what it made.<br/>That's the only way it will ever be able to create something new."
-     l "That might seem scary, given that we are part of what has to be fed to it but that way we will be reborn in a new world.<br/>We will be given new purpose and meaning."
+     j "But, for the Void to properly work it also needs to be fed what it made."
+     j "That's the only way it will ever be able to create something new."
+     l "That might seem scary, given that we are part of what has to be fed to it but that way we will be reborn in a new world."
+     l "We will be given new purpose and meaning."
      j "I'm not sure if it would work on you to be honest, given how you are just controlling your character."
      j "Even if it would work, there is no guarantee that we would meet eachother in that new world."
-     j "We might even not be reborn in the same world."
+     j "We might not even be reborn in the same world."
      l "But atleast we would get some rest after being stuck so long in here."
      l "So, after hearing all those things, do you want to come with us [persistent.name]?"
      menu:
           "Yeah, I'd like to.":
                jump polaroidZone_endOfEverything_goWiththem
                                                  
-   
-
 label badReunionTransferUniverse:
-     n "You focus all your energy into tapping in to another world. A world where [persistent.date_ghost] is standing in this exact place."
+     n "You focus all your energy into tapping in to another world. One where [persistent.date_ghost] is standing in this exact place."
      n "Slowly but surely you open a rift big enough to pull something, someone from that world into this one."
      n "Almost instantaniously a figure appears in front of you."
      n "Everyone's faces turn white. They look like they just saw a ghost."
      n "No, worse, a ghost turned alive."
-     l "J- [persistent.date_ghost_nickname], is that you?"
+     l "[persistent.date_ghost_nickname[0]]- [persistent.date_ghost_nickname], is that you?"
      n "Now [persistent.date_ghost]'s face follows suit."
      j "[persistent.date_nickname]?... But that's not possible."
      li "This can't be real, I watched them burry you."
@@ -5099,8 +5344,9 @@ label badReunionTransferUniverse:
      n "[persistent.date_dad] and [persistent.date_mom] run off in pure shock."
      a "I... better go check on them."
      n "[persistent.date_sis] starts catching up towards [sis_pos] parents."
-     j "What happened? We were right here having this reunion, and suddenly {i}[date_sub]{/i} [conj('date', 'is', 'are')] here with us again? Why are you acting like I am the one that... died?"
-     l "That's- we were having this reunion, and you suddenly showed up out of nowhere."
+     j "What happened? We were right here having this reunion, and suddenly {i}[date_sub]{/i} [conj('date', 'is', 'are')] here with us again?"
+     j "Why is everyone acting like I am the one that... died?"
+     l "That's- we were having this reunion, and you suddenly showed up out of nowhere!"
      j "Wait [persistent.name], what are you doing here?"
      l "...You know [persistent.name]?"
      j "...Yes? We were supposed to go on a date, before this reunion ha- How do you know [persistent.name]?"
@@ -5109,17 +5355,16 @@ label badReunionTransferUniverse:
      menu:
           "I put the [persistent.date_ghost] of another world where [ghost_sub] [conj('ghost', 'does', 'do')]n't die but you do into yours where the opposite happens.":
                l "So there are worlds where [ghost_sub] [conj('ghost', 'lives', 'live')] and I die?"
-               l "But still, why did you take it upon yourself to make everything so much more difficult?"
+               l "Still, why did you take it upon yourself to make everything so much more difficult?"
                l "I'm sure it wasn't your intention but didn't you see how [mom_parShort] and... [dad_parShort] reacted?"
-               l "You can't just pluck another [persistent.date_ghost_nickname] from an alternate world or timeline or whatever and expect things to move along smoothly."
-               j "You ripped me away from the reunion of my own? Everyone must be so worried. And for what? To reopen a wound that was finally healing?"
+               l "You can't just pluck another [persistent.date_ghost_nickname] from somwhere else and expect things to move along smoothly."
+               j "You ripped me away from my own reunion? Everyone must be so worried. And for what? To reopen a wound that was finally healing?"
                j "For a family that has to look at a living ghost?"
                l "From what I hear we both had a good thing going until it was meddled with."
                l "Don't get me wrong [persistent.name], a part of me is glad to know a version of [persistent.date_ghost] survived, to see [ghost_obj] again."
                l "But this is just unnatural. We have to keep moving forward, we can't cling onto the past."
-               j "Can you put me back in my world?"
-               j "The world where I don't freak my own family out?"
-               j "The one where they don't have to look at their dead son and [ghost_sib]?"
+               j "Can you put me back in my world? The one where I don't freak my own family out?"
+               j "Where they don't have to look at their dead [ghost_child] and [ghost_sib]?"
                n "You focus all your attention into creating another rift, eventually you conjure one up, swallowing [persistent.date_ghost] whole."
                l "Good. I'm glad that worked atleast but don't think everything is back to how it was [persistent.name]."
                l "Have you seen the look on my parents faces being confronted with a living ghost?"
@@ -5128,15 +5373,15 @@ label badReunionTransferUniverse:
                l "I suppose it's a good thing our family is reunited since that might be the only way to heal this."
                l "I'm guessing your motivations were pure, but you do know how horrifying what you just did was, right?"
                l "I'm trying to keep myself calm but this is all too much for me."
-               l "I think it's just better if we go our seperate ways [persistent.name]."
+               l "I think it's just better if we go our seperate ways [persistent.name]. Forever."
                l "Goodbye."
                n "[date_sub!c] [conj('date', 'rushes', 'rush')] in the direction where [persistent.date_sis] and [date_pos] parents ran off into, never to be seen again."
+               #Ending
+               $ persistent.ending_traumatizedReunion = True
+               $ lilithAliveEnding = True
+               $ ending_check = "traumaReunion"
                jump gameOver
-
-
-
-
-                                    
+                   
 label before_main_menu:
      if (persistent.date_sis is None or persistent.date_dad is None or persistent.date_ghost is None  or persistent.date_mom is None or persistent.mysteriousCallerName is None):
           $ reset_to_default_names()

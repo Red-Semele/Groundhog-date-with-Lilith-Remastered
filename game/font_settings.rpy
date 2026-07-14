@@ -25,10 +25,9 @@ default persistent.grid_choices = True
 
 init python:
     FONT_DEJAVU           = "DejaVuSans.ttf"
-    FONT_PACIFICO         = "Pacifico-Regular.ttf"
-    FONT_INDIEFLOWER      = "IndieFlower-Regular.ttf"
-    FONT_SHADOWSINTOLIGHT = "ShadowsIntoLight-Regular.ttf"
-
+    FONT_PACIFICO         = "defaultFonts/Pacifico-Regular.ttf"
+    FONT_INDIEFLOWER      = "defaultFonts/IndieFlower-Regular.ttf"
+    FONT_SHADOWSINTOLIGHT = "defaultFonts/ShadowsIntoLight-Regular.ttf"
     ## Scan game/custom_fonts/ for any .ttf/.otf files the player dropped in.
     ## Populates a list of (display_name, gamedir-relative path) tuples.
     ## This runs once at startup; players must restart for new fonts to appear.

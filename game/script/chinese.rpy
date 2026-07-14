@@ -2,14 +2,26 @@ label chinese_start:
     $ chinese = True
     l "That sounds like a plan!"
     l "I'll see you there."
-    if reunion_davidPresent and reunion_lilaPresent:
-        jump reunionEnding
+    if reunion_davidPresent:
+        if reunion_lilaPresent:
+            jump reunionEnding
+        else:
+            jump reunionEnding_onlyDavid
     if persistent.rockMode:
         jump rockTransport
     else:
         n "You head to the Chinese restaurant, when you arive there [persistent.date] is already seated. [date_sub!c] [conj('date', 'waves', 'wave')] at you happily."
         n "It's appears to be quite busy, there are people at every table."
         n "You walk towards the table where [persistent.date] is sitting and greet [date_obj] with a cheerful smile."
+        show chineseRestaurant_bg
+        show chineseRestaurant_fg onlayer foreground
+        transform chineseSit:
+            zoom 0.40
+            xanchor 0.5
+            yanchor 1.0
+            xpos 930
+            ypos 1000
+        show lilith talking_happy at chineseSit
     label chinese_arrived:
         l "Heya [persistent.name]!
         Glad to see you here."
@@ -563,7 +575,7 @@ label chinese_riddle_railroad:
             l "Usually I come here with my [mom_parShort] and my [sis_sib], so it's a bit weird to be here with someone else."
             l "Weird in a good way though! It's a welcome change if I'm being honest."
             l "The reason we come here so much is because my [sis_sib], [persistent.date_sis], really adores this place."
-            l "Since [mom_parShort] and me took [sis_obj] here for [sub_pos] fourteenth birthday [sis_sub] insisted on coming again for five years in a row."
+            l "Since [mom_parShort] and me took [sis_obj] here for [sis_pos] fourteenth birthday [sis_sub] insisted on coming again for five years in a row."
             l "[sis_sub!c] always [conj('sis', 'picks', 'pick')] the orange chicken, it really is [sis_pos] favourite."
             #In the rude route she tells you this but a bit more rude, you get the option to shit on the restaurant (verbally, not literally)
             menu:
@@ -821,7 +833,9 @@ label chinese_phoneScene:
             $ chinese_lilithBreakupTrigger = 2
         l "I'll be right back [persistent.name], I just need to go to the bathroom real quick."
         n "[persistent.date] stands up from [date_pos] chair and pushes it back under the table."
-        n "As [date_sub] [conj('date', 'enters', 'enter')] the bathroom stall you see that [date_sub] [conj('date', 'has', 'have')] forgotten [date_pos] phone, it is still laying on the table."
+        hide lilith talk_closed with easeoutright
+
+        n "As [date_sub] [conj('date', 'enters', 'enter')] the bathroom you see that [date_sub] [conj('date', 'has', 'have')] forgotten [date_pos] phone, it is still laying on the table."
         if persistent.lildeaths >= 7:
             if persistent.peeked_phone == True:
                 n "You've already done it before, you might aswell do it again, right?"
@@ -830,8 +844,8 @@ label chinese_phoneScene:
                 n "Go on. I won't stop you, not as long as this remains my story."
             else:
                 $ nopeek = True
-                n "You know it isn't right to do but maybe you could find a way to save [date_obj] on [date_pos] phone.
-                If there is even the slightest chance that it will help [date_obj] you owe it to [date_obj] to try that out, right?"
+                n "You know it isn't right to do but maybe you could find a way to save [date_obj] on [date_pos] phone."
+                n "If there is even the slightest chance that it will help [date_obj] you owe it to [date_obj] to try that out, right?"
 
 
 
