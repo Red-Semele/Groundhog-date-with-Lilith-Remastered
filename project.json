@@ -1,5 +1,5 @@
 {
-  "build_update": false,
+  "build_update": true,
   "packages": [
     "pc"
   ],

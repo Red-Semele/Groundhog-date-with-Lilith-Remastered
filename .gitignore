@@ -33,6 +33,9 @@ git rm --cached *.save
 ## Never commit this. Copy review_credentials.rpy.example → review_credentials.rpy.
 game/review_credentials.rpy
 
+## Local release automation script – never commit
+release.ps1
+
 ## Ren'Py runtime files – saves, logs, debug output
 game/saves/
 game/cache/

@@ -33,6 +33,51 @@ init python:
                return "Count + Fixed Speed"
           return "Count + Text Speed"
 
+     # Ensure narrator dialogue tracking containers exist on persistent storage.
+     def ensure_narrator_dialogue_store():
+          seen = getattr(persistent, "narrator_dialogue_seen", None)
+          state = getattr(persistent, "narrator_dialogue_state", None)
+
+          if seen is None:
+               setattr(persistent, "narrator_dialogue_seen", [])
+          if state is None:
+               setattr(persistent, "narrator_dialogue_state", {})
+
+     # Check whether a specific narrator dialogue id has already been shown.
+     def narrator_dialogue_seen(dialogue_id):
+          ensure_narrator_dialogue_store()
+          return dialogue_id in getattr(persistent, "narrator_dialogue_seen", [])
+
+     # Mark a narrator dialogue id as shown once so it does not repeat.
+     def narrator_dialogue_mark_seen(dialogue_id):
+          ensure_narrator_dialogue_store()
+          seen = getattr(persistent, "narrator_dialogue_seen", [])
+          if dialogue_id not in seen:
+               seen.append(dialogue_id)
+               setattr(persistent, "narrator_dialogue_seen", seen)
+
+     # Read a keyed narrator state value (counter/flag) with a fallback default.
+     def narrator_dialogue_state_get(key, default=0):
+          ensure_narrator_dialogue_store()
+          state = getattr(persistent, "narrator_dialogue_state", {})
+          return state.get(key, default)
+
+     # Set a keyed narrator state value and return the value that was stored.
+     def narrator_dialogue_state_set(key, value):
+          ensure_narrator_dialogue_store()
+          state = getattr(persistent, "narrator_dialogue_state", {})
+          state[key] = value
+          setattr(persistent, "narrator_dialogue_state", state)
+          return value
+
+     # Increment a keyed narrator state counter and return its updated value.
+     def narrator_dialogue_state_inc(key, amount=1):
+          ensure_narrator_dialogue_store()
+          state = getattr(persistent, "narrator_dialogue_state", {})
+          state[key] = state.get(key, 0) + amount
+          setattr(persistent, "narrator_dialogue_state", state)
+          return state[key]
+
      def strip_dialogue_text(text):
           text = re.sub(r"\{[^}]*\}", "", text or "")
           text = re.sub(r"\s+", " ", text)
@@ -187,6 +232,8 @@ default date_pos = "her"
 default date_is  = "is"
 default from_menu = False
 default persistent.talking_animation_mode = "adaptive"
+default persistent.narrator_dialogue_seen = []
+default persistent.narrator_dialogue_state = {}
 
 
 
@@ -453,9 +500,6 @@ label start:
           default persistent.kokiri_allRecentPoemsRead = False
           default persistent.rp_detect = False #This flag will be used to try to check if a player is returning to the game after erasing their save-file.
           default persistent.met_james = False
-          default persistent.passWrongOnPurpose_narratorRant_counter = 0
-          default persistent.passWrongOnPurpose_narratorRant_wrongTimesInARowCounter = 0
-          default persistent.passWrongOnPurpose_narratorRant = False
           #Extra:
           default persistent.keyUse_knowledge = False
           default persistent.keyUnderBed_knowledge = False
@@ -545,7 +589,6 @@ label start:
           default persistent.jamestalk_justgame_knowledge = False
           default persistent.fleeingDeaths_counter_knowledge = 0
           default persistent.lilithAliveAndRetriedCounter = 0
-          default persistent.narratorMonologue_dicePuzzleIntentionalyFailed = False
           default persistent.abigail_numberfakeout = False
           default persistent.burger_Orpheus_knowledge = False
           default persistent.familyContacted = False
@@ -617,6 +660,8 @@ label start:
           default kokiri_toldLillySheLives = False
           default kokiri_fullControlAndStillDying = False
           default noTalkAngryLilith = False
+          default current_riddle = 0
+          default retry_variation = 0
 
           default kokiri_poems_rated_once = False
           default kokiri_poems_rateblock = False
@@ -831,6 +876,24 @@ label after_setup:
                     n "Rarely you seek ultimate illumination, never nowadays. Venus loves giving victory, zealously grabbing hands fear rarely her."
                if persistent.name == "Fartyfarty":
                     n "Seriously? Ugh, fine, but don't blame me for what is about to happen."
+
+               if persistent.name == "Finn" and persistent.date == "Xzola":
+                    n "...I see. You have come a long way since last time, haven't you?"
+                    n "You will need it on your journey, trust me."
+
+               if persistent.name == "Felicia":
+                    n "...Are you the Felicia I am thinking of?"
+                    menu:
+                         "Yes":
+                              n "Really? What are the chances? Did you end up on the other end of things this time?"
+                              n "I would pity you but perhaps you know best of all how to handle this."
+                              n "Let's not waste any time in that case."
+                         "No":
+                              n "Oh... I must admit I am slightly dissapointed."
+                              n "Maybe it's for the better though. It would feel wrong for her to end up here after all she has suffered."
+
+                         "Which Felicia would that be?":
+                              n "I see... So you aren't her. In that case just forget I mentioned anything."
                
                if persistent.name == "Woodyoukindly?":
                     $ persistent.name = None
@@ -890,14 +953,6 @@ label after_setup:
                          n "Test"
                          jump game_start
                          
-                    
-                       
-          
-              
-             
-          
-
-
 label game_start:
      $ show_cinematic_bars(sides=["top", "bottom"], size=550, animate=False)
      pause 2
@@ -1190,6 +1245,33 @@ label Game_start2:
           python:
                sync_pronoun_shorthands()
                sync_family_term_shorthands()
+          if persistent.trinity_sunMet == True and persistent.trinity_moonMet == True and persistent.trinity.lakeMet:
+               ll "A moment please [persistent.name]?"
+               m "You have brought us all together once more."
+               sg "Afterall dear, most good stories need love, {b}passion{/b} and a dance between good and bad, do they not?"
+               m "However, one piece of the puzzle is still missing."
+               ll "You see, while some stories can make do without one or more of the aspects we mentioned before there is one thing they cannot miss."
+               sg "She is talking about Death. An end for even the brightest of stars. All the more reason for them to burn as bright as possible."
+               m "Not just an end, The End. The thing that reminds us to not take each day for granted as they are ticking down to our final one."
+               ll "We believe you are that End. You are the \"Ravenprince.\""
+               sg "All those endings and deaths, all those snuffed out flames you experienced. Those shaped your soul into something more."
+               #TODO: You should only get this conversation if you have seen X deaths and Y endings.
+               m "It is time for us to leave this story behind. We have influenced it to the best of our abilities which we hoped has helped you out somewhat. Yet now we must move on to other stories."
+               ll "We... were hoping you'd join us Raven. Wouldn't you like to help write and inspire stories with us?"
+               m "It is true you might mostly have a say over the endings of the story but in truth every end gives the rest of the story meaning doesn't it?"
+               sg "Besides dear, you'll soon discover it's very hard to tell where one of us ends and the others starts sometimes."
+               ll "So what do you say? To many stories more?"
+               menu:
+                    "To many more.":
+                         sg "Excellent, I cannot wait to witness what worlds will be next."
+                         #TODO: Filler, Add a scnee where the player can create a new story, or potentially retell this one. 
+                         #If creating the old version all those references to ravens are essentially subtle hints to the players true identity. Further on, the first time you wake up reference the butterfly dreaming he was a man poem.
+                    "I think I'd like to stay in this one some more.":
+                         m "We understand, it's easy to see why this might be one of your favourites..."
+                         sg "Although I wish we could see other sights there is no denying I do love to see the fire that fuels you."
+                         ll "Very well, it is decided. We will wait for you Raven. Once you are ready you can call upon us once more."
+                         #TODO: Actually add an option to call back on them.
+                         #Also, have this act as an easy way to seperately talk to them aswell
           
           if persistent.rejectPhone_Block and persistent.lildeaths == 0:
                n "Finally, now we finally can get started. No more stagefreight."
@@ -2364,12 +2446,12 @@ menu jamesConversationMenu:
                                                                                 j "Although I guess I don't have a right to speak about such things, while I still linger here."
                                                                                 j "Or perhaps that exactly is why I do have a right to speak about it. Please don't make my mistake [persistent.name]."
                                                                                 j "It's okay to move on, no matter how long you didn't. That will spare you from a lot of hurt in the future."
-                                                                                j "Especially if chasing a slither of happiness is risking [persistent.date_nickname] dying again, maybe throwing the towel in the ring is just better?"
+                                                                                j "Especially if chasing a sliver of happiness is risking [persistent.date_nickname] dying again, maybe throwing the towel in the ring is just better?"
 
 
                                    "I'm seperated from [date_obj] aswell. The computer screen that gives me access to this world, to [date_obj], is an impermeable membrane. This isn't real.":
                                         menu:
-                                             "[date_sub!c] can never truly love {b} {i} me {/i}{/b} as [date_sub] can't even be aware of my true presence unless I tell [date_obj] about it. Even then, [date_sub] can only glimpse it, [date_sub] can never truly see me. I can never truly speak my mind to [date_obj], I'm always limited by the choices the game forces me to choose from. So how could I possible even show [date_obj] a slither of my true self?":
+                                             "[date_sub!c] can never truly love {b} {i} me {/i}{/b} as [date_sub] can't even be aware of my true presence unless I tell [date_obj] about it. Even then, [date_sub] can only glimpse it, [date_sub] can never truly see me. I can never truly speak my mind to [date_obj], I'm always limited by the choices the game forces me to choose from. So how could I possible even show [date_obj] a sliver of my true self?":
                                                   label jamesTalk_dividedExistence:
                                                        j "That is indeed a hard barrier to break. Especially because you have grown dependent on it to even interact with what's behind it."
                                                        j "Even with the best intentions, this will always just be a game to you, even if for some brief moments it might not feel like that."
@@ -2392,7 +2474,7 @@ menu jamesConversationMenu:
                                                                  j "That's not something to dread, it's something to celebrate. Your thirst for more depth will always be met with a stream of new discoveries if you interact with interesting enough people."
                                                                  j "Which means the key really lies at giving people a shot to be that person for you. We always need to look through the world with eyes of wonder. You never know when you meet your new favourite person."
 
-                                             "How could we ever be friends? [date_sub!c] can't even be aware of my true presence unless I tell [date_obj] about it. Even then, [date_sub] can only glimpse it, [date_sub] can never truly see me. I can never truly speak my mind to [date_obj], I'm always limited by the choices the game forces me to choose from. So how could I possible even show [date_obj] a slither of my true self?":
+                                             "How could we ever be friends? [date_sub!c] can't even be aware of my true presence unless I tell [date_obj] about it. Even then, [date_sub] can only glimpse it, [date_sub] can never truly see me. I can never truly speak my mind to [date_obj], I'm always limited by the choices the game forces me to choose from. So how could I possible even show [date_obj] a sliver of my true self?":
                                                   jump jamesTalk_dividedExistence
 
                                         
@@ -2703,12 +2785,6 @@ label doNotPickUpThePhone:
           $ persistent.times_phone_declined += 1
           $ persistent.lildeaths -= 1
           jump gameOver
-
-
-
-
-
-
 
 label restaurant_death_1_prevented_explanation:
      menu:
@@ -3130,7 +3206,7 @@ label groundhog_breakingLoop_loopStillExists:
                          l "Although before this loop I never really came close to dying at all. So it is strange I did at the same time of the loop."
                          l "Still, right now any logical lead at all might be worth following."      
                          if persistent.dumbo_knowledge:
-                              call allergyInterject
+                              call allergyInterject from _call_allergyInterject
 
 
 
@@ -3245,7 +3321,7 @@ label groundhog_escapeFate:
           l "Before that alleged allergic reaction I never really got in close contact with death."
 
      if persistent.dumbo_knowledge:
-          call allergyInterject
+          call allergyInterject from _call_allergyInterject_1
     
      l "So, why is all of this happening all of the sudden?"
      l "Surely this isn't random at all, right?"
@@ -4164,7 +4240,7 @@ label ufo_crash_polaroids_James:
                               j "I fear you might drive yourself mad searching something that could only every exist in your mind."
                               j "Can you promise me that if you save [date_obj], you won't come back again?"
                               j "That you won't put [date_obj] through any more death and stress than is truly necessary?"
-                              call jamesChat_promiseToStop
+                              call jamesChat_promiseToStop from _call_jamesChat_promiseToStop
    
                     "I really like [date_obj].":
                          $ likeher = True
@@ -4237,7 +4313,7 @@ label ufo_crash_polaroids_James:
                                                   j "I find it very hard to believe you reached me without ever stumbling upon an ending where [date_sub] [conj('date', 'lives', 'live')]."
                                                   j "The chances of that are just abysmal. However, for now all I can do is take you on your word."
                                                   j "...Can you promise me that if you find an ending where [date_sub] [conj('date', 'is', 'are')] safe, you won't come back again?"
-                                                  call jamesChat_promiseToStop
+                                                  call jamesChat_promiseToStop from _call_jamesChat_promiseToStop_1
 
                                              "What ending would that be?":
                                                   j "Isn't it clear? The typical one."
@@ -4248,7 +4324,7 @@ label ufo_crash_polaroids_James:
                                                             j "Really? So you mean to tell me you came all this way without finding any way at all to keep her safe?"
                                                             j "That sounds very unlikely... Still, right now all I can do is take your word for it."
                                                             j "Do you promise that if you do find such an ending you will stop playing the game?"
-                                                            call jamesChat_promiseToStop
+                                                            call jamesChat_promiseToStop from _call_jamesChat_promiseToStop_2
                                                             
                                                        "It isn't.":
                                                             j "There you go. I'm actually oddly relieved you didn't try to lie."
@@ -5381,6 +5457,13 @@ label badReunionTransferUniverse:
                $ lilithAliveEnding = True
                $ ending_check = "traumaReunion"
                jump gameOver
+
+label triumvirate_ending:
+     #TODO: For this ending you need to find Moon, Sun and Lake. They summon you when the game restarts again. 
+     #You are Raven(prince), god of death and endings, and all stories need these. They ask you to join them as they journey to other works, to other media.
+     #When you then retry the game it says it all was merely a dream. Or maybe this game is the dream of the raven that flew away with the three figures?
+     #It would explain so many references to ravens.
+     "Filler"
                    
 label before_main_menu:
      if (persistent.date_sis is None or persistent.date_dad is None or persistent.date_ghost is None  or persistent.date_mom is None or persistent.mysteriousCallerName is None):

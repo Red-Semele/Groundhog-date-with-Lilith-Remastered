@@ -8,9 +8,11 @@ default cinematic_bars_state = {"sides": [], "size": 0, "target_size": 0, "anima
 default persistent.menu_choice_history = {}
 default persistent.menu_choice_history_display = {}
 default persistent.menu_choice_history_current = {}
+default persistent.grid_choices = False
+default persistent.inline_choices = False
+default persistent.inline_choice_grow = False
+default persistent.number_keys = False
 default persistent.auto_pick_underlined_choice = False
-
-
 screen cinematic_bars():
     zorder 200
     $ size = cinematic_bars_state["target_size"]
@@ -357,13 +359,13 @@ style prompt_text is gui_text:
 
 style bar:
     ysize gui.bar_size
-    left_bar Frame("gui/bar/left.png", gui.bar_borders, tile=gui.bar_tile)
-    right_bar Frame("gui/bar/right.png", gui.bar_borders, tile=gui.bar_tile)
+    left_bar Solid(gui.hover_color)
+    right_bar Solid(gui.hover_muted_color)
 
 style vbar:
     xsize gui.bar_size
-    top_bar Frame("gui/bar/top.png", gui.vbar_borders, tile=gui.bar_tile)
-    bottom_bar Frame("gui/bar/bottom.png", gui.vbar_borders, tile=gui.bar_tile)
+    top_bar Solid(gui.hover_color)
+    bottom_bar Solid(gui.hover_muted_color)
 
 style scrollbar:
     ysize gui.scrollbar_size
@@ -374,19 +376,19 @@ style vscrollbar:
     xsize 72
     ypadding 0
     unscrollable "hide"
-    base_bar Transform(Frame("gui/scrollbar/vertical_idle_bar.png", gui.vscrollbar_borders, tile=gui.scrollbar_tile), matrixcolor=TintMatrix("#000000"))
-    thumb Transform("gui/scrollbar/vertical_idle_thumb.png", matrixcolor=TintMatrix("#336600"))
+    base_bar Transform(Frame("gui/scrollbar/vertical_idle_bar.png", gui.vscrollbar_borders, tile=gui.scrollbar_tile), matrixcolor=ColorizeMatrix("#000000", gui.hover_muted_color))
+    thumb Transform("gui/scrollbar/vertical_idle_thumb.png", matrixcolor=ColorizeMatrix("#000000", gui.hover_color))
     thumb_offset 36
 
 style slider:
     ysize gui.slider_size
-    base_bar Frame("gui/slider/horizontal_[prefix_]bar.png", gui.slider_borders, tile=gui.slider_tile)
-    thumb "gui/slider/horizontal_[prefix_]thumb.png"
+    base_bar Solid(gui.hover_muted_color)
+    thumb Solid(gui.hover_color)
 
 style vslider:
     xsize gui.slider_size
-    base_bar Frame("gui/slider/vertical_[prefix_]bar.png", gui.vslider_borders, tile=gui.slider_tile)
-    thumb "gui/slider/vertical_[prefix_]thumb.png"
+    base_bar Solid(gui.hover_muted_color)
+    thumb Solid(gui.hover_color)
 
 
 style frame:
@@ -420,6 +422,13 @@ style frame:
 screen say(who, what):
     style_prefix "say"
 
+    $ _say_base_viewport_height = max(120, gui.textbox_height - gui.dialogue_ypos - 10)
+    $ _say_cap_box_height = min(int(config.screen_height * 0.72), gui.textbox_height + 420)
+    $ _say_cap_viewport_height = max(120, _say_cap_box_height - gui.dialogue_ypos - 10)
+    $ _say_content_height = estimate_dialogue_content_height(what, gui.dialogue_width, gui.text_size)
+    $ _say_viewport_height = min(_say_cap_viewport_height, max(_say_base_viewport_height, _say_content_height))
+    $ _say_box_height = gui.dialogue_ypos + _say_viewport_height + 10
+
 
 
     $ shift = 0
@@ -442,12 +451,15 @@ screen say(who, what):
             id "namebox"
             style "namebox"
             at (textbox_shift_smooth(prev_shift, shift, duration) if animate_shift else textbox_shift_static(shift))
+            yoffset -(_say_box_height) - 20
             text who id "who"
 
     if what is not None and what != "":
         window:
             id "window"
             at (textbox_shift_smooth(prev_shift, shift, duration) if animate_shift else textbox_shift_static(shift))
+            ysize _say_box_height
+            background At(Transform("gui/textbox.png", xalign=0.5, yalign=1.0, ysize=_say_box_height), Transform(alpha=gui.textbox_alpha))
             text what id "what"
 
 transform textbox_shift_smooth(prev, new, duration):
@@ -594,6 +606,11 @@ style input:
 ## https://www.renpy.org/doc/html/screen_special.html#choice
 
 init python:
+    import math
+    import re
+
+    _renpy_text_tag_re = re.compile(r"\{[^\}]*\}")
+
     def _choice_menu_id():
         filename, line = renpy.get_filename_line()
         return "%s:%s" % (filename, line)
@@ -678,6 +695,54 @@ init python:
             return text
         return "{u}%s{/u}" % text
 
+    def estimate_inline_choice_content_height(items, text_pixel_width, number_keys=False, text_size=34):
+        """Estimate inline-choice content height so the textbox can grow before scrolling."""
+        width = max(120.0, float(text_pixel_width))
+        size = max(16.0, float(text_size))
+        avg_char_px = max(7.0, size * 0.56)
+        chars_per_line = max(10, int(width / avg_char_px))
+        line_height = int(size + 10)
+        row_padding = 4
+        spacing = 2
+
+        total = 0
+        for i in items:
+            caption = renpy.substitute(i.caption)
+            prefix_chars = 3 if (number_keys and i.action is not None) else 0
+            raw_lines = max(1, int(math.ceil(float(len(caption) + prefix_chars) / chars_per_line)))
+
+            # Action rows are truncated in the resting state, so fully wrapped
+            # estimates push the list too high. Cap at 2 lines to preserve
+            # baseline alignment while still allowing tall menus to grow.
+            if i.action is not None:
+                lines = min(2, raw_lines)
+            else:
+                lines = raw_lines
+
+            if i.action is None:
+                total += (lines * line_height)
+            else:
+                total += (lines * line_height) + row_padding
+
+            total += spacing
+
+        return max(0, total)
+
+    def estimate_dialogue_content_height(text, text_pixel_width, text_size=34):
+        """Estimate dialogue content height for adaptive say-window growth."""
+        width = max(140.0, float(text_pixel_width))
+        size = max(16.0, float(text_size))
+        avg_char_px = max(7.0, size * 0.56)
+        chars_per_line = max(12, int((width - 16.0) / avg_char_px))
+        line_height = int(size + 10)
+
+        raw = renpy.substitute(text or "")
+        cleaned = _renpy_text_tag_re.sub("", raw)
+        line_count = max(1, int(math.ceil(float(len(cleaned)) / chars_per_line)))
+
+        # Keep a little extra breathing room so larger fonts don't clip.
+        return max(line_height + 12, (line_count * line_height) + int(line_height * 0.35) + 12)
+
 screen choice(items):
     style_prefix "choice"
     zorder 100
@@ -726,27 +791,43 @@ screen choice(items):
 
     if persistent.inline_choices:
         # ── Inline mode: choices appear inside the dialogue box ──────────
+        $ _inline_text_max = max(120, gui.dialogue_width - gui.scrollbar_size - 120)
+        $ _inline_top_padding = gui.dialogue_ypos
+        $ _inline_base_viewport_height = max(120, gui.textbox_height - _inline_top_padding - 10)
+        $ _inline_min_viewport_height = _inline_base_viewport_height
+        $ _inline_cap_box_height = min(int(config.screen_height * 0.72), gui.textbox_height + 420)
+        $ _inline_cap_viewport_height = max(120, _inline_cap_box_height - _inline_top_padding - 10)
+        $ _inline_content_height = estimate_inline_choice_content_height(items, _inline_text_max, persistent.number_keys, gui.text_size)
+        $ _inline_target_viewport_height = max(_inline_min_viewport_height, _inline_content_height)
+        $ _inline_viewport_height = (min(_inline_cap_viewport_height, _inline_target_viewport_height) if persistent.inline_choice_grow else _inline_base_viewport_height)
+        $ _inline_box_height = _inline_top_padding + _inline_viewport_height + 10
+        $ _inline_needs_scroll = (_inline_content_height > (_inline_viewport_height + 2))
+        $ _inline_top_spacer = (max(0, _inline_viewport_height - _inline_content_height) if not _inline_needs_scroll else 0)
+
         window:
             style "window"
             at textbox_shift_static(_choice_shift)
+            ysize _inline_box_height
+            background At(Transform("gui/textbox.png", xalign=0.5, yalign=1.0, ysize=_inline_box_height), Transform(alpha=gui.textbox_alpha))
 
             viewport:
                 mousewheel True
-                draggable True
-                scrollbars "vertical"
+                draggable "touch"
+                scrollbars ("vertical" if _inline_needs_scroll else None)
                 xpos gui.dialogue_xpos
                 xsize gui.dialogue_width
-                ypos gui.dialogue_ypos
-                ymaximum (gui.textbox_height - gui.dialogue_ypos - 10)
+                ypos _inline_top_padding
+                ymaximum _inline_viewport_height
 
                 vbox:
                     style "inline_choice_vbox"
+                    xoffset 10
+                    yoffset _inline_top_spacer
                     for i in items:
                         if i.action is None:
                             text i.caption style "inline_choice_caption"
                         else:
                             $ safe_caption = renpy.substitute(i.caption)
-                            $ _inline_text_max = max(120, gui.dialogue_width - gui.scrollbar_size - 120)
                             $ _short = truncate_to_width(safe_caption, _inline_text_max)
                             $ _choice_key = _choice_caption_key(i.caption)
                             $ _was_marked = bool(_menu_choice_marks.get(_choice_key, []))
@@ -771,7 +852,7 @@ screen choice(items):
                                         _bullet_img,
                                         zoom=0.09,
                                         matrixcolor=(
-                                            ColorizeMatrix("#336600", "#ffffff")
+                                            ColorizeMatrix(gui.hover_color, "#ffffff")
                                             if _inline_hovered == i.caption
                                             else ColorizeMatrix("#000000", "#ffffff") ##707070 is also pretty for the dark color
                                         )
@@ -843,7 +924,7 @@ style inline_choice_button is default:
 style inline_choice_button_text is default:
     properties gui.text_properties("dialogue")
     idle_color "#000000"
-    hover_color gui.accent_color
+    hover_color gui.inline_choice_hover_text_color
     insensitive_color "#6060607f"
 
 
@@ -889,9 +970,12 @@ init python:
             "font_choice",
             "text_size_offset",
             "text_outline",
+            "dialogue_text_color",
+            "inline_hover_text_color",
             "talking_animation_mode",
             "grid_choices",
             "inline_choices",
+            "inline_choice_grow",
             "number_keys",
             "auto_pick_underlined_choice",
             "pictureBookUnlocked",
@@ -1444,6 +1528,7 @@ screen preferences():
                     label _("Choices")
                     textbutton _("Compact Grid") action ToggleField(persistent, "grid_choices")
                     textbutton _("Inline") action ToggleField(persistent, "inline_choices")
+                    textbutton _("Grow Inline Textbox") action ToggleField(persistent, "inline_choice_grow")
                     textbutton _("Number Keys") action ToggleField(persistent, "number_keys")
                     textbutton _("Auto Pick Underlined") action ToggleField(persistent, "auto_pick_underlined_choice")
 
@@ -1556,7 +1641,9 @@ style radio_vbox:
 
 style radio_button:
     properties gui.button_properties("radio_button")
-    foreground "gui/button/radio_[prefix_]foreground.png"
+    foreground Null()
+    selected_foreground Transform(Solid(gui.hover_color), xsize=10, ysize=42, xalign=0.0, yalign=0.5)
+    selected_hover_foreground Transform(Solid(gui.hover_color), xsize=10, ysize=42, xalign=0.0, yalign=0.5)
 
 style radio_button_text:
     properties gui.button_text_properties("radio_button")
@@ -1566,7 +1653,9 @@ style check_vbox:
 
 style check_button:
     properties gui.button_properties("check_button")
-    foreground "gui/button/check_[prefix_]foreground.png"
+    foreground Null()
+    selected_foreground Transform(Solid(gui.hover_color), xsize=10, ysize=42, xalign=0.0, yalign=0.5)
+    selected_hover_foreground Transform(Solid(gui.hover_color), xsize=10, ysize=42, xalign=0.0, yalign=0.5)
 
 style check_button_text:
     properties gui.button_text_properties("check_button")
@@ -1600,6 +1689,10 @@ screen text_settings():
     default outline_open     = False
     default customfont_open  = False
     default talking_mode_open = False
+    default dialogue_text_color_open = False
+    default inline_hover_text_color_open = False
+    default dialogue_text_color_draft = getattr(persistent, "dialogue_text_color", "#404040")
+    default inline_hover_text_color_draft = getattr(persistent, "inline_hover_text_color", "#336600")
 
     ## Rebuild styles once when the player navigates away so gui.rebuild()
     ## never fires mid-drag (which would kill the drag gesture).
@@ -1609,117 +1702,234 @@ screen text_settings():
     use game_menu(_("Text Appearance"), scroll="viewport"):
 
         vbox:
+            xfill True
 
             ## ── Dropdowns row ────────────────────────────────────────────────
-            hbox:
-                box_wrap True
-                spacing 40
-                xoffset 60
+            vbox:
+                spacing 28
 
-                ## Font dropdown
-                vbox:
-                    spacing 4
+                hbox:
+                    box_wrap True
+                    xfill True
+                    xmaximum 1140
+                    spacing 40
 
-                    label _("Font"):
-                        style "pref_label"
-
-                    ## Header button showing the active font name + arrow.
-                    textbutton ("[current_font().replace('-Regular','').replace('-',' ').replace('.ttf','').replace('.otf','')]  [u'▲' if font_open else u'▼']"):
-                        action ToggleLocalVariable("font_open")
-                        style "pref_label_text"
-                        ypadding 6
-
-                    ## Options — only shown when open.
-                    if font_open:
-                        frame:
-                            padding (8, 6, 8, 6)
-                            vbox:
-                                style_prefix "radio"
-                                textbutton _("Default (DejaVu)"):
-                                    action [SetFont("DejaVuSans.ttf"), SetLocalVariable("font_open", False)]
-                                    text_font "DejaVuSans.ttf"
-                                textbutton _("Pacifico"):
-                                    action [SetFont("defaultFonts/Pacifico-Regular.ttf"), SetLocalVariable("font_open", False)]
-                                    text_font "defaultFonts/Pacifico-Regular.ttf"
-
-                                textbutton _("Indie Flower"):
-                                    action [SetFont("defaultFonts/IndieFlower-Regular.ttf"), SetLocalVariable("font_open", False)]
-                                    text_font "defaultFonts/IndieFlower-Regular.ttf"
-
-                                textbutton _("Shadows Into Light"):
-                                    action [SetFont("defaultFonts/ShadowsIntoLight-Regular.ttf"), SetLocalVariable("font_open", False)]
-                                    text_font "defaultFonts/ShadowsIntoLight-Regular.ttf"
-
-                ## Custom Font dropdown — only shown when custom fonts are present.
-                if CUSTOM_FONTS:
+                    ## Font dropdown
                     vbox:
                         spacing 4
 
-                        label _("Custom Font"):
+                        label _("Font"):
                             style "pref_label"
 
-                        textbutton ("[current_font().replace('-Regular','').replace('-',' ').replace('.ttf','').replace('.otf','').split('/')[-1] if current_font().startswith('custom_fonts/') else 'None selected']  [u'▲' if customfont_open else u'▼']"):
-                            action ToggleLocalVariable("customfont_open")
+                        textbutton ("[current_font().replace('-Regular','').replace('-',' ').replace('.ttf','').replace('.otf','')]  [u'▲' if font_open else u'▼']"):
+                            action ToggleLocalVariable("font_open")
                             style "pref_label_text"
                             ypadding 6
+                            xsize 338
+                            text_xalign 0.0
 
-                        if customfont_open:
+                        if font_open:
                             frame:
                                 padding (8, 6, 8, 6)
                                 vbox:
                                     style_prefix "radio"
-                                    for _cname, _cfile in CUSTOM_FONTS:
-                                        textbutton _(_cname):
-                                            action [SetFont(_cfile), SetLocalVariable("customfont_open", False)]
-                                            text_font _cfile
+                                    textbutton _("Default (DejaVu)"):
+                                        action [SetFont("DejaVuSans.ttf"), SetLocalVariable("font_open", False)]
+                                        text_font "DejaVuSans.ttf"
+                                    textbutton _("Pacifico"):
+                                        action [SetFont("defaultFonts/Pacifico-Regular.ttf"), SetLocalVariable("font_open", False)]
+                                        text_font "defaultFonts/Pacifico-Regular.ttf"
+                                    textbutton _("Indie Flower"):
+                                        action [SetFont("defaultFonts/IndieFlower-Regular.ttf"), SetLocalVariable("font_open", False)]
+                                        text_font "defaultFonts/IndieFlower-Regular.ttf"
+                                    textbutton _("Shadows Into Light"):
+                                        action [SetFont("defaultFonts/ShadowsIntoLight-Regular.ttf"), SetLocalVariable("font_open", False)]
+                                        text_font "defaultFonts/ShadowsIntoLight-Regular.ttf"
 
-                ## Text Outline dropdown
-                vbox:
-                    spacing 4
+                    if CUSTOM_FONTS:
+                        vbox:
+                            spacing 4
 
-                    label _("Text Outline"):
-                        style "pref_label"
+                            label _("Custom Font"):
+                                style "pref_label"
 
-                    textbutton ("[persistent.text_outline.capitalize()]  [u'▲' if outline_open else u'▼']"):
-                        action ToggleLocalVariable("outline_open")
-                        style "pref_label_text"
-                        ypadding 6
+                            textbutton ("[current_font().replace('-Regular','').replace('-',' ').replace('.ttf','').replace('.otf','').split('/')[-1] if current_font().startswith('custom_fonts/') else 'None selected']  [u'▲' if customfont_open else u'▼']"):
+                                action ToggleLocalVariable("customfont_open")
+                                style "pref_label_text"
+                                ypadding 6
+                                xsize 338
+                                text_xalign 0.0
 
-                    if outline_open:
-                        frame:
-                            padding (8, 6, 8, 6)
-                            vbox:
-                                style_prefix "radio"
-                                textbutton _("None"):
-                                    action [SetTextOutline("none"),    SetLocalVariable("outline_open", False)]
-                                textbutton _("Outline"):
-                                    action [SetTextOutline("outline"), SetLocalVariable("outline_open", False)]
-                                textbutton _("Shadow"):
-                                    action [SetTextOutline("shadow"),  SetLocalVariable("outline_open", False)]
+                            if customfont_open:
+                                frame:
+                                    padding (8, 6, 8, 6)
+                                    vbox:
+                                        style_prefix "radio"
+                                        for _cname, _cfile in CUSTOM_FONTS:
+                                            textbutton _(_cname):
+                                                action [SetFont(_cfile), SetLocalVariable("customfont_open", False)]
+                                                text_font _cfile
 
-                ## Talking Animation dropdown
-                vbox:
-                    spacing 4
+                hbox:
+                    box_wrap True
+                    xfill True
+                    xmaximum 1140
+                    spacing 40
 
-                    label _("Talking Animation"):
-                        style "pref_label"
+                    ## Text Outline dropdown
+                    vbox:
+                        spacing 4
 
-                    textbutton ("[get_talking_animation_mode_label()]  [u'▲' if talking_mode_open else u'▼']"):
-                        action ToggleLocalVariable("talking_mode_open")
-                        style "pref_label_text"
-                        ypadding 6
+                        label _("Text Outline"):
+                            style "pref_label"
 
-                    if talking_mode_open:
-                        frame:
-                            padding (8, 6, 8, 6)
-                            vbox:
-                                style_prefix "radio"
-                                textbutton _("Count + Text Speed"):
-                                    action [SetField(persistent, "talking_animation_mode", TALKING_MODE_ADAPTIVE), SetLocalVariable("talking_mode_open", False)]
-                                textbutton _("Fixed Interval"):
-                                    action [SetField(persistent, "talking_animation_mode", TALKING_MODE_FIXED), SetLocalVariable("talking_mode_open", False)]
-                                textbutton _("Count + Fixed Speed"):
-                                    action [SetField(persistent, "talking_animation_mode", TALKING_MODE_MIXED), SetLocalVariable("talking_mode_open", False)]
+                        textbutton ("[persistent.text_outline.capitalize()]  [u'▲' if outline_open else u'▼']"):
+                            action ToggleLocalVariable("outline_open")
+                            style "pref_label_text"
+                            ypadding 6
+                            xsize 338
+                            text_xalign 0.0
+
+                        if outline_open:
+                            frame:
+                                padding (8, 6, 8, 6)
+                                vbox:
+                                    style_prefix "radio"
+                                    textbutton _("None"):
+                                        action [SetTextOutline("none"), SetLocalVariable("outline_open", False)]
+                                    textbutton _("Outline"):
+                                        action [SetTextOutline("outline"), SetLocalVariable("outline_open", False)]
+                                    textbutton _("Shadow"):
+                                        action [SetTextOutline("shadow"), SetLocalVariable("outline_open", False)]
+
+                    ## Talking Animation dropdown
+                    vbox:
+                        spacing 4
+
+                        label _("Talking Animation"):
+                            style "pref_label"
+
+                        textbutton ("[get_talking_animation_mode_label()]  [u'▲' if talking_mode_open else u'▼']"):
+                            action ToggleLocalVariable("talking_mode_open")
+                            style "pref_label_text"
+                            ypadding 6
+                            xsize 338
+                            text_xalign 0.0
+
+                        if talking_mode_open:
+                            frame:
+                                padding (8, 6, 8, 6)
+                                vbox:
+                                    style_prefix "radio"
+                                    textbutton _("Count + Text Speed"):
+                                        action [SetField(persistent, "talking_animation_mode", TALKING_MODE_ADAPTIVE), SetLocalVariable("talking_mode_open", False)]
+                                    textbutton _("Fixed Interval"):
+                                        action [SetField(persistent, "talking_animation_mode", TALKING_MODE_FIXED), SetLocalVariable("talking_mode_open", False)]
+                                    textbutton _("Count + Fixed Speed"):
+                                        action [SetField(persistent, "talking_animation_mode", TALKING_MODE_MIXED), SetLocalVariable("talking_mode_open", False)]
+
+                    ## Dialogue Text Color custom hex
+                    vbox:
+                        spacing 4
+
+                hbox:
+                    box_wrap True
+                    xfill True
+                    xmaximum 1140
+                    spacing 40
+
+                    ## Dialogue Text Color custom hex
+                    vbox:
+                        spacing 4
+
+                        textbutton _("Dialogue Text Color  [u'▲' if dialogue_text_color_open else u'▼']"):
+                            action ToggleLocalVariable("dialogue_text_color_open")
+                            style "pref_label_text"
+                            ypadding 6
+                            xsize 338
+                            text_xalign 0.0
+
+                        if dialogue_text_color_open:
+                            frame:
+                                padding (10, 8, 10, 8)
+                                background Transform(Frame("gui/frame_outline.png", gui.frame_borders, tile=gui.frame_tile), matrixcolor=ColorizeMatrix("#ffffff", gui.hover_color))
+                                vbox:
+                                    spacing 8
+                                    hbox:
+                                        spacing 10
+                                        frame:
+                                            background Solid("#ffffff18")
+                                            padding (8, 4)
+                                            xsize 170
+                                            yminimum 40
+                                            input:
+                                                value ScreenVariableInputValue("dialogue_text_color_draft")
+                                                length 7
+                                                allow "#0123456789abcdefABCDEF"
+                                                xfill True
+                                                yalign 0.5
+                                                style "input"
+                                        textbutton _("Apply"):
+                                            action Function(set_dialogue_text_color, dialogue_text_color_draft)
+                                        textbutton _("Default"):
+                                            action [SetScreenVariable("dialogue_text_color_draft", "#404040"), Function(set_dialogue_text_color, "#404040")]
+
+                                    hbox:
+                                        spacing 8
+                                        for _label, _color in DIALOGUE_COLOR_PRESETS:
+                                            button:
+                                                xsize 34
+                                                ysize 24
+                                                background Solid(_color)
+                                                action [SetScreenVariable("dialogue_text_color_draft", _color), Function(set_dialogue_text_color, _color)]
+                                                tooltip _label
+
+                    ## Global Hover Color custom hex
+                    vbox:
+                        spacing 4
+
+                        textbutton _("Hover Color (Global)  [u'▲' if inline_hover_text_color_open else u'▼']"):
+                            action ToggleLocalVariable("inline_hover_text_color_open")
+                            style "pref_label_text"
+                            ypadding 6
+                            xsize 338
+                            text_xalign 0.0
+
+                        if inline_hover_text_color_open:
+                            frame:
+                                padding (10, 8, 10, 8)
+                                background Transform(Frame("gui/frame_outline.png", gui.frame_borders, tile=gui.frame_tile), matrixcolor=ColorizeMatrix("#ffffff", gui.hover_color))
+                                vbox:
+                                    spacing 8
+                                    hbox:
+                                        spacing 10
+                                        frame:
+                                            background Solid("#ffffff18")
+                                            padding (8, 4)
+                                            xsize 170
+                                            yminimum 40
+                                            input:
+                                                id "inline_hover_text_color_input"
+                                                value ScreenVariableInputValue("inline_hover_text_color_draft")
+                                                length 7
+                                                allow "#0123456789abcdefABCDEF"
+                                                xfill True
+                                                yalign 0.5
+                                                style "input"
+                                        textbutton _("Apply"):
+                                            action Function(set_inline_hover_text_color, inline_hover_text_color_draft)
+                                        textbutton _("Default"):
+                                            action [SetScreenVariable("inline_hover_text_color_draft", "#336600"), Function(set_inline_hover_text_color, "#336600")]
+
+                                    hbox:
+                                        spacing 8
+                                        for _label, _color in INLINE_HOVER_COLOR_PRESETS:
+                                            button:
+                                                xsize 34
+                                                ysize 24
+                                                background Solid(_color)
+                                                action [SetScreenVariable("inline_hover_text_color_draft", _color), Function(set_inline_hover_text_color, _color)]
+                                                tooltip _label
 
             null height (4 * gui.pref_spacing)
 
@@ -1745,7 +1955,7 @@ screen text_settings():
                         xsize 580
                         xanchor 0.0
                         padding (20, 16, 20, 16)
-                        background At(Frame("gui/frame.png", gui.frame_borders, tile=gui.frame_tile), Transform(alpha=(persistent.textbox_opacity * 0.01 if persistent.textbox_opacity is not None else 1.0)))
+                        background Transform(Frame("gui/frame_outline.png", gui.frame_borders, tile=gui.frame_tile), matrixcolor=ColorizeMatrix("#ffffff", gui.hover_color))
                         text _("The quick brown fox jumps over the lazy dog.\nPack my box with five dozen liquor jugs."):
                             font current_font()
                             size (33 + (persistent.text_size_offset if persistent.text_size_offset else 0))
@@ -2465,11 +2675,15 @@ style window:
 
 style radio_button:
     variant "small"
-    foreground "gui/phone/button/radio_[prefix_]foreground.png"
+    foreground Null()
+    selected_foreground Transform(Solid(gui.hover_color), xsize=10, ysize=48, xalign=0.0, yalign=0.5)
+    selected_hover_foreground Transform(Solid(gui.hover_color), xsize=10, ysize=48, xalign=0.0, yalign=0.5)
 
 style check_button:
     variant "small"
-    foreground "gui/phone/button/check_[prefix_]foreground.png"
+    foreground Null()
+    selected_foreground Transform(Solid(gui.hover_color), xsize=10, ysize=48, xalign=0.0, yalign=0.5)
+    selected_hover_foreground Transform(Solid(gui.hover_color), xsize=10, ysize=48, xalign=0.0, yalign=0.5)
 
 style nvl_window:
     variant "small"
@@ -2498,14 +2712,14 @@ style pref_vbox:
 style bar:
     variant "small"
     ysize gui.bar_size
-    left_bar Frame("gui/phone/bar/left.png", gui.bar_borders, tile=gui.bar_tile)
-    right_bar Frame("gui/phone/bar/right.png", gui.bar_borders, tile=gui.bar_tile)
+    left_bar Solid(gui.hover_color)
+    right_bar Solid(gui.hover_muted_color)
 
 style vbar:
     variant "small"
     xsize gui.bar_size
-    top_bar Frame("gui/phone/bar/top.png", gui.vbar_borders, tile=gui.bar_tile)
-    bottom_bar Frame("gui/phone/bar/bottom.png", gui.vbar_borders, tile=gui.bar_tile)
+    top_bar Solid(gui.hover_color)
+    bottom_bar Solid(gui.hover_muted_color)
 
 style scrollbar:
     variant "small"
@@ -2522,14 +2736,14 @@ style vscrollbar:
 style slider:
     variant "small"
     ysize gui.slider_size
-    base_bar Frame("gui/phone/slider/horizontal_[prefix_]bar.png", gui.slider_borders, tile=gui.slider_tile)
-    thumb "gui/phone/slider/horizontal_[prefix_]thumb.png"
+    base_bar Solid(gui.hover_muted_color)
+    thumb Solid(gui.hover_color)
 
 style vslider:
     variant "small"
     xsize gui.slider_size
-    base_bar Frame("gui/phone/slider/vertical_[prefix_]bar.png", gui.vslider_borders, tile=gui.slider_tile)
-    thumb "gui/phone/slider/vertical_[prefix_]thumb.png"
+    base_bar Solid(gui.hover_muted_color)
+    thumb Solid(gui.hover_color)
 
 style slider_vbox:
     variant "small"

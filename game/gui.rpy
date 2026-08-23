@@ -16,6 +16,31 @@ init python:
 ## Enable checks for invalid or unstable properties in screens or transforms
 define config.check_conflicting_properties = True
 
+init python:
+    def _normalize_gui_hex(value, fallback):
+        c = unicode(value).strip() if value is not None else ""
+        if not c:
+            c = fallback
+        if not c.startswith("#"):
+            c = "#" + c
+        raw = c[1:]
+        if len(raw) == 3 and all(ch in "0123456789abcdefABCDEF" for ch in raw):
+            raw = "".join(ch * 2 for ch in raw)
+        if len(raw) != 6 or not all(ch in "0123456789abcdefABCDEF" for ch in raw):
+            raw = fallback[1:]
+        return "#" + raw.upper()
+
+    def _lighten_gui_hex(value, amount):
+        c = _normalize_gui_hex(value, "#336600")
+        r = int(c[1:3], 16)
+        g = int(c[3:5], 16)
+        b = int(c[5:7], 16)
+        t = max(0.0, min(1.0, float(amount)))
+        r = int(round(r + (255 - r) * t))
+        g = int(round(g + (255 - g) * t))
+        b = int(round(b + (255 - b) * t))
+        return "#%02X%02X%02X" % (r, g, b)
+
 
 ################################################################################
 ## GUI Configuration Variables
@@ -27,7 +52,7 @@ define config.check_conflicting_properties = True
 ## The colors of text in the interface.
 
 ## An accent color used throughout the interface to label and highlight text.
-define gui.accent_color = '#336600'
+define gui.accent_color = _normalize_gui_hex((persistent.inline_hover_text_color if (hasattr(persistent, "inline_hover_text_color") and persistent.inline_hover_text_color) else '#336600'), '#336600')
 
 ## The color used for a text button when it is neither selected nor hovered.
 define gui.idle_color = '#707070'
@@ -37,7 +62,10 @@ define gui.idle_color = '#707070'
 define gui.idle_small_color = '#606060'
 
 ## The color that is used for buttons and bars that are hovered.
-define gui.hover_color = '#336600'
+define gui.hover_color = _normalize_gui_hex((persistent.inline_hover_text_color if (hasattr(persistent, "inline_hover_text_color") and persistent.inline_hover_text_color) else '#336600'), '#336600')
+
+## Hover color for inline choice text inside the textbox.
+define gui.inline_choice_hover_text_color = _normalize_gui_hex((persistent.inline_hover_text_color if (hasattr(persistent, "inline_hover_text_color") and persistent.inline_hover_text_color) else '#336600'), '#336600')
 
 ## The color used for a text button when it is selected but not focused. A
 ## button is selected if it is the current screen or preference value.
@@ -48,11 +76,11 @@ define gui.insensitive_color = '#7070707f'
 
 ## Colors used for the portions of bars that are not filled in. These are not
 ## used directly, but are used when re-generating bar image files.
-define gui.muted_color = '#84a366'
-define gui.hover_muted_color = '#adc199'
+define gui.muted_color = _lighten_gui_hex(gui.hover_color, 0.35)
+define gui.hover_muted_color = _lighten_gui_hex(gui.hover_color, 0.58)
 
 ## The colors used for dialogue and menu choice text.
-define gui.text_color = '#404040'
+define gui.text_color = _normalize_gui_hex((persistent.dialogue_text_color if (hasattr(persistent, "dialogue_text_color") and persistent.dialogue_text_color) else '#404040'), '#404040')
 define gui.interface_text_color = '#404040'
 
 

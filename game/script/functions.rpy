@@ -346,6 +346,8 @@ label gdwl_functions:
             globals()["rw2"] = 0
             globals()["rw3"] = 0
             globals()["rw_total"] = 0
+            globals()["current_riddle"] = 0
+            globals()["retry_variation"] = 0
             globals()["family_ask"] = 0
             globals()["riddleAnswersTold"] = 0
             globals()["chinese_lilithBreakupTrigger"] = 0

@@ -19,6 +19,10 @@ default persistent.textbox_opacity = 100
 ## Text outline style: "none", "outline", or "shadow".
 default persistent.text_outline = "none"
 
+## Dialogue text color and inline-choice hover color.
+default persistent.dialogue_text_color = "#404040"
+default persistent.inline_hover_text_color = "#336600"
+
 ## Whether to use the compact grid layout for 3–4 choices.
 ## When off, the classic stacked layout is used. 5+ choices always scroll.
 default persistent.grid_choices = True
@@ -52,6 +56,55 @@ init python:
 
     LETTER_SPACING_MIN = 0
     LETTER_SPACING_MAX = 20
+
+    DIALOGUE_COLOR_PRESETS = [
+        ("Charcoal", "#404040"),
+        ("Black", "#000000"),
+        ("Deep Brown", "#2b1f16"),
+        ("Forest", "#2d4a1f"),
+        ("Navy", "#1d2f5b"),
+        ("Plum", "#5c2a55"),
+    ]
+
+    INLINE_HOVER_COLOR_PRESETS = [
+        ("Accent Green", "#336600"),
+        ("Emerald", "#208f4a"),
+        ("Blue", "#2e6ed8"),
+        ("Gold", "#a77700"),
+        ("Crimson", "#a32727"),
+        ("Purple", "#6f3fd6"),
+    ]
+
+    def normalize_hex_color(value, fallback):
+        """Normalize a user-entered color into #RRGGBB, or return fallback."""
+        if value is None:
+            return fallback
+
+        c = unicode(value).strip()
+        if not c:
+            return fallback
+
+        if not c.startswith("#"):
+            c = "#" + c
+
+        raw = c[1:]
+        if len(raw) == 3 and all(ch in "0123456789abcdefABCDEF" for ch in raw):
+            raw = "".join(ch * 2 for ch in raw)
+
+        if len(raw) != 6 or not all(ch in "0123456789abcdefABCDEF" for ch in raw):
+            return fallback
+
+        return "#" + raw.upper()
+
+    def set_dialogue_text_color(value):
+        persistent.dialogue_text_color = normalize_hex_color(value, "#404040")
+        gui.rebuild()
+        renpy.restart_interaction()
+
+    def set_inline_hover_text_color(value):
+        persistent.inline_hover_text_color = normalize_hex_color(value, "#336600")
+        gui.rebuild()
+        renpy.restart_interaction()
 
     ## Maximum words shown on a grid choice button before truncating.
     ## Full text appears in the tooltip notecard on hover.
@@ -202,6 +255,42 @@ init python:
 
         def get_selected(self):
             return getattr(persistent, "text_outline", "none") == self.mode
+
+    class SetDialogueTextColor(Action):
+        """Action for dialogue text color presets."""
+        def __init__(self, color_hex):
+            self.color_hex = color_hex
+
+        def __call__(self):
+            set_dialogue_text_color(self.color_hex)
+
+        def get_selected(self):
+            return getattr(persistent, "dialogue_text_color", "#404040") == self.color_hex
+
+    class SetInlineHoverTextColor(Action):
+        """Action for inline-choice hover text color presets."""
+        def __init__(self, color_hex):
+            self.color_hex = color_hex
+
+        def __call__(self):
+            set_inline_hover_text_color(self.color_hex)
+
+        def get_selected(self):
+            return getattr(persistent, "inline_hover_text_color", "#336600") == self.color_hex
+
+    def _current_color_name(pairs, value, fallback_label):
+        for label, color in pairs:
+            if color == value:
+                return label
+        return fallback_label
+
+    def current_dialogue_text_color_name():
+        value = getattr(persistent, "dialogue_text_color", "#404040")
+        return _current_color_name(DIALOGUE_COLOR_PRESETS, value, value)
+
+    def current_inline_hover_text_color_name():
+        value = getattr(persistent, "inline_hover_text_color", "#336600")
+        return _current_color_name(INLINE_HOVER_COLOR_PRESETS, value, value)
 
     ## Returns the currently selected font, falling back to DejaVu if unset.
     ## Also falls back if a previously chosen custom font file was removed.

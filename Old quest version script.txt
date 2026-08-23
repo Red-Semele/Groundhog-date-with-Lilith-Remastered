@@ -15448,7 +15448,7 @@
                           SetForegroundColour (player.Narcolor)
                           msg ("Lilith jumps up from where she was lying mere moments ago, on her face is a visible layer of anger or is it... dissapointment?<br/>You're not sure which one would sting more, probably a combination of the two.<br/>She wipes the crumbs on her clothes away with a frightening speed and begins walking off the hill.")
                           SetForegroundColour (player.Lilcolor)
-                          msg ("Goodbye {player.alias}, we are done here. <br/>Do not come back if you have even the slightest slither of respect for me.")
+                          msg ("Goodbye {player.alias}, we are done here. <br/>Do not come back if you have even the slightest sliver of respect for me.")
                           SetFlagOn ("AngryLilith")
                           MovePlayer (Kak_death_4_hill_2)
                         ]]></script>
@@ -17960,7 +17960,7 @@
       SetForegroundColour (player.Narcolor)
       msg ("Lilith jumps up from where she was lying mere moments ago, on her face is a visible layer of anger or is it... dissapointment?<br/>You're not sure which one would sting more, probably a combination of the two.<br/>She wipes the crumbs on her clothes away with a frightening speed and begins walking off the hill.")
       SetForegroundColour (player.Lilcolor)
-      msg ("Goodbye {player.alias}, we are done here. <br/>Do not come back if you have even the slightest slither of respect for me. (Make this only appear if you made one really big mistake)")
+      msg ("Goodbye {player.alias}, we are done here. <br/>Do not come back if you have even the slightest sliver of respect for me. (Make this only appear if you made one really big mistake)")
       SetForegroundColour (player.Devcolor)
       msg ("Check if the player has retryed after she says not to.")
       SetForegroundColour (player.Narcolor)
