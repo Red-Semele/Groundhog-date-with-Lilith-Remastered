@@ -472,16 +472,16 @@ label burger_ordering:
 menu burger_burgerRate:
     #TODO: I don't think Rose ever delivers the burgers to the table, have a scene for that.
     "It's the best one I ever had!":
-        call burger_burgerRate_best
+        call burger_burgerRate_best from _call_burger_burgerRate_best
            
     "It's pretty good.":
-        call burger_burgerRate_prettyGood
+        call burger_burgerRate_prettyGood from _call_burger_burgerRate_prettyGood
        
     "It's a nothing burger, literally.":
-        call burger_burgerRate_nothingBurger
+        call burger_burgerRate_nothingBurger from _call_burger_burgerRate_nothingBurger
      
     "It's really bad.":
-        call burger_burgerRate_reallyBad
+        call burger_burgerRate_reallyBad from _call_burger_burgerRate_reallyBad
 
 jump burger_deathBuildup
       
