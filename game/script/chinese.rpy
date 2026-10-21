@@ -710,10 +710,10 @@ label chinese_riddle_loop:
             l "To taunt the gods with webs of lies
             is to hang but not to die."
         
-        call chinese_riddle_lilithAction
+        call chinese_riddle_lilithAction from _call_chinese_riddle_lilithAction
         if persistent.r1_knowledge == True:
             n "You remember [persistent.date] telling you the answer was Arachne."
-        call chinese_riddle_narratorAction
+        call chinese_riddle_narratorAction from _call_chinese_riddle_narratorAction
         $ riddle_input_started_at = renpy.get_game_runtime()
         $ riddle_answer = player_input("Place your guess here")
         $ riddle_answer_time += renpy.get_game_runtime() - riddle_input_started_at
@@ -746,10 +746,10 @@ label chinese_riddle_loop:
             l "Carried by Lightning with a crown of moon."
         
         
-        call chinese_riddle_lilithAction
+        call chinese_riddle_lilithAction from _call_chinese_riddle_lilithAction_1
         if persistent.r2_knowledge == True:
             n "You remember [persistent.date] telling you the answer was Europa."
-        call chinese_riddle_narratorAction
+        call chinese_riddle_narratorAction from _call_chinese_riddle_narratorAction_1
         $ riddle_input_started_at = renpy.get_game_runtime()
         $ riddle_answer = player_input("Place your guess here")
         $ riddle_answer_time += renpy.get_game_runtime() - riddle_input_started_at
@@ -772,13 +772,13 @@ label chinese_riddle_loop:
             l "The musical barterer returned empty-handed from the underworld."
         
         
-        call chinese_riddle_lilithAction
+        call chinese_riddle_lilithAction from _call_chinese_riddle_lilithAction_2
         if persistent.r3_knowledge == True:
             n "You remember [persistent.date] telling you the answer was Orpheus."
         elif persistent.burger_Orpheus_knowledge == True:
             n "Something about this riddle seems familiar... The name Eurydice pops into your mind but you know it's not quite right."
 
-        call chinese_riddle_narratorAction
+        call chinese_riddle_narratorAction from _call_chinese_riddle_narratorAction_2
         $ riddle_input_started_at = renpy.get_game_runtime()
         $ riddle_answer = player_input("Place your guess here")
         $ riddle_answer_time += renpy.get_game_runtime() - riddle_input_started_at
@@ -884,32 +884,32 @@ label chinese_riddle_retry:
     $ attempts = riddles[current_riddle]["rw"]
     if retry_variation == 0:
         l "Hmm, not exactly who I was thinking about."
-        call riddle_movingOn
+        call riddle_movingOn from _call_riddle_movingOn
         l "Would you like to try again?"
 
     elif retry_variation == 1:
         l "Not quite, but you gave it a fair shot."
-        call riddle_movingOn
+        call riddle_movingOn from _call_riddle_movingOn_1
         l "Do you want to take another guess?"
 
     elif retry_variation == 2:
         l "That is not the name I had in mind."
-        call riddle_movingOn
+        call riddle_movingOn from _call_riddle_movingOn_2
         l "Do you want another try?"
 
     elif retry_variation == 3:
         l "Not quite..."
-        call riddle_movingOn
+        call riddle_movingOn from _call_riddle_movingOn_3
         l "Want to give it another shot?"
 
     elif retry_variation == 4:
         l "Not exactly..."
-        call riddle_movingOn
+        call riddle_movingOn from _call_riddle_movingOn_4
         l "Should we try again?"
 
     else:
         l "Not really... I admire how determined you are, though."
-        call riddle_movingOn
+        call riddle_movingOn from _call_riddle_movingOn_5
         l "Would you like one more attempt?"
     $ retry_variation = (retry_variation + 1) % 5
     menu:
