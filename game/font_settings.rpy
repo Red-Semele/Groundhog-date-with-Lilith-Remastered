@@ -80,7 +80,7 @@ init python:
         if value is None:
             return fallback
 
-        c = unicode(value).strip()
+        c = str(value).strip()
         if not c:
             return fallback
 
@@ -103,6 +103,92 @@ init python:
 
     def set_inline_hover_text_color(value):
         persistent.inline_hover_text_color = normalize_hex_color(value, "#336600")
+        gui.rebuild()
+        renpy.restart_interaction()
+
+    def request_preference_scope_apply(pref_key, pref_value):
+        # Main menu settings should remain global. In-profile changes can be scoped.
+        in_profile = bool(getattr(store, "_profile_context_active", False))
+
+        # Some builds may not include profile preference helpers.
+        # Fall back to direct persistent assignment so color controls still work.
+        _apply_fn = globals().get("profile_apply_preference", None)
+        if not callable(_apply_fn):
+            if pref_key == "dialogue_text_color":
+                persistent.dialogue_text_color = pref_value
+            elif pref_key == "inline_hover_text_color":
+                persistent.inline_hover_text_color = pref_value
+            else:
+                setattr(persistent, pref_key, pref_value)
+            gui.rebuild()
+            renpy.restart_interaction()
+            return
+
+        if in_profile:
+            renpy.show_screen("preference_apply_scope_confirm", pref_key=pref_key, pref_value=pref_value)
+            return
+        _apply_fn(pref_key, pref_value, scope="all")
+        gui.rebuild()
+        renpy.restart_interaction()
+
+    def sync_color_input(input_id, color):
+        """Push a color into a live input widget, which otherwise keeps its old typed text."""
+        # The input lives in whichever top-level screen `use`s the colors post-it,
+        # so look it up in every shown screen instead of by the post-it's own name.
+        w = None
+        try:
+            sls = renpy.exports.scene_lists()
+            for layer in renpy.config.layers:
+                for sle in sls.layers.get(layer, []):
+                    name = getattr(sle, "tag", None)
+                    if not name:
+                        continue
+                    w = renpy.get_widget(name, input_id, layer)
+                    if w is not None:
+                        break
+                if w is not None:
+                    break
+        except Exception:
+            w = None
+        if w is None:
+            return
+        if hasattr(w, "set_text"):
+            w.set_text(color)
+        else:
+            w.update_text(color, True)
+        renpy.restart_interaction()
+
+    def pick_color_preset(pref_key, color):
+        """Swatch click: mirror the color into the hex field, then apply it."""
+        try:
+            sync_color_input(pref_key + "_input", color)
+        except Exception:
+            pass
+        if pref_key == "dialogue_text_color":
+            request_dialogue_text_color_apply(color)
+        else:
+            request_inline_hover_text_color_apply(color)
+
+    def request_dialogue_text_color_apply(value):
+        color = normalize_hex_color(value, "#404040")
+        request_preference_scope_apply("dialogue_text_color", color)
+
+    def request_inline_hover_text_color_apply(value):
+        color = normalize_hex_color(value, "#336600")
+        request_preference_scope_apply("inline_hover_text_color", color)
+
+    def apply_preference_scope_choice(pref_key, pref_value, scope):
+        _apply_fn = globals().get("profile_apply_preference", None)
+        if callable(_apply_fn):
+            _apply_fn(pref_key, pref_value, scope=scope)
+        else:
+            if pref_key == "dialogue_text_color":
+                persistent.dialogue_text_color = pref_value
+            elif pref_key == "inline_hover_text_color":
+                persistent.inline_hover_text_color = pref_value
+            else:
+                setattr(persistent, pref_key, pref_value)
+        renpy.hide_screen("preference_apply_scope_confirm")
         gui.rebuild()
         renpy.restart_interaction()
 

@@ -15,14 +15,14 @@ label cafe_start:
             n "There are some holes in the specially shaped aquarium to allow for easy fish feeding."
             n "It also makes things feel more alive. Colorful fish sometimes poke their head out of the aquarium as if they want to watch the customers."
             n "It's almost as if you are the one in the glass cage and you just don't know it."
-            n "It's probably the other way around though. Atleast they seem to be enjoying themselves in their captivity, or they seem to."
+            n "It's probably the other way around though. Atleast they are enjoying themselves in their captivity, or they seem to."
         else:
             n "You once again make it to the cafe, the fish poking their heads out of the aquariums almost as if to greet you."
         n "Your eyes fall on [persistent.date], who is already sitting at a nice looking mahogany table."
         n "When [date_sub] [conj('date', 'notices', 'notice')] you [date_sub] [conj('date', 'waves', 'wave')] enthusiastically with a wide grin on [date_pos] face."
         l "Heya, glad you could make it!"
         l "This place has a really nice atmosphere, those aquariums are real eye catchers don't you think?"
-        l "Anyway, let's go order our food and then we can talk some more, I'm starving!"
+        l "Anyway, let's go order our food and then we can talk some more, I'm starving!" #TODO: Should I make you talk to her for a bit before she suggests this?
         n "[persistent.date] and you walk towards the barista, as he glances up from his phone he greets you with a shy smile."
         b "What could I get the both of you?"
         n "He seems quite young, if you'd have to guess you would say he is about 17."
@@ -192,7 +192,7 @@ label cafe_dice_result:
     l "I hope that hint is helpful!"
     l "So, what was the number of the first dice on the first turn?"
     label cafe_dice_choice:
-        $ dicenumber = renpy.input("Place your guess here", length=5)
+        $ dicenumber = player_input("Place your guess here", length=5)
         $ dicenumber = dicenumber.strip()
 
         if not dicenumber:
@@ -290,7 +290,7 @@ label cafe_dice_result:
 
             "No, that's not right.":
                 l "Oh,so what number do you think it is then [persistent.name]?"
-                $ dicenumber2 = renpy.input("Place your guess here", length=5)
+                $ dicenumber2 = player_input("Place your guess here", length=5)
                 $ dicenumber2 = dicenumber2.strip()
 
                 if not dicenumber2:

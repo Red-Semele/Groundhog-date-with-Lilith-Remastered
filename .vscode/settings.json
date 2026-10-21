@@ -237,6 +237,18 @@
                 "settings": {
                     "foreground": "#000"
                 }
+            },
+            {
+                "scope": "renpy.meta.color.#bbbbbb",
+                "settings": {
+                    "foreground": "#bbbbbb"
+                }
+            },
+            {
+                "scope": "renpy.meta.color.#ffffff",
+                "settings": {
+                    "foreground": "#ffffff"
+                }
             }
         ]
     },

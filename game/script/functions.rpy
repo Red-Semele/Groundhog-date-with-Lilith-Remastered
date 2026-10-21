@@ -4,6 +4,8 @@ label gdwl_functions:
 
         def check_death_skip(death_id):
             # Increments the seen-count for this death and returns the new total.
+            # Also remembers the cause so gameOver can log it for the graveyard.
+            store.death_cause = death_id
             if persistent.death_seen_counts is None:
                 persistent.death_seen_counts = {}
             count = persistent.death_seen_counts.get(death_id, 0) + 1
@@ -67,6 +69,57 @@ label gdwl_functions:
             quest_file = os.path.join(renpy.config.gamedir, "gallery", filename)
             subprocess.Popen([exe, quest_file])
 
+        def get_lilith_current_loop_memory(location=None):
+            global lilithCurrentLoopMemory
+            if lilithCurrentLoopMemory is None:
+                lilithCurrentLoopMemory = {}
+            if location is None:
+                location_keys = ["burger", "cafe", "chinese", "beach", "kokiri"]
+                for key in location_keys:
+                    if globals().get(key, False):
+                        location = key
+                        break
+            if location is None:
+                return {}
+            if location not in lilithCurrentLoopMemory:
+                lilithCurrentLoopMemory[location] = {}
+            return lilithCurrentLoopMemory[location]
+
+        def reset_lilith_current_loop_memory(location=None):
+            global lilithCurrentLoopMemory
+            if lilithCurrentLoopMemory is None:
+                lilithCurrentLoopMemory = {}
+            memory = get_lilith_current_loop_memory(location)
+            for key in list(memory.keys()):
+                value = memory[key]
+                if isinstance(value, bool):
+                    memory[key] = False
+                elif isinstance(value, (int, float)):
+                    memory[key] = 0
+                elif isinstance(value, str):
+                    memory[key] = ""
+                elif isinstance(value, list):
+                    memory[key] = []
+                elif isinstance(value, dict):
+                    memory[key] = {}
+                else:
+                    memory[key] = False
+            return memory
+
+        def record_attitude_event(event_name, is_positive):
+            if not event_name:
+                return
+            attitude_memory = get_lilith_current_loop_memory("attitude")
+            if not isinstance(attitude_memory.get("positive"), list):
+                attitude_memory["positive"] = []
+            if not isinstance(attitude_memory.get("negative"), list):
+                attitude_memory["negative"] = []
+            bucket = "positive" if is_positive else "negative"
+            if event_name not in attitude_memory[bucket]:
+                attitude_memory[bucket].append(event_name)
+
+      
+
         def flash_screen(color_name="red", duration=0.5): 
             renpy.show(color_name, layer="overlay")
             renpy.pause(duration, hard=True)
@@ -89,7 +142,7 @@ label gdwl_functions:
             global major_love_offence
             global minor_love_comfort
             global major_love_comfort
-            love_points = 2
+            attitude_memory = get_lilith_current_loop_memory("attitude")
             love_meter += love_points
             if love_points == -1:
                 minor_love_offence += 1
@@ -104,6 +157,11 @@ label gdwl_functions:
             elif love_points >= 2:
                 major_love_comfort += 1
                 persistent.major_love_comfort_counter += 1
+
+            attitude_memory["minor_love_offence"] = minor_love_offence
+            attitude_memory["major_love_offence"] = major_love_offence
+            attitude_memory["minor_love_comfort"] = minor_love_comfort
+            attitude_memory["major_love_comfort"] = major_love_comfort
             love_points = 0
             if alwaysJump == True:
                 love_meter_result(True)
@@ -327,7 +385,7 @@ label gdwl_functions:
                 if persistent.kokiri_death_1 == True:
                     if kokiri_alternateplace == False:
                         renpy.say(n, "Suddenly you are plagued with a vision of the meteorite that killed [persistent.date]. You should probably try to warn [date_obj] this time.", interact=False)
-                        met_check = renpy.display_menu([("You might want to sit on my right instead of my left first. Something's coming soon.","meteorite_warn"),("*Don't warn [date_obj].*","no_meteorite_warn")])
+                        met_check = menu([("You might want to sit on my right instead of my left first. Something's coming soon.","meteorite_warn"),("*Don't warn [date_obj].*","no_meteorite_warn")])
                         if met_check == "meteorite_warn":
                             kokiri_meteorite_alert = True
                         else:
@@ -340,17 +398,21 @@ label gdwl_functions:
             globals()["love_meter"] = 3
             globals()["carDescription"] = ""
             globals()["changeableWord"] = ""
+            globals()["neverEndingVariety"] = ""
+            reset_lilith_current_loop_memory()
             globals()["dicenumber"] = 0
             globals()["dicenumber2"] = 0
-            globals()["rw1"] = 0
-            globals()["rw2"] = 0
-            globals()["rw3"] = 0
+            globals()["riddles"] = [{"rw": 0, "riddleAnswers": ""}, {"rw": 0, "riddleAnswers": ""}, {"rw": 0, "riddleAnswers": ""}]
+            globals()["riddle_answer_time"] = 0.0
+            globals()["riddle_answer_history"] = []
             globals()["rw_total"] = 0
             globals()["current_riddle"] = 0
             globals()["retry_variation"] = 0
+            globals()["repeat_variation"] = 0
+            globals()["skip_variation"] = 0
             globals()["family_ask"] = 0
-            globals()["riddleAnswersTold"] = 0
             globals()["chinese_lilithBreakupTrigger"] = 0
+            globals()["chinese_lilith_breakup_pending"] = False
             globals()["callsMade"] = 0
             globals()["kokiri_conversation"] = 0
             
@@ -369,13 +431,14 @@ label gdwl_functions:
 
  
             global_vars = [
-                "called_phone", "burger", "cafe", "chinese", "nightmare", "kokiri_cherishAllDates", "burgerBeforeLie", "abby_phoneToldSisDies", "kokiri_griefHasNoTimeLimit", "kokiri_groundhog_lie", "kokiri_psychic_lie",
+                "called_phone", "burger", "cafe", "chinese", "nightmare", "kokiri_cherishAllDates", "burgerbeenBefore", "burgerGreatTaste", "abby_phoneToldSisDies", "kokiri_griefHasNoTimeLimit", "kokiri_groundhog_lie", "kokiri_psychic_lie",
                 "car_caught", "car_free", "groundhog", "psychic", "hugRequestedBeforeDeath",
                 # Locations
-                "burger_poem_cleancheck", "burgerBeenBefore", "onlyBurgers", "burger_alt", "brotherasked", "burger_nightmare", "kokiri_jamesTalkBlock",
+                "burger_poem_cleancheck", "burgerBeenBefore","riddleSkip", "burgerBeenBeforeMultiple", "onlyBurgers", "burgerFanatic", "burger_alt", "brotherasked", "burger_nightmare", "kokiri_jamesTalkBlock",
                 "cafedicecheat", "cafe_badLove_lowbar", "cafe_badLove_justafeeling", "peking", "orange", "kokiri_goalSurvive",
                 "riddle_loop", "poem_conversation", "teaseDeath", "angryLilith", "kokiri_poemBad", "kokiri_promiseCancelDate",
-                "kokiri_poems_rated_once", "kokiri_poems_rateblock", "kokiri_alternateplace", "kokiri_holdhand", "kokiri_scenery_headhurt", "kokiri_scenery_breakfrombreakingyourhead", "kokiri_scenery_gamegoal", "kokiri_meteorite_alert", "kokiri_meteorite_no_alert", "kokiri_finalTalk", "kokiri_call_death_2_check", "kokiri_call_death_1_check", "kokiri_death_4_playerResponse", "damoclesAsked", "big_sis_mode", "lilithAliveEnding", "kokiri_positiveDavidStory", "kokiri_familyContacted", "called_James", "kokiri_ToldLillyHowManyRetries", "kokiriSceneryWatched", "kokiri_scenery_shutUpLackOfSelfEsteem", "kokiri_poem_time_recent", "kokiri_poem_sun_recent", "kokiri_poem_marble_recent", "kokiri_poem_beach_recent", "kokiri_griefHasNoTimeLimit", "kokiri_silentMoment",
+                "kokiri_poems_rated_once", "kokiri_poems_rateblock", "kokiri_alternateplace", "kokiri_holdhand", "kokiri_scenery_headhurt", "kokiri_scenery_breakfrombreakingyourhead", "kokiri_scenery_gamegoal", "kokiri_meteorite_alert", "kokiri_meteorite_no_alert", "kokiri_finalTalk", "kokiri_call_death_2_check", "kokiri_call_death_1_check", "kokiri_death_4_playerResponse", "damoclesAsked", "big_sis_mode", "lilithAliveEnding", "kokiri_positiveDavidStory", "kokiri_familyContacted", "called_James", "kokiri_ToldLillyHowManyRetries", "kokiriSceneryWatched", "kokiri_scenery_shutUpLackOfSelfEsteem", "kokiri_poem_time_recent", "kokiri_poem_sun_recent", "kokiri_poem_marble_recent", "kokiri_poem_beach_recent", "kokiri_griefHasNoTimeLimit", "kokiri_silentMoment",  "kokiri_notReadyToLetGo", "kokiri_entered_alone"
+
                 # Kokiri recent poems
                 "kokiri_poem_snowwoman_recent", "kokiri_poem_shadowman_recent", "kokiri_poem_lights_recent", "kokiri_poem_bang_recent", "kokiri_poem_window_recent",
                 # Booleans to see who you ask about the most at familyask in kokiri
@@ -383,7 +446,7 @@ label gdwl_functions:
                 # Conversation trackers
                 "conversationtracker_poems", "conversationtracker_tellheraboutnarrator", "conversationtracker_questmade", "conversationtracker_abigail", "conversationtracker_david", "conversationtracker_james", "conversationtracker_lila", "conversationtracker_blamedavid", "conversationtracker_poem_window", "conversationtracker_poem_snowwoman", "conversationtracker_poem_shadowman", "conversationtracker_poem_lights", "conversationtracker_poem_bang", "conversationtracker_mayo", "conversationtracker_determinism", "conversationtracker_crosser", "conversationtracker_becomeGame", "conversationtracker_nightmares",
                 # Other flags
-                "abby_askedAboutGameTheme", "nmDetect", "mDetect", "hard_rude", "easy_rude", "demetrius", "adriel", "currentcar", "booklovertalked", "musiclovertalked", "phone_wrongPassword_graceSystem", "burger_explosion_outside", "onlyDates", "davidPromise", "abbyCalled", "lilaCalled", "jamesCalled", "davidCalled", "policeCalled", "rockMode_rockBand", "rockModeBackToStart", "reunion_davidPresent", "reunion_lilaPresent", "dumboStoryTold", 
+                "abby_askedAboutGameTheme", "nmDetect", "mDetect", "hard_rude", "easy_rude", "demetrius", "adriel", "currentcar", "bookloverTalked", "musicloverTalked", "phone_wrongPassword_graceSystem", "burger_explosion_outside", "onlyDates", "davidPromise", "abbyCalled", "lilaCalled", "jamesCalled", "davidCalled", "policeCalled", "rockMode_rockBand", "rockModeBackToStart", "reunion_davidPresent", "reunion_lilaPresent", "dumboStoryTold", 
                 # Beach
                 "beachStart_doneBook", "beachStart_doneDunes", "beachStart_doneBeach", "beachStart_doneFriterie", "beachStart_doneIce", "beachStart_doneCinema", "ice", "raintalked",
                 # QOL-settings
@@ -391,7 +454,11 @@ label gdwl_functions:
             ]
 
             for var in global_vars:
-                globals()[var] = False
+                if var == "burger_poem_cleancheck":
+                    globals()[var] = ""
+                else:
+                    globals()[var] = False
+            globals()["burger_poem_cleancheck"] = ""
 
             
         def showContinueTalk():
@@ -487,5 +554,4 @@ label gdwl_functions:
     jump after_setup
 
                 
-
 

@@ -23,7 +23,7 @@ define gui.show_name = True
 
 ## The version of the game.
 
-define config.version = "1.4.4.1"
+define config.version = "1.5.4.0"
 
 
 ## Text that is placed on the game's about screen. Place the text between the
@@ -91,8 +91,12 @@ define config.debug_sound  = True
 define config.enter_transition = dissolve
 define config.exit_transition = dissolve
 
-
 ## Between screens of the game menu.
+
+define config.game_menu = "notebook_closed_menu"
+
+init python:
+    config.keymap["game_menu"] = ["mouseup_3", "K_ESCAPE", "K_MENU"]
 
 define config.intra_transition = dissolve
 

@@ -9,32 +9,49 @@ screen fanart_gallery(img_path):
             add Transform(img_path, fit="contain", xysize=(900,600)) xalign 0.5 yalign 0.5
 
 label gallery:
-    n "You find yourself in a small room tucked away somewhere between loops."
-    n "The walls are lined with old monitors, each one displaying something familiar yet unfinished."
-    n "A plaque on the wall reads: {i}Where it all began.{/i}"
+    n "You find yourself in an old, half-abandoned gallery."
+    menu:
+        "*Enter a room with monitors.*":
+            n "The walls are lined with old monitors, each one displaying something familiar yet unfinished."
+            n "A plaque on the wall reads: {i}Where it all began.{/i}"
+            label gallery_menu:
+                menu:
+                    "View a random fanart":
+                        jump gallery_fanart_random
+                    "Read a random fanwriting":
+                        jump gallery_fanwriting_random
+                    "Prototype 1: GdwL1":
+                        $ launch_quest_game("GdwL1.quest")
+                        n "The game launches in a separate window. Come back whenever you're done."
+                        jump gallery_menu
+                    "Prototype 2: GdwL2":
+                        $ launch_quest_game("GdwL2.quest")
+                        n "The game launches in a separate window. Come back whenever you're done."
+                        jump gallery_menu
+                    "Prototype 4: GdwL4":
+                        $ launch_quest_game("GdwL4.quest")
+                        n "The game launches in a separate window. Come back whenever you're done."
+                        jump gallery_menu
+                    "Leave the gallery.":
+                        pass
 
-    label gallery_menu:
-        menu:
-            "View a random fanart":
-                jump gallery_fanart_random
-            "Read a random fanwriting":
-                jump gallery_fanwriting_random
-            "Prototype 1 GdwL1":
-                $ launch_quest_game("GdwL1.quest")
-                n "The game launches in a separate window. Come back whenever you're done."
-                jump gallery_menu
-            "Prototype 2 GdwL2":
-                $ launch_quest_game("GdwL2.quest")
-                n "The game launches in a separate window. Come back whenever you're done."
-                jump gallery_menu
-            "Prototype 4 GdwL4":
-                $ launch_quest_game("GdwL4.quest")
-                n "The game launches in a separate window. Come back whenever you're done."
-                jump gallery_menu
-            "Leave the gallery.":
-                pass
+            return
 
-    return
+        "*Enter podium room.*":
+            #TODO: Link this to the "I seek the one responsible" storyline
+            n "You enter a room with a grand stage at the center, illuminated by a single spotlight."
+            n "On it, one figure, in the center of the beam yet somehow cloaked in darkness."
+            menu:
+                "*Approach the figure.*":
+                    n "It is... [date_dad]?"
+                    d "If I hadn't given [ghost_obj] that camera none of this would have happened."
+                    d "If you seek the one responsible, it is me."
+                    #TODO: Fill this in more over time
+                "*Enter backstage.*":
+                    n "You step behind the stage, only to find yourself on the same stage. Except no, this is a slightly different one, yet it is impossible to tell with your eyes. It just feels ever so slightly different in your gut."
+                    n "Once again, a figure stands in the center of the stage, shrouded in the same mysterious darkness."
+                    #TODO: order of figures, first the dad, then??? then potentially the trinity, then the narrator, then the player themselves, then finally goose dev
+                    #TODO: Upon reaching goose, have it so that you can spawn any character from the game on the stage and control their narrated text, movement and text
 
 # Utility to list files in a folder (requires Ren'Py 7.4+)
 init python:

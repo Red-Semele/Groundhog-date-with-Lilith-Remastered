@@ -2,15 +2,13 @@
 default cinematic_textbox_shift = True
 default cinematic_textbox_shift_last_size = 0
 default cinematic_textbox_shift_prev_shift = 0
-# Cinematic Black Bars Overlay
-
 default cinematic_bars_state = {"sides": [], "size": 0, "target_size": 0, "animate": False, "duration": 0.3, "hide_duration": 0.3, "retracting": False, "retract_from": 0, "retract_pending": False, "curve": None, "block_dismiss_until": 0.0}
 default persistent.menu_choice_history = {}
 default persistent.menu_choice_history_display = {}
 default persistent.menu_choice_history_current = {}
-default persistent.grid_choices = False
+default persistent.menu_choice_history_loop = {}
 default persistent.inline_choices = False
-default persistent.inline_choice_grow = False
+default persistent.inline_choice_grow = True
 default persistent.number_keys = False
 default persistent.auto_pick_underlined_choice = False
 screen cinematic_bars():
@@ -91,26 +89,22 @@ transform bar_grow_xsize_right(duration, target):
 init python:
     import time as _cinematic_time
 
-    def show_cinematic_bars(sides=["top", "bottom"], size=120, animate=True, duration=0.3, curve=None):
+    def show_cinematic_bars(sides, size, animate=True, duration=0.3, curve=None):
         """
-        Shows cinematic black bars on specified sides.
-        sides:    list of "top", "bottom", "left", "right"
-        size:     pixel thickness of bars
-        animate:  whether to animate the bars
-        duration: animation duration in seconds
-        curve:    easing — None/"linear", "ease", "easein", "easeout",
-        or [(seconds, fraction), ...] for multi-segment
+        Shows the cinematic bars, optionally animating them in.
         """
-        global cinematic_bars_state, cinematic_textbox_shift_last_size, cinematic_textbox_shift_prev_shift
+        global cinematic_bars_state, cinematic_textbox_shift_prev_shift, cinematic_textbox_shift_last_size
         cinematic_bars_state["sides"] = sides
+        cinematic_bars_state["size"] = size
         cinematic_bars_state["target_size"] = size
         cinematic_bars_state["animate"] = animate
         cinematic_bars_state["duration"] = duration if animate else 0.0
         cinematic_bars_state["curve"] = curve
-        # Block dismiss for the full animation duration
+        cinematic_bars_state["retracting"] = False
+        cinematic_bars_state["retract_pending"] = False
+        cinematic_bars_state["retract_from"] = 0
         if animate and duration > 0:
             cinematic_bars_state["block_dismiss_until"] = _cinematic_time.time() + duration
-        # Store previous shift for textbox animation
         if cinematic_textbox_shift and "bottom" in sides and size > 0:
             cinematic_textbox_shift_prev_shift = cinematic_textbox_shift_last_size
         else:
@@ -130,64 +124,14 @@ init python:
         cinematic_bars_state["duration"] = hide_dur
         cinematic_bars_state["hide_duration"] = hide_dur
         cinematic_bars_state["curve"] = curve
-        # Block dismiss for the retract duration
         if animate and hide_dur > 0:
             cinematic_bars_state["block_dismiss_until"] = _cinematic_time.time() + hide_dur
-        # Store retract info so the say screen can animate the textbox back down
         if cinematic_textbox_shift and "bottom" in cinematic_bars_state["sides"]:
             cinematic_bars_state["retracting"] = True
             cinematic_bars_state["retract_pending"] = True
             cinematic_bars_state["retract_from"] = cinematic_textbox_shift_last_size
         cinematic_textbox_shift_last_size = 0
         renpy.hide_screen("cinematic_bars")
-screen show_name_input_screen(npc_var, npc_default):
-    frame:
-        style_prefix "menu"
-        xalign 0.5
-        yalign 0.5
-        vbox:
-            spacing 10
-            text f"Enter Name:" size 28
-            input:
-                default getattr(persistent, npc_var, npc_default)
-                changed (lambda v, nv=npc_var: setattr(persistent, nv, v))
-            hbox:
-                spacing 10
-                textbutton "Save" action Hide('show_name_input_screen')
-                textbutton "Cancel" action Hide('show_name_input_screen')
-init python:
-    def reset_all_character_defaults():
-        for npc_var, name_d, nick_d in _NPC_DEFAULTS:
-            setattr(persistent, npc_var, name_d)
-            setattr(persistent, npc_var + "_nickname", nick_d)
-            setattr(persistent, npc_var + "_pronouns", dict(_PRONOUN_DEFAULTS.get(npc_var, {})))
-            setattr(persistent, npc_var + "_family_terms", dict(_FAMILY_DEFAULTS.get(npc_var, {})))
-        updatePronouns()
-        updateFamilyTerms()
-
-    # --- FAMILY TERM SYSTEM ---
-    _FAMILY_DEFAULTS = {
-        "date":       {"sibling (short)": "sis", "sibling": "sister", "child": "daughter"},
-        "date_sis":   {"sibling (short)": "sis", "sibling": "sister", "child": "daughter"},
-        "date_dad":   {"parent (short)": "dad", "parent": "father"},
-        "date_mom":   {"parent (short)": "mom", "parent": "mother"},
-        "date_ghost": {"sibling (short)": "bro", "sibling": "brother", "child": "son"},
-    }
-
-    def set_family_term(npc_var, term_key, value):
-        d = _get_family_dict(npc_var)
-        d[term_key] = value
-        setattr(persistent, npc_var + "_family_terms", d)
-
-    def _get_family_dict(npc_var):
-        stored = getattr(persistent, npc_var + "_family_terms", None)
-        defaults = dict(_FAMILY_DEFAULTS.get(npc_var, {}))
-        if isinstance(stored, dict):
-            merged = dict(defaults)
-            merged.update(stored)
-            return merged
-        setattr(persistent, npc_var + "_family_terms", defaults)
-        return defaults
 
     def reset_to_default_family_terms():
         for npc_var, name_d, nick_d in _NPC_DEFAULTS:
@@ -317,9 +261,8 @@ screen change_family_terms_menu():
 
 init offset = -1
 
-if persistent.canSave == False:
-    define _game_menu_screen = "preferences"
-define config.auto_load = "quitsave"
+define _game_menu_screen = "notebook_closed_menu"
+define config.auto_load = None
 
 
 ################################################################################
@@ -385,6 +328,10 @@ style slider:
     base_bar Solid(gui.hover_muted_color)
     thumb Solid(gui.hover_color)
 
+style slider_bar is bar:
+    left_bar "gui/horizontal bar filling.png"
+    right_bar "gui/horizontal bar empty.png"
+
 style vslider:
     xsize gui.slider_size
     base_bar Solid(gui.hover_muted_color)
@@ -419,15 +366,16 @@ style frame:
 ##
 ## https://www.renpy.org/doc/html/screen_special.html#say
 
-screen say(who, what):
+screen say(who, what, nametag=None, **kwargs):
     style_prefix "say"
 
-    $ _say_base_viewport_height = max(120, gui.textbox_height - gui.dialogue_ypos - 10)
-    $ _say_cap_box_height = min(int(config.screen_height * 0.72), gui.textbox_height + 420)
-    $ _say_cap_viewport_height = max(120, _say_cap_box_height - gui.dialogue_ypos - 10)
-    $ _say_content_height = estimate_dialogue_content_height(what, gui.dialogue_width, gui.text_size)
-    $ _say_viewport_height = min(_say_cap_viewport_height, max(_say_base_viewport_height, _say_content_height))
-    $ _say_box_height = gui.dialogue_ypos + _say_viewport_height + 10
+    # Text fills the free space below first; then it climbs into the free space above (never into the torn edge, which ends ~34px below the box top) before the box grows.
+    $ _say_text_top_min = 50
+    $ _say_text_top_default = gui.dialogue_ypos + 18
+    $ _say_cap_box_height = int(config.screen_height * 0.92)
+    $ _say_content_height = measure_dialogue_height(what, gui.dialogue_width, gui.text_size)
+    $ _say_box_height = min(_say_cap_box_height, max(gui.textbox_height, _say_text_top_min + _say_content_height + 10))
+    $ _say_text_top = max(_say_text_top_min, min(_say_text_top_default, _say_box_height - 10 - _say_content_height))
 
 
 
@@ -446,21 +394,270 @@ screen say(who, what):
             $ duration = cinematic_bars_state["duration"]
             $ animate_shift = (prev_shift > 0 and duration > 0.0)
 
-    if who is not None:
-        window:
-            id "namebox"
-            style "namebox"
+    if what is not None and what != "" and persistent.cheddar and cheddar_state["open"]:
+        fixed:
             at (textbox_shift_smooth(prev_shift, shift, duration) if animate_shift else textbox_shift_static(shift))
-            yoffset -(_say_box_height) - 20
-            text who id "who"
+            use cheddar_tab_piece
+
+    $ _nt = nametag_track(who, what)
+    if what is not None and what != "" and who is not None:
+        $ _tag_render_w = int(round(202 * menu_notebook_zoom))
+        $ _tag_render_h = int(round(63 * menu_notebook_zoom))
+        fixed:
+            at (textbox_shift_smooth(prev_shift, shift, duration) if animate_shift else textbox_shift_static(shift))
+            if _nt["swap"] and _nt["prev"] is not None:
+                use nametag_piece(_nt["prev"], nametag_color(_nt["prev"]), _tag_render_w, _tag_render_h, nametag_retract(nametag_shown(_nt["prev"]), nametag_hidden()), False)
+                use nametag_piece(who, nametag_color(who, nametag), _tag_render_w, _tag_render_h, nametag_extend(nametag_hidden(), nametag_shown(who), 0.8), True)
+            elif _nt["swap"]:
+                use nametag_piece(who, nametag_color(who, nametag), _tag_render_w, _tag_render_h, nametag_extend(nametag_hidden(), nametag_shown(who), 0.0), True)
+            else:
+                use nametag_piece(who, nametag_color(who, nametag), _tag_render_w, _tag_render_h, nametag_static(nametag_shown(who)), True)
 
     if what is not None and what != "":
         window:
             id "window"
             at (textbox_shift_smooth(prev_shift, shift, duration) if animate_shift else textbox_shift_static(shift))
             ysize _say_box_height
-            background At(Transform("gui/textbox.png", xalign=0.5, yalign=1.0, ysize=_say_box_height), Transform(alpha=gui.textbox_alpha))
-            text what id "what"
+            background At(Frame(Transform(Crop((0, 330, 912, 187), "gui/textbox paper unripped.png"), zoom=menu_notebook_zoom), 240, 170, 240, 40, tile=False, xsize=int(912 * menu_notebook_zoom), xalign=0.5, ysize=_say_box_height + 96, yalign=1.0), Transform(alpha=gui.textbox_alpha))
+
+            fixed:
+                xalign 1.0
+                xoffset -300
+                yalign 0.0
+                yoffset 60 + (_say_box_height - gui.textbox_height)
+                xsize 80
+                vbox:
+                    xalign 1.0
+                    spacing 18
+                    imagebutton:
+                        idle Transform("gui/side.png", crop=(764, 380, 26, 29), zoom=1.4, matrixcolor=ColorizeMatrix("#000000", "#000000"), xalign=0.5)
+                        hover Transform("gui/side.png", crop=(764, 380, 26, 29), zoom=1.4, matrixcolor=ColorizeMatrix("#000000", "#2E9F53"), xalign=0.5)
+                        selected_idle Transform("gui/side.png", crop=(764, 380, 26, 29), zoom=1.4, matrixcolor=ColorizeMatrix("#000000", "#2E9F53"), xalign=0.5)
+                        selected_hover Transform("gui/side.png", crop=(764, 380, 26, 29), zoom=1.4, matrixcolor=ColorizeMatrix("#000000", "#2E9F53"), xalign=0.5)
+                        selected skip_is_armed()
+                        action Function(toggle_skip_armed) alternate Skip(fast=True, confirm=True)
+                    imagebutton:
+                        idle Transform("gui/side.png", crop=(764, 413, 31, 40), zoom=1.4, matrixcolor=ColorizeMatrix("#000000", "#000000"), xalign=0.5)
+                        hover Transform("gui/side.png", crop=(764, 413, 31, 40), zoom=1.4, matrixcolor=ColorizeMatrix("#000000", "#2E9F53"), xalign=0.5)
+                        selected Transform("gui/side.png", crop=(764, 413, 31, 40), zoom=1.4, matrixcolor=ColorizeMatrix("#000000", "#2E9F53"), xalign=0.5)
+                        action ShowMenu('history')
+                    imagebutton:
+                        idle Transform("gui/side.png", crop=(764, 461, 30, 30), zoom=1.4, matrixcolor=ColorizeMatrix("#000000", "#000000"), xalign=0.5)
+                        hover Transform("gui/side.png", crop=(764, 461, 30, 30), zoom=1.4, matrixcolor=ColorizeMatrix("#000000", "#2E9F53"), xalign=0.5)
+                        selected Transform("gui/side.png", crop=(764, 461, 30, 30), zoom=1.4, matrixcolor=ColorizeMatrix("#000000", "#2E9F53"), xalign=0.5)
+                        action ShowMenu('notebook_closed_menu')
+
+            text what id "what" ypos _say_text_top
+
+init python:
+    _nametag_state = {"line": None, "who": None, "prev": None, "swap": False}
+
+    def skip_is_armed():
+        return bool(renpy.session.get("skip_armed", False))
+
+    def toggle_skip_armed():
+        # Armed skip stays on until toggled off; it only advances over seen text.
+        # Kept in renpy.session so rollback doesn't revert the player's choice.
+        renpy.session["skip_armed"] = not skip_is_armed()
+        if skip_is_armed():
+            renpy.config.skipping = "slow"
+        else:
+            renpy.config.skipping = None
+        renpy.restart_interaction()
+
+    # Tab now toggles the armed skip instead of Ren'Py's built-in toggle.
+    config.keymap["toggle_skip"] = []
+    config.overlay_screens.append("skip_toggle_key")
+
+    def skip_delay_seconds():
+        afm = float(getattr(preferences, "afm_time", 15.0) or 0.0)
+        return 1.0 - 0.8 * max(0.0, min(1.0, afm / 30.0))
+
+    def skip_apply_speed():
+        # Skip delay follows the auto-forward slider: left = 1.0s (slowest), right = 0.2s (fastest).
+        afm = float(getattr(preferences, "afm_time", 15.0) or 0.0)
+        config.skip_delay = int(round(skip_delay_seconds() * 1000))
+
+    config.start_interact_callbacks.append(lambda: skip_apply_speed())
+
+    def skip_rearm_callback():
+        if not skip_is_armed() or renpy.config.skipping:
+            return
+        try:
+            node = renpy.game.script.lookup(renpy.game.context().current)
+            if isinstance(node, renpy.ast.Say) and renpy.game.context().seen_current(True):
+                renpy.config.skipping = "slow"
+        except Exception:
+            pass
+
+    config.start_interact_callbacks.append(skip_rearm_callback)
+
+    def nametag_plain(who):
+        if who is None:
+            return None
+        return renpy.filter_text_tags(who, allow=[])
+
+    def nametag_paper_left():
+        # Left edge of the opaque textbox paper on screen (paper art: x=114 of 912, centred).
+        return int((config.screen_width - 912 * menu_notebook_zoom) / 2 + 114 * menu_notebook_zoom)
+
+    def nametag_hidden(who=None):
+        # Whole tag tucked behind the paper.
+        return nametag_paper_left() - 18 + 6
+
+    def nametag_shown(who):
+        # Stops once the last letter has cleared the paper edge.
+        tw = Text(who, style="say_label").size()[0]
+        return max(-18, nametag_paper_left() - 18 - 24 - int(tw) - 24)
+
+    _nametag_explicit = {}
+
+    def nametag_color(who, explicit=None):
+        # Colour comes from the Character's show_nametag="#hex"; remembered so the outgoing tag keeps it.
+        name = nametag_plain(who)
+        if explicit:
+            _nametag_explicit[name] = explicit
+            return explicit
+        if name in _nametag_explicit:
+            return _nametag_explicit[name]
+        return gui.hover_color
+
+    def nametag_track(who, what):
+        # Recomputed only when the line changes, so redraws don't restart the animation.
+        st = _nametag_state
+        name = nametag_plain(who)
+        if renpy.predicting():
+            return {"swap": name != st["who"], "prev": st["who"]}
+        if st["line"] != what:
+            st["swap"] = (name != st["who"])
+            st["prev"] = st["who"]
+            st["line"] = what
+            st["who"] = name
+        return st
+
+transform nametag_static(x):
+    xoffset x
+
+transform nametag_retract(x_from, x_to):
+    xoffset x_from
+    easein 0.8 xoffset x_to
+
+transform nametag_extend(x_from, x_to, wait):
+    xoffset x_from
+    pause wait
+    easeout 0.8 xoffset x_to
+
+screen skip_toggle_key():
+    key "K_TAB" action Function(toggle_skip_armed)
+
+screen nametag_piece(name, color, w, h, anim, main):
+    window:
+        if main:
+            id "namebox"
+        style "namebox"
+        at anim
+        xpos 18
+        yalign 1.0
+        yoffset -100
+        xsize w
+        ysize h
+        background At(Transform("gui/nametag tab.png", crop=(117, 352, 202, 63), xalign=0.0, yalign=1.0, zoom=menu_notebook_zoom, matrixcolor=ColorizeMatrix("#000000", color)), Transform(alpha=gui.textbox_alpha))
+        fixed:
+            xsize w
+            ysize h
+            if main:
+                text name id "who":
+                    style "say_label"
+                    xanchor 0.0
+                    yanchor 0.5
+                    xpos 24
+                    ypos int(round(h / 2.0))
+                    text_align 0.0
+            else:
+                text name:
+                    style "say_label"
+                    xanchor 0.0
+                    yanchor 0.5
+                    xpos 24
+                    ypos int(round(h / 2.0))
+                    text_align 0.0
+
+screen multiple_say(who, what, multiple):
+    if multiple and multiple[1] == 2:
+        $ _block = int(multiple[0])
+        $ _say_base_viewport_height = max(120, gui.textbox_height - gui.dialogue_ypos - 10)
+        $ _say_cap_box_height = int(config.screen_height * 0.92)
+        $ _say_cap_viewport_height = max(120, _say_cap_box_height - gui.dialogue_ypos - 10)
+        $ _say_content_height = estimate_dialogue_content_height(what, gui.dialogue_width, gui.text_size)
+        $ _say_viewport_height = min(_say_cap_viewport_height, max(_say_base_viewport_height, _say_content_height))
+        $ _say_box_height = gui.dialogue_ypos + _say_viewport_height + 10
+
+        # Match split placement to the textbox's rendered width at current y-size.
+        $ _src_w, _src_h = _multiple_textbox_source_size_safe()
+        $ _src_left_w = max(1, int(_src_w / 2))
+        $ _src_right_w = max(1, int(_src_w - _src_left_w))
+        $ _scale = (float(_say_box_height) / float(max(1, _src_h)))
+        $ _render_w = max(2, int(round(float(_src_w) * _scale)))
+        $ _left_w = max(1, int(round(float(_src_left_w) * _scale)))
+        $ _right_w = max(1, int(_render_w - _left_w))
+
+        $ _split_gap = 18
+        $ _split_shift_x = 220
+        $ _box_base_x = int((config.screen_width - _render_w) / 2) + _split_shift_x
+        $ _left_gap_push = int(_split_gap / 2)
+        $ _right_gap_push = int(_split_gap - _left_gap_push)
+        $ _panel_x = ((_box_base_x - _left_gap_push) if _block == 1 else (_box_base_x + _left_w + _right_gap_push))
+        $ _panel_w = (_left_w if _block == 1 else _right_w)
+
+        $ _text_pad_x = int(max(24, round(44.0 * _scale)))
+        $ _namebox_x = _panel_x + int(max(12, round(24.0 * _scale)))
+        $ _bg_crop = _multiple_textbox_half_crop(_block)
+        $ _content_w = max(120, _panel_w - (_text_pad_x * 2))
+
+        $ shift = 0
+        $ prev_shift = 0
+        $ duration = 0.0
+        $ animate_shift = False
+        if cinematic_textbox_shift and "bottom" in cinematic_bars_state["sides"]:
+            if cinematic_bars_state["target_size"] > 0:
+                $ shift = cinematic_bars_state["target_size"]
+                $ prev_shift = cinematic_textbox_shift_prev_shift
+                $ duration = cinematic_bars_state["duration"] if cinematic_bars_state["animate"] else 0.0
+                $ animate_shift = (prev_shift != shift and duration > 0.0)
+            elif cinematic_bars_state.get("retracting", False):
+                $ prev_shift = cinematic_bars_state.get("retract_from", 0)
+                $ duration = cinematic_bars_state["duration"]
+                $ animate_shift = (prev_shift > 0 and duration > 0.0)
+
+        if who is not None:
+            window:
+                id "namebox"
+                style "namebox"
+                at (textbox_shift_smooth(prev_shift, shift, duration) if animate_shift else textbox_shift_static(shift))
+                xpos _namebox_x
+                yoffset -(_say_box_height) - 20
+                xminimum max(180, int(_panel_w * 0.40))
+                text who id "who"
+
+        if what is not None and what != "":
+            window:
+                id "window"
+                style "empty"
+                at (textbox_shift_smooth(prev_shift, shift, duration) if animate_shift else textbox_shift_static(shift))
+                xfill False
+                xpos _panel_x
+                xsize _panel_w
+                yalign gui.textbox_yalign
+                yoffset -40
+                ysize _say_box_height
+                background At(Transform("gui/textbox paper unripped.png", crop=_bg_crop, xalign=0.0, yalign=1.0, xsize=_panel_w * 1.5, ysize=_say_box_height + 120, zoom=menu_notebook_zoom), Transform(alpha=gui.textbox_alpha))
+
+                text what id "what":
+                    style "say_dialogue"
+                    xpos _text_pad_x
+                    xsize _content_w
+    else:
+        use say(who, what)
 
 transform textbox_shift_smooth(prev, new, duration):
     yoffset -prev
@@ -475,6 +672,31 @@ transform textbox_shift_animated(shift, duration):
 
 transform textbox_shift_static(shift):
     yoffset -shift
+
+init python:
+    _multiple_textbox_source_size = None
+
+    def _multiple_textbox_source_size_safe():
+        global _multiple_textbox_source_size
+
+        if _multiple_textbox_source_size is None:
+            try:
+                _multiple_textbox_source_size = renpy.image_size("gui/textbox.png")
+            except Exception:
+                _multiple_textbox_source_size = (config.screen_width, gui.textbox_height)
+
+        src_w, src_h = _multiple_textbox_source_size
+        return (int(src_w), int(src_h))
+
+    def _multiple_textbox_half_crop(block):
+        """Return a crop rect for left/right half of the textbox source image."""
+        src_w, src_h = _multiple_textbox_source_size_safe()
+        left_w = max(1, int(src_w / 2))
+        right_w = max(1, int(src_w - left_w))
+        if int(block) == 1:
+            return (0, 0, left_w, src_h)
+        return (left_w, 0, right_w, src_h)
+
 init python:
     def enable_cinematic_textbox_shift(enable=True):
         """
@@ -485,20 +707,22 @@ init python:
 
     def _cinematic_after_say(event, interact=True, **kwargs):
         if event == "end" and interact:
-            store.cinematic_textbox_shift_prev_shift = store.cinematic_textbox_shift_last_size
-            if store.cinematic_bars_state.get("retract_pending", False):
+            setattr(store, "cinematic_textbox_shift_prev_shift", getattr(store, "cinematic_textbox_shift_last_size", 0))
+            _cinematic_bars_state = getattr(store, "cinematic_bars_state", {})
+            if _cinematic_bars_state.get("retract_pending", False):
                 # First click after retract — the animation played, now clear everything
-                store.cinematic_bars_state["retracting"] = False
-                store.cinematic_bars_state["retract_from"] = 0
-                store.cinematic_bars_state["retract_pending"] = False
+                _cinematic_bars_state["retracting"] = False
+                _cinematic_bars_state["retract_from"] = 0
+                _cinematic_bars_state["retract_pending"] = False
     config.all_character_callbacks.append(_cinematic_after_say)
 
     def _cinematic_say_allow_dismiss():
-        until = store.cinematic_bars_state.get("block_dismiss_until", 0.0)
+        _cinematic_bars_state = getattr(store, "cinematic_bars_state", {})
+        until = _cinematic_bars_state.get("block_dismiss_until", 0.0)
         if until > 0.0:
             if _cinematic_time.time() < until:
                 return False
-            store.cinematic_bars_state["block_dismiss_until"] = 0.0
+            _cinematic_bars_state["block_dismiss_until"] = 0.0
         return True
     config.say_allow_dismiss = _cinematic_say_allow_dismiss
 
@@ -530,25 +754,23 @@ style window:
     ysize gui.textbox_height
     yoffset -40
 
-    background At(Image("gui/textbox.png", xalign=0.5, yalign=1.0), Transform(alpha=gui.textbox_alpha))
+    background At(Transform("gui/textbox paper unripped.png", xalign=0.5, yalign=1.0, zoom=menu_notebook_zoom), Transform(alpha=gui.textbox_alpha))
 
 style namebox:
-    xpos gui.name_xpos
     xanchor 0.0
-    xminimum 180
-    ## yanchor 1.0 + yalign 1.0 + yoffset = -gui.textbox_height puts the
-    ## bottom of the namebox exactly at the top of the textbox — touching, not overlapping.
+    xminimum 202
+    xsize 202
     yanchor 1.0
     yalign 1.0
-    yoffset -(gui.textbox_height) - 20
-
-    background Frame(Solid(gui.accent_color), Borders(0, 0, 0, 0))
-    padding (20, 10, 20, 10)
+    yoffset 0
+    ysize 63
+    background At(Transform("gui/nametag tab.png", crop=(117, 352, 202, 63), xalign=0.0, yalign=1.0, zoom=menu_notebook_zoom, matrixcolor=ColorizeMatrix("#000000", gui.hover_color)), Transform(alpha=gui.textbox_alpha))
+    padding (0, 0, 0, 0)
 
 style say_label:
     properties gui.text_properties("name", accent=True)
     xalign 0.5
-    text_align 0.5
+    text_align 0.0
     yalign 0.5
     color "#ffffff"
 
@@ -557,7 +779,7 @@ style say_dialogue:
 
     xpos gui.dialogue_xpos
     xsize gui.dialogue_width
-    ypos gui.dialogue_ypos
+    ypos gui.dialogue_ypos + 18
 
     adjust_spacing False
 
@@ -580,10 +802,10 @@ screen input(prompt):
             xanchor gui.dialogue_text_xalign
             xpos gui.dialogue_xpos
             xsize gui.dialogue_width
-            ypos gui.dialogue_ypos
+            ypos gui.dialogue_ypos + 18
 
             text prompt style "input_prompt"
-            input id "input"
+            input id "input" default_focus True
 
 
 style input_prompt is default
@@ -595,6 +817,42 @@ style input_prompt:
 style input:
     xalign gui.dialogue_text_xalign
     xmaximum gui.dialogue_width
+
+
+init python:
+    def speak_player_reply(text, literal=False):
+        if not text or not getattr(store, "_profile_context_active", True):
+            return
+
+        if literal:
+            text = text.replace("[", "[[").replace("{", "{{")
+
+        renpy.say(p, text)
+
+    # Screen actions can't start an interaction, so the picked caption is
+    # stored here and spoken once the menu interaction has returned.
+    _pending_player_reply = [None]
+
+    def set_pending_player_reply(caption):
+        _pending_player_reply[0] = caption
+
+    _display_menu = renpy.display_menu
+
+    def menu(items, *args, **kwargs):
+        _pending_player_reply[0] = None
+        rv = _display_menu(items, *args, **kwargs)
+        caption = _pending_player_reply[0]
+        _pending_player_reply[0] = None
+        if caption and not kwargs.get("predict_only", False):
+            speak_player_reply(caption)
+        return rv
+
+    _renpy_input = renpy.input
+
+    def player_input(*args, **kwargs):
+        result = _renpy_input(*args, **kwargs)
+        speak_player_reply(result, literal=True)
+        return result
 
 
 ## Choice screen ###############################################################
@@ -628,19 +886,28 @@ init python:
         if getattr(persistent, "menu_choice_history_current", None) is None or not isinstance(persistent.menu_choice_history_current, dict):
             persistent.menu_choice_history_current = {}
 
+        if not isinstance(getattr(persistent, "menu_choice_history_loop", None), dict):
+            persistent.menu_choice_history_loop = {}
+
         if not isinstance(legacy, dict):
             persistent.menu_choice_history = {}
 
     def start_menu_choice_session(menu_id):
         _ensure_menu_choice_history()
 
+        loop_id = getattr(persistent, "retry_counter", 0) or 0
+        loops = persistent.menu_choice_history_loop
         previous = persistent.menu_choice_history_current.get(menu_id, [])
+
+        # Revisiting a menu inside the same loop keeps showing the previous loop's path.
+        if loops.get(menu_id) == loop_id and isinstance(previous, list):
+            return
+
         if isinstance(previous, list) and previous:
-            # Show only the immediately previous encounter of this menu.
             persistent.menu_choice_history_display[menu_id] = list(previous)
 
-        # Start a fresh sequence for this encounter.
         persistent.menu_choice_history_current[menu_id] = []
+        loops[menu_id] = loop_id
 
     def remember_menu_choice(menu_id, caption):
         _ensure_menu_choice_history()
@@ -669,6 +936,10 @@ init python:
     def get_auto_pick_item(items, marks):
         """Return the marked item that was chosen latest in the previous encounter."""
         if not marks:
+            return None
+
+        # The profile select menu must never auto-pick: a quit-save taken there would reload itself forever.
+        if any(_choice_caption_key(i.caption).startswith("Profile ") for i in items if i.action):
             return None
 
         best_item = None
@@ -728,13 +999,32 @@ init python:
 
         return max(0, total)
 
+    _dialogue_measure_cache = {}
+
+    def measure_dialogue_height(text, text_pixel_width, text_size=34):
+        # Real rendered height of the wrapped dialogue; falls back to the estimate.
+        key = (text, text_pixel_width, text_size)
+        if key in _dialogue_measure_cache:
+            return _dialogue_measure_cache[key]
+        try:
+            d = Text(text or "", style="say_dialogue", xpos=0, ypos=0, xsize=text_pixel_width)
+            h = int(renpy.render(d, text_pixel_width, 4000, 0, 0).get_size()[1])
+            if h <= 0:
+                raise ValueError("empty")
+        except Exception:
+            return estimate_dialogue_content_height(text, text_pixel_width, text_size)
+        if len(_dialogue_measure_cache) > 300:
+            _dialogue_measure_cache.clear()
+        _dialogue_measure_cache[key] = h
+        return h
+
     def estimate_dialogue_content_height(text, text_pixel_width, text_size=34):
         """Estimate dialogue content height for adaptive say-window growth."""
         width = max(140.0, float(text_pixel_width))
         size = max(16.0, float(text_size))
-        avg_char_px = max(7.0, size * 0.56)
+        avg_char_px = max(7.0, size * 0.6)
         chars_per_line = max(12, int((width - 16.0) / avg_char_px))
-        line_height = int(size + 10)
+        line_height = int(size * 1.55)
 
         raw = renpy.substitute(text or "")
         cleaned = _renpy_text_tag_re.sub("", raw)
@@ -751,6 +1041,9 @@ screen choice(items):
     default _inline_hovered = ""
     default _menu_session_initialized = False
     default _auto_pick_scheduled = False
+
+    if persistent.cheddar and cheddar_state["open"] and not renpy.get_screen("say"):
+        use cheddar_tab_piece
 
     ## Shift choices up when cinematic bottom bar is active.
     $ _choice_shift = cinematic_bars_state["target_size"] if cinematic_textbox_shift and "bottom" in cinematic_bars_state["sides"] and cinematic_bars_state["target_size"] > 0 else 0
@@ -780,19 +1073,19 @@ screen choice(items):
 
     if persistent.auto_pick_underlined_choice and preferences.afm_enable and _auto_pick_item is not None and not _auto_pick_scheduled:
         $ _auto_pick_scheduled = True
-        timer _auto_pick_delay action [Function(remember_menu_choice, _menu_id, _auto_pick_item.caption), _auto_pick_item.action, Function(narrator.add_history, kind="adv", who=("{color=#7BCF7D}%s" % persistent.name), what=__(_auto_pick_item.caption))] repeat False
+        timer _auto_pick_delay action [Function(remember_menu_choice, _menu_id, _auto_pick_item.caption), Function(set_pending_player_reply, _auto_pick_item.caption), _auto_pick_item.action] repeat False
 
     ## Bind number keys 1–9 (main and numpad) to the corresponding active choice when enabled.
     if persistent.number_keys:
         for _kidx, _kitem in enumerate(_active):
             if _kidx < 9:
-                key "K_%d" % (_kidx + 1) action _kitem.action
-                key "K_KP%d" % (_kidx + 1) action _kitem.action
+                key "K_%d" % (_kidx + 1) action [Function(remember_menu_choice, _menu_id, _kitem.caption), Function(set_pending_player_reply, _kitem.caption), _kitem.action]
+                key "K_KP%d" % (_kidx + 1) action [Function(remember_menu_choice, _menu_id, _kitem.caption), Function(set_pending_player_reply, _kitem.caption), _kitem.action]
 
     if persistent.inline_choices:
-        # ── Inline mode: choices appear inside the dialogue box ──────────
+        # -- Inline mode: choices appear inside the dialogue box ----------
         $ _inline_text_max = max(120, gui.dialogue_width - gui.scrollbar_size - 120)
-        $ _inline_top_padding = gui.dialogue_ypos
+        $ _inline_top_padding = gui.dialogue_ypos + 15
         $ _inline_base_viewport_height = max(120, gui.textbox_height - _inline_top_padding - 10)
         $ _inline_min_viewport_height = _inline_base_viewport_height
         $ _inline_cap_box_height = min(int(config.screen_height * 0.72), gui.textbox_height + 420)
@@ -802,13 +1095,13 @@ screen choice(items):
         $ _inline_viewport_height = (min(_inline_cap_viewport_height, _inline_target_viewport_height) if persistent.inline_choice_grow else _inline_base_viewport_height)
         $ _inline_box_height = _inline_top_padding + _inline_viewport_height + 10
         $ _inline_needs_scroll = (_inline_content_height > (_inline_viewport_height + 2))
-        $ _inline_top_spacer = (max(0, _inline_viewport_height - _inline_content_height) if not _inline_needs_scroll else 0)
+        $ _inline_top_spacer = 0
 
         window:
             style "window"
             at textbox_shift_static(_choice_shift)
             ysize _inline_box_height
-            background At(Transform("gui/textbox.png", xalign=0.5, yalign=1.0, ysize=_inline_box_height), Transform(alpha=gui.textbox_alpha))
+            background At(Frame(Transform(Crop((0, 330, 912, 187), "gui/textbox paper unripped.png"), zoom=menu_notebook_zoom), 240, 170, 240, 40, tile=False, xsize=int(912 * menu_notebook_zoom), xalign=0.5, ysize=_inline_box_height + 96, yalign=1.0), Transform(alpha=gui.textbox_alpha))
 
             viewport:
                 mousewheel True
@@ -841,10 +1134,11 @@ screen choice(items):
                                 style "inline_choice_button"
                                 hovered SetScreenVariable("_inline_hovered", i.caption)
                                 unhovered SetScreenVariable("_inline_hovered", "")
-                                action [Function(remember_menu_choice, _menu_id, i.caption), i.action, Function(narrator.add_history, kind="adv", who=("{color=#7BCF7D}%s" % persistent.name), what=__(i.caption))]
+                                action [Function(remember_menu_choice, _menu_id, i.caption), Function(set_pending_player_reply, i.caption), i.action]
                                 hbox:
                                     spacing 20
-                                    $ _bullet_num = min(7, max(0, persistent.lildeaths))
+                                    $ _bullet_deaths = profile_choice_bullet_deaths(i.caption, persistent.lildeaths)
+                                    $ _bullet_num = min(7, max(0, _bullet_deaths))
                                     $ _bullet_img = "gui/bullet_loop.png" if _bullet_num == 0 else "gui/bullet_loop%s.png" % _bullet_num
                                     yalign 0.5
 
@@ -867,6 +1161,26 @@ screen choice(items):
                                         xfill True
                                         layout "subtitle"
                                         yalign 0.5
+
+    else:
+        # Fallback menu renderer for non-inline mode (important on fresh persistent data).
+        vbox:
+            style "choice_vbox"
+            at textbox_shift_static(_choice_shift)
+
+            for i in items:
+                if i.action is None:
+                    text i.caption style "choice_button_text"
+                else:
+                    $ _choice_key = _choice_caption_key(i.caption)
+                    $ _was_marked = bool(_menu_choice_marks.get(_choice_key, []))
+                    $ _nprefix = ("%d. " % _num_map[id(i)]) if persistent.number_keys and id(i) in _num_map else ""
+                    $ _caption_display = _nprefix + underline_if_marked(i.caption, _was_marked)
+                    button:
+                        style "choice_button"
+                        action [Function(remember_menu_choice, _menu_id, i.caption), Function(set_pending_player_reply, i.caption), i.action]
+
+                        text _caption_display style "choice_button_text"
 
    
 
@@ -894,7 +1208,7 @@ style grid_choice_button is choice_button:
     yminimum 90
 
 style grid_choice_button_text is choice_button_text:
-    text_align 0.5
+    text_align 0.0
     xalign 0.5
 
 ## Tooltip notecard — yellow card showing full choice text on hover
@@ -905,7 +1219,7 @@ style notecard_frame is frame:
 
 style notecard_text:
     color "#1a1000"
-    text_align 0.5
+    text_align 0.0
     size gui.text_size
 
 ## Inline choices — choices displayed inside the dialogue box
@@ -933,39 +1247,14 @@ style inline_choice_button_text is default:
 ## The quick menu is displayed in-game to provide easy access to the out-of-game
 ## menus.
 
-screen quick_menu():
-
-    ## Ensure this appears on top of other screens.
-    zorder 100
-
-    if quick_menu:
-
-        hbox:
-            style_prefix "quick"
-
-            xalign 0.5
-            yalign 1.0
-
-            textbutton _("Back") action Rollback()
-            textbutton _("History") action ShowMenu('history')
-            if persistent.testmode or persistent.rockMode:
-                textbutton _("Clear Cheats") action [SetField(persistent, "testmode", False), SetField(persistent, "rockMode", False)]
-            textbutton _("Skip") action Skip() alternate Skip(fast=True, confirm=True)
-            textbutton _("Auto") action Preference("auto-forward", "toggle")
-            if persistent.canSave:
-                textbutton _("Save") action ShowMenu('save')
-                textbutton _("Q.Save") action QuickSave()
-                textbutton _("Q.Load") action QuickLoad()
-            textbutton _("Prefs") action ShowMenu('preferences')
             
 
 
 ## This code ensures that the quick_menu screen is displayed in-game, whenever
 ## the player has not explicitly hidden the interface.
 init python:
-    config.overlay_screens.append("quick_menu")
-
     def start_over_reset():
+        _active_slot = int(getattr(persistent, "active_profile_slot", 1) or 1)
         _pref_keys = [
             "font_choice",
             "text_size_offset",
@@ -973,7 +1262,7 @@ init python:
             "dialogue_text_color",
             "inline_hover_text_color",
             "talking_animation_mode",
-            "grid_choices",
+            "grid_choices", #TODO: This is probably fine to remove since I basically have no use for it anymore.
             "inline_choices",
             "inline_choice_grow",
             "number_keys",
@@ -983,12 +1272,34 @@ init python:
             "menu_choice_history",
             "menu_choice_history_display",
             "menu_choice_history_current",
+            "menu_choice_history_loop",
+            "cheddar",
+            "active_profile_slot",
+            "profile_slot_data",
+            "profile_preference_overrides",
+            "profile_template_state",
+            "profile_playtime_seconds",
+            "total_playtime_seconds",
+            "profile_schema_version",
         ]
         _saved = {k: getattr(persistent, k, None) for k in _pref_keys}
         persistent._clear()
         for k, v in _saved.items():
             if v is not None:
                 setattr(persistent, k, v)
+
+        # Start Over should not continue from an old quit-save; wipe active profile saves.
+        try:
+            profile_delete_slot(_active_slot, save_persistent=False)
+        except Exception:
+            try:
+                qslot = profile_quitsave_slot(_active_slot)
+                if renpy.can_load(qslot):
+                    renpy.unlink_save(qslot)
+            except Exception:
+                pass
+
+        renpy.save_persistent()
 
 default quick_menu = True
 
@@ -1023,8 +1334,8 @@ screen navigation():
 
         if main_menu:
 
-            textbutton _("Start") action Start()
-
+            textbutton _("Start") action [Function(set_profile_save_context), Function(profile_sync_active, True), Function(profile_save_quitsave), Start()]
+            textbutton _("Profiles") action ShowMenu("profiles")
         else:
 
             textbutton _("History") action ShowMenu("history")
@@ -1044,16 +1355,19 @@ screen navigation():
 
         elif not main_menu:
 
-            textbutton _("Main Menu") action MainMenu()
+            textbutton _("Main Menu") action [Function(set_profile_save_context), Function(profile_sync_active, True), Function(profile_save_quitsave), MainMenu()]
 
         textbutton _("About") action ShowMenu("about")
+        textbutton _("Fake Credits") action ShowMenu("fake_credits")
+        textbutton _("Credits") action ShowMenu("real_credits")
 
         if renpy.variant("pc") or (renpy.variant("web") and not renpy.variant("mobile")):
 
             ## Help isn't necessary or relevant to mobile devices.
             textbutton _("Help") action ShowMenu("help")
         
-        textbutton _("Start Over") action Show("start_over_confirm")
+        if not main_menu or getattr(store, "_profile_context_active", False):
+            textbutton _("Start Over") action Show("start_over_confirm")
 
 
 
@@ -1061,7 +1375,11 @@ screen navigation():
 
             ## The quit button is banned on iOS and unnecessary on Android and
             ## Web.
-            textbutton _("Quit") action Quit(confirm=not main_menu)
+            textbutton _("Quit") action [Function(set_profile_save_context), Function(profile_sync_active, True), Function(profile_save_quitsave), Quit(confirm=not main_menu)]
+
+        if main_menu:
+            null height 8
+            text _("Total Playtime\n(All Profiles): \n[format_playtime_hms(profile_total_playtime_seconds(True))]")
 
 
 style navigation_button is gui_button
@@ -1086,15 +1404,8 @@ screen main_menu():
     ## This ensures that any other menu screen is replaced.
     tag menu
 
-    add gui.main_menu_background
-
-    ## This empty frame darkens the main menu.
-    frame:
-        style "main_menu_frame"
-
-    ## The use statement includes another screen inside this one. The actual
-    ## contents of the main menu are in the navigation screen.
-    use navigation
+    use menu_notebook_backdrop
+    use menu_notebook_page_content
 
     ## Show an update notification banner if a newer version is available.
     use update_notification
@@ -1110,6 +1421,49 @@ screen main_menu():
             text "[config.version]":
                 style "main_menu_version"
 
+    use menu_notebook_tabs_overlay
+
+
+screen notebook_closed_menu():
+
+    tag menu
+    default notebook_closing = False
+
+    on "show" action [SetVariable("menu_notebook_open", False), SetVariable("menu_notebook_tab", "game"), SetVariable("menu_notebook_settings_page", "main")]
+
+    if notebook_closing:
+        timer 0.42 action Return()
+        fixed:
+            at notebook_ascend_close
+            use menu_notebook_backdrop
+            use menu_notebook_page_content
+            use menu_notebook_tabs_overlay
+    else:
+        fixed:
+            at notebook_descend_short
+            use menu_notebook_backdrop
+            use menu_notebook_page_content
+            use menu_notebook_tabs_overlay
+
+    key "game_menu" action (
+        Return() if notebook_closing else
+        [
+            SetScreenVariable("notebook_closing", True),
+            SetVariable("menu_notebook_open", False),
+            SetVariable("menu_notebook_tab", "game"),
+            SetVariable("menu_notebook_settings_page", "main")
+        ]
+    )
+    key "mouseup_3" action (
+        Return() if notebook_closing else
+        [
+            SetScreenVariable("notebook_closing", True),
+            SetVariable("menu_notebook_open", False),
+            SetVariable("menu_notebook_tab", "game"),
+            SetVariable("menu_notebook_settings_page", "main")
+        ]
+    )
+
 
 style main_menu_frame is empty
 style main_menu_vbox is vbox
@@ -1120,8 +1474,7 @@ style main_menu_version is main_menu_text
 style main_menu_frame:
     xsize 420
     yfill True
-
-    background "gui/overlay/main_menu.png"
+    background None
 
 style main_menu_vbox:
     xalign 1.0
@@ -1153,10 +1506,7 @@ screen game_menu(title, scroll=None, yinitial=0.0):
 
     style_prefix "game_menu"
 
-    if main_menu:
-        add gui.main_menu_background
-    else:
-        add gui.game_menu_background
+    use menu_notebook_backdrop
 
     frame:
         style "game_menu_outer_frame"
@@ -1212,6 +1562,8 @@ screen game_menu(title, scroll=None, yinitial=0.0):
 
     label title
 
+    use menu_notebook_tabs_overlay
+
     if main_menu:
         key "game_menu" action ShowMenu("main_menu")
 
@@ -1232,8 +1584,7 @@ style return_button_text is navigation_button_text
 style game_menu_outer_frame:
     bottom_padding 45
     top_padding 180
-
-    background "gui/overlay/game_menu.png"
+    background None
 
 style game_menu_navigation_frame:
     xsize 420
@@ -1268,15 +1619,1023 @@ style return_button:
     yoffset -45
 
 
+define menu_notebook_zoom = 2
+default menu_notebook_tab = "game"
+default menu_notebook_open = False
+default menu_notebook_hovered_tab = ""
+default menu_notebook_settings_page = "main"
+define menu_notebook_tab_hover_push = 70
+define menu_notebook_tab_1_x = 0
+define menu_notebook_tab_2_x = 0
+define menu_notebook_tab_3_x = -60
+define menu_notebook_tab_hitbox_x_adjust = 22
+define menu_notebook_tab_label_1_x = 604
+define menu_notebook_tab_label_2_x = 604
+define menu_notebook_tab_label_3_x = 676
+define menu_notebook_tab_label_x_adjust = 0
+define menu_notebook_tab_label_y_adjust = 0
+define menu_notebook_tab_label_1_y = -112
+define menu_notebook_tab_label_2_y = -242
+define menu_notebook_tab_label_3_y = -378
+define menu_notebook_tab_label_box_w = int(round(202 * menu_notebook_zoom))
+define menu_notebook_tab_label_box_h = int(round(63 * menu_notebook_zoom))
+define menu_notebook_tab_text_pad = 24
+define menu_notebook_tab_labels = {1: (_("Info"), 30), 2: (_("Settings"), 28), 3: (_("Game"), 27)}
+define menu_notebook_tab_art_right = {1: 806, 2: 806, 3: 818}
+
+init python:
+    def menu_notebook_tab_push(n):
+        # Like the nametag: slide the tab out just far enough for its label to clear the paper edge.
+        label, size = menu_notebook_tab_labels[n]
+        tw = Text(label, font="custom_fonts/Scribble Show.ttf", size=size).size()[0]
+        paper_right = (818 - 456) * menu_notebook_zoom
+        visible = menu_notebook_tab_art_right[n] - paper_right
+        return max(0, int(tw) + 2 * menu_notebook_tab_text_pad - visible)
+define menu_notebook_postit_grid_center_x = 0
+define menu_notebook_postit_grid_center_y = 60
+define menu_notebook_postit_center_spacing = 410
+define menu_notebook_postit_col_spacing = int(menu_notebook_postit_center_spacing / 2)
+define menu_notebook_postit_row_spacing = menu_notebook_postit_center_spacing
+define menu_notebook_settings_page_col_spacing = 395
+define menu_notebook_settings_page_col_left_x = -menu_notebook_settings_page_col_spacing
+define menu_notebook_settings_page_col_mid_x = 0
+define menu_notebook_settings_page_col_right_x = menu_notebook_settings_page_col_spacing
+define menu_notebook_postit_crop = (556, 111, 190, 192)
+define menu_notebook_postit_col_left_x = menu_notebook_postit_grid_center_x - menu_notebook_postit_col_spacing
+define menu_notebook_postit_col_mid_x = menu_notebook_postit_grid_center_x
+define menu_notebook_postit_col_right_x = menu_notebook_postit_grid_center_x + menu_notebook_postit_col_spacing
+define menu_notebook_postit_row_top_y = menu_notebook_postit_grid_center_y - int(menu_notebook_postit_row_spacing / 2)
+define menu_notebook_postit_row_bottom_y = menu_notebook_postit_grid_center_y + int(menu_notebook_postit_row_spacing / 2)
+define menu_notebook_postit_content_y = -40
+define menu_notebook_postit_font = "defaultFonts/IndieFlower-Regular.ttf"
+define menu_notebook_postit_title_text_size = 34
+define menu_notebook_postit_body_text_size = 28
+define menu_notebook_postit_slider_text_size = 28
+define menu_notebook_postit_dropdown_main_size = 32
+define menu_notebook_postit_dropdown_option_size = 30
+
+
+transform notebook_page_flip_right:
+    on show:
+        alpha 0.0
+        xoffset -140
+        linear 0.24 alpha 1.0 xoffset 0
+
+transform notebook_descend_short:
+    on show:
+        alpha 1.0
+        yoffset -1200
+        easeout 0.58 yoffset 0
+
+transform notebook_ascend_close:
+    yoffset 0
+    linear 0.42 yoffset -1200
+
+
+screen menu_notebook_backdrop():
+    $ _tab_1_active = (menu_notebook_hovered_tab == "info")
+    $ _tab_2_active = (menu_notebook_hovered_tab == "settings")
+    $ _tab_3_active = (menu_notebook_hovered_tab == "game")
+    $ _tab_1_on_top = menu_notebook_open and menu_notebook_tab == "info"
+    $ _tab_2_on_top = menu_notebook_open and menu_notebook_tab == "settings"
+    $ _tab_3_on_top = menu_notebook_open and menu_notebook_tab == "game"
+    $ _tab_1_extend = _tab_1_active and not _tab_1_on_top
+    $ _tab_2_extend = _tab_2_active and not _tab_2_on_top
+    $ _tab_3_extend = _tab_3_active and not _tab_3_on_top
+
+    add Transform("gui/tab 1.png", zoom=menu_notebook_zoom, xalign=0.5, yalign=0.5, xoffset=menu_notebook_tab_1_x + (menu_notebook_tab_push(1) if _tab_1_extend else 0), matrixcolor=ColorizeMatrix("#000000", "#E53935"))
+    add Transform("gui/tab 2.png", zoom=menu_notebook_zoom, xalign=0.5, yalign=0.5, xoffset=menu_notebook_tab_2_x + (menu_notebook_tab_push(2) if _tab_2_extend else 0), matrixcolor=ColorizeMatrix("#000000", "#1E88E5"))
+    add Transform("gui/tab 3.png", zoom=menu_notebook_zoom, xalign=0.5, yalign=0.5, xoffset=menu_notebook_tab_3_x + (menu_notebook_tab_push(3) if _tab_3_extend else 0), matrixcolor=ColorizeMatrix("#000000", "#FDD835"))
+
+    fixed:
+        xalign 0.5
+        yalign 0.5
+        xoffset menu_notebook_tab_1_x + (menu_notebook_tab_push(1) if _tab_1_extend else 0) + menu_notebook_tab_label_1_x + menu_notebook_tab_label_x_adjust
+        yoffset menu_notebook_tab_label_1_y + menu_notebook_tab_label_y_adjust
+        xsize menu_notebook_tab_label_box_w
+        ysize menu_notebook_tab_label_box_h
+        text _("Info"):
+            xanchor 1.0
+            yanchor 0.5
+            xpos menu_notebook_tab_label_box_w - menu_notebook_tab_text_pad
+            ypos int(round(menu_notebook_tab_label_box_h / 2.0))
+            text_align 1.0
+            font "custom_fonts/Scribble Show.ttf"
+            size 30
+            color "#ffffff"
+            outlines [(2, "#00000088", 0, 0)]
+
+    fixed:
+        xalign 0.5
+        yalign 0.5
+        xoffset menu_notebook_tab_2_x + (menu_notebook_tab_push(2) if _tab_2_extend else 0) + menu_notebook_tab_label_2_x + menu_notebook_tab_label_x_adjust
+        yoffset menu_notebook_tab_label_2_y + menu_notebook_tab_label_y_adjust
+        xsize menu_notebook_tab_label_box_w
+        ysize menu_notebook_tab_label_box_h
+        text _("Settings"):
+            xanchor 1.0
+            yanchor 0.5
+            xpos menu_notebook_tab_label_box_w - menu_notebook_tab_text_pad
+            ypos int(round(menu_notebook_tab_label_box_h / 2.0))
+            text_align 1.0
+            font "custom_fonts/Scribble Show.ttf"
+            size 28
+            color "#ffffff"
+            outlines [(2, "#00000088", 0, 0)]
+
+    fixed:
+        xalign 0.5
+        yalign 0.5
+        xoffset menu_notebook_tab_3_x + (menu_notebook_tab_push(3) if _tab_3_extend else 0) + menu_notebook_tab_label_3_x + menu_notebook_tab_label_x_adjust
+        yoffset menu_notebook_tab_label_3_y + menu_notebook_tab_label_y_adjust
+        xsize menu_notebook_tab_label_box_w
+        ysize menu_notebook_tab_label_box_h
+        text _("Game"):
+            xanchor 1.0
+            yanchor 0.5
+            xpos menu_notebook_tab_label_box_w - menu_notebook_tab_text_pad
+            ypos int(round(menu_notebook_tab_label_box_h / 2.0))
+            text_align 1.0
+            font "custom_fonts/Scribble Show.ttf"
+            size 27
+            color "#ffffff"
+            outlines [(2, "#00000088", 0, 0)]
+
+    if menu_notebook_open:
+        add Transform("gui/notebook paper full.png", zoom=menu_notebook_zoom, xalign=0.5, yalign=0.5)
+    else:
+        add Transform("gui/notebook paper full.png", zoom=menu_notebook_zoom, xalign=0.5, yalign=0.5, matrixcolor=ColorizeMatrix("#7A5A32", "#E8D7BE"))
+    add Transform("gui/rings.png", zoom=menu_notebook_zoom, xalign=0.5, yalign=0.5, matrixcolor=ColorizeMatrix("#000000", "#909090"))
+
+    # Draw the selected tab above the paper so it appears attached to the active page.
+    if menu_notebook_open and menu_notebook_tab == "info":
+        add Transform("gui/tab 1.png", zoom=menu_notebook_zoom, xalign=0.5, yalign=0.5, xoffset=menu_notebook_tab_1_x, matrixcolor=ColorizeMatrix("#000000", "#E53935"))
+
+        fixed:
+            xalign 0.5
+            yalign 0.5
+            xoffset menu_notebook_tab_1_x + menu_notebook_tab_label_1_x + menu_notebook_tab_label_x_adjust
+            yoffset menu_notebook_tab_label_1_y + menu_notebook_tab_label_y_adjust
+            xsize menu_notebook_tab_label_box_w
+            ysize menu_notebook_tab_label_box_h
+            text _("Info"):
+                xanchor 1.0
+                yanchor 0.5
+                xpos menu_notebook_tab_label_box_w - menu_notebook_tab_text_pad
+                ypos int(round(menu_notebook_tab_label_box_h / 2.0))
+                text_align 1.0
+                font "custom_fonts/Scribble Show.ttf"
+                size 30
+                color "#ffffff"
+                outlines [(2, "#00000088", 0, 0)]
+
+    elif menu_notebook_open and menu_notebook_tab == "settings":
+        add Transform("gui/tab 2.png", zoom=menu_notebook_zoom, xalign=0.5, yalign=0.5, xoffset=menu_notebook_tab_2_x, matrixcolor=ColorizeMatrix("#000000", "#1E88E5"))
+
+        fixed:
+            xalign 0.5
+            yalign 0.5
+            xoffset menu_notebook_tab_2_x + menu_notebook_tab_label_2_x + menu_notebook_tab_label_x_adjust
+            yoffset menu_notebook_tab_label_2_y + menu_notebook_tab_label_y_adjust
+            xsize menu_notebook_tab_label_box_w
+            ysize menu_notebook_tab_label_box_h
+            text _("Settings"):
+                xanchor 1.0
+                yanchor 0.5
+                xpos menu_notebook_tab_label_box_w - menu_notebook_tab_text_pad
+                ypos int(round(menu_notebook_tab_label_box_h / 2.0))
+                text_align 1.0
+                font "custom_fonts/Scribble Show.ttf"
+                size 28
+                color "#ffffff"
+                outlines [(2, "#00000088", 0, 0)]
+
+    elif menu_notebook_open and menu_notebook_tab == "game":
+        add Transform("gui/tab 3.png", zoom=menu_notebook_zoom, xalign=0.5, yalign=0.5, xoffset=menu_notebook_tab_3_x, matrixcolor=ColorizeMatrix("#000000", "#FDD835"))
+
+        fixed:
+            xalign 0.5
+            yalign 0.5
+            xoffset menu_notebook_tab_3_x + menu_notebook_tab_label_3_x + menu_notebook_tab_label_x_adjust
+            yoffset menu_notebook_tab_label_3_y + menu_notebook_tab_label_y_adjust
+            xsize menu_notebook_tab_label_box_w
+            ysize menu_notebook_tab_label_box_h
+            text _("Game"):
+                xanchor 1.0
+                yanchor 0.5
+                xpos menu_notebook_tab_label_box_w - menu_notebook_tab_text_pad
+                ypos int(round(menu_notebook_tab_label_box_h / 2.0))
+                text_align 1.0
+                font "custom_fonts/Scribble Show.ttf"
+                size 27
+                color "#ffffff"
+                outlines [(2, "#00000088", 0, 0)]
+
+    if menu_notebook_open and menu_notebook_tab == "settings":
+        # 2x2 corner layout: top-left/top-right and bottom-left/bottom-right.
+        if menu_notebook_settings_page == "text_appearance":
+            use notebook_text_appearance_page(back_action=SetVariable("menu_notebook_settings_page", "main"))
+        else:
+            use notebook_sound_settings_postit(menu_notebook_postit_col_left_x, menu_notebook_postit_row_top_y)
+            use notebook_display_choices_postit(menu_notebook_postit_col_right_x, menu_notebook_postit_row_top_y)
+            use notebook_character_postit(menu_notebook_postit_col_left_x, menu_notebook_postit_row_bottom_y)
+            use notebook_text_flow_postit(menu_notebook_postit_col_right_x, menu_notebook_postit_row_bottom_y)
+
+
+screen menu_notebook_tabs_overlay():
+    $ _tab_1_active = (menu_notebook_hovered_tab == "info")
+    $ _tab_2_active = (menu_notebook_hovered_tab == "settings")
+    $ _tab_3_active = (menu_notebook_hovered_tab == "game")
+
+    imagebutton:
+        idle Transform("gui/tab 1.png", zoom=menu_notebook_zoom, xalign=0.5, yalign=0.5, xoffset=menu_notebook_tab_1_x + menu_notebook_tab_hitbox_x_adjust, alpha=0.01)
+        hover Transform("gui/tab 1.png", zoom=menu_notebook_zoom, xalign=0.5, yalign=0.5, xoffset=menu_notebook_tab_1_x + menu_notebook_tab_hitbox_x_adjust, alpha=0.01)
+        action [SetVariable("menu_notebook_tab", "info"), SetVariable("menu_notebook_open", True)]
+        hovered SetVariable("menu_notebook_hovered_tab", "info")
+        unhovered SetVariable("menu_notebook_hovered_tab", "")
+        focus_mask True
+
+    imagebutton:
+        idle Transform("gui/tab 2.png", zoom=menu_notebook_zoom, xalign=0.5, yalign=0.5, xoffset=menu_notebook_tab_2_x + menu_notebook_tab_hitbox_x_adjust, alpha=0.01)
+        hover Transform("gui/tab 2.png", zoom=menu_notebook_zoom, xalign=0.5, yalign=0.5, xoffset=menu_notebook_tab_2_x + menu_notebook_tab_hitbox_x_adjust, alpha=0.01)
+        action [SetVariable("menu_notebook_tab", "settings"), SetVariable("menu_notebook_open", True), SetVariable("menu_notebook_settings_page", "main")]
+        hovered SetVariable("menu_notebook_hovered_tab", "settings")
+        unhovered SetVariable("menu_notebook_hovered_tab", "")
+        focus_mask True
+
+    imagebutton:
+        idle Transform("gui/tab 3.png", zoom=menu_notebook_zoom, xalign=0.5, yalign=0.5, xoffset=menu_notebook_tab_3_x + menu_notebook_tab_hitbox_x_adjust, alpha=0.01)
+        hover Transform("gui/tab 3.png", zoom=menu_notebook_zoom, xalign=0.5, yalign=0.5, xoffset=menu_notebook_tab_3_x + menu_notebook_tab_hitbox_x_adjust, alpha=0.01)
+        action [SetVariable("menu_notebook_tab", "game"), SetVariable("menu_notebook_open", True)]
+        hovered SetVariable("menu_notebook_hovered_tab", "game")
+        unhovered SetVariable("menu_notebook_hovered_tab", "")
+        focus_mask True
+
+
+screen menu_notebook_page_content():
+    frame:
+        background None
+        xalign 0.5
+        yalign 0.5
+        xsize 1280
+        ysize 760
+
+        if not menu_notebook_open:
+            null
+
+        elif menu_notebook_tab == "game":
+            vbox:
+                style_prefix "postit"
+                at notebook_page_flip_right
+                spacing 18
+                xalign 0.48
+                yalign 0.56
+
+                text _("Game") size 52 color "#2d2d2d"
+
+                textbutton _("Start") action [Function(set_profile_save_context), Function(profile_sync_active, True), Function(profile_save_quitsave), Start()] style "postit_button"
+                if persistent.canSave:
+                    textbutton _("Load") action ShowMenu("load") style "postit_button"
+                textbutton _("Profiles") action ShowMenu("profiles") style "postit_button"
+                textbutton _("Quit") action [Function(set_profile_save_context), Function(profile_sync_active, True), Function(profile_save_quitsave), Quit(confirm=False)] style "postit_button"
+
+        elif menu_notebook_tab == "info":
+            vbox:
+                style_prefix "postit"
+                at notebook_page_flip_right
+                spacing 14
+                xalign 0.48
+                yalign 0.56
+
+                text _("Info") size 52 color "#2d2d2d"
+
+                textbutton _("About") action ShowMenu("about") style "postit_button"
+                textbutton _("Fake Credits") action ShowMenu("fake_credits") style "postit_button"
+                textbutton _("Credits") action ShowMenu("real_credits") style "postit_button"
+                if main_menu and getattr(persistent, "gallery_unlocked", True):
+                    textbutton _("Gallery") action Start("gallery") style "postit_button"
+                if renpy.variant("pc") or (renpy.variant("web") and not renpy.variant("mobile")):
+                    textbutton _("Help") action ShowMenu("help") style "postit_button"
+
+        else:
+            fixed:
+                at notebook_page_flip_right
+                xalign 0.48
+                yalign 0.56
+                xsize 1060
+                ysize 620
+
+
+screen notebook_overlay_slider(slider_value, slider_width=160):
+    fixed:
+        xsize slider_width
+        ysize 14
+
+        bar:
+            value slider_value
+            style "notebook_pref_slider_core"
+            xsize slider_width
+
+        # Keep the empty bar art on top so fill appears underneath it.
+        add Frame(Transform("gui/horizontal bar empty.png", crop=(575, 177, 83, 14), matrixcolor=ColorizeMatrix("#000000", "#111111")), 7, 0, 7, 0, tile=False) xsize slider_width ysize 14
+
+
+screen notebook_sound_settings_postit(xpos, ypos):
+    fixed:
+        xalign 0.5
+        yalign 0.5
+        xoffset xpos
+        yoffset ypos
+        xsize 260
+        ysize 220
+
+        add Transform("gui/post it 1.png", crop=menu_notebook_postit_crop, zoom=menu_notebook_zoom, xalign=0.5, yalign=0.5, matrixcolor=ColorizeMatrix("#000000", "#F4E7A3"))
+
+        vbox:
+            style_prefix "postit"
+            xalign 0.5
+            ypos menu_notebook_postit_content_y
+            xsize 220
+            spacing 8
+
+            text _("Sound"):
+                xalign 0.5
+                style "postit_title_text"
+
+            fixed:
+                xalign 0.5
+                xsize 220
+                ysize 158
+
+                $ _col_w = 96
+                $ _left_x = 4
+                $ _right_x = 120
+                $ _top_y = 4
+                $ _bottom_y = 78
+                $ _bar_y = 34
+
+                if config.has_music or config.has_sound or config.has_voice:
+                    fixed:
+                        xpos _left_x
+                        ypos _top_y
+                        xsize _col_w
+                        ysize 72
+                        text _("Main"):
+                            xsize _col_w
+                            size menu_notebook_postit_slider_text_size
+                            color "#2d2d2d"
+                            font menu_notebook_postit_font
+                            layout "subtitle"
+                        fixed:
+                            ypos _bar_y
+                            xsize _col_w
+                            use notebook_overlay_slider(slider_value=Preference("mixer main volume"), slider_width=_col_w)
+
+                if config.has_music:
+                    fixed:
+                        xpos _right_x
+                        ypos _bottom_y
+                        xsize _col_w
+                        ysize 72 #TODO: Do not make this a fixed height if possible, it should be possible to be adaptable.
+                        text _("Music"):
+                            xsize _col_w
+                            size menu_notebook_postit_slider_text_size
+                            color "#2d2d2d"
+                            font menu_notebook_postit_font
+                            layout "subtitle"
+                        fixed:
+                            ypos _bar_y
+                            xsize _col_w
+                            use notebook_overlay_slider(slider_value=Preference("music volume"), slider_width=_col_w)
+
+                if config.has_voice:
+                    fixed:
+                        xpos _right_x
+                        ypos _top_y
+                        xsize _col_w
+                        ysize 72
+                        text _("Voice"):
+                            xsize _col_w
+                            size menu_notebook_postit_slider_text_size
+                            color "#2d2d2d"
+                            font menu_notebook_postit_font
+                            layout "subtitle"
+                        fixed:
+                            ypos _bar_y
+                            xsize _col_w
+                            use notebook_overlay_slider(slider_value=Preference("voice volume"), slider_width=_col_w)
+
+                if config.has_sound:
+                    fixed:
+                        xpos _left_x
+                        ypos _bottom_y
+                        xsize _col_w
+                        ysize 72
+                        text _("Effects"):
+                            xsize _col_w
+                            size menu_notebook_postit_slider_text_size
+                            color "#2d2d2d"
+                            font menu_notebook_postit_font
+                            layout "subtitle"
+                        fixed:
+                            ypos _bar_y
+                            xsize _col_w
+                            use notebook_overlay_slider(slider_value=Preference("sound volume"), slider_width=_col_w)
+
+                
+
+            if config.has_music or config.has_sound or config.has_voice:
+                textbutton _("Mute All"):
+                    xalign 0.5
+                    action Preference("all mute", "toggle")
+                    style "postit_mute_all_button"
+
+
+screen notebook_display_choices_postit(xpos, ypos):
+    default display_open = False
+    default choices_open = False
+
+    fixed:
+        xalign 0.5
+        yalign 0.5
+        xoffset xpos
+        yoffset ypos
+        xsize 260
+        ysize 220
+
+        add Transform("gui/post it 1.png", crop=menu_notebook_postit_crop, zoom=menu_notebook_zoom, xalign=0.5, yalign=0.5, matrixcolor=ColorizeMatrix("#000000", "#F4E7A3"))
+
+        vbox:
+            style_prefix "postit"
+            xalign 0.5
+            ypos menu_notebook_postit_content_y
+            xsize 232
+            spacing 3
+
+            text _("Display"):
+                xalign 0.5
+                style "postit_title_text"
+
+            if renpy.variant("pc") or renpy.variant("web"):
+                vbox:
+                    spacing 1
+
+                    textbutton _("Display"):
+                        action [ToggleLocalVariable("display_open"), SetLocalVariable("choices_open", False)]
+                        style "postit_dropdown_toggle_button"
+
+                    if display_open:
+                        textbutton _("Window") action Preference("display", "window") style "postit_dropdown_button"
+                        textbutton _("Fullscreen") action Preference("display", "fullscreen") style "postit_dropdown_button"
+
+            textbutton _("Text Appearance..."):
+                action SetVariable("menu_notebook_settings_page", "text_appearance")
+                style "postit_dropdown_button"
+
+            vbox:
+                spacing 1
+
+                textbutton _("Choice Options"):
+                    action [ToggleLocalVariable("choices_open"), SetLocalVariable("display_open", False)]
+                    style "postit_dropdown_toggle_button"
+
+                if choices_open:
+                    textbutton _("Grow Inline") action ToggleField(persistent, "inline_choice_grow") style "postit_dropdown_button"
+                    textbutton _("Number Keys") action ToggleField(persistent, "number_keys") style "postit_dropdown_button"
+                    textbutton _("Auto Pick") action ToggleField(persistent, "auto_pick_underlined_choice") style "postit_dropdown_button"
+
+
+screen notebook_character_postit(xpos, ypos):
+    fixed:
+        xalign 0.5
+        yalign 0.5
+        xoffset xpos
+        yoffset ypos
+        xsize 260
+        ysize 220
+
+        add Transform("gui/post it 1.png", crop=menu_notebook_postit_crop, zoom=menu_notebook_zoom, xalign=0.5, yalign=0.5, matrixcolor=ColorizeMatrix("#000000", "#F4E7A3"))
+
+        vbox:
+            style_prefix "postit"
+            xalign 0.5
+            ypos menu_notebook_postit_content_y
+            xsize 220
+            spacing 10
+
+            text _("Character"):
+                xalign 0.5
+                style "postit_title_text"
+
+            textbutton _("Change Character Info") action Show("change_names_menu")
+            textbutton _("Change Your Name") action [SetVariable("from_menu", True), Start("nameSelect")]
+
+
+screen notebook_text_flow_postit(xpos, ypos):
+    fixed:
+        xalign 0.5
+        yalign 0.5
+        xoffset xpos
+        yoffset ypos
+        xsize 260
+        ysize 220
+
+        add Transform("gui/post it 1.png", crop=menu_notebook_postit_crop, zoom=menu_notebook_zoom, xalign=0.5, yalign=0.5, matrixcolor=ColorizeMatrix("#000000", "#F4E7A3"))
+
+        vbox:
+            style_prefix "postit"
+            xalign 0.5
+            ypos menu_notebook_postit_content_y
+            xsize 220
+            spacing 6
+
+            text _("Text Flow"):
+                xalign 0.5
+                style "postit_title_text"
+
+            fixed:
+                xalign 0.5
+                xsize 220
+                ysize 112
+
+                $ _col_w = 90
+                $ _left_x = 0
+                $ _right_x = 130
+                $ _label_y = 0
+                $ _bar_y = 34
+                $ _value_y = 66
+
+                fixed:
+                    xpos _left_x
+                    ypos _label_y
+                    xsize _col_w
+                    ysize 100
+
+                    text _("Text Speed"):
+                        xsize _col_w
+                        size 24
+                        color "#2d2d2d"
+                        font menu_notebook_postit_font
+                        layout "nobreak"
+
+                    fixed:
+                        ypos _bar_y
+                        xsize _col_w
+                        use notebook_overlay_slider(slider_value=Preference("text speed"), slider_width=_col_w)
+
+                    if preferences.text_cps == 0:
+                        text _("Instant"):
+                            xpos 0
+                            ypos _value_y
+                            xsize _col_w
+                            size 22
+                            color "#2d2d2d"
+                            layout "nobreak"
+                    else:
+                        text "[int(preferences.text_cps)] chars/sec":
+                            xpos 0
+                            ypos _value_y
+                            xsize _col_w
+                            size 22
+                            color "#2d2d2d"
+                            layout "nobreak"
+
+                fixed:
+                    xpos _right_x
+                    ypos _label_y
+                    xsize _col_w
+                    ysize 100
+
+                    text _("Auto-Forward"):
+                        xsize _col_w
+                        size 24
+                        color "#2d2d2d"
+                        font menu_notebook_postit_font
+                        layout "nobreak"
+
+                    fixed:
+                        ypos _bar_y
+                        xsize _col_w
+                        use notebook_overlay_slider(slider_value=Preference("auto-forward time"), slider_width=_col_w)
+
+                    text "[skip_delay_seconds():.1f] sec/line":
+                        xpos 0
+                        ypos _value_y
+                        xsize _col_w
+                        size 22
+                        color "#2d2d2d"
+                        layout "nobreak"
+
+            vbox:
+                xalign 0.5
+                xsize 220
+                spacing 0
+
+                text _("Skip Options"):
+                    xalign 0.5
+                    size 22
+                    color "#2d2d2d"
+                    font menu_notebook_postit_font
+
+                textbutton _("Unseen Text"):
+                    action Preference("skip", "toggle")
+                    xalign 0.5
+                    xsize 220
+                    style "postit_mute_all_button"
+                    text_style "postit_skip_button_text"
+
+                textbutton _("After Choices"):
+                    action Preference("after choices", "toggle")
+                    xalign 0.5
+                    xsize 220
+                    style "postit_mute_all_button"
+                    text_style "postit_skip_button_text"
+
+                textbutton _("Transitions"):
+                    action InvertSelected(Preference("transitions", "toggle"))
+                    xalign 0.5
+                    xsize 220
+                    style "postit_mute_all_button"
+                    text_style "postit_skip_button_text"
+
+
+screen notebook_text_appearance_fonts_postit(xpos, ypos):
+    default font_open = False
+    default customfont_open = False
+    default outline_open = False
+
+    fixed:
+        xalign 0.5
+        yalign 0.5
+        xoffset xpos
+        yoffset ypos
+        xsize 260
+        ysize 220
+
+        add Transform("gui/post it 1.png", crop=menu_notebook_postit_crop, zoom=menu_notebook_zoom, xalign=0.5, yalign=0.5, matrixcolor=ColorizeMatrix("#000000", "#F4E7A3"))
+
+        vbox:
+            style_prefix "postit"
+            xalign 0.5
+            ypos menu_notebook_postit_content_y
+            xsize 220
+            spacing 2
+
+            text _("Text"):
+                xalign 0.5
+                size 30
+                style "postit_title_text"
+
+            textbutton ("[current_font().replace('-Regular','').replace('-',' ').replace('.ttf','').replace('.otf','').split('/')[-1]]  {font=DejaVuSans.ttf}[u'▲' if font_open else u'▼']{/font}"):
+                action ToggleLocalVariable("font_open")
+                style "postit_dropdown_toggle_button"
+                text_size 26
+
+            if font_open:
+                frame:
+                    padding (8, 6, 8, 6)
+                    vbox:
+                        style_prefix "postit_radio"
+                        textbutton _("Default (DejaVu)"):
+                            action [SetFont("DejaVuSans.ttf"), SetLocalVariable("font_open", False)]
+                            text_font "DejaVuSans.ttf"
+                            text_size 24
+                        textbutton _("Pacifico"):
+                            action [SetFont("defaultFonts/Pacifico-Regular.ttf"), SetLocalVariable("font_open", False)]
+                            text_font "defaultFonts/Pacifico-Regular.ttf"
+                            text_size 24
+                        textbutton _("Indie Flower"):
+                            action [SetFont("defaultFonts/IndieFlower-Regular.ttf"), SetLocalVariable("font_open", False)]
+                            text_font "defaultFonts/IndieFlower-Regular.ttf"
+                            text_size 24
+                        textbutton _("Shadows Into Light"):
+                            action [SetFont("defaultFonts/ShadowsIntoLight-Regular.ttf"), SetLocalVariable("font_open", False)]
+                            text_font "defaultFonts/ShadowsIntoLight-Regular.ttf"
+                            text_size 24
+
+                        if CUSTOM_FONTS:
+                            null height 4
+                            for _cname, _cfile in CUSTOM_FONTS:
+                                textbutton _(_cname):
+                                    action [SetFont(_cfile), SetLocalVariable("font_open", False)]
+                                    text_font _cfile
+                                    text_size 24
+
+            text _("Text Size"):
+                size 24
+                color "#2d2d2d"
+                font menu_notebook_postit_font
+
+            use notebook_overlay_slider(slider_value=TextSizeValue(), slider_width=160)
+
+            textbutton ("[persistent.text_outline.capitalize()]  {font=DejaVuSans.ttf}[u'▲' if outline_open else u'▼']{/font}"):
+                action ToggleLocalVariable("outline_open")
+                style "postit_dropdown_toggle_button"
+                text_size 26
+
+            if outline_open:
+                frame:
+                    padding (8, 6, 8, 6)
+                    vbox:
+                        style_prefix "postit_radio"
+                        textbutton _("None"):
+                            action [SetTextOutline("none"), SetLocalVariable("outline_open", False)]
+                            text_size 24
+                        textbutton _("Outline"):
+                            action [SetTextOutline("outline"), SetLocalVariable("outline_open", False)]
+                            text_size 24
+                        textbutton _("Shadow"):
+                            action [SetTextOutline("shadow"), SetLocalVariable("outline_open", False)]
+                            text_size 24
+
+            hbox:
+                spacing 10
+
+                vbox:
+                    xsize 100
+                    spacing 2
+
+                    text _("Textbox Spacing"):
+                        size 22
+                        color "#2d2d2d"
+                        font menu_notebook_postit_font
+
+                    use notebook_overlay_slider(slider_value=LetterSpacingValue(), slider_width=100)
+
+                vbox:
+                    xsize 100
+                    spacing 2
+
+                    text _("Textbox Opacity"):
+                        size 22
+                        color "#2d2d2d"
+                        font menu_notebook_postit_font
+
+                    use notebook_overlay_slider(slider_value=TextboxOpacityValue(), slider_width=100)
+
+
+screen notebook_text_appearance_colors_postit(xpos, ypos):
+    default color_picker_open = None
+    default dialogue_text_color_draft = getattr(persistent, "dialogue_text_color", "#404040")
+    default inline_hover_text_color_draft = getattr(persistent, "inline_hover_text_color", "#336600")
+
+    fixed:
+        xalign 0.5
+        yalign 0.5
+        xoffset xpos
+        yoffset ypos
+        xsize 260
+        ysize 220
+
+        add Transform("gui/post it 1.png", crop=menu_notebook_postit_crop, zoom=menu_notebook_zoom, xalign=0.5, yalign=0.5, matrixcolor=ColorizeMatrix("#000000", "#F4E7A3"))
+
+        vbox:
+            style_prefix "postit"
+            xalign 0.5
+            ypos menu_notebook_postit_content_y
+            xsize 220
+            spacing 3
+
+            text _("Colors"):
+                xalign 0.5
+                size 30
+                style "postit_title_text"
+
+            textbutton _("Text Color"):
+                action SetLocalVariable("color_picker_open", None if color_picker_open == "text" else "text")
+                style "postit_dropdown_toggle_button"
+                text_size 26
+
+            if color_picker_open == "text":
+                frame:
+                    padding (10, 8, 10, 8)
+                    background Transform(Frame("gui/frame_outline.png", gui.frame_borders, tile=gui.frame_tile), matrixcolor=ColorizeMatrix("#ffffff", getattr(persistent, "dialogue_text_color", "#404040")))
+                    vbox:
+                        spacing 8
+                        hbox:
+                            spacing 10
+                            frame:
+                                background Solid("#ffffff18")
+                                padding (8, 4)
+                                xsize 170
+                                yminimum 40
+                                input:
+                                    id "dialogue_text_color_input"
+                                    color getattr(persistent, "dialogue_text_color", "#404040")
+                                    value LocalVariableInputValue("dialogue_text_color_draft")
+                                    length 7
+                                    allow "#0123456789abcdefABCDEF"
+                                    xfill True
+                                    yalign 0.5
+                                    style "input"
+                            textbutton _("Apply"):
+                                action Function(request_dialogue_text_color_apply, dialogue_text_color_draft)
+                                text_size 24
+                            textbutton _("Default"):
+                                action [SetLocalVariable("dialogue_text_color_draft", "#404040"), Function(sync_color_input, "dialogue_text_color_input", "#404040"), Function(request_dialogue_text_color_apply, "#404040")]
+                                text_size 24
+
+                        hbox:
+                            spacing 8
+                            for _label, _color in DIALOGUE_COLOR_PRESETS:
+                                button:
+                                    xsize 34
+                                    ysize 24
+                                    padding (0, 0)
+                                    background Solid(_color)
+                                    hover_background Solid(_color)
+                                    focus_mask None
+                                    action [SetLocalVariable("dialogue_text_color_draft", _color), Function(pick_color_preset, "dialogue_text_color", _color)]
+                                    tooltip _label
+
+            textbutton _("Hover Color"):
+                action SetLocalVariable("color_picker_open", None if color_picker_open == "hover" else "hover")
+                style "postit_dropdown_toggle_button"
+                text_size 26
+
+            if color_picker_open == "hover":
+                frame:
+                    padding (10, 8, 10, 8)
+                    background Transform(Frame("gui/frame_outline.png", gui.frame_borders, tile=gui.frame_tile), matrixcolor=ColorizeMatrix("#ffffff", getattr(persistent, "inline_hover_text_color", "#336600")))
+                    vbox:
+                        spacing 8
+                        hbox:
+                            spacing 10
+                            frame:
+                                background Solid("#ffffff18")
+                                padding (8, 4)
+                                xsize 170
+                                yminimum 40
+                                input:
+                                    id "inline_hover_text_color_input"
+                                    color getattr(persistent, "inline_hover_text_color", "#336600")
+                                    value LocalVariableInputValue("inline_hover_text_color_draft")
+                                    length 7
+                                    allow "#0123456789abcdefABCDEF"
+                                    xfill True
+                                    yalign 0.5
+                                    style "input"
+                            textbutton _("Apply"):
+                                action Function(request_inline_hover_text_color_apply, inline_hover_text_color_draft)
+                                text_size 24
+                            textbutton _("Default"):
+                                action [SetLocalVariable("inline_hover_text_color_draft", "#336600"), Function(sync_color_input, "inline_hover_text_color_input", "#336600"), Function(request_inline_hover_text_color_apply, "#336600")]
+                                text_size 24
+
+                        hbox:
+                            spacing 8
+                            for _label, _color in INLINE_HOVER_COLOR_PRESETS:
+                                button:
+                                    xsize 34
+                                    ysize 24
+                                    padding (0, 0)
+                                    background Solid(_color)
+                                    hover_background Solid(_color)
+                                    focus_mask None
+                                    action [SetLocalVariable("inline_hover_text_color_draft", _color), Function(pick_color_preset, "inline_hover_text_color", _color)]
+                                    tooltip _label
+
+
+screen notebook_text_appearance_extra_postit(xpos, ypos):
+    default talking_mode_open = False
+
+    fixed:
+        xalign 0.5
+        yalign 0.5
+        xoffset xpos
+        yoffset ypos
+        xsize 260
+        ysize 220
+
+        add Transform("gui/post it 1.png", crop=menu_notebook_postit_crop, zoom=menu_notebook_zoom, xalign=0.5, yalign=0.5, matrixcolor=ColorizeMatrix("#000000", "#F4E7A3"))
+
+        vbox:
+            style_prefix "postit"
+            xalign 0.5
+            ypos menu_notebook_postit_content_y
+            xsize 220
+            spacing 3
+
+            text _("Extra"):
+                xalign 0.5
+                size 30
+                style "postit_title_text"
+
+            textbutton ("[get_talking_animation_mode_label()]  {font=DejaVuSans.ttf}[u'▲' if talking_mode_open else u'▼']{/font}"):
+                action ToggleLocalVariable("talking_mode_open")
+                style "postit_dropdown_toggle_button"
+                text_size 26
+
+            if talking_mode_open:
+                frame:
+                    padding (8, 6, 8, 6)
+                    vbox:
+                        style_prefix "postit_radio"
+                        textbutton _("Count + Text Speed"):
+                            action [SetField(persistent, "talking_animation_mode", TALKING_MODE_ADAPTIVE), SetLocalVariable("talking_mode_open", False)]
+                            text_size 24
+                        textbutton _("Fixed Interval"):
+                            action [SetField(persistent, "talking_animation_mode", TALKING_MODE_FIXED), SetLocalVariable("talking_mode_open", False)]
+                            text_size 24
+                        textbutton _("Count + Fixed Speed"):
+                            action [SetField(persistent, "talking_animation_mode", TALKING_MODE_MIXED), SetLocalVariable("talking_mode_open", False)]
+                            text_size 24
+
+
+screen notebook_text_appearance_page(back_action=None):
+    fixed:
+        xalign 0.5
+        yalign 0.5
+        xsize 1060
+        ysize 620
+
+        use notebook_text_appearance_fonts_postit(menu_notebook_settings_page_col_left_x, menu_notebook_postit_row_top_y)
+        use notebook_text_appearance_colors_postit(menu_notebook_settings_page_col_mid_x, menu_notebook_postit_row_top_y)
+        use notebook_text_appearance_extra_postit(menu_notebook_settings_page_col_right_x, menu_notebook_postit_row_top_y)
+
+        if back_action is not None:
+            textbutton _("Back to Settings"):
+                action back_action
+                style "postit_button"
+                xalign 0.5
+                yalign 1.0
+                yoffset -20
+
+
+screen notebook_preferences_embedded():
+    # Legacy fallback: notebook settings are now rendered directly inside post-it screens.
+    null #TODO: Remove this later
+
+
+
+
+screen profiles():
+
+    tag menu
+    default copy_source = int(getattr(persistent, "active_profile_slot", 1))
+
+    use game_menu(_("Profiles"), scroll="viewport"):
+
+        vbox:
+            spacing 22
+            #TODO: Rewrite this text, also probably not show the amount of loops and deaths to the player as to not really spoil as much.
+            text _("Manage profile slots. Delete clears a slot. Copy duplicates one slot into another.")
+            text _("Copy Source: Profile [copy_source]")
+
+            for slot in range(1, 4):
+                $ _used = profile_slot_is_used(slot)
+                $ _deaths = int(profile_slot_state_value(slot, "lildeaths", 0) or 0)
+                $ _retries = int(profile_slot_state_value(slot, "retry_counter", 0) or 0)
+                $ _ptime = format_playtime_hms(profile_slot_playtime_seconds(slot, include_live=True))
+                $ _source_used = profile_slot_is_used(copy_source)
+                $ _bullet_num = min(7, max(0, _deaths))
+                $ _bullet_img = "gui/bullet_loop.png" if _bullet_num == 0 else "gui/bullet_loop%s.png" % _bullet_num
+
+                frame:
+                    xfill True
+
+                    vbox:
+                        spacing 10
+
+                        hbox:
+                            spacing 12
+                            yalign 0.5
+
+                            add Transform(
+                                _bullet_img,
+                                zoom=0.11,
+                                matrixcolor=ColorizeMatrix("#000000", "#ffffff")
+                            ):
+                                yalign 0.5
+
+                            text _("Profile [slot] - [profile_slot_label(slot)]"):
+                                yalign 0.5
+
+                        text _("Deaths: [_deaths]    Loops: [_retries]")
+                        text _("Playtime: [_ptime]")
+
+                        hbox:
+                            spacing 20
+
+                            textbutton _("Use As Copy Source") action SetScreenVariable("copy_source", slot)
+
+                            if copy_source != slot:
+                                if _used:
+                                    textbutton _("Copy Here (Overwrite)") action Show("profile_copy_overwrite_confirm", source_slot=copy_source, target_slot=slot) sensitive _source_used
+                                else:
+                                    textbutton _("Copy Here") action [Function(profile_copy_slot, copy_source, slot, False, True), Function(renpy.restart_interaction)] sensitive _source_used
+
+                            textbutton _("Delete Slot") action Show("profile_delete_confirm", slot=slot)
+
+            text _("Tip: Overwrite only appears when the target profile is already used.")
+            
 ## About screen ################################################################
 ##
 ## This screen gives credit and copyright information about the game and Ren'Py.
 ##
 ## There's nothing special about this screen, and hence it also serves as an
 ## example of how to make a custom screen.
-
 screen about():
-
     tag menu
 
     ## This use statement includes the game_menu screen inside this one. The
@@ -1356,39 +2715,29 @@ screen save():
 
     tag menu
 
-    use file_slots(_("Save"))
+    use file_slots("save", _("Save"))
 
 
 screen load():
 
     tag menu
 
-    use file_slots(_("Load"))
+    use file_slots("load", _("Load"))
 
 
-screen file_slots(title):
+screen file_slots(mode, title):
 
-    default page_name_value = FilePageNameInputValue(pattern=_("Page {}"), auto=_("Automatic saves"), quick=_("Quick saves"))
+    $ _active_profile = int(getattr(persistent, "active_profile_slot", 1))
 
     use game_menu(title):
 
+        on "show" action FilePage(profile_page_name(1))
+
         fixed:
 
-            ## This ensures the input will get the enter event before any of the
-            ## buttons do.
-            order_reverse True
-
-            ## The page name, which can be edited by clicking on a button.
-            button:
-                style "page_label"
-
-                key_events True
+            text "Profile [_active_profile]":
+                style "page_label_text"
                 xalign 0.5
-                action page_name_value.Toggle()
-
-                input:
-                    style "page_label_text"
-                    value page_name_value
 
             ## The grid of file slots.
             grid gui.file_slot_cols gui.file_slot_rows:
@@ -1404,7 +2753,7 @@ screen file_slots(title):
                     $ slot = i + 1
 
                     button:
-                        action FileAction(slot)
+                        action ([Function(profile_prepare_save), FileSave(slot)] if mode == "save" else FileLoad(slot))
 
                         has vbox
 
@@ -1433,16 +2782,24 @@ screen file_slots(title):
                     textbutton _("<") action FilePagePrevious()
 
                     if config.has_autosave:
-                        textbutton _("{#auto_page}A") action FilePage("auto")
+                        textbutton _("{#auto_page}A") action FilePage(profile_page_name("auto"))
 
                     if config.has_quicksave:
-                        textbutton _("{#quick_page}Q") action FilePage("quick")
+                        textbutton _("{#quick_page}Q") action FilePage(profile_page_name("quick"))
 
                     ## range(1, 10) gives the numbers from 1 to 9.
                     for page in range(1, 10):
-                        textbutton "[page]" action FilePage(page)
+                        textbutton "[page]" action FilePage(profile_page_name(page))
 
                     textbutton _(">") action FilePageNext()
+
+                hbox:
+                    xalign 0.5
+                    spacing gui.page_spacing
+
+                    textbutton _("Profile 1") action [Function(profile_switch, 1), FilePage(profile_page_name(1)), Function(renpy.restart_interaction)]
+                    textbutton _("Profile 2") action [Function(profile_switch, 2), FilePage(profile_page_name(1)), Function(renpy.restart_interaction)]
+                    textbutton _("Profile 3") action [Function(profile_switch, 3), FilePage(profile_page_name(1)), Function(renpy.restart_interaction)]
 
                 if config.has_sync:
                     if CurrentScreenName() == "save":
@@ -1595,8 +2952,8 @@ screen preferences():
             ## Add the new button here
             null height gui.pref_spacing
             textbutton _("Text Appearance...") action ShowMenu("text_settings")
-            textbutton _("Change Character Info") action Show("change_names_menu")
-            textbutton _("Change Your Name") action [SetVariable("from_menu", True), Start("nameSelect")]
+            textbutton _("Alter characters") action Show("change_names_menu")
+            textbutton _("Alter own info") action [SetVariable("from_menu", True), Start("nameSelect")]
             
 
 
@@ -1661,7 +3018,20 @@ style check_button_text:
     properties gui.button_text_properties("check_button")
 
 style slider_slider:
-    xsize 525
+    xsize 160
+    xalign 1.0
+    ysize 14
+    left_bar Frame(Transform("gui/horizontal bar filling.png", crop=(578, 201, 78, 14), matrixcolor=ColorizeMatrix("#000000", gui.hover_color)), 7, 0, 7, 0, tile=False)
+    right_bar Frame(Transform("gui/horizontal bar empty.png", crop=(575, 177, 83, 14), matrixcolor=ColorizeMatrix("#000000", "#111111")), 7, 0, 7, 0, tile=False)
+    thumb Transform(Solid(Color(gui.hover_color).shade(0.7)), xsize=12, ysize=12)
+
+style notebook_pref_slider_core is slider_slider:
+    xsize 160
+    xalign 1.0
+    ysize 14
+    left_bar Frame(Transform("gui/horizontal bar filling.png", crop=(578, 201, 78, 14), matrixcolor=ColorizeMatrix("#000000", gui.hover_color)), 7, 0, 7, 0, tile=False)
+    right_bar Solid("#0000")
+    thumb Transform(Solid(Color(gui.hover_color).shade(0.7)), xsize=12, ysize=12)
 
 style slider_button:
     properties gui.button_properties("slider_button")
@@ -1673,6 +3043,93 @@ style slider_button_text:
 
 style slider_vbox:
     xsize 675
+
+style postit_text is gui_text
+style postit_button is button
+style postit_button_text is button_text
+style postit_dropdown_toggle_button is postit_button
+style postit_dropdown_toggle_button_text is postit_button_text
+style postit_dropdown_button is postit_button
+style postit_dropdown_button_text is postit_button_text
+style postit_mute_all_button_text is mute_all_button_text
+style postit_skip_button_text is postit_button_text
+
+style postit_text:
+    font menu_notebook_postit_font
+    size menu_notebook_postit_body_text_size
+    color "#2d2d2d"
+
+style postit_button_text:
+    font menu_notebook_postit_font
+    size menu_notebook_postit_body_text_size
+
+style postit_title_text:
+    font menu_notebook_postit_font
+    size menu_notebook_postit_title_text_size
+    bold True
+    color "#2d2d2d"
+
+style postit_dropdown_button:
+    background None
+    left_padding 0
+    right_padding 0
+    top_padding 0
+    bottom_padding 0
+    top_margin 0
+    bottom_margin 0
+    yminimum 0
+
+style postit_dropdown_toggle_button:
+    background None
+    left_padding 0
+    right_padding 0
+    top_padding 0
+    bottom_padding 0
+    top_margin 0
+    bottom_margin 0
+    yminimum 0
+
+style postit_dropdown_button_text:
+    font menu_notebook_postit_font
+    size menu_notebook_postit_dropdown_option_size
+    layout "nobreak"
+    idle_color "#2d2d2d"
+    hover_color gui.hover_color
+    selected_idle_color gui.hover_color
+    selected_hover_color gui.hover_color
+
+
+style postit_dropdown_toggle_button_text:
+    font menu_notebook_postit_font
+    size menu_notebook_postit_dropdown_main_size
+    layout "nobreak"
+
+style postit_mute_all_button_text:
+    font menu_notebook_postit_font
+    size menu_notebook_postit_body_text_size
+    selected_idle_color gui.hover_color
+    selected_hover_color gui.hover_color
+
+style postit_mute_all_button is mute_all_button:
+    foreground Null()
+    selected_foreground Null()
+    selected_hover_foreground Null()
+
+style postit_radio_button is radio_button:
+    foreground Null()
+    selected_foreground Null()
+    selected_hover_foreground Null()
+
+style postit_radio_button_text is radio_button_text:
+    selected_idle_color gui.hover_color
+    selected_hover_color gui.hover_color
+
+style postit_skip_button_text:
+    font menu_notebook_postit_font
+    size 22
+    idle_color "#2d2d2d"
+    selected_idle_color gui.hover_color
+    selected_hover_color gui.hover_color
 
 
 ## Text Appearance screen ######################################################
@@ -1689,8 +3146,7 @@ screen text_settings():
     default outline_open     = False
     default customfont_open  = False
     default talking_mode_open = False
-    default dialogue_text_color_open = False
-    default inline_hover_text_color_open = False
+    default color_picker_open = None
     default dialogue_text_color_draft = getattr(persistent, "dialogue_text_color", "#404040")
     default inline_hover_text_color_draft = getattr(persistent, "inline_hover_text_color", "#336600")
 
@@ -1704,7 +3160,7 @@ screen text_settings():
         vbox:
             xfill True
 
-            ## ── Dropdowns row ────────────────────────────────────────────────
+            ## -- Dropdowns row ------------------------------------------------
             vbox:
                 spacing 28
 
@@ -1863,16 +3319,16 @@ screen text_settings():
                                             xsize 170
                                             yminimum 40
                                             input:
-                                                value ScreenVariableInputValue("dialogue_text_color_draft")
+                                                value LocalVariableInputValue("dialogue_text_color_draft")
                                                 length 7
                                                 allow "#0123456789abcdefABCDEF"
                                                 xfill True
                                                 yalign 0.5
                                                 style "input"
                                         textbutton _("Apply"):
-                                            action Function(set_dialogue_text_color, dialogue_text_color_draft)
+                                            action Function(request_dialogue_text_color_apply, dialogue_text_color_draft)
                                         textbutton _("Default"):
-                                            action [SetScreenVariable("dialogue_text_color_draft", "#404040"), Function(set_dialogue_text_color, "#404040")]
+                                            action [SetScreenVariable("dialogue_text_color_draft", "#404040"), Function(request_dialogue_text_color_apply, "#404040")]
 
                                     hbox:
                                         spacing 8
@@ -1881,7 +3337,7 @@ screen text_settings():
                                                 xsize 34
                                                 ysize 24
                                                 background Solid(_color)
-                                                action [SetScreenVariable("dialogue_text_color_draft", _color), Function(set_dialogue_text_color, _color)]
+                                                action [SetScreenVariable("dialogue_text_color_draft", _color), Function(request_dialogue_text_color_apply, _color)]
                                                 tooltip _label
 
                     ## Global Hover Color custom hex
@@ -1910,16 +3366,16 @@ screen text_settings():
                                             yminimum 40
                                             input:
                                                 id "inline_hover_text_color_input"
-                                                value ScreenVariableInputValue("inline_hover_text_color_draft")
+                                                value LocalVariableInputValue("inline_hover_text_color_draft")
                                                 length 7
                                                 allow "#0123456789abcdefABCDEF"
                                                 xfill True
                                                 yalign 0.5
                                                 style "input"
                                         textbutton _("Apply"):
-                                            action Function(set_inline_hover_text_color, inline_hover_text_color_draft)
+                                            action Function(request_inline_hover_text_color_apply, inline_hover_text_color_draft)
                                         textbutton _("Default"):
-                                            action [SetScreenVariable("inline_hover_text_color_draft", "#336600"), Function(set_inline_hover_text_color, "#336600")]
+                                            action [SetScreenVariable("inline_hover_text_color_draft", "#336600"), Function(request_inline_hover_text_color_apply, "#336600")]
 
                                     hbox:
                                         spacing 8
@@ -1928,12 +3384,29 @@ screen text_settings():
                                                 xsize 34
                                                 ysize 24
                                                 background Solid(_color)
-                                                action [SetScreenVariable("inline_hover_text_color_draft", _color), Function(set_inline_hover_text_color, _color)]
+                                                action [SetScreenVariable("inline_hover_text_color_draft", _color), Function(request_inline_hover_text_color_apply, _color)]
                                                 tooltip _label
+
+                hbox:
+                    box_wrap True
+                    xfill True
+                    xmaximum 1140
+                    spacing 40
+
+                    vbox:
+                        style_prefix "check"
+                        spacing 4
+
+                        label _("Skip Behavior"):
+                            style "pref_label"
+
+                        textbutton _("Unseen Text") action Preference("skip", "toggle")
+                        textbutton _("After Choices") action Preference("after choices", "toggle")
+                        textbutton _("Transitions") action InvertSelected(Preference("transitions", "toggle"))
 
             null height (4 * gui.pref_spacing)
 
-            ## ── Sliders + live preview side by side ──────────────────────────
+            ## -- Sliders + live preview side by side --------------------------
             hbox:
                 style_prefix "slider"
                 spacing 40
@@ -2281,6 +3754,85 @@ screen start_over_confirm():
     ## No key binding here — right-click and escape cannot dismiss this screen.
 
 
+screen profile_delete_confirm(slot):
+
+    modal True
+    zorder 205
+    style_prefix "confirm"
+
+    add "gui/overlay/confirm.png"
+
+    frame:
+        vbox:
+            xalign .5
+            yalign .5
+            spacing 28
+
+            label _("Delete Profile [slot]? This clears that profile's progress and removes its save slots."):
+                style "confirm_prompt"
+                xalign 0.5
+
+            hbox:
+                xalign 0.5
+                spacing 60
+
+                textbutton _("Delete") action [Function(profile_delete_slot, slot, True), Hide("profile_delete_confirm"), Function(renpy.restart_interaction)]
+                textbutton _("Cancel") action Hide("profile_delete_confirm")
+
+
+screen profile_copy_overwrite_confirm(source_slot, target_slot):
+
+    modal True
+    zorder 206
+    style_prefix "confirm"
+
+    add "gui/overlay/confirm.png"
+
+    frame:
+        vbox:
+            xalign .5
+            yalign .5
+            spacing 28
+
+            label _("Profile [target_slot] is already used. Overwrite it with Profile [source_slot]?"):
+                style "confirm_prompt"
+                xalign 0.5
+
+            hbox:
+                xalign 0.5
+                spacing 60
+
+                textbutton _("Overwrite") action [Function(profile_copy_slot, source_slot, target_slot, True, True), Hide("profile_copy_overwrite_confirm"), Function(renpy.restart_interaction)]
+                textbutton _("Cancel") action Hide("profile_copy_overwrite_confirm")
+
+
+screen preference_apply_scope_confirm(pref_key, pref_value):
+
+    modal True
+    zorder 205
+    style_prefix "confirm"
+
+    add "gui/overlay/confirm.png"
+
+    frame:
+        vbox:
+            xalign .5
+            yalign .5
+            spacing 28
+
+            label _("Apply this preference to all profiles or only this profile?"):
+                style "confirm_prompt"
+                xalign 0.5
+
+            hbox:
+                xalign 0.5
+                spacing 60
+
+                textbutton _("All Profiles") action Function(apply_preference_scope_choice, pref_key, pref_value, "all")
+                textbutton _("Only This Profile") action Function(apply_preference_scope_choice, pref_key, pref_value, "profile")
+                textbutton _("Cancel") action Hide("preference_apply_scope_confirm")
+
+
 screen confirm(message, yes_action, no_action):
 
     ## Ensure other screens do not get input while this screen is displayed.
@@ -2597,7 +4149,7 @@ style bubble_who:
 
 style bubble_what:
     align (0.5, 0.5)
-    text_align 0.5
+    text_align 0.0
     layout "subtitle"
     color "#000"
 
@@ -2691,11 +4243,11 @@ style nvl_window:
 
 style main_menu_frame:
     variant "small"
-    background "gui/phone/overlay/main_menu.png"
+    background None
 
 style game_menu_outer_frame:
     variant "small"
-    background "gui/phone/overlay/game_menu.png"
+    background None
 
 style game_menu_navigation_frame:
     variant "small"
@@ -2739,6 +4291,11 @@ style slider:
     base_bar Solid(gui.hover_muted_color)
     thumb Solid(gui.hover_color)
 
+style slider_bar:
+    variant "small"
+    left_bar "gui/horizontal bar filling.png"
+    right_bar "gui/horizontal bar empty.png"
+
 style vslider:
     variant "small"
     xsize gui.slider_size
@@ -2751,7 +4308,12 @@ style slider_vbox:
 
 style slider_slider:
     variant "small"
-    xsize 900
+    xsize 210
+    xalign 1.0
+    ysize 14
+    left_bar Frame(Transform("gui/horizontal bar filling.png", crop=(578, 201, 78, 14), matrixcolor=ColorizeMatrix("#000000", gui.hover_color)), 7, 0, 7, 0, tile=False)
+    right_bar Frame(Transform("gui/horizontal bar empty.png", crop=(575, 177, 83, 14), matrixcolor=ColorizeMatrix("#000000", "#111111")), 7, 0, 7, 0, tile=False)
+    thumb Transform(Solid(Color(gui.hover_color).shade(0.7)), xsize=12, ysize=12)
 
 
 init python:
@@ -3049,12 +4611,12 @@ style charinfo_section_frame:
 style charinfo_title_text:
     size 34
     color gui.accent_color
-    text_align 0.5
+    text_align 0.0
 
 style charinfo_subtitle_text:
     size 17
     color "#5C5346"
-    text_align 0.5
+    text_align 0.0
 
 style charinfo_role_text:
     size 15

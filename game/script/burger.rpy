@@ -43,6 +43,7 @@ label burger_start:
             $ persistent.burgerwent += 1
         menu:
             "I can't say no to burgers!":
+                $ burgerFanatic = True
                 jump burger_start_choice1
 
             "I wouldn't want to miss this for the world!":
@@ -56,6 +57,7 @@ label burger_start:
 
             "Hey glad to be here. Could we sit somewhere else though?" if persistent.burger_death_1 and not persistent.rockMode:
                 $ burger_alt = True
+                $ get_lilith_current_loop_memory()["burger_alt"] = True
                 n "[persistent.date] gives you a smile and a thumbs up."
                 l "Sure, where would you like to sit?"
                 n "You quickly point to a table, any will do, as long as that lost bullet doesn't find [date_obj]."
@@ -84,21 +86,31 @@ label burger_start_choice1:
         l "Did you already know that or is this your first time here?"
     menu:
         "I actually didn't know that, I've never been here before." if persistent.burgerwent == 0:
+            $ get_lilith_current_loop_memory()["beenBefore"] = "never"
             jump burger_beenBeforeXTimes
 
-        "I knew that, I've been here a couple of times. (Lie)" if persistent.burgerwent == 0:
-            $ burgerBeforeLie = True
+        "I actually didn't know that, I've never been here before. (Lie)" if persistent.burgerwent > 0:
+            $ get_lilith_current_loop_memory()["beenBefore"] = "never"
+            jump burger_beenBeforeXTimes
+
+        "I knew that, I've been here a couple of times. (Lie)" if persistent.burgerwent < 2:
+            $ get_lilith_current_loop_memory()["beenBefore"] = "true"
+            $ get_lilith_current_loop_memory()["beenBeforeMultiple"] = True
             jump burger_beenBeforeXTimes
 
         "I knew, I've been here before, only once though." if persistent.burgerwent == 1:
+            $ get_lilith_current_loop_memory()["beenBefore"] = "true"
             jump burger_beenBeforeXTimes
 
         "I'm well aware, I've been here exactly [persistent.burgerwent] times." if persistent.burgerwent > 1 and not persistent.rockMode:
+            $ get_lilith_current_loop_memory()["beenBefore"] = "true"
+            $ get_lilith_current_loop_memory()["beenBeforeMultiple"] = True
             n "It sounds a bit weird if you phrase it like that, doesn't it?"
             jump burger_beenBeforeXTimes
 
         "I knew, I've actually been here a couple of times." if persistent.burgerwent > 1:
-            $ burgerBeenBefore = True
+            $ get_lilith_current_loop_memory()["beenBeforeMultiple"] = True
+            $ get_lilith_current_loop_memory()["beenBefore"] = "true"
             l "Oh you have? That makes sense, these burgers are the best of the state, scratch that, of the world!"
             if not persistent.rockMode:
                 n "While [date_sub] is enthusiastically exclaiming this [date_pos] arms kind of seem to have a life of their own, making all kinds of gestures to get the point across even more."
@@ -109,28 +121,25 @@ label burger_start_choice1:
                 l "They are so great. They must be! While we cannot thoroughly taste them to test them out, we sure can imagine."
                 l "Although I wonder. If you could order one thing here, what would you pick?"
                 l "I think I'd go for the juicy cheeseburger, something about that choice just feels... right."
-                $ hypotheticalBurger = True
+                $ get_lilith_current_loop_memory()["hypotheticalBurger"] = True
+
             jump burger_start_menu
 
 label burger_beenBeforeXTimes: #TODO: Probably add some more choices like the once_greatTaste one. I feel like that'd add a lot more variety.
+    $ burgerBeenBefore = get_lilith_current_loop_memory().get("beenBefore", "")
 
-    if persistent.burgerwent > 0:
-        $ burgerBeenBefore = True
-
-    if persistent.burgerwent == 0:
-        if burgerBeforeLie == False:
+    if persistent.burgerwent == 0 or burgerBeenBefore == "never":
             l "I'm sure after today that will change. They have really great burgers like I said before."
             if love_meter >= 3:
                 l "So something tells me you will come here often after this. Maybe... some of those times with me?"
             else:
-                l "You might find yourself coming here more often than you'd have expected. The burgers might just be magic."
-        else: 
-            jump burger_beenBeforeXTimes_once_greatTaste
+                l "You might find yourself coming back more often than you'd have expected. The burgers might just be magic."
+        
             
 
     elif persistent.burgerwent == 1:
         if persistent.rockMode:
-            l "Oh, you've been here before? Is that why you wanted to come back here so much? I must admit, I can't blame you at all." #TODO: Not sure if this is an inconsistencie... at a certain point she say she has been here before as a rock, but here she acts as if she never saw it.
+            l "Oh, you've been here before? Is that why you wanted to come back here so much? I must admit, I can't blame you at all."
             l "This place sure looks lovely, pretty cozy too!"
         else:
             jump burger_beenBeforeXTimes_once_greatTaste
@@ -183,16 +192,18 @@ label burger_beenBeforeXTimes: #TODO: Probably add some more choices like the on
         l "So, which burger do you want to pick? I think I'll go for the juicy cheeseburger myself."
     else:
         l "Imagine, you could eat one thing here. What would you pick? I think I'd like to taste the juicy cheeseburger."
-        $ hypotheticalBurger = True
+        $ get_lilith_current_loop_memory()["hypotheticalBurger"] = True
     jump burger_start_menu
 
 label burger_beenBeforeXTimes_once_greatTaste:
     l "I see, in that case you have great taste!"
+    $ get_lilith_current_loop_memory()["greatTaste"] = True
     n "[date_sub!c] [conj('date', 'lets', 'let')] out a hearty chuckle."
     menu:
         "Of course, afterall, I am here with you, aren't I?":
             $ love_points += 1
-            $ love_meter_updater()
+            $ record_attitude_event("tasteCompliment", True)
+            $ love_meter_updater(False)
             l "Uhm- I uhm- {size=*0.5}thank you [persistent.name]{/size}"
             n "[date_sub!c] [conj('date', 'is', 'are')] clearly flustered by your words."
             n "[date_obj!c] face is as red as a tomato as she just desperately tries to find any sensible reply."
@@ -230,11 +241,11 @@ label burger_start_choice3:
     else:
         l "Stressful times like that make you wish for some lovely food, don't they? Even make you wish that we could eat at all."
         l "...Actually, that gives me an interesting idea. If you could pick anything to eat here, what would you choose?"
-        $ hypotheticalBurger = True
+        $ get_lilith_current_loop_memory()["hypotheticalBurger"] = True
     jump burger_start_menu
 
 label burger_start_menu:
-    if not hypotheticalBurger:
+    if not get_lilith_current_loop_memory().get("hypotheticalBurger", False):
         menu burgerChoice:
             "I could go for a veggie burger!":
                 $ burger_choice = "veggie burger"
@@ -284,7 +295,7 @@ label burger_chickentenders:
     l "I promise, they are to die for! Those tenders are pre-made. Still good ofcourse but they pale to Rose's craftsmanship."
     menu:
         "That does sound good... sure, I'll pick a burger!":
-            $ onlyBurgers = True
+            $ get_lilith_current_loop_memory()["onlyBurgers"] = True
             jump burgerChoice
 
         "I'm actually more in the mood for tenders.":
@@ -312,7 +323,6 @@ label burger_chickentenders:
                             n "You camp outside, ready to repeat all of this the next day and the day after that ad infinitum."
                             n "Or atleast until your heart decides to give out from all the greasy goodness."
                             #Ending
-                            $ persistent.ending_food = True
                             $ lilithAliveEnding = True
                             $ ending_check = "food ending"
                             jump gameOver
@@ -320,24 +330,66 @@ label burger_chickentenders:
 label burger_ordering:
     if persistent.rockMode == False:
         if burger_choice == "juicy cheeseburger":
-            l "Great minds think alike I suppose!" #TODO: If she said you have great taste, then reference this aswell here, something like "You really do have great taste!"
+            if get_lilith_current_loop_memory().get("greatTaste", False):
+                l "So you really do have great taste! I knew it!"
+            else: 
+                l "I can't say I'm surprised, great minds think alike after all, don't they?"
         else:
             l "That's a great choice [persistent.name]!"
-        l "Let's go order, alright?"
-        define move_out_left = MoveTransition(3.0, leave=offscreenleft, leave_time_warp=_warper.easeout)
-        hide lilith talk_closed with move_out_left #move_out_left is a custom defined move transition since this is the only way to not have it hapen in 0.5 seconds
-        if persistent.burgerwent == 0:
-            n "You look around to search for a self-service screen like most fastfood places have however, you can't spot any."
-            n "Instead [persistent.date] walks straight to the counter."
-            n "You decide to follow [date_obj]."
-            #TODO: If you have told her you have been here before she will find this odd because you seemingly tried to look for a self-service screen while they don't use it.
-            #Have her shoot you a subtle glance and then mention it later at the table.
+        if get_lilith_current_loop_memory().get("beenBeforeMultiple", False) and love_meter >= 2:
+            l "Do you usually pick the [burger_choice] when you come here?"
+            menu:
+                "Oh yeah, all the time honestly." if persistent.burgerwent > 0:
+                    jump burger_orderingAllthetime
+                
+                "Oh yeah, all the time honestly. (Lie)" if persistent.burgerwent == 0:
+                    jump burger_orderingAllthetime
+                    label burger_orderingAllthetime:
+                        if burger_choice == "juicy cheeseburger":
+                            $ get_lilith_current_loop_memory()["repeatCheese"] = True
+                            $ love_points += 1
+                            $ record_attitude_event("commonTaste", True)
+                            $ love_meter_updater(False)
+                            n "[persistent.date]'s eyes light up like fireworks as [date_sub] almost [conj('date', 'bounces', 'bounce')] out of [date_pos] seat."
+                            l "Really? No way! I also always go for the cheeseburger!"
+                            l "It's just too irresistable to pass up on, isn't it?"
+                            
+                        else:
+                            n "[persistent.date] gives you a playful wink."
+                            l "You can't go wrong with the classics I suppose."
+                            l "I'm honestly very much the same, I don't think I can ever muster up the strength to pick anything other than that cheeseburger."
+                    
+                "Actually, it's my first time.":
+                    if burger_choice == "juicy cheeseburger":
+                        l "Really? I totally convinced you to get one, didn't I?"
+                        n "[persistent.date] lets out a playful laugh."
+                        l "Don't worry [persistent.name], you won't regret it, I promise!"
+                        l "Or maybe you will regret not being able to go back after you grow addicted to this one."
+                    else:
+                        l "Oh I see! I hope it'll be to your liking then."
+                        l "Picking new things can be a bit scary sometimes as it's always a surprise."
+                        l "Yet then again, if you like the other burgers here, there is a good chance you might like this one too!"
+                        l "Rose really is incapable of making a bad burger as I'm sure you must have tasted by now."
+            l "All this food talk is just making me hungrier and hungrier, let's go order something before I eat you."
+            jump hungryBurgerTransition
+        else:
+            l "Let's go order, alright?"
+            define move_out_left = MoveTransition(3.0, leave=offscreenleft, leave_time_warp=_warper.easeout)
+            hide lilith talk_closed with move_out_left #move_out_left is a custom defined move transition since this is the only way to not have it hapen in 0.5 seconds
+            if persistent.burgerwent == 0:
+                n "You look around to search for a self-service screen like most fastfood places have however, you can't spot any."
+                if get_lilith_current_loop_memory().get("beenBefore", "") == "true":
+                    n "As you turn around to check if you maybe missed the screen you catch [persistent.date] giving you a confused look before she turns around and walks straight to the counter."
+                    $ get_lilith_current_loop_memory()["beenBefore"] = "lie"
+                else:
+                    n "As you turn around to check if you maybe missed the screen you catch [persistent.date] flashing you an understanding smile as [date_obj] beckons you and walks straight to the counter."
+                n "You decide to follow [date_obj]."
 
-        else: 
-            if love_meter >= 3:
-                n "You walk towards the counter, [persistent.date] is right next to you, shooting you a subtle glance every now and then."
-            else:
-                n "You walk towards the counter, [persistent.date] is right next to you."
+            else: 
+                if love_meter >= 3:
+                    n "You walk towards the counter, [persistent.date] is right next to you, shooting you a subtle glance every now and then."
+                else:
+                    n "You walk towards the counter, [persistent.date] is right next to you."
 
         if persistent.rosename_knowledge == True:
             $ roseName = "Rose"
@@ -346,81 +398,390 @@ label burger_ordering:
             n "An old lady smiles at the both of you."
         
         if burger_nightmare == False:
-            r "Hey [persistent.date], glad to see you here once more!"
-            r "I'm almost surprised to see you here, it's been quite a while hasn't it?"
-            #TODO: Probably have lilith say something alluding to how she stopped coming here after what happened to James and Rose saying it's alright, that she doesn't need to get into detail because she knows it's a hurtful topic.
-            #That way lilith would later be able to more easily bring up james if you ask her about it.
-            if persistent.rosename_knowledge == True:
-                n "Rose looks at you for a brief moment and continues."
-            else:
-                n "The old lady looks at you for a brief moment and continues."
-
-            r "Who did you bring along for the ride?"
-            if not burgerBeenBefore:
-                l "Oh right, you two haven't met. Rose, this is [persistent.name] and [persistent.name] this is Rose."
-                $ persistent.rosename_knowledge = True
-                $ roseName = "Rose"
-                n "Rose gives you a sincere smile."
-                r "Nice to meet you [persistent.name]."
-            else:
-                l "Oh, do you not recognize [persistent.name] Rose?"
-                r "No, their face is not ringing any bells I'm afraid, should I recognize them?"
-                l "I suppose not necesarilly, but with how good your memory is I thought you would remember them, they've eaten here before."
-                r "Really? Huh... Still not ringing any bells I'm afraid. Might be my age slowly catching up on me."
-                r "The woman lets out a hearty chuckle."
-                r "Anyway [persistent.name], consider your face remembered from now on out!"
-                if persistent.burger_faceRemembered == False:
-                    $ persistent.burger_faceRemembered = True
-                else:
-                    n "Yet she never remembers you doesn't she?"
-                    n "No matter how hard she might try. No matter how many times she says she will."
-                    n "You will always be a stranger to her."
-                
-            r "So, what can I get the two of you?"
-            n "[persistent.date] and you tell her both of your choices."
-            if burger_choice == "juicy cheeseburger":
-                r "Two juicy cheeseburgers coming right up! I'll bring them to you when they are done, alright?"
-            else:
-                r "A juicy cheeseburger and a [burger_choice] coming right up! I'll bring them to you when they are done, alright?"
-            r "That way you two can get to know each other some more."
-            n "She gives [persistent.date] a quick wink you just barely manage to catch."
-            n "[persistent.date]'s face turning beetred is a lot easier to notice."
-            l "{size=*0.5}Uhm, thank you Rose... we uhm have to get back to our table now.{/size}"
-            n "You can't help but chuckle to yourself as [persistent.date] practically darts back to the table."
-            show lilith talking_happy at burgerSit
-            n "By the time you've reached the table [date_sub] [conj('date', 'is', 'are')] already sitting down, still as red as [date_sub] possibly could be."
-            n "[date_sub] quickly brushes one hand over [date_pos] left cheek and somehow manages to turn even redder realising that [date_sub] [conj('date', 'is', 'are')] still blushing."
-            #TODO: Probably instead make this her looking for something but not being able to say it, you then can say a few things to break the tension. One of which is asking what absence Rose was talking about.
-            n "Right then [date_sub] lets out a few small coughs as [date_sub] [conj('date', 'tries', 'try')] to somehow divert attention from what just happened."
-            n "As you sit back down [date_sub] begins speaking once again."
-            l "Thank you for choosing this place [persistent.name]. It has been too long since I've been here, to tell you the truth I actually was avoiding this place."
-            l "But now the happy memories come flooding back to me."
-            n "[persistent.date] pauses for a moment, [date_sub] [conj('date', 'seems', 'seem')] unsure whether to continue or not."
-            l"You know, my [ghost_sib] really used to love this place before..."
-            n "[persistent.date] freezes before [date_sub] can continue the sentence."
-            l "{size=*0.5}Why did I have to bring that up now?{/size}"
-            jump burger_brother
-
-            menu burger_brother:
-                "What was [ghost_pos] name?":
-                    jump burger_brother_question
-
-                "Are you alright [persistent.date]? If this story hurts too much you don't have to continue.":
-                    $ love_points += 1
-                    $ love_meter_updater(False)
-                    l "I don't think I'll ever be fully alright because of what happened. I think telling the story will always hurt."
-                    l "However that doesn't mean I wouldn't like to tell you about it."
-                    l "In fact, I think it might be good for me to eventually tell you."
-                    l "Just... maybe some other time [persistent.name]?"
-                    l "I do really appreciate it though. Thank you for being so considerate."
-                    n "Things grow quiet for a moment. It's not necessarily a bad quiet, it's one [date_sub] needed."
-                    n "You can tell so by [date_obj] body slowly relaxing into the state [date_sub] [conj('date', 'was', 'were')] in before."
-                    n "Then, when [date_sub] [conj('date', 'is', 'are')] properly recouped, the silence once again makes room for conversation."
-                    l "Oh, I almost forgot to ask."
-                    l "How are you liking your burger [persistent.name]?"
-                    jump burger_burgerRate
-                    
+            jump burger_ordering_normal
         else:
+            jump burger_ordering_nightmare
+           
+    else:
+        jump burger_ordering_rockMode
+
+label hungryBurgerTransition:
+    if love_meter < 4:
+        n "[date_sub!c] [conj('date', 'rushes', 'rush')] off so fast you actually lose track of [date_obj]."
+        if persistent.burgerwent > 0:
+            n "Luckily you already know where [date_sub] will be."
+            n "You calmly make your way to the counter."  
+        else: 
+            n "You figure [date_sub] probably went to the nearest screen to order."
+            n "Yet you spend a minute or so without managing to locate one."
+            n "You are this close to questioning your own sanity when-" (multiple=2) #TODO: Have this somehow first type it's line and then trigger the second one
+            if get_lilith_current_loop_memory().get("beenBefore", "") == "true":
+                l "Heya [persistent.name], are you alright?" (multiple=2)
+                n "You practically jump up in suprise."
+                $ get_lilith_current_loop_memory()["beenBefore"] = "lie"
+                n "[date_sub!c] [conj('date', 'gives', 'give')] you a strange look."
+                l "I was just with Rose just now, are you coming?"
+                n "You nod and follow [persistent.date]. Soon enough the both of you reach a counter."
+                n "An old lady, who you presume is Rose, gives you a peculiar look before her face shifts into a warmer smile."
+            else:
+                l "Sorry [persistent.name], I forgot you don't know your way around here yet." (multiple=2)
+                l "I guess I was so excited to order that I abandoned you for a moment."
+                l "Come with me."
+                n "[date_sub!c] [conj('date', 'beckons', 'beckon')] you. Thankful for the salvation you follow."
+                n "[persistent.date] stops when she reaches a counter, behind it is an old lady who gives you a warm smile."
+                jump burger_ordering_normal
+    else:
+        n "[date_sub!c] practically [conj('date', 'drags', 'drag')] you with [date_obj] as [date_sub] [conj('date', 'rushes', 'rush')] off."
+        #Here she never finds if you lied about coming here before
+        if persistent.burgerwent > 0:
+            n "In a blink of an eye, you find yourself at the counter, where Rose has to hold back a laugh before she gives the both of you a warm smile."
+        else:
+            n "In the blink of an eye, you find yourself at a counter. An old lady seemingly has to hold back a laugh before she gives the both of you a warm smile."
+        jump burger_ordering_normal
+
+label burger_ordering_normal:
+    r "Hey [persistent.date], glad to see you here once more!"
+    r "I'm almost surprised to see you here, it's been quite a while hasn't it?"
+    l "I'm so sorry. I really wanted to come back but after [persistent.date_ghost[:2]]-"
+    r "Oh... I see. I'm sorry sweetie, I really hadn't thought before I ran my mouth."
+    r "It's perfectly alright [persistent.date], I really didn't want this to come off as judgemental at all."
+    r "In fact, I'm glad you're out and about again, you and-"
+    if persistent.rosename_knowledge == True:
+        n "Rose turns towards you."
+    else:
+        n "The old lady turns towards you."
+    if love_meter >= 2:
+        n "She flashes you a smile that seems to be filled with nothing but warmth and kindness."
+    else:
+        n "She gives you a somewhat odd look. She seems almost... disappointed?"
+        n "Then she turns back to [persistent.date] and gives her a pitiful look."
+
+    r "Who did you bring along for the ride?"
+    if get_lilith_current_loop_memory().get("beenBefore", "") != "true" and get_lilith_current_loop_memory().get("beenBefore", "") != "lie":
+        if love_meter >= 2:
+            l "Oh right, you two haven't met. Rose, this is [persistent.name] and [persistent.name] this is Rose."
+            $ persistent.rosename_knowledge = True
+            $ roseName = "Rose"
+            n "Rose gives you a sincere smile."
+            r "Nice to meet you [persistent.name]."
+        else:
+            l "Oh right... This is [persistent.name]."
+            r "I see..."
+            jump burger_ordering_roseOrder
+    else:
+        l "Oh, do you not recognize [persistent.name] Rose?"
+        r "No, their face is not ringing any bells I'm afraid, should I recognize them?"
+        l "I suppose not necessarily, but with how good your memory is I thought you would remember them, they've eaten here before."
+        if get_lilith_current_loop_memory().get("repeatCheese", False) and persistent.burgerwent > 1:
+            l "Besides, they have the same impeccable taste as I do! Always picking the juicy cheeseburger."
+            r "While there certainly is no doubting either of your great taste I must admit it's still not ringing any bells."
+        else:
+            r "Really? Huh... Still not ringing any bells I'm afraid."
+        r "Might be my age slowly catching up on me."
+        r "The woman lets out a hearty chuckle."
+        r "Anyway [persistent.name], consider your face remembered from now on out!"
+        if persistent.burger_faceRemembered == False:
+            $ persistent.burger_faceRemembered = True
+        else:
+            n "Yet she never remembers you doesn't she?"
+            n "No matter how hard she might try. No matter how many times she says she will."
+            n "You will always be a stranger to her."
+        jump burger_ordering_roseOrder
+
+label burger_ordering_roseOrder: 
+    if love_meter >= 2:
+        r "So, what can I get the two of you?"
+        n "[persistent.date] and you tell her both of your choices."
+        if burger_choice == "juicy cheeseburger":
+            r "Two juicy cheeseburgers coming right up! I'll bring them to you when they are done, alright?"
+        else:
+            r "A juicy cheeseburger and a [burger_choice] coming right up! I'll bring them to you when they are done, alright?"
+        r "That way you two can get to know each other some more."
+        n "She gives [persistent.date] a quick wink you just barely manage to catch."
+        n "[persistent.date]'s face turning beetred is a lot easier to notice."
+        l "{size=*0.5}Uhm, thank you Rose... we uhm have to get back to our table now.{/size}"
+        n "You can't help but chuckle to yourself as [persistent.date] practically darts back to the table."
+        jump burger_ordered
+    else:
+        r "So, have the two of you had a chance to {i}think about what you want{/i} to get?"
+        l "..."
+        l "Honestly I'm having some doubts. Let me look over the menu real quick."
+        r "That's totally alright dear, take as much time as you need! I wouldn't want you to pick something that is not right for you afterall."
+        n "While [persistent.date] is looking over the menu plastered on the wall behind the counter, Rose turns to you."
+        r "How about you [persistent.name]? {i}Do you know what you want?{/i} Because you look rather indecisive."
+        r "I'd hate for you to just pick any burger without thinking about it and end up regretting it and wasting a perfectly good burger."
+        r "You might not be used to having to put so much care and thought into something like this, so if you don't think that's for you it's still not too late to {i}go somewhere else{/i}."
+        r "So, what will it be?"
+        menu:
+            "*Tell her your order*":
+                jump changeMindBurger
+
+
+            "*Tell [persistent.date] you can't do this anymore.*":
+                l "...What do you mean [persistent.name]?"
+                menu:
+                    "I have not been treating you as you deserve.":
+                        jump burger_breakup_notTreatingWell
+                        
+                    "Rose is scaring me into ending this date.":
+                        l "Well... do you know why she is doing that?"
+                        menu:
+                            "I have not been treating you as you deserve.":
+                                jump burger_breakup_notTreatingWell
+
+                            "I don't know but she's looking at me like she might kill me!":
+                                n "[persistent.date] lets out a deep sigh."
+                                l "Look [persistent.name], this is not going to work out at all."
+                                l "The only reason Rose is looking at you like that is because she is worried about me."
+                                l "The truth is, you have been acting quite poorly during this entire date and I was {i}this{/i} close to just walking out."
+                                l "Yet something in me wanted to sit it out, hoped that you would somehow turn things around."
+                                l "Yet now I understand that was foolish of me to think. You can't see what you have done wrong."
+                                l "If you won't take accountability for your actions then I think it's just best we end things here."
+                                #TODO: Fill in more
+                                jump burger_breakup_leave
+
+
+menu changeMindBurger:
+    "I'll stick with my first choice, the [burger_choice].":
+        r "I see... I would strongly advise against that choice if I were you."
+        r "You know, after so many years serving customers I can tell just what they want."
+        r "Perhaps you yourself don't know it yet, but I can tell this is not the right choice for you."
+        r "Then again, I guess I'm just an old lady and can't exactly stop you."
+        jump changeMindBurger_changedMind
+
+    "I'll actually go for the veggie burger!" if not burger_choice == "veggie burger":
+        $ burger_choice = "veggie burger"
+        jump changeMindBurger_changedMind
+
+    "I'll actually go for that juicy cheeseburger!" if not burger_choice == "juicy cheeseburger":
+        $ burger_choice = "juicy cheeseburger"
+        jump changeMindBurger_changedMind
+
+    "I'll actually go for the fish burger!" if not burger_choice == "fish burger":
+        $ burger_choice = "fish burger"
+        jump changeMindBurger_changedMind
+
+    "I'll actually go for the beef burger!" if not burger_choice == "beef burger":
+        $ burger_choice = "beef burger"
+        jump changeMindBurger_changedMind
+    
+    "I think I will go for some chicken tenders!" if persistent.chickenTendiesUnlock and not onlyBurgers and not burger_choice == "chicken tenders":
+        $ burger_choice = "chicken tenders"
+        jump changeMindBurger_changedMind
+
+label changeMindBurger_changedMind:
+    r "Now you are talking! It's never too late to change your mind [persistent.name]."
+    r "Never..."
+    n "Things turn awkardly silent between the two of you before Rose points her attention back to [persistent.date]."
+    jump changeMindBurger_changedMind_date
+
+label changeMindBurger_changedMind_date:
+    r "What about you [persistent.date]? Will you order something else?"
+    l "Actually, I think I'll stay with my original choice. As much as I am having doubts, I think I have to see this through for myself."
+    r "...That's alright dear, I suppose you have to see for yourself to make up your mind."
+    r "Just know that if you don't like it you can always come to me if need be, alright?"
+    l "Thank you Rose, I really appreciate it."
+    r "Any time, now, would you like to stay here while I prepare the burgers?"
+    l "We'll go back to our table I think, if there's anything I'll give you a call."
+    r "As you wish, I'll try to come as soon as I can."
+
+label burger_ordered:
+    show lilith talking_happy at burgerSit
+    n "By the time you've reached the table [date_sub] [conj('date', 'is', 'are')] already sitting down, still as red as [date_sub] possibly could be."
+    n "[date_sub] quickly brushes one hand over [date_pos] left cheek and somehow manages to turn even redder realising that [date_sub] [conj('date', 'is', 'are')] still blushing."
+    n "Right then [date_sub] lets out a few small coughs as [date_sub] [conj('date', 'tries', 'try')] to somehow divert attention from what just happened."
+    if get_lilith_current_loop_memory().get("beenBefore", "") == "lie" and persistent.burgerwent == 0:
+        n "As you sit back down [date_sub] begins speaking once again."
+        l "You had a hard time finding your way back there, didn't you?"
+        n "[date_sub!c] [conj('date', 'tries', 'try')] to come off joking but [date_pos] eyes seem to study your face."
+        menu:
+            "It's just been so long since I last came here.":
+                l "I suppose that makes sense, yet I also haven't been here in a while and had no trouble at all."
+                l "Also Rose still knew me, just like she does all her customers. Then why doesn't she know you?..."
+                menu:
+
+                    "I lied about coming here before, I just wanted to make a good impression.":
+                        jump burger_beenBefore_confession
+
+                    "Maybe when I came here it just was really busy? I can't really remember anymore though... (Lie)":
+                        l "I suppose that could be right..."
+                        l "Even someone as great as Rose is only human."
+                        l "Although it's a shame, Rose loves all her returning customers and that really seeps into her burgers."
+                        l "I suppose we will have to come back here again some other time so you can taste the difference for yourself."
+                        n "[date_sub!c] [conj('date', 'lets', 'let')] out a big chuckle."
+                        jump burger_roseDeliversAtTable
+
+                    "Perhaps she's begining to lose it? She's anything but young afterall. (Lie)":
+                        l "What? I will not have you say such things about Rose! She is an absolute sweetheart."
+                        l "I cannot do this anymore [persistent.name], if this is how you treat other people then I don't want any part in it."
+                        if persistent.love_meter >= 2:
+                            l "To think I actually thought this was promising for a moment."
+                        else:
+                            l "I knew things were bad, but I didn't think they were this horrible."
+                        $ love_meter_updater(True)
+
+            "I lied about coming here before, I just wanted to make a good impression.":
+                label burger_beenBefore_confession:
+                    l "Really? So you chose to lie to me? About something so simple?"
+                    l "Not only that, you lied again when I asked you if you order the same burger each time."
+                    if get_lilith_current_loop_memory().get("repeatCheese", False):
+                        l "Did you specifically pick the cheeseburger because you knew it was my favorite?"
+                    else:
+                        l "Who knows what else you have been lying about?"
+                        
+                    l "All this to make me like you? If you hadn't already made a good impression I wouldn't even have been on this date with you in the first place!"
+                    l "I'm really sorry if you somehow felt you needed to lie to me to be liked by me but I don't deserve that treatment."
+                    l "Coming clean to me just now was a good step, I just wish you had took it from the start."
+                    $ love_meter_updater(True)
+                
+    else:
+        n "You sit back down a little slower than usual to give [date_obj] a chance to gather [date_pos] thoughts."
+        n "Yet by the time you're back on your seat [date_sub] [conj('date', 'is', 'are')] still struggeling so you decide to help out."
+        #TODO:  Possibly add one extra option?
+        menu:
+            "What was that about with Rose?":
+                if love_meter >= 2:
+                    l "Well... it's true that I haven't been here for quite a long time. Even though I really like it here."
+                    l "I suppose that's why I brought this place up when we were looking for a place to meet up."
+                    n "[persistent.date] pauses for a moment, [date_sub] [conj('date', 'seems', 'seem')] unsure whether to continue or not."
+                    l "You see, my [ghost_sib] really used to love this place before..."
+                    n "[persistent.date] freezes before [date_sub] can continue the sentence."
+                    l "{size=*0.5}I'm sorry, I just- it's hard for me to say out loud...{/size}"
+                    jump burger_brother
+                else:
+                    l "Honestly, I don't really want to talk about that right now."
+                    menu:
+                        "You seemed to want to with Rose though.":
+                            $ love_points -= 2
+                            $ record_attitude_event("limitIgnore", False)
+                            l "Alright, I've had it! That is it. I can't do this anymore."
+                            $ love_meter_updater(True)
+
+                        "I'm sorry if I pryed too much.":
+                            n "[date_sub!c] [conj('date', 'lets', 'let')] out a deep sigh."
+                            n "It's fine really, it's just that we don't know each other well enough to talk about something like that."
+                            menu:
+                                "*Talk about something else.*":
+                                    "Filler"
+                                    #TODO: Have this lead to a few small topics. Not the ones she can talk about if you never ask about the brother though.
+
+                                "But I feel as if I know you very well!":
+                                    n "[date_pos!c] face sinks a little at your words."
+                                    l "Look [persistent.name], if this is you knowing me well then I don't think I want to know you at all."
+                                    l "If you knew me well you would be able to tell this is not how I want to be treated."
+                                    l "Even if you didn't know me well, I doubt {b}anyone{/b} wants to be treated like this!"
+                                    l "I'm out."
+                                    $ love_meter_updater(True)
+
+
+            "Don't worry, I'm excited about this date aswell!":
+                l "You are?..."
+                n "[date_sub!c] [conj('date', 'lets', 'let')] out a deep sigh of relief."
+                l "I'm sorry [persistent.name], it's just been so long since I last did this."
+                l "To tell you the truth I was really scared of messing things up."
+                l "Although I suppose I am worrying about nothing, am I?"
+                l "We are both having a good time and that is all that matters."
+                $ love_points += 1
+                $ record_attitude_event("honestExcitement", True)
+                $ love_meter_updater(False)
+                #TODO: Probably have this lead to something else, perhaps a conversation you can't have if you aquire about James since otherwise she will be too downtrodden.
+               
+            
+                    
+    label burger_ordering_rockMode:
+        if get_lilith_current_loop_memory().get("fakeBurger", False):
+            l "Sounds good! Let me just telepathically call my rock to human translator."
+            n "[date_sub!c] [conj('date', 'bursts', 'burst')] out in laughter once again."
+            l "I'm sorry [persistent.name], I couldn't resist. I promise I will play nice from now on out."
+        else:
+            if burger_choice == "juicy cheeseburger":
+                l "My my, I suppose great minds think alike, don't they [persistent.name]?"
+                l "[date_sub!c] [conj('date', 'lets', 'let')] out another chuckle."
+            elif burger_choice == "chicken tenders":
+                l "They serve those here? I would say they probably won't live up to the reputation of the burgers here."
+                l "Although, I suppose if one place could pull it off it might just be this one!"
+            else:
+                l "Ah, that sounds like a lovely choice [persistent.name]!"
+        jump burger_ordering_rockModeIsolation
+
+menu burger_brother:
+    "What was [ghost_pos] name?":
+        jump burger_brother_question
+
+    "Are you alright [persistent.date]? If this story hurts too much you don't have to continue.":
+        $ love_points += 1
+        $ record_attitude_event("noPryBrother", True)
+        $ love_meter_updater(False)
+        l "I don't think I'll ever be fully alright because of what happened. I think telling the story will always hurt."
+        l "However that doesn't mean I wouldn't like to tell you about it."
+        l "In fact, I think it might be good for me to eventually tell you."
+        l "Just... maybe some other time [persistent.name]?"
+        l "I do really appreciate it though. Thank you for being so considerate."
+        n "Things grow quiet for a moment. It's not necessarily a bad quiet, it's one [date_sub] needed."
+        n "You can tell so by [date_obj] body slowly relaxing into the state [date_sub] [conj('date', 'was', 'were')] in before."
+        n "Then, when [date_sub] [conj('date', 'is', 'are')] properly recouped, the silence once again makes room for conversation."
+        jump burger_roseDeliversAtTable
+        label burger_roseDeliversAtTable:
+            if burger_choice == "juicy cheeseburger":
+                r "There you go! Two juicy cheeseburgers. The two of you have great taste."
+            else:
+                r "There you go! The juicy cheeseburger and the [burger_choice]. A lovely combination if I do say so myself."
+            n "Rose winks at the both of you, [persistent.date] almost immediately flares up in embarassment again."
+            l "Uhm, thank you Rose- Oh, could we pay already?"
+            r "Don't worry about it hon. These are on the house. I'm just glad you're out again, and in such good company too!"
+            n "She gives you a playful wink before turning around and heading back to the counter."
+            n "[persistent.date] is left behind a blushing mess not able to form a coherent sentence or look you in the eyes."
+            n "Deciding to spare her a little you pick up your [burger_choice] and dig in."
+            n "As [persistent.date] follows [date_sub] [conj('date', 'lets', 'let')] out a small sigh of relief."
+            n "The two of you get so lost in the delicious food you barely say a word until you're both halfway done."
+            n "[date_sub!c] [conj('date', 'rubs', 'rub')] her tummy in contentment as [date_sub] [conj('date', 'chuckles', 'chuckle')]."
+            l "Phew, she can be quite intense sometimes, can't she? But, I do think she likes you, [persistent.name]."
+        l "Oh, I almost forgot to ask."
+        l "How are you liking your burger [persistent.name]?"
+        jump burger_burgerRate
+
+label burger_breakup_notTreatingWell:
+    l "...You're right. You have been quite lousy during this date."
+    l "If anything I'm surprised you are taking some accountability for your actions now. However that doesn't make any of this okay."
+    l "Although there is a part of me that has one question that I can't seem to shake off."
+    l "Why? Back when we first started talking you seemed so different from this."
+    l "Was I so wrong about you? Or did I do something wrong?"
+    menu:
+        "It's not you, some things just aren't meant to be.":
+            l "What are you saying? That we're fated to be apart?"
+            l "So that made you decide to take it out on me?"
+            l "I think the only way standing between us is you."
+            l "Yet if you really feel like things should end I can't say I disagree with you."
+            l "However do not make a mistake, this was your doing, not fate."
+            
+        "I just have been feeling pretty stuck lately, I shouldn't have taken it out on you.":
+            l "I'm sorry to hear that [persistent.name], I wish you had confided in me earlier."
+            l "However, you are right. You shouldn't have taken that out on me."
+            l "If this is how you'll treat me during hard times then I think it's for the best we never see each other again."
+
+        "All of this was just not what I expected.":
+            l "So you take it out on me? I had higher hopes for you than that."
+            l "You know you can just talk to me about such things, right? We could have ended our date at any time."
+            l "Instead you just toy with me and my feelings? It's not as if I can cater to all your expectations, right?"
+    jump burger_breakup_leave
+    label burger_breakup_leave:
+        n "With that she leaves you standing at the counter as she first fetches her purse from the table and then walks out of the restaurant."
+        n "Perhaps this was the right thing to do after treating her so badly?"
+        n "Then again, perhaps the right thing would have been to not treat her like that in the first place."
+        n "Rose gives you an unapologetic shrug."
+        r "Believe me, it was for the best. Also, if you're not ordering anything could you leave? I have other customers to attend to."
+        n "You look behind you and see no one else standing in line."
+        l "With your head held low you leave the restaurant, never to come back or hear from [persistent.date] again."
+        if persistent.lildeaths >= 1:
+            n "Well, until the next time at least."
+        $ lilithAliveEnding = True
+        if persistent.lildeaths >= 1:
+            $ ending_check = "good ending?"
+        else:
+            $ ending_check = "bad ending"
+        jump gameOver
+
+label burger_ordering_nightmare:
             r "Hey [persistent.date] and [persistent.name], welcome back!"  
             n "This startles you. You never came here before the loop. She {i}can't{/i} know you."
             n "You ask Rose how she knows your name."
@@ -448,29 +809,12 @@ label burger_ordering:
                     r "Oh well, the two of you are rotten, one on the outside and one on the inside. Go on, give [date_obj] a try anyway."
                     r "Here, let me help you out [persistent.name]. Didn't you want to be together with [date_obj]? I know just how to grant that wish."
                     n "She takes the burger from your hand, forces your jaw open and slowly slides the burger down your esophagus. You can feel it squirming as it wriggles down your throat."
-                    
             $ nightmare = True
             $ burger_nightmare = False
             $ persistent.nightmareCounter += 1
             jump game_start
-    else:
-        if fakeBurger == True:
-            l "Sounds good! Let me just telepathically call my rock to human translator."
-            n "[date_sub!c] [conj('date', 'bursts', 'burst')] out in laughter once again."
-            l "I'm sorry [persistent.name], I couldn't resist. I promise I will play nice from now on out."
-        else:
-            if burger_choice == "juicy cheeseburger":
-                l "My my, I suppose great minds think alike, don't they [persistent.name]?"
-                l "[date_sub!c] [conj('date', 'lets', 'let')] out another chuckle."
-            elif burger_choice == "chicken tenders":
-                l "They serve those here? I would say they probably won't live up to the reputation of the burgers here."
-                l "Although, I suppose if one place could pull it off it might just be this one!"
-            else:
-                l "Ah, that sounds like a lovely choice [persistent.name]!"
-        jump burger_ordering_rockModeIsolation
-
+    
 menu burger_burgerRate:
-    #TODO: I don't think Rose ever delivers the burgers to the table, have a scene for that.
     "It's the best one I ever had!":
         call burger_burgerRate_best from _call_burger_burgerRate_best
            
@@ -486,7 +830,7 @@ menu burger_burgerRate:
 jump burger_deathBuildup
       
 label burger_burgerRate_best:
-    if not burgerBeenBefore:
+    if get_lilith_current_loop_memory().get("beenBefore", "") != "true" and get_lilith_current_loop_memory().get("beenBefore", "") != "lie":
         l "That great? I honestly can't say I'm surprised. Rose's burgers are the best for a reason after all."
         n "[persistent.date] let's out a small chuckle."
         l "I'm glad you like them so much [persistent.name]!"
@@ -496,7 +840,8 @@ label burger_burgerRate_best:
         menu:
             "At least we'll have eachother, I'm sure anything would taste good if I'm enjoying your company.":
                 $ love_points += 1
-                $ love_meter_updater()
+                $ record_attitude_event("companyCompliment", True)
+                $ love_meter_updater(False)
                 l "You flatterer!"
                 n "[date_sub!c] just turned close to beetred."
                 l "In that case I'd like to try out the other restaurants I mentioned. Surely anything will taste good as long as we are together."
@@ -521,7 +866,7 @@ label burger_burgerRate_best:
                 n "[persistent.date] giggles, but as [date_sub] [conj('date', 'does', 'do')] you think you can spot some concern in [date_pos] eyes."
                 l "I totally understand [persistent.name], sometimes it can be really hard to let go of something great."
                 l "However if you never finish this burger and keep clutching on to it, it will begin to grow moldy."
-                l "And if youkeep eating Rose's [burger_choice]s for the rest of your life they will grow very stale quicker than you think."
+                l "And if you keep eating Rose's [burger_choice]s for the rest of your life they will grow very stale quicker than you think."
                 l "I think sometimes we just need to enjoy what we have in the moment and when we don't enjoy something anymore, let go of it."
                 l "It's easy to fool ourselves into thinking that if we liked something in the past we must like it now aswell."
                 l "Most of the time it's just nostalgia, to how things were before, not even necesarilly to whatever you feel the need to hold on to."
@@ -536,19 +881,53 @@ label burger_burgerRate_best:
                 l "Wouldn't that be wonderful? To be able to go back in time as you please, maybe even change a few things?"
                 if persistent.lildeaths > 9:
                     n "That's the tricky part isn't it? To create any meaningful change at al. You've noticed it firsthand many times now."
-                l "I'm sure we wouldn't have to limit ourselves to just going back in time to just eating burgers earlier, we could do so many great things."
+                l "I'm sure we wouldn't have to limit ourselves to just going back in time to eat burgers earlier, we could do so many great things."
                 #TODO: Add some more dialogue here, it's a perfect spot for it.
+                menu:
+                    "I could make sure to never go on this date.":
+                        "Filler"
+
+                    "I could enjoy this date over and over again.":
+                        "Filler"
+
+                    "I could find the perfect thing to say on this date.":
+                        if love_meter > 2:
+                            l "Really? You'd have this super cool machine to do whatever you want and you'd use it to say the right things to me?"
+                            l "As silly as that is on it's own I'm not sure if I should be flattered or worried."
+                            l "The whole point of a date is to see if you are compatible with someone, isn't it?"
+                            l "If you have to conform yourself to their norms just to have a chance with them, are you really being yourself?"
+                            l "If not, do you really want to be with someone who only likes you for someone you are not?"
+                            l "Besides, you shouldn't see a date like something that can be won [persistent.name]. This isn't some videogame where picking specific options wins or loses you points."
+                            l "Just be your authentic self like you are now and I promise you, you'll be more than enough."
+                        else:
+                            l "Honestly, I feel like you might not be able to find it even with all the time in the world..."
+                            l "If this is you trying to make this work then I don't think it will work out at all."
+                            l "Instead, I think you'll have to work more on yourself to fix whatever is holding you back."
+                            l "It is genuinely a shame, because when we first talked you seemed so different."
+                            l "I suppose I hadn't yet glimpsed behind the mask, but now I have seen it crystal clear."
+                            l "Goodbye [persistent.name], I think it's best we never see each other again."
+                            $ love_meter_updater(True)
+                            
                 
 
             "I'm sure it's the lovely company that makes it even better.":
-                $ love_points += 1
-                $ love_meter_updater()
-                l "You really are a charmer aren't you [persistent.name]?"
                 if love_meter > 2:
+                    $ love_points += 1
+                    $ record_attitude_event("companyCompliment2", True)
+                    $ love_meter_updater(False)
+                    l "You really are a charmer aren't you [persistent.name]?"
                     l "Although I have to admit that I feel the same way."
                     l "Sure, I have been craving one of these burgers for a very long time...but I think you might be a very likely culprit aswell."
                     l "It just feels... more special? So I'm really happy to hear that you think the same thing [persistent.name]!"
-                #TODO: Add an alternate dialogue line here for love lower than 3
+                else:
+                    $ love_points -= 1
+                    $ record_attitude_event("companyCompliment2_failed", False)
+                    l "{b}{size=+10}Really?{/size}{/b} Look, while that would have been a sweet sentiment you have to know it's kind of wasted on this date."
+                    l "You have been completely different than how you were when we first met! I honestly don't recognize you anymore."
+                    l "What happened to the person that would make such comments like the one you just made feel sincere?"
+                    l "Why have you been treating me like this? Even now I can't help but think you might be sarcastic."
+                    l "I tried to sit this out, since I thought I owed it to myself but I can't stand this any longer."
+                    $ love_meter_updater(True)
                 
     return                        
 
@@ -560,10 +939,24 @@ label burger_burgerRate_prettyGood:
     l "How many things do you know that are perfect? Many of those tend to not remain perfect upon closer inspection."
     l "Because in reality, almost nothing is truly perfect, which it doesn't need to be."
     l "I would say \"pretty good\" is more than good enough in most cases."
-    #TODO: Probably go a bit more in depth with this, potentially with a choice for the player inbetween
+    menu:
+        "But doesn't that mean we can never find anything better than \"pretty good\"?":
+            l "Absolutely not [persistent.name]! What I mean with perfection not really being attainable is in a more objective sense."
+            l "Every rose has it's thorns, nothing is flawless. Yet to us, on a subjective scale, that rose can be perfect."
+            l "Perhaps smelling it gave us nostalgia to a time long gone, or admiring it's beauty sparked something in our hearts."
+            l "In that way we can ascribe perfection to something inherently imperfect."
+            l "You see it all the time with how people rate things, a 10/10 is not necessarily without any faults but the person still feels very strongly for it."
+
+        "Some things {b}can{/b} be perfect though. Like getting a perfect score on a test.":
+            l "I suppose that is true, although personally I'd argue that is a very constructed form of perfection."
+            l "It's a concept made up by people, isn't it? I'd say in that sense the perfection is very subjective, even if almost everyone would agree that it is perfect."
+            l "Objective perfection is a really hard thing to properly emulate or wrap your head around."
+            l "It might even be a little unbelievable if you were to encounter it yourself. Almost as if you couldn't possibly feel as if you've earned it."
+            l "So while some things can definitely be considered truly perfect, I think it's a very manufactured concept of it."
+
     n "[date_sub!c] [conj('date', 'takes', 'take')] a thoughtful bite of [date_pos] own burger, as if savoring the moment."
-    l "I'm glad you're enjoying it, [persistent.name]."
-    if not burgerBeenBefore:
+    l "Philosophy aside, I'm glad you're enjoying it, [persistent.name]."
+    if get_lilith_current_loop_memory().get("beenBefore", "") != "true" and get_lilith_current_loop_memory().get("beenBefore", "") != "lie":
         l "Maybe next time we can try some of the other things on the menu and see if they measure up?"
     else:
         l "Maybe next time we can go to that Chinese restaurant I talked about and see how you like the food there? It's really really good."
@@ -574,12 +967,14 @@ label burger_burgerRate_nothingBurger:
     l "A \"nothing burger\" huh? I guess that means it's... okay?"
     n "[date_sub!c] [conj('date', 'tries', 'try')] to mask [date_pos] disappointment with a soft chuckle."
     l "Maybe it just didn’t live up to the hype. I hope it wasn’t too underwhelming, though."
-    if not burgerBeenBefore:
+    if get_lilith_current_loop_memory().get("beenBefore", "") != "true" and get_lilith_current_loop_memory().get("beenBefore", "") != "lie":
         l "Rose makes all her burgers with as much love as is feasibly possible but maybe her [burger_choice] isn't really your thing?"
         n "You can tell [date_sub] [conj('date', 'was', 'were')] hoping you would enjoy it more."
         l "If you'd like, we can come back and try something different next time. There's so much more on the menu here that might be more your style."
-        l "Or maybe it's just better to try one of the other restaurants? Maybe burgers just aren't your thing?" #TODO: Change this if you say that you would never miss burgers. Something like maybe you like the other burgers better?
-    
+        if get_lilith_current_loop_memory().get("burgerFanatic", False):
+            l "Or maybe it's just better to try one of the other restaurants? Maybe burgers just aren't your thing?"
+        else:
+            l "Or maybe we should just try one of the other restaurants? Although... you did say you like burgers, right? Perhaps we should go to a place where they have the ones you like?"
     else:
         l "Although I am slightly confused, to be honest with you."
         l "You have been here before, right? Did you like the burger you had then?"
@@ -592,7 +987,7 @@ label burger_burgerRate_nothingBurger:
                 if love_meter > 2:
                     l "After all, I want this date to be nice for the both of us."
                 l "But now that we are here, would you like to order something else? Maybe some chicken tenders?"
-                n "You shake your head. Even if you don't like the burger, you have to admit it fills you quite well."
+                n "You shake your head. Even if you don't like the burger, you have to admit it was quite filling."
                 #TODO: Perhaps fill this out a bit more aswell. Not entirely sure where it could lead to for now.
 
             "Oh, I usually don't pick a burger, I tend to always pick chicken tenders.":
@@ -603,8 +998,9 @@ label burger_burgerRate_nothingBurger:
                     "I was in for a change.":
                         l "That makes sense, sometimes it's good to have a little change here and there isn't it?"
                         l "It can truly make for a breath of fresh air. Of course, sometimes it can be a bit of a dissapointment."
-                        l "But good of you for trying something new, you never know what great things might come from that."
-                        #TODO: flesh this line out a bit more.
+                        l "However, never trying anything new and just doing the same things over and over is going to end up in a lot more dissapointment eventually than trying something new."
+                        l "Believe me, sometimes you might stick with something because it's all you have ever known and you already invested so much time into it."
+                        l "However hard it might be, sometimes you have to acknowledge you fell victim to the sunk cost fallacy and try to let go."
                         
                     "You were really enthusiastic about the burgers here and I didn't want you to think less of me because I picked chicken tenders.":
                         l "Oh [persistent.name], I'm very sorry you felt that way."
@@ -642,34 +1038,31 @@ label burger_burgerRate_nothingBurger:
     return
 
 label burger_burgerRate_reallyBad:
-    n "[persistent.date] freezes for a moment, taken aback by your bluntness."
-    #TODO: Word this better she shouldn't really be upset that you don't like the burger. More so a little bit hurt.
-    if not burgerBeenBefore or not burgerBeforeLie:
-        l "Really bad? Oh no, I'm so sorry, [persistent.name]."
+    n "[persistent.date] freezes for a moment, taken aback by your comment."
+    if get_lilith_current_loop_memory().get("beenBefore", "") != "true" and get_lilith_current_loop_memory().get("beenBefore", "") != "lie":
+        l "Really? Oh no, I'm so sorry, [persistent.name]."
         l "I hyped this place up very much, didn't I? Maybe that set your expectations too high."
         n "[date_sub] [conj('date', 'looks', 'look')] genuinely upset."
-        l "I guess taste is pretty subjective. But hey, at least now we know, right?"
-        n "[date_sub!c] [conj('date', 'tries', 'try')] to force a smile, but it's clear your words stung more than [date_sub] expected."
+        l "I guess taste is pretty subjective. At least now we know, right?"
+        n "[date_sub!c] [conj('date', 'tries', 'try')] to force a smile, but it's clear [date_sub] [conj('date', 'is', 'are')] more dissapointed than [date_sub] expected."
         l "Maybe next time we could go somewhere else?"
         l "Hopefully the chinese restaurant or the cafe will be more to your liking."
     else:
-        l "Really?..."
-        l "But you've been here before, right?"
-        l "Is something different now?"
-        n "[persistent.date] gives you a confused look, [date_sub] [conj('date', 'is', 'are')] clearly stumped."
+        l "Really?... But you've been here before, right?"
+        l "What is different now?"
+        n "[persistent.date] gives you a confused look."
         menu:
             "I never picked this burger before.":
                 l "Oh I see, so the [burger_choice] isn't really your thing?"
                 l "That's totally fine, I suppose not every kind of burger can be everyone's favourite after all."
-                l "{size=*0.5}Although you could have been a little less blunt about it.{/size}" #TODO: They weren't exactly that blunt about it.
                 l "It's good of you to try something else though, picking the same thing over and over can get bland real fast."
                 l "Although, sometimes it can be hard to do that, in the fear that the other experience will be worse than the familiar and comfortable thing you always pick."
                 l "Maybe if we come here next time you can tell me what kind of burger you tend to like and I can recomend a few ones that I think you will like based on that?"
 
-            "I think there is something wrong with my burger.":
+            "I think there was something wrong with my burger.":
                 l "Really?"
-                l "Is there something you didn't order in there?"
-                l "Or does it just not taste good?"
+                l "Was there something you didn't order in there?"
+                l "Or did it just not taste good?"
                 l "Either way, it's very rare for Rose to mess up a burger."
                 l "Of course mistakes can always happen."
                 l "Would you like to see if she can make you another one of those burgers? I'm sure she wouldn't mind if you ask her nicely."
@@ -681,15 +1074,27 @@ label burger_burgerRate_reallyBad:
                 if persistent.lildeaths == 0:
                     n "[date_sub!c] [conj('date', 'does', 'do')] have a point, if this is how you treat all your dates it is no wonder you are on \"Another first date\"."
                 else:
-                    n "[date_sub!c] [conj('date', 'does', 'do')] make a good point, even if [date_sub] [conj('date', 'does', 'do')] not know the full extent of it. You tried playing the game again to save [date_obj], didn't you?" #TODO: This is a bit of a weird line, might need a rewrite. I think the premise was that maybe you try to treat her horribly to see if it saves her.
-                    n "Then why are you treating [date_obj] like that?"
-                    n "Even if it could hypothetically save [date_obj], would it be worth it?"
+                    n "[date_sub!c] [conj('date', 'does', 'do')] make a good point, even if [date_sub] [conj('date', 'does', 'do')] not know the full extent of it."
+                    n "You are trying to save [date_obj], aren't you?"
+                    n "Is that why you are treating [date_obj] like that?"
+                    if persistent.lilithAliveAndRetriedCounter > 0:
+                        n "Because you think it might be the key to saving [date_obj]?"
+                        n "Even if it hypothetically was, would it be worth it?"
+                        n "You would be seen as horrible in [date_pos] eyes."
+                    else:
+                        n "No, that can't be it. You already saved [date_obj] before. So this is rather pointless, isn't it?"
+                        n "I could understand if you maybe were trying to find a better outcome for the both of you, but this is not how you would reach something like that."
+                        n "Then why are you putting [date_obj] through this?..."
+                        n "Perhaps just to see what reaction you will get out of it?"
+                        n "Is that what this is, just an excuse to get some new dialogue?... Don't answer that, I want to pretend like I don't know your what you'd say."
+
                 l "You weren't like this at all when we talked before, is this how you really are?"
                 l "Either way, I won't stick around to find out."
                 l "Goodbye [persistent.name]."
                 $ angryLilith = True
                 $ noTalkAngryLilith = True
                 $ love_points -= 1
+                $ record_attitude_event("companyRoast", False)
                 $ love_meter_updater(True) 
     return
 
@@ -711,7 +1116,8 @@ label burger_ordering_rockModeIsolation:
 
 label burger_brother_question:
     if persistent.rockMode == False:
-        $ askedbrother = True
+        $ get_lilith_current_loop_memory()["askedbrother"] = True
+        
         n "[persistent.date] tries to compose [date_pred] as well as [date_sub] can but [date_pos] eyes tell you this is all too much for [date_obj]."
     menu:
         "Try to alleviate tension with a joke.":
@@ -742,8 +1148,10 @@ label burger_joke_3:
 
 label burger_joke_Abigail:
     $ love_points = 1
+    $ record_attitude_event("abigailJoke", True)
     $ love_meter_updater(False)
-    $ burger_jokeFromAbigailTold = True
+    $ get_lilith_current_loop_memory()["playerToldAbbyJoke"] = True
+
     n "[persistent.date] bursts out in laughter. It feels as if [date_sub] [conj('date', 'keeps', 'keep')] laughing for atleast five minutes straight."
     n "The other guests in the restaurant are looking at [date_obj] as they begin to whisper amongst themselves."
     n "Eventually [date_obj] laughter comes to a halt."
@@ -766,9 +1174,11 @@ label burger_joke_response:
         [date_sub!c] [conj('date', 'seems', 'seem')] to have become slightly more composed thanks to your clumsy yet endearing effort."
     else:
         n "You feel [date_pos] mind calm down, not fully, but enough to not get swept away in [date_pos] thoughts."
-        n "It was not necesarilly the joke doing this, you feel. Moreso the gesture behind it."
-    #TODO: Write that last line of hers out with a slower cps than normal
-    l "Thank you [persistent.name], I mean it."
+        n "It was not necessarily the joke doing this, you feel. Moreso the gesture behind it."
+    $ _player_cps = float(getattr(_preferences, "text_cps", 35) or 35)
+    $ _thanks_target_cps = 35.0 * 0.33
+    $ _thanks_cps = min(_player_cps, _thanks_target_cps)
+    l "{cps=[_thanks_cps:.2f]}Thank you [persistent.name], I mean it.{/cps}"
     n "[persistent.date] continues as if nothing happened."
     jump burger_living
 
@@ -776,7 +1186,7 @@ label burger_living:
     if not persistent.rockMode:
         l "So, what do you do for a living?"
         $ persistent.booklover_knowledge = True
-        $ booklovertalked = True
+        $ get_lilith_current_loop_memory()["bookloverTalked"] = True
     else:
         l "So, what do you do to pass the time?"
 
@@ -857,7 +1267,8 @@ label burger_living_rockResponse:
                         l "Besides, not like I have much better things to do and this sounds like a fun way to spend some time."
                         $ rockMode_rockBand = True
                         l "What should we call our band?"
-                        $ changeableWord = renpy.input("Maybe...")
+                        $ changeableWord = player_input("Maybe...").strip()
+                        $ get_lilith_current_loop_memory()["rockBandName"] = changeableWord if changeableWord else ""
                         l "\"[changeableWord]\" huh? I like it!"
 
                     "Does art need someone to witness it? Isn't making it for creation's sake enough?":
@@ -874,8 +1285,7 @@ label burger_living_rockResponse:
         l "Sculpting new worlds from our ideas and experiences, creation as a whole, is a lovely pursuit."
         l "I create aswell, but for me it's mostly poems. I have been dreaming them up for as long as I can remember."
         l "Sadly so far I haven't managed to share even one. I do not have a mouth to speak them, nor hands to write them."
-        l "Do you know how frustrating it is to have a version of something in your head while you are missing the means to bring it into reality just right?"
-        #TODO: Maybe add one reply here pertaining more to the "good ending" itself. Where you have a vision about it that is frustrating since you can't bring it to life.
+        l "Do you know how frustrating it is to have a version of something in mind while missing the means to bring it into reality just right?"
         menu:
             "I do, I think everyone like us knows. Artistic rocks. Or scratch that, any artist.":
                 l "They do? That's terrible. How do they cope with a feeling like that?"
@@ -1036,6 +1446,7 @@ label burger_living_rockResponse:
                                                             
                                             "We could go to the beach.":
                                                 $ love_points = -1
+                                                $ record_attitude_event("beachSuggestion", False)
                                                 $ love_meter_updater(True)
                                                 l "What?... Why would you say that [persistent.name]?"
                                                 l "You do know what sand is, right?... The broken down bodies of rocks like us."
@@ -1068,7 +1479,7 @@ label burger_living_rockResponse:
                                                 n "[date_sub!c] [conj('date', 'grows', 'grow')] silent for a moment, you can feel [date_obj] thinking in your head, but you have a hard time picking up [date_pos] exact thoughts."
                                                 l "...You are right, I like the way things are too. Perhaps different circumstances would lead to us just passing by eachother, never meeting, or only fleetingly."
                                                 l "But now we have the opportunity to get to know eachother on a deeper level. Afterall, we have nothing but time, don't we?"
-                                                #TODO: On the neverending have the narrator say something about you having "nothing but time" and the horrifying conclusion that comes from that.
+                                                $ neverEndingVariety = "time"
                                                 l "For now though, instead of thinking of stories, let's continue writing ours, starting with this date"
                     
                                             "Do you have another idea for a story?":
@@ -1079,8 +1490,60 @@ label burger_living_rockResponse:
                                                 l "First they would need to defeat the evil jester who is also a bit of a magic trickster, protecting the castle with a forcefield."
                                                 l "I'm not sure exactly how they would do that, but I'm sure we could brainstorm a statisfying way to do so later."
                                                 l "For now though, I'd like to be in the moment with you. Maybe we could write that story together during our next date?"
-                                                #TODO:In the ending, have the two of you write this story and make it more and more convoluted over time, involving 8 timelines splitting off of one and so on and on.
-       
+                                                $ neverEndingVariety = "fantasy"
+
+            "I think I know quite well. It seems as if no matter what I try there is no way to reach my goal.":
+                l "Really? I suppose it's no wonder you of all people, uhm rocks, can relate."
+                l "What do you do in a situation like that though? When it feels as if your goal is just always out of reach?"
+                menu:
+                    "You stop trying for that goal and adjust for a realistic one.":
+                        l "That seems like the best thing you could possibly do in those situations."
+                        l "A lot of people have very ambitious goals that are very overscoped, only for the goalpost to continually move even further away."
+                        l "I think the kindest thing someone can do to themselves is to downscale their gigantic goals a fair bit so they become more achievable."
+                        l "Then again, it's also very important to not make them too easily doable, since some people would grow bored if there is not a big enough challenge."
+                        l "If you are like that I would suggest splitting your big aspirations up in a few smaller ones that act as stepping stones for the larger goal."
+                        l "That way you can tackle a tough challenge while feeling like you are making progress step by step."
+                        menu:
+                            "But what if I only ever can get close to my goal without ever reaching it?":
+                                l "To me that seems like a sign that perhaps your main goal is still too ambitious."
+                                l "Perhaps it is not feasible with your current skills, or maybe it's even completely impossible."
+                                l "I think you should probably try considering which one of the two it is and accordingly adjust your approach."
+                                l "Either way, you still got as close as you did to your goal, and that is something to be proud of aswell."
+                                l "You got further than anyone who didn't try."
+
+                    "You give up.":
+                        l "Really? Just like that? I suppose trying for an unachievable goal without any success is going to be very unsatisfying."
+                        l "Then again, I do believe we need a goal to replace the one we gave up on."
+                        l "Although it is a very hard balancing act. When do we call it and quit?"
+                        l "Perhaps victory is right around the corner or perhaps it never existed at all."
+                        l "That's why perseverance is so important, because otherwise you risk giving up on all of your goals before ever reaching any of them."
+                        l "Ofcourse, sometimes the best and only action you can really do is quit and start anew somewhere else."
+                        menu:
+                            "How do you know when to quit?":
+                                l "That is a very difficult question which might be even harder to answer."
+                                l "I don't think there is a specific point at which everyone should."
+                                l "It genuinely varies from situation to situation and person to person."
+                                l "Although I think my answer would be when it doesn't give you any sense of progress, hapiness or purpose anymore."
+                                l "Do not let the sunk cost fallacy dictate your decisions. If you do feel that, it might precisely be the sign that you need to stop."
+                                l "Your time is yours and you do not owe it to anyone or anything to spend it on them."
+                                l "Afterall, time you volontarily spend on someone or on something is so much more meaningful than when you are forced to do so."
+
+                    "Anything is possible, you just need to try hard enough.":
+                        l "Do you really think so? I suppose in general if you really work for something you are more likely to achieve it."
+                        l "However, that does not really apply to everything, some things are just beyond our control."
+                        l "For example, I can't grow hands, no matter how hard I would try to."
+                        l "Sometimes the effort we need to achieve a goal is also not proportionate to how much someone else might need."
+                        l "If it came between me and a human in running a marathon, the human would very clearly have a better shot at doing so."
+                        l "So it's not because something is achievable for one person that it automatically means anyone can do it."
+                        l "Sometimes you need the right circumstances or conditions to succeed."
+                        l "However, that's also not everything. Some people who get the perfect conditions will flop regardless of their chances."
+                        l "Others without any favorable circumstances might still make it through sheer determination."
+                        l "I don't believe that anything is possible if you try hard enough."
+                        l "However, I do believe that {i}a lot{/i} is."
+                        l "So if you have dreams, I would encourage you to pursue them as much as is feasible."
+                        l "Just be aware that even if you fail you still did more than those that do not dare to try."
+                        l "Besides, perhaps you can pick the dream back up later when the time is right or maybe it shows you the path to another aspiration."
+
     jump burger_deathBuildup   
         
 label burger_living_showWriting:
@@ -1093,20 +1556,24 @@ label burger_living_showWriting:
     n "Suddenly you are reminded of the burger sauce that is all over your fingers."
     menu:
         "*Clean your fingers with a napkin before taking the notebook.*":
-            $ burger_poem_cleancheck = True
+            $ burger_poem_cleancheck = "clean"
+            $ get_lilith_current_loop_memory()["poemFingerState"] = "clean"
             jump burger_living_showWriting_poem
         "*Don't clean your fingers and just take the notebook*":
+            $ burger_poem_cleancheck = "dirty"
+            $ get_lilith_current_loop_memory()["poemFingerState"] = "dirty"
             jump burger_living_showWriting_poem
 
 label burger_living_showWriting_poem:
-    if persistent.tracker == 1:
-        $ persistent.tracker1 = True
-    if burger_poem_cleancheck == True:
+    $ burger_poem_cleancheck = get_lilith_current_loop_memory().get("poemFingerState", burger_poem_cleancheck)
+    $ mark_tracker_scene(1)
+    if burger_poem_cleancheck == "clean":
         n "[persistent.date] seems thankful that you cleaned your fingers."
         n "You take the notebook out of [date_pos] hand and begin to read."
         n "You can read the entire thing in [date_pos] voice somehow."
     else:
         $ love_points = -1
+        $ record_attitude_event("dirtiedNotebook", False)
         $ love_meter_updater(False)
         n "[persistent.date] frowns when [date_sub] [conj('date', 'sees', 'see')] your dirty fingers."
         n "Nonetheless you take the notebook out of [date_pos] hand and begin to read."
@@ -1122,7 +1589,7 @@ label burger_living_showWriting_poem:
     I don't know whether to cry or laugh when I look at my, our, green horizon."
     l "All I know is that we better not listen to the dwindling of Orpheus' tune."
     l "Has something that has not been seen or heard really happened?"
-    if burger_poem_cleancheck == True:
+    if burger_poem_cleancheck == "clean":
         n "When you get done reading your eyes linger on the notebook a bit longer before returning it to [persistent.date]."
         l "So [persistent.name], what did you think of it?"
         n "[date_sub!c] [conj('date', 'seems', 'seem')] eager to find out what your thoughts are on [date_pos] writing."
@@ -1158,17 +1625,35 @@ label burger_poem_rating:
             n "[date_sub!c] [conj('date', 'pauses', 'pause')] for a moment, only to seemingly realise something and continue."
             l "Anyway, that’s the short version. I hope I didn't make you regret asking that too much [persistent.name]..."
             $ persistent.burger_Orpheus_knowledge = True
-            #TODO: The chinese riddle about orpheus might give you an inspiration about this so you can utilize this piece of knowledge on that as a small hint.
             jump burger_deathBuildup
 
 label burger_poem_rating_terrible:
     $ love_points = -1
+    $ record_attitude_event("harshPoem", False)
     $ love_meter_updater(False)
-    #TODO: this needs a rewrite!
-    n "[persistent.date] begins to frown slightly.
-    [date_sub!c] [conj('date', 'looks', 'look')] hurt by your words."
-    l "Oh...
-    No need to be a douche about it."
+    if love_meter >= 2 and get_lilith_current_loop_memory().get("poemFingerState", "") == "clean":
+        n "[persistent.date] begins to frown slightly."
+        n "[date_sub!c] [conj('date', 'looks', 'look')] hurt by your words."
+        l "Really?..."
+        l "It's probably not my best work ever since I did write it years ago in a pretty edgy phase of my life."
+        l "Then again, I think it definitely has some merit to it. If only as to serve as some sort of timecapsule to catch a glimpse of past me's soul."
+        l "Although I understand if you don't really like my older stuff. Perhaps some of my newer poems would be more your style?"
+        l "I could show you some another time if you'd like."
+    else:
+        l "Look, I know this is definetly not one of my best works. But you were the one asking to read something of mine!"
+        l "To then treat not only it but also me with so little respect by dirtying it both literally and figuratively..."
+
+        if get_lilith_current_loop_memory("attitude").get("minor_love_offence", 0) <= 2:
+            l "I really don't seem to understand [persistent.name]. Other than this you actually were really nice."
+            l "Still, I can't just ignore what you did just now."
+            $ love_meter_updater(True)
+        else:
+            l "You actually have not been treating me well at all pretty much this entire time."
+            l "I'm not sure what has gotten into you since you used to be so nice when we first met."
+            l "However, whatever this is, I want nothing to do with it."
+            $ angryLilith
+            $ love_meter_updater(True)
+
     jump burger_Brotherasked
 
 label burger_poem_rating_fantastic:
@@ -1196,15 +1681,14 @@ label burger_living_writer_thankTip:
 
 label burger_living_writer_thankTip_sorryHobbyLost:
     l "That's alright [persistent.name]. It's not as if music isn't my passion anymore, just... in a different way if that makes sense?"
-    $ persistent.musiclover_knowledge = True
-    $ musiclovertalked = True
+    $ get_lilith_current_loop_memory()["musicloverTalked"] = True
     l "But if I kept playing it I think I would slowly grow to resent it, sometimes it's just better to end things on a good note."
     n "[persistent.date] lets out a small giggle."
     l "That pun wasn't intended, I swear!"
     jump burger_Brotherasked
 
 label burger_Brotherasked:
-    if askedbrother == True:
+    if get_lilith_current_loop_memory().get("askedbrother", False) == True:
         if love_meter >= 3:
             $ persistent.brother_knowledge = True
             n "[persistent.date] pauses for a moment."
@@ -1225,7 +1709,7 @@ label burger_Brotherasked:
             l "[persistent.date_dad] couldn't take [persistent.date_ghost] dying and left us. That day two people were taken away from me by the same car."
             l "Actually, scratch that, [persistent.date_dad] had a choice in the matter, [persistent.date_ghost] was the only one really taken away from me."
             l "[mom_parShort!c] really tried [mom_pos] best to fill the void left by them but the presence of their absence has always haunted us since that horrible day."
-            if burger_jokeFromAbigailTold == True:
+            if get_lilith_current_loop_memory().get("playerToldAbbyJoke", False) == True:
                 l "Although [persistent.date_sis] was 7 years at that moment and doesn't remember very well."
             else:
                 l "Although my [sis_sib], [persistent.date_sis], was 7 years when at that moment and doesn't remember very well."
@@ -1237,6 +1721,7 @@ label burger_Brotherasked:
             jump burger_deathBuildup
 
 label burger_deathBuildup:
+    $ burger_alt_in_loop = get_lilith_current_loop_memory().get("burger_alt", False)
     n "Suddenly you hear screaming from a few shops further."
     l "What was that?"
     menu:
@@ -1246,11 +1731,11 @@ label burger_deathBuildup:
         "Maybe there is a sale going on somewhere?":
             jump burger_deathBuildup_choice2
 
-        "This is important, duck now." if persistent.burger_death_1 and not burger_alt and not persistent.rockMode:
+        "This is important, duck now." if persistent.burger_death_1 and not burger_alt_in_loop and not persistent.rockMode:
             jump restaurant_death_1_prevented
 
 label burger_deathBuildup_choice1:
-    if burger_alt == False:
+    if not get_lilith_current_loop_memory().get("burger_alt", False):
         if persistent.rockMode == False:
             l "You're probably right, it's probably not even a big deal anywa-"
         else:
@@ -1262,24 +1747,26 @@ label burger_deathBuildup_choice1:
 
 label burger_deathBuildup_choice2:
     l "Let's hope it's just that."
-    if burger_alt == False:
+    if not get_lilith_current_loop_memory().get("burger_alt", False):
         jump restaurant_death_1
     else:
         jump burger_alt_askHerAQuestion
 
 label burger_alt_askHerAQuestion:
-    $ burger_alt = False
+    $ get_lilith_current_loop_memory()["burger_alt"] = False
+    $ musiclover_talked = get_lilith_current_loop_memory().get("musicloverTalked", False)
+    $ booklover_talked = get_lilith_current_loop_memory().get("bookloverTalked", False)
 
     menu:
         "*Ask [date_obj] a question.*":
             menu:
-                "So you mentioned that you really like music. Which music do you listen to?" if persistent.musiclover_knowledge and musiclovertalked:
+                "So you mentioned that you really like music. Which music do you listen to?" if persistent.musiclover_knowledge and musiclover_talked:
                     jump burger_alt_askHerAQuestion_musicLover
-                "Which music do you like to listen to?" if persistent.musiclover_knowledge and not musiclovertalked:
+                "Which music do you like to listen to?" if persistent.musiclover_knowledge and not musiclover_talked:
                     jump burger_alt_askHerAQuestion_musicLover
-                "So you mentioned that you like writing. That made me curious, which books do you like to read?" if persistent.booklover_knowledge and booklovertalked:
+                "So you mentioned that you like writing. That made me curious, which books do you like to read?" if persistent.booklover_knowledge and booklover_talked:
                     jump burger_alt_askHerAQuestion_bookLover
-                "Which books do you like to read?" if persistent.booklover_knowledge and not booklovertalked:
+                "Which books do you like to read?" if persistent.booklover_knowledge and not booklover_talked:
                     jump burger_alt_askHerAQuestion_bookLover
 
 label burger_alt_askHerAQuestion_musicLover:

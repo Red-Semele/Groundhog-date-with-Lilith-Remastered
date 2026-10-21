@@ -1,3 +1,55 @@
+﻿
+default chinese_learned_number_temp = False
+
+default chinese_riddle_narrator_used = []
+
+init python:
+    def chinese_riddle_pick_narration(current_riddle, riddles):
+        rw1 = riddles[0]["rw"] if len(riddles) > 0 else 0
+        rw2 = riddles[1]["rw"] if len(riddles) > 1 else 0
+        attempts = riddles[current_riddle]["rw"] if 0 <= current_riddle < len(riddles) else 0
+        rw_total = sum(riddle["rw"] for riddle in riddles)
+        used_lines = set(getattr(store, "chinese_riddle_narrator_used", []))
+        entries = []
+
+        def add_line(text, weight, reusable=False):
+            if weight <= 0:
+                return
+            if reusable or text not in used_lines:
+                entries.append((text, weight, reusable))
+        add_line("You can almost hear the cogs in your mind turning.", 6)
+        add_line("You feel as if this time you'll get it right!", 5 if attempts > 0 else 0)
+        add_line("It's like they say, third time's the charm!", 7 if attempts == 2 else 0)
+        add_line("You are on the verge of something really great.", 5 if current_riddle == 2 and attempts > 0 else 3)
+        add_line("Carefully consider your answer, perfection can't be rushed.", 3, reusable=True)
+        add_line("You can do it, just dust off that brain of yours.", 4 if (attempts > 0 or rw_total > 0) else 2)
+        add_line("Again?", 2 if attempts > 0 else 0, reusable=True)
+        add_line("Come on, couldn't you just ask for the answer already?", 2 + min(rw_total, 10) if attempts > 0 else 0)
+        add_line("I wonder if this one will be the one.", 4 if attempts > 0 else 0, reusable=True)
+        add_line("Are you going to get this one first try?", 5 if attempts == 0 else 0)
+        add_line("It's still not too late for your redemption, try to get this one right immediately.", 4 if current_riddle > 0 and (rw1 > 0 or rw2 > 0) else 0)
+        add_line("Finish your streak!", 7 if current_riddle == 2 and attempts == 0 else 0)
+        add_line("Let's hope your luck will turn around.", 5 if attempts > 0 else 1, reusable=True)
+
+        if not entries:
+            entries = [
+                ("You can almost hear the cogs in your mind turning.", 1, True),
+            ]
+
+        total_weight = sum(weight for _, weight, _ in entries)
+        roll = renpy.random.randint(1, total_weight)
+        upto = 0
+        for text, weight, reusable in entries:
+            upto += weight
+            if roll <= upto:
+                if not reusable and text not in used_lines:
+                    updated_used_lines = list(used_lines)
+                    updated_used_lines.append(text)
+                    setattr(store, "chinese_riddle_narrator_used", updated_used_lines)
+                return text
+
+        return entries[-1][0]
+
 label chinese_start:
     $ chinese = True
     l "That sounds like a plan!"
@@ -48,17 +100,16 @@ label chinese_arrived:
 label chinese_start_gladToBeHere_theRestaurant:
     $ love_points = -1
     $ love_meter_updater(False)
-    l "I suppose this is a really nice place..."
+    l "Oh- I suppose this is a really nice place..."
     if persistent.rockMode == False:
-        n "[date_sub!c] [conj('date', 'seems', 'seem')] disappointed with your answer."
-        n "Things turn silent for a moment. [date_sub!c] [conj('date', 'seems', 'seem')] to be trying to think of something to say."
-        l "Anyway, I think I'd starve if I don't eat soon so let's continue our little chat while we wait on our food."
+        n "[date_sub!c] [conj('date', 'looks', 'look')] down at the table, [date_pos] eyes lingering."
+        n "Things fall silent for a moment. Even if only for a brief instant it feels as if it lasts forever."
+        l "...Anyway- I think I'd starve if I don't eat soon so let's continue our little chat while we wait on our food."
         l "What would you like to order?"
     else:
         n "You feel a wave of disappointment well up deep inside you. Then you realize, it's [date_pred]."
         n "Things turn silent for a moment. You feel [date_pos] mind desperately searching for something to keep the conversation going."
-        l "Humor me this [persistent.name], imagine you were a human, what would you like to order?"
-    #Make her slightly more disappointed.
+        l "Humor me this [persistent.name], imagine you were a human, what would you order?"
     jump chinese_menu
 
 label chinese_start_gladToBeHere_youOfcourse:
@@ -69,12 +120,77 @@ label chinese_start_gladToBeHere_youOfcourse:
         n "Deciding to spare [date_obj] you graciously choose to forget what [date_sub] said."
         l "Anyway, I think I'd starve if I don't eat soon so let's continue our little chat while we wait on our food."
         l "What would you like to order?"
+        jump chinese_menu
     else:
         n "You feel a wave of relief wash over [date_pos] mind, then it makes way for another sensation. The embarassment of even having had that thought."
         n "You chuckle slightly at the idea of [date_obj] being embarrassed over something so small."
         n "[date_sub!c] seemingly [conj('date', 'picks', 'pick')] up on you glimpsing [date_pos] thoughts and quickly tries to brush past it."
-        l "Humor me this [persistent.name], imagine you were a human, what would you like to order?"
-    jump chinese_menu
+        #TODO: Put the low love response from lilith on every restaurant whenever she asks that question
+        if not love_points == 1:
+            l "Humor me this [persistent.name], imagine you were a human, what would you like to order?"
+            jump chinese_menu
+
+        else:
+            label rockMode_lowLoveDefault:
+                if narrator_dialogue_seen("chinese.low_love_quiet.rant"):
+                    n "I'm still not reading that rock pun out loud. All you need to know is that things are not looking good once again."
+                    n "That somehow you managed to screw this up once more. Which is extra impressive(?) if you consider you might be the only suitable partner in [date_pos] current form."
+                else:
+                    $ narrator_dialogue_mark_seen("chinese.low_love_quiet.rant")
+                    n "[persistent.date] doesn't seem very chatty anymore. [date_pos!c] mind is cleverly hidden away from your efforts to read it."
+                    n "It seems things are off to a rocky sta- No, I will not read that rock pun out loud, I do not care that it is in the script."
+                    n "Frankly, it seems that even if you are the only suitable partner out there for [date_obj] you still manage to be detestable."
+                
+                n "It looks like, if anyone will break the silence, it won't be [date_obj]."
+                n "The question is, will you even try at this point?"
+                menu:
+                    "No.":
+                        n "Perhaps it's for the best. Chances are, whatever you could cook up wouldn't salvage the situation and only be seen as half-hearted attempts at best."
+                        n "Maybe it was always your fate to drift appart... or your undoing was you own doing."
+                        n "Either way, the cat's out of the bag so it would be foolish to try to... re-bag... it."
+                        n "Yet... you will do so anyway won't you? Next loop it will be like nothing happened at all."
+                        n "You might be sitting with your mess for a little while but it's only because it will be cleaned up for you."
+                        #TODO: This should probably give some unique dialogue/make the neverEnding different. In it, you pretty much never see eachother except once in a blue moon.
+                        jump restaurant_death_2
+                    "Yes.":
+                        #TODO: This should kinda be read as you being a douche but still somewhat making an effort. In the never ending this probably means you will end up with her more as aquantances than friends or lovers.
+                        n "You desperately fire up every available neural pathway in an attempt to come up with somethin- anything that could dispel the silence."
+                        n "Quite an impressive feat, considering you're fairly certain rocks don't have neural pathways nor brains for that matter."
+                        n "After trying your hardest you finally manage to distill your efforts into three possible icebreakers."
+                        menu:
+                            "So, what do you do for work?":
+                                l "Well, this very much feels like work."
+                                l "I'm thinking about resigning."
+
+                            "Played any fun sports lately?":
+                                l "Just gymnastics."
+                                l "The mental gymnastics of wheter or not to leave you."
+
+                            "What skin care routine do you use?":
+                                l "I don't really have any."
+                                l "Neither do I have skin."
+
+                        n "Now, when I said you came up with icebreakers, I didn't say they were any good."
+                        n "You just have your own mangled mind to thank for that."
+
+                        l "Why are you asking me a question like that?"
+                        l "Is this you trying to make an effort? If so it's a really pitiful attempt."
+                        l "Even so, why try at all after how you treated me?"
+                        menu:
+                            "Because I regret how I treated you.":
+                                l "Then tell me that instead of using pointless small talk that is not even applicable."
+                                menu:
+                                    "I just did.":
+                                        #This leads to the same outcome as the neverEding where you do not reconcile with her at all.
+                                        "Filler"
+
+                                    "*Repeat it again.*":
+                                        #This leads to the outcome of the neverEnding where you reconcile somewhat with her but you become more like aquintances
+                                        "Filler"
+
+                                    "The game forced me to say that other stuff first.":
+                                        "Filler"
+    
 
 label chinese_menu:
     $ peking = False
@@ -83,19 +199,33 @@ label chinese_menu:
         menu:
             "I'm going for the peking duck.":
                 $ peking = True
+                $ get_lilith_current_loop_memory("chinese")["playerOrder"] = "peking"
                 jump chinese_menu_result
 
             "I think I'll pick the orange chicken.":
                 $ orange = True
+                $ get_lilith_current_loop_memory("chinese")["playerOrder"] = "orange"
+                jump chinese_menu_result
+
+            "I think I'll go for the Kung Pao chicken." if persistent.chinese_kungPao_knowledge == True:
+                $ kungPao = True
+                $ get_lilith_current_loop_memory("chinese")["playerOrder"] = "kungPao"
                 jump chinese_menu_result
     else:
         menu:
             "I think I'd go for the peking duck.":
                 $ peking = True
+                $ get_lilith_current_loop_memory("chinese")["playerOrder"] = "peking"
                 jump chinese_menu_result
 
             "I think I'd pick the orange chicken.":
                 $ orange = True
+                $ get_lilith_current_loop_memory("chinese")["playerOrder"] = "orange"
+                jump chinese_menu_result
+
+            "I think I'd go for the Kung Pao chicken." if persistent.chinese_kungPao_knowledge == True:
+                $ kungPao = True
+                $ get_lilith_current_loop_memory("chinese")["playerOrder"] = "kungPao"
                 jump chinese_menu_result
 
             "What's the point of dreaming about food if neither of us can eat it?":
@@ -189,36 +319,319 @@ label restaurant_menu_pointOfPretending:
 
 label restaurant_menu_waitress:
     n "Suddenly a waitress stands right before your table, slightly startling you."
-    n "[persistent.date] tries [date_pos] best not to burst out with laughter but a few muffled laughs get through."
+    if love_meter >= 2:
+        n "[persistent.date] tries [date_pos] best not to burst out with laughter but a few muffled laughs get through."
+        wa "Welcome, what would the two of you wish to order?"
+        menu:
+            "I'll have the peking duck, please.":
+                $ peking = True
+                $ get_lilith_current_loop_memory("chinese")["playerOrder"] = "peking"
 
-    "After writing down both of your choices she wanders off towards the kitchen."
-    l "Do you want to try to answer a few riddles in the meantime?"
+            "I'll have the orange chicken, please.":
+                $ orange = True
+                $ get_lilith_current_loop_memory("chinese")["playerOrder"] = "orange"
 
-    menu:
-        "I'd rather not actually, I'm pretty bad at answering riddles.":
-            jump chinese_riddle_decline
+            "I'll have the Kung Pao chicken, please." if persistent.chinese_kungPao_knowledge == True:
+                $ kungPao = True
+                $ get_lilith_current_loop_memory("chinese")["playerOrder"] = "kungPao"
 
-        "Sure, I'd like that!":
-            jump chinese_riddle_accept
+        wa "Very well."
+        n "She turns to look at [persistent.date]."
+        menu:
+            "*Say nothing.*":
+                if peking == True:
+                    l "I'll have the same, please."
+                else:
+                    l "I'll have the peking duck, please."
+
+            "[date_sub!c]'ll have the peking duck.":
+                $ forcedOrder = "peking"
+
+            "[date_sub!c]'ll have the orange chicken.":
+                $ forcedOrder = "orange"
+                
+
+            "[date_sub!c]'ll have the Kung Pao chicken." if persistent.chinese_kungPao_knowledge == True:
+                $ forcedOrder = "kungPao"
+                
+
+        if forcedOrder != "":
+            $ love_meter -= 2
+            if forcedOrder == "kungPao" and get_lilith_current_loop_memory("chinese").get("lilithRefusedKungPao", False):
+                $ angryLilith = True
+                #TODO: Probably add a little more dialogue before this and just use the love meter updater set to true to trigger this.
+                jump car_death
+
+            if love_meter > 0:
+                n "The waitress breaks eye contact with [persistent.date] to look at you in pure disbelief."
+                l "Why are you ordering for me [persistent.name]? I do not appreciate that at all if I am being honest."
+                l "You are lucky you have been fairly decent so far, well up until now I suppose, so I won't just leave right now."
+                if forcedOrder != "peking":
+                    l "But you know that was not what I ordered."
+                    n "[date_sub!c] [conj('date', 'tries', 'try')] to calm [date_ref] down."
+                    l "I'd like to get the peking duck instead please."
+                    
+                else:
+                    l "I hate how I don't want the peking duck anymore now..."
+                    l "I guess I'll have to pick something else instead."
+                    n "[persistent.date] digs through the menu, for a while, clearly quite stressed to keep the waitress waiting."
+                    w "... May I suggest the Kung Pao chicken?... It might be to your liking."
+                    l "Thank you for the suggestion, I'll pick that then."
+                    $ get_lilith_current_loop_memory("chinese")["lilithKungPao"] = True
+                    
+                    
+
+            n "The waitress nods and hurries off towards the kitchen, eager to escape the tense atmosphere."
+            n "Along with her dissapeared the last bit of levity."
+            n "[persistent.date] just [conj('date', 'goes', 'go')] non-responsive, [date_pos] gaze glued to the table."
+            n "It doesn't really feel as if there's anything you could possibly say to break the tension. All you can do is just wait on the food, so you do."
+            n "It takes an uncomfortable amount of silence before it gets broken by two bowls being placed on the table."
+            n "You ever so slightly startle at the sound, however this time that doesn't get a chuckle out of [date_obj]."
+            n "In pure silence the both of you begin to dig in."
+            if get_lilith_current_loop_memory("chinese").get("lilithKungPao", False):
+                n "It might be your imagination, but you seem to pick up on very quiet sounds of [persistent.date]'s approval at the food."
+                n "Eventually when [date_sub] [conj('date', 'is', 'are')] finished [date_sub] [conj('date', 'speaks', 'speak')] again."
+                l "I hate how that actually was a great dish. I'd love to have eaten it under normal cirumstances."
+                l "Just a shame that was... well, whatever that was."
+                l "At the very least it wasn't a complete bust I suppose."
+                l "Still, make no mistake. I merely stayed because I did not want to make too big of a scene in front of the waitress."
+                l "Now that I'm done with the food, I'm also done with you."
+                $ persistent.chinese_kungPao_knowledge = True
+                $ angryLilith = True
+                jump car_death
+            else:
+                jump chinese_death_1
+
+    n "After writing down both of your choices she wanders off towards the kitchen."
+    if love_meter >= 2:
+        l "Do you want to try to answer a few riddles in the meantime?"
+        menu:
+            "I'd rather not actually, I'm pretty bad at answering riddles.":
+                jump chinese_riddle_decline
+
+            "Sure, I'd like that!":
+                jump chinese_riddle_accept
+    else:
+        n "It's almost as if she took all conversation with her as she left."
+        n "Replacing it there now instead lingers an awful tension that makes you think twice about saying anything at all."
+        n "However, even the most cursed aura can't win from your uncomfortability with silence."
+        n "You have to say something, anything."
+        menu:
+            #TODO: Write this out in the future
+            "Filler":
+                "filler for now"
         
 label chinese_menu_result:
     if not persistent.rockMode:
-        if peking == True:
-            l "That's a good choice! So good in fact that I was thinking about picking the same thing."
-        elif orange == True:
-            l "That's a good choice! I've had my fair share of orange chicken already throughout my life, so I think I'm going for something else."
-            n "[persistent.date] scratches [date_pos] chin softly."
-            l "I think I'm going to pick the peking duck, beats another portion of orange chicken."
-            n "[date_sub!c] [conj('date', 'lets', 'let')] out a small chuckle."
+        if love_meter >= 2:
+            if peking == True:
+                l "That's a good choice! So good in fact that I was thinking about picking the same thing."
+            elif orange == True:
+                l "That's a good choice! I've had my fair share of orange chicken already throughout my life, so I think I'm going for something else."
+                n "[persistent.date] scratches [date_pos] chin softly."
+                l "I think I'm going to pick the peking duck, beats another portion of orange chicken."
+                n "[date_sub!c] [conj('date', 'lets', 'let')] out a small chuckle."
+        else:
+            if peking == True:
+                l "I suppose I could pick the same..."
+            else:
+                l "I think I'll go for the peking duck myself..."
 
         menu:
             "Actually you are really allergic to that peking duck, deathly even." if persistent.chinese_death_1:
                 jump restaurant_death_1_prevented
 
-            "Great minds think alike!" if peking == True:
+            "Actually, if I could do a suggestion, I've heard great things about the Kung Pao chicken. I think you might really like it." if persistent.chinese_kungPao_knowledge == True:
+                $ get_lilith_current_loop_memory("chinese")["playerSuggestedKungPao"] = True
+                l "Hmm, I'm not sure honestly..."
+                if love_meter >= 2:
+                    l "Then again, it definitely is worth trying."
+                    l "Although, a part of me is scared that I might regret my choice and wish I had stuck with my choice."
+                    menu convinceKungPao:
+                        "We could always swap if you don't like it." if peking == True:
+                            if love_meter >= 2:
+                                $ get_lilith_current_loop_memory("chinese")["lilithKungPao"] = True
+                                l "Really? You'd do that for me?"
+                                l "That's such a sweet gesture!"
+                                l "I suppose you are right, it's not like I'd have anything to lose..."
+                                l "Alright, it's worth a shot."
+
+                            else:
+                                l "[changeableWord]"
+                                $ get_lilith_current_loop_memory("chinese")["lilithRefusedKungPao"] = True
+                                l "I don't want to swap because I do not even want the Kung Pao chicken in the first place."
+                                l "I wish you'd respect that instead of trying to keep pushing it on me."
+
+                        "What if I ordered the peking duck instead? Then we could swap if you don't like it." if orange == True:
+                            if love_meter >= 2:
+                                l "You would?"
+                                l "That's really kind of you to offer, but I could never accept it."
+                                l "I want you to order what you really want, you shouldn't have to change on my whim."
+                            else:
+                                l "[changeableWord]"
+                                $ get_lilith_current_loop_memory("chinese")["lilithRefusedKungPao"] = True
+                                l "You shouldn't order something else just because of me."
+                                l "Especially since I don't even want the Kung Pao chicken, so do not pretend like you are doing this for me."
+                          
+
+                        "I was planning on ordering the Kung Pao chicken anyway, you could order the peking duck and try mine if you want." if kungPao == True:
+                            if love_meter >= 2:
+                                $ get_lilith_current_loop_memory("chinese")["lilithKungPao"] = True
+                                l "Are you sure?..."
+                                l "I wouldn't want you to regret this."
+                                l "It's really sweet of you to offer but you seemed to be looking forward to the kung pao..."
+                                l "Then again, maybe I should just trust your judgment, I'll take you up on your offer!"
+
+                            #Something like "you'd really do that for me? Thank you persistent name!"
+
+                        "Isn't that what life is all about? If we never try something new, we might miss out on something amazing.":
+                            if love_meter >= 2:
+                                l "I suppose you are right... Still, if I am being honest I'm usually not that person."
+                                l "I prefer sticking with an option or two and just swap between them each time I am bored of the other."
+                                l "It- It kind of brings me great comfort in a way."
+                                l "Especially now when the circumstances of coming here are so different."
+                                l "Maybe some other time? Although for now I'd rather stick with the peking duck."
+                                $ get_lilith_current_loop_memory("chinese")["lilithRefusedKungPao"] = True
+                            else:
+                                l "[changeableWord]"
+                                l "It might be true that life is about trying new things, but I am pretty sure those things should be your own choice."
+                                l "It doesn't count if someone just keeps pushing those new things onto you."
+                                l "So I'd prefer if we could just drop this."
+                                $ get_lilith_current_loop_memory("chinese")["lilithRefusedKungPao"] = True
+
+                        "That's alright, we can always try the Kung Pao chicken next time.":
+                            if love_meter >= 2:
+                                l "Next time?..."
+                                l "I uh- I'd like that [persistent.name]!"
+                                l "It's a deal, next time we come here, I'm definitely going for it."
+                                l "Although I'm not sure why you want me to try the Kung Pao chicken so badly."
+                                l "I wonder if it will be able to live up to what you built it up to be."
+                                $ get_lilith_current_loop_memory("chinese")["lilithRefusedKungPao"] = True
+                            else:
+                                l "{size=*0.5}That's assuming there will even be a next time...{/size}"
+                                l "Thank you for understanding I suppose..."
+                                $ get_lilith_current_loop_memory("chinese")["lilithRefusedKungPao"] = True
+                else:
+                    l "I kind of am already set on the peking duck."
+                    $ changeableWord = "I said I was set on the peking duck."
+                    jump convinceKungPao
+
+                if get_lilith_current_loop_memory("chinese").get("lilithKungPao", False):
+                    l "Although I'm not sure why you are so dead set on me getting the Kung Pao chicken."
+                    n "[persistent.date] lets out a tiny giggle."
+                    l "I suppose we'll soon see if it was worth the effort, won't we?"
+
+            "Great minds think alike!" if peking == True and love_meter >= 2:
+                l "Oh I assure you, that was less my mind doing the thinking and moreso my stomach."
+                l "Speaking of we should probably try to look for someone who can take our order, right?"
                 jump restaurant_menu_waitress
             
-            "That's a great choice!":
+            "That's a great choice!" if love_meter >= 2:
+                if peking == True:
+                    l "I see, how sneaky. You are paying me a compliment while also getting to compliment yourself."
+                    l "Afterall, you picked the same thing, didn't you?"
+                    n "[persistent.date] chuckles."
+                    l "I'm just kidding, let's agree we both have great taste."
+                    menu:
+                        "I'm flattered, here I thought I was the one with great taste for going on this date with you.":
+                            n "[date_sub!c] [conj('date', 'blushes', 'blush')] beetred for a brief moment, so brief you almost missed it."
+                            l "Well... I suppose it certainly seems like you're not the only one with great taste..."
+                            l "Although I'd like to not run ahead too quickly, the night still is young afterall."
+                            l "It'd be foolish to rate a dish on nothing but the first bites, wouldn't it?"
+
+                        "That's great to know for if we ever need to cannibalize eachother.":
+                            $ love_points += 1
+                            $ love_meter_updater(False)
+                            n "[date_sub!c] [conj('date', 'chuckles', 'chuckle')] at your joke."
+                            l "You really have a way with words, don't you?"
+                            l "You might scare a few dates away with jokes like that, luckily I actually quite enjoy them."
+                            l "Although it kind of made me wonder... if we were on a deserted island with no food in sight."
+                            l "Who'd eat who first?"
+                            menu:
+                                "I'd eat you first.":
+                                    l "Really? Just like that?"
+                                    l "I suppose I can't blame you for that [persistent.name]."
+                                    l "After all, it's only natural to want to survive, isn't it?"
+                                    l "I'm not sure, for me personally there is a weird peace in knowing that I would help someone live through something so terrible."
+                                    l "Even if, well, it kills me."
+                                    l "Maybe it's because I am pretty content with the life I lived?"
+                                    l "Of course I'd rather survive aswell, but if there was no other choice..."
+
+                                "You'd eat me first.":
+                                    l "Really? What makes you think that?"
+                                    l "I don't exactly see myself as the person who'd do that."
+                                    l "Then again, I suppose it's like with knowing wheter or not you'd rescue someone from a burning building."
+                                    l "You can give that hypothetical all the thought in the world, you'll only figure out once you are in a scenario like that."
+                                    l "So perhaps I'd really eat you first after all."
+                                    l "I'm just curious about whatever made you think that..."
+
+                                "I'd let you eat me.":
+                                    l "Really? You'd do that?"
+                                    l "But why? Why would you sacrifice yourself for me?"
+                                    l "You don't really know me that well, do you?"
+                                    l "I couldn't possibly ask you to do that."
+                                    l "I suppose someone'd need to eat someone else eventually..."
+                                    l "But still, you really shouldn't suffer for my sake [persistent.name]."
+                                    menu:
+                                        "What's the alternative? You suffering for my sake?":
+                                            l "..."
+                                            l "You are right, someone would always need to suffer for the other person."
+                                            l "Besides, while being eaten is horrible, I don't think having to be the one eating is any better either."
+                                            l "I think if you'd ever get off the island you'd be traumatized for life."
+                                            l "Perhaps death is the more merciful path as absurd as it sounds."
+
+                                "We could eat each other.":
+                                    l "Maybe you are right, if we both eat a few parts of eachother perhaps we could keep both of us alive long enough to be rescued."
+                                    l "Still, I can't help but wonder if it would be ethical to keep us both alive and suffering through that."
+                                    l "If we ever got rescued, we'd be severely traumatized for life. Then again, we do still have our lives..."
+                                    l "It is a tough one, because I find myself leaning a little more to wanting to die with dignity still in tact instead of having to resort to canibalize you."
+                                    l "..."
+
+
+                                "We could refrain from eating each other.":
+                                    l "I think you are right [persistent.name]. It'd probably be a losing battle to try to survive."
+                                    l "Whatever we'd try, we'd either end both traumatized or only one of us and the other dead."
+                                    l "Perhaps it's better to just not play that cruel game and try to keep our dignity intact."
+                                    l "We'd still get to find comfort in each other at the very least, that's a nice thought."
+                                    l "I suppose I'm just a little scared we wouldn't have the willpower for that."
+                                    l "We are human after all, and we are at best just a miserable pile of instincts."
+                                    l "Who's to say one of us wouldn't get desperate enough to eat the other?"
+                                    l "Or perhaps we'd both be at each other's throats?"
+                                    l "Still, I'll choose to believe that we can ascend above such behaviour and move on to our next adventure, wherever that might be..."
+                    
+                    l "Anyway, that's enough talk about eating human flesh for now."
+                    l "I hunger for something else instead, let's try to find the waitress so we can order, alright?"
+                    jump restaurant_menu_waitress
+                
+                else:
+                    l "Ofcourse! I only have the greatest of tastes. Next time we should go to the burger restaurant I mentioned."
+                    l "I'll prove it there, I know the best burger on the menu!"
+                    menu:
+                        "Next time?":
+                            l "Oh- y- yeah! I was just thinking out loud about what we could do for our next date."
+                            menu:
+                                "Isn't that a bit fast? This one barely started. Shouldn't we first see where it goes?":
+                                    l "I suppose you are right. I really hadn't given it much thought."
+                                    l "It might sound odd... but that's just how I thought it was supposed to go."
+                                    l "It's been so long... maybe I am rushing it a bit."
+                                    l "I'll try to consider it some more, thank you [persistent.name]."
+                                    $ love_points += 1
+                                    $ love_meter_updater(False)
+                                    #TODO: when she comes back from the bathroom wanting to tell you something have her refer to this.
+                                    
+                                
+                        "Do you also have a great taste in dates?": 
+                            l "I- uhm..."
+                            n "[date_sub!c] [conj('date', 'blushes', 'blush')] beetred."
+                            l "I mean it's probably too early to just outright confirm."
+                            l "B- but so far I definetly am enjoying myself. A- and also enjoying your company."
+
+                jump restaurant_menu_waitress
+
+            "Great minds think alike." if love_meter == 1:
+                jump restaurant_menu_waitress
+
+            "That's a great choice." if love_meter == 1:
                 jump restaurant_menu_waitress
       
     else:
@@ -230,7 +643,33 @@ label chinese_menu_result:
             l "It's weird, but somehow I feel exhausted of orange chicken even though I've never eaten it before."
             l "Maybe I ate enough of it in a past life for this one as well?"
             n "[date_sub!c] [conj('date', 'lets', 'let')] out a small chuckle, you feel it resonate in your mind."
-        jump chinese_riddle
+        if love_meter >= 2:
+            jump chinese_riddle
+        n "[persistent.date] seems to consider saying something more, then falls quiet instead."
+        l "I had a few riddles in mind, but... never mind. Maybe we should just enjoy the food."
+        jump chinese_riddle_railroad
+
+label chinese_kungPaoSavoring:
+    l "Wow... I- I actually have no words for this."
+    l "It's- it's really good! I can't believe I never tried this before."
+    if get_lilith_current_loop_memory("chinese").get("playerOrder", "") == "kungPao":
+        l "You were right to pick this one, [persistent.name]!"
+    elif get_lilith_current_loop_memory("chinese").get("playerSuggestedKungPao", False):
+        l "You were spot on about this [persistent.name]!"
+    else:
+        l "I'm glad you helped me discover something new, [persistent.name]."
+    l "Thank you for helping me discover something new.If it weren't for you, chances are I'd just switch back and forth between orange chicken and peking duck indefinitly each time I'd get sick of the other."
+    l "I usually stick with an option or two per place for the rest of my visits."
+    l "In a way I suppose because that familiarity brings me comfort?"
+    l "For example, when I still studied I'd always go to the same vending machine and always choose the waffle, number 22."
+    l "It's something to cling onto while everything around me is constantly changing."
+    l "As nice as that repetition is, I'm also always glad to learn something new since that is how my new defaults come to be after all."
+    l "Although I will admit breaking free can be a little scary."
+    l "Once you go through the motions so many times it can be intimidating to ponder what's outside of that loop."
+    l "Still, while it can be comforting to have routines it's also important to not be restricted by them."
+    l "I find if you feel trapped in repitition it's important to try to break that pattern or leave the cycle all together."
+    #TODO: tie this together a little nicer still. Also, this still needs to go to some alternate choices etc.
+    
 
 label chinese_riddle:
     l "Would you like to answer a few riddles [persistent.name]? That should be fun, right?"
@@ -242,32 +681,55 @@ label chinese_riddle:
             jump chinese_riddle_accept
 
 label chinese_riddle_accept:
-    $ rw1 = 0
-    $ rw2 = 0
-    $ rw3 = 0
+    $ riddles = [{"rw": 0, "riddleAnswers": ""}, {"rw": 0, "riddleAnswers": ""}, {"rw": 0, "riddleAnswers": ""}]
+    $ riddle_answer_time = 0.0
+    $ riddle_answer_history = []
     $ rw_total = 0
     $ current_riddle = 0
     $ retry_variation = 0
+    $ repeat_variation = 0
+    $ skip_variation = 0
+    $ riddleSkip = False
+    $ chinese_riddle_narrator_used = []
+    $ easy_rude = False
+    $ hard_rude = False
     $ persistent.chineseRiddlesSeenXTimesCounter += 1
     l "Alright, here is the first riddle."
     l "They are all based around Greek and Roman myths."
     l "So here we go."
+
 label chinese_riddle_loop:
+    #TODO: Quality control
+    if current_riddle < 0:
+        $ current_riddle = 0
+    if current_riddle >= len(riddles):
+        jump chinese_riddle_evaluation
+
     if current_riddle == 0:
-        l "To taunt the gods with webs of lies
-        is to hang but not to die."
-        n "[persistent.date] gives you a moment to think it through properly."
-        l "So, do you have a hunch on who it could be?"
+        if riddleSkip == False:
+            l "To taunt the gods with webs of lies
+            is to hang but not to die."
+        
+        call chinese_riddle_lilithAction
         if persistent.r1_knowledge == True:
             n "You remember [persistent.date] telling you the answer was Arachne."
-        $ riddle_answer = renpy.input("Place your guess here")
+        call chinese_riddle_narratorAction
+        $ riddle_input_started_at = renpy.get_game_runtime()
+        $ riddle_answer = player_input("Place your guess here")
+        $ riddle_answer_time += renpy.get_game_runtime() - riddle_input_started_at
         $ riddle_answer = riddle_answer.strip()
         $ riddle_answer = riddle_answer.lower()
+        if riddle_answer != "":
+            $ riddle_answer_history.append(riddle_answer)
         if riddle_answer == "arachne":
+            $ riddles[current_riddle]["riddleAnswers"] = "Right"
             l "That's right!"
             l "Lets try out the next riddle."
             $ current_riddle = 1
+            $ riddleSkip = False
             jump chinese_riddle_loop
+        elif riddle_answer == "athena":
+            l "She was a part of that fateful competition but who was Her opponent?"
         elif riddle_answer == "demetrius":
             if persistent.name == "Demetrius":
                 $ demetrius = True
@@ -278,79 +740,291 @@ label chinese_riddle_loop:
                 $ adriel = True
                 $ riddle_loop = 5
                 jump riddle_tryAgain_loop
-        $ rw1 += 1
+        $ riddles[current_riddle]["rw"] += 1
     elif current_riddle == 1:
-        l "Carried by Lightning with a crown of moon."
-        n "[persistent.date] gives you a moment to think about [date_pos] riddle."
-        l "So, do you have an idea who I could be talking about?"
+        if riddleSkip == False:
+            l "Carried by Lightning with a crown of moon."
+        
+        
+        call chinese_riddle_lilithAction
         if persistent.r2_knowledge == True:
             n "You remember [persistent.date] telling you the answer was Europa."
-        $ riddle_answer = renpy.input("Place your guess here")
+        call chinese_riddle_narratorAction
+        $ riddle_input_started_at = renpy.get_game_runtime()
+        $ riddle_answer = player_input("Place your guess here")
+        $ riddle_answer_time += renpy.get_game_runtime() - riddle_input_started_at
         $ riddle_answer = riddle_answer.strip()
         $ riddle_answer = riddle_answer.lower()
+        if riddle_answer != "":
+            $ riddle_answer_history.append(riddle_answer)
         if riddle_answer == "europa":
+            $ riddles[current_riddle]["riddleAnswers"] = "Right"
             l "That's right!"
             l "Lets try out the next riddle."
             $ current_riddle = 2
+            $ riddleSkip = False
             jump chinese_riddle_loop
-        $ rw2 += 1
+        elif riddle_answer == "zeus":
+            l "He was the carrier, but who was on His back?"
+        $ riddles[current_riddle]["rw"] += 1
     else:
-        l "The musical barterer returned empty-handed from the underworld."
-        n "[persistent.date] pauses for a moment."
-        l "Do you have a clue who it might be this time?"
+        if riddleSkip == False:
+            l "The musical barterer returned empty-handed from the underworld."
+        
+        
+        call chinese_riddle_lilithAction
         if persistent.r3_knowledge == True:
             n "You remember [persistent.date] telling you the answer was Orpheus."
-        $ riddle_answer = renpy.input("Place your guess here")
+        elif persistent.burger_Orpheus_knowledge == True:
+            n "Something about this riddle seems familiar... The name Eurydice pops into your mind but you know it's not quite right."
+
+        call chinese_riddle_narratorAction
+        $ riddle_input_started_at = renpy.get_game_runtime()
+        $ riddle_answer = player_input("Place your guess here")
+        $ riddle_answer_time += renpy.get_game_runtime() - riddle_input_started_at
         $ riddle_answer = riddle_answer.strip()
         $ riddle_answer = riddle_answer.lower()
+        if riddle_answer != "":
+            $ riddle_answer_history.append(riddle_answer)
         if riddle_answer == "orpheus":
+            $ riddles[current_riddle]["riddleAnswers"] = "Right"
             l "That's right!"
+            $ riddleSkip = False
             jump chinese_riddle_evaluation
-        $ rw3 += 1
+        elif riddle_answer == "eurydice":
+            l "She did follow the barterer, but who turned around to lose her?"
+        $ riddles[current_riddle]["rw"] += 1
     jump chinese_riddle_retry
 
-label chinese_riddle_retry:
-    if retry_variation == 0:
-        l "Hmm, not exactly who I was thinking about.
-        Would you like to try again or have me give the answer?"
-    elif retry_variation == 1:
-        l "Not quite, but you are giving it a fair shot.
-        Do you want to take another guess or should I tell you?"
-    elif retry_variation == 2:
-        l "That is not the name I had in mind.
-        Want another try, or would you rather hear the answer?"
+label chinese_riddle_lilithAction:
+    #TODO: Probably add a few more for varying situations etc and also refine what's already there, but now the lines themselves are atleast not that bad
+    if current_riddle == 0:
+        if riddles[current_riddle]["rw"] == 0:
+            l "So, do you have an idea who I could be talking about?"
+        elif riddles[current_riddle]["rw"] == 1:
+            n "A moment passes as you ponder the riddle."
+        else:
+            l "You got this! Third time's the charm!"
+
+    elif current_riddle == 1:
+        if riddles[current_riddle]["rw"] == 0:
+            
+            if riddles[0]["rw"] == 0:
+                n "[date_sub!c] [conj('date', 'looks', 'look')] at you expectantly."
+                
+            else:
+                n "[date_sub!c] [conj('date', 'studies', 'study')] your face as if the answer might be written there."
+
+        elif riddles[current_riddle]["rw"] == 1:
+            l "Take all the time you need. There is no rush."
+           
+        else:
+            l "Do you have any clue who it might be this time?"
+           
     else:
-        l "Close or not, I appreciate the effort.
-        Should I give you another chance or reveal it?"
-    $ retry_variation = (retry_variation + 1) % 4
+        if riddles[current_riddle]["rw"] == 0:
+            if (riddles[0]["rw"] + riddles[1]["rw"]) == 0:
+                n "There is a shimmer in [date_pos] eyes."
+           
+            else:
+                n "[date_sub!c] [conj('date', 'gives', 'give')] you a thumbs-up and a reassuring smile."
+                
+        elif riddles[current_riddle]["rw"] == 1:
+            if (riddles[0]["rw"] + riddles[1]["rw"]) == 6:
+                l "You are right at the finish line, just keep pushing through."
+            else:
+                n "[persistent.date] gives you a moment to think about [date_pos] riddle."
+        else:
+            if (riddles[0]["rw"] + riddles[1]["rw"]) == 6:
+                n "You spot a strange mix of emotions in [date_pos] eyes. Regret, fear and...admiration?" #If you got all the riddles so far wrong and are on the third attempt of the last riddle.
+            else:
+                n "For a moment [date_sub] [conj('date', 'seems', 'seem')] to want to say something, then instead [persistent.date] decides against it."
+
+    return
+
+label chinese_riddle_narratorAction:
+    $ chinese_riddle_narration = chinese_riddle_pick_narration(current_riddle, riddles)
+    n "[chinese_riddle_narration]"
+    return
+
+init python:
+    #This should handle the retry lines with both variations of repeating the riddle or just guessing again.
+    CHINESE_RETRY_OPENERS = ["Of course.", "Sure,", "Absolutely.", "No problem,", "All right.", "You got it,"]
+    CHINESE_RETRY_TAILS_GUESS = [
+        "Take your time.",
+        "Really flex those brain muscles.",
+        "Give it your best shot.",
+        "You can do this!",
+        "This will be the one.",
+        "You got this!",
+        "Try thinking it through.",
+
+    ]
+    CHINESE_RETRY_TAILS_REPEAT = [
+        "Let's do this!",
+        "Here it comes again.",
+        "Here we go.",
+        "Let's see...",
+        "Let's take a look.",
+        "Let's give it another shot.",
+        
+    ]
+
+    def chinese_riddleRetry(index, repeat):
+        opener = CHINESE_RETRY_OPENERS[index % len(CHINESE_RETRY_OPENERS)]
+        tails = CHINESE_RETRY_TAILS_REPEAT if repeat else CHINESE_RETRY_TAILS_GUESS
+        tail = tails[index % len(tails)]
+        # After a comma the sentence continues, so the glued part starts lowercase.
+        if opener.endswith(","):
+            tail = tail[0].lower() + tail[1:]
+        return opener + " " + tail
+
+label chinese_riddle_retry:
+    #TODO: Add a few more variations here and there, like for example, have you been just kind of spamming replies or did you answer a lot of duplicates? Then she'll answer less enthusiasticly.
+    $ attempts = riddles[current_riddle]["rw"]
+    if retry_variation == 0:
+        l "Hmm, not exactly who I was thinking about."
+        call riddle_movingOn
+        l "Would you like to try again?"
+
+    elif retry_variation == 1:
+        l "Not quite, but you gave it a fair shot."
+        call riddle_movingOn
+        l "Do you want to take another guess?"
+
+    elif retry_variation == 2:
+        l "That is not the name I had in mind."
+        call riddle_movingOn
+        l "Do you want another try?"
+
+    elif retry_variation == 3:
+        l "Not quite..."
+        call riddle_movingOn
+        l "Want to give it another shot?"
+
+    elif retry_variation == 4:
+        l "Not exactly..."
+        call riddle_movingOn
+        l "Should we try again?"
+
+    else:
+        l "Not really... I admire how determined you are, though."
+        call riddle_movingOn
+        l "Would you like one more attempt?"
+    $ retry_variation = (retry_variation + 1) % 5
     menu:
         "I'd like to give it another shot.":
+            $ riddleSkip = True
+            $ retry_line = chinese_riddleRetry(repeat_variation, False)
+            l "[retry_line]"
+            $ repeat_variation = (repeat_variation + 1) % 6
+            jump chinese_riddle_loop
+
+        "I'd like to try again, could you repeat the riddle?":
+            $ riddleSkip = False
+            $ retry_line = chinese_riddleRetry(repeat_variation, True)
+            l "[retry_line]"
+            $ repeat_variation = (repeat_variation + 1) % 6
             jump chinese_riddle_loop
 
         "I'd like to know the answer.":
-            if current_riddle == 0:
-                $ persistent.r1_knowledge = True
-                l "Sure thing, that was a really tricky one."
-                l "The answer is Arachne."
-                $ riddleAnswersTold += 1
-                l "Let's move on to the next riddle."
-                $ current_riddle = 1
+            $ riddleSkip = False
+            label chinese_riddle_showAnswer:
+                if current_riddle == 0:
+                    $ persistent.r1_knowledge = True
+                    l "Sure thing, that was a really tricky one."
+                    l "The answer is Arachne."
+                    $ riddles[current_riddle]["riddleAnswers"] = "Told"
+                    l "Let's move on to the next riddle."
+                    $ current_riddle = 1
+                    jump chinese_riddle_loop
+                elif current_riddle == 1:
+                    $ persistent.r2_knowledge = True
+                    if sum(1 for r in riddles if r["riddleAnswers"] == "Told") + sum(1 for r in riddles if r["riddleAnswers"] == "Skipped") >= 1:
+                        l "That was another hard one..."
+                    else:
+                        l "Alright, that was quite a though one."
+                    l "The answer is Europa."
+                    $ riddles[current_riddle]["riddleAnswers"] = "Told"
+                    if riddles[0]["riddleAnswers"] == "Told" or riddles[0]["riddleAnswers"] == "Skipped":
+                        l "There's one more riddle to go, maybe you'll fare better with that one?"
+                    else:
+                        l "Let's move on to the next riddle."
+                    $ current_riddle = 2
+                    jump chinese_riddle_loop
+                else:
+                    $ persistent.r3_knowledge = True
+                    if sum(1 for r in riddles if r["riddleAnswers"] == "Told") + sum(1 for r in riddles if r["riddleAnswers"] == "Skipped") >= 2:
+                        l "I really didn't make this easy for you..."
+                    else:
+                        l "That was quite a hard one wasn't it?"
+                    l "The answer is Orpheus."
+                    $ riddles[current_riddle]["riddleAnswers"] = "Told"
+                    l "That was the final riddle!"
+                    jump chinese_riddle_evaluation
+
+        "Actually, could we go to the next riddle without revealing the answer?" if current_riddle < 2:
+            label chinese_riddle_skip:
+                $ riddles[current_riddle]["riddleAnswers"] = "Skipped"
+                $ attempts = riddles[current_riddle]["rw"]
+                if skip_variation == 0:
+                    l "Really? Are you not wondering what the answer could be?"
+                    if attempts == 2:
+                        l "It's not exactly like you'll have a shot at retrying that one any time soon."
+                        l "Then again, maybe you feel like you didn't earn the answer? I can respect such sportsmanship."
+                    else:
+                        l "You can still give it another try if you want after all."
+                        l "I doubt that if we move on you'll have another chance any time soon."
+                        if attempts == 0:
+                            l "Perhaps you only want to try each riddle once as an extra challenge to yourself?"
+                            l "I think in it's own way that's quite commendable."
+                        
+
+
+                elif skip_variation == 1:
+                    l "Of course, you won't get a single peep out of me. I'll take the answer to my grave."
+                    if persistent.chinese_death_1 and not get_lilith_current_loop_memory("chinese").get("lilithKungPao", False):
+                        n "That moment might be approaching faster than [date_sub] [conj('date', 'realises', 'realise')]."
+                    if persistent.chinese_death_2:
+                        n "While not as fast as usual, that moment will still arrive faster than [date_sub] [conj('date', 'realises', 'realise')]."
+                else:
+                    l "I suppose ignorance is bliss, isn't it? Very well, I'll leave you in it for now."
+                    n "[date_sub!c] [conj('date', 'mimes', 'mime')] locking [date_pos] mouth and throwing the key away."
+                $ riddleSkip = False
+                $ current_riddle += 1
+                $ skip_variation = (skip_variation + 1) % 3
                 jump chinese_riddle_loop
-            elif current_riddle == 1:
-                $ persistent.r2_knowledge = True
-                l "Alright, that was quite a though one."
-                l "The answer is Europa."
-                $ riddleAnswersTold += 1
-                l "Let's move on to the next riddle."
-                $ current_riddle = 2
+
+        "Actually, could we just continue without revealing the answer?" if current_riddle == 2:
+            jump chinese_riddle_skip
+        
+
+        
+
+label riddle_movingOn:
+    if (riddles[0]["rw"] >= 3 and current_riddle == 0) or (riddles[1]["rw"] >= 3 and current_riddle == 1):
+        l "As much as I admire your persistence, it's probably best we either move on to the next one or I tell you the answer."
+        menu:
+            "Move on to the next riddle.":
+                $ riddleSkip = False
+                $ riddles[current_riddle]["riddleAnswers"] = "Skipped"
+                $ current_riddle += 1
                 jump chinese_riddle_loop
-            else:
-                $ persistent.r3_knowledge = True
-                l "That was quite a hard one wasn't it?"
-                l "The answer is Orpheus."
-                $ riddleAnswersTold += 1
-                l "That was the final riddle!"
+
+            "Tell me the answer.":
+                jump chinese_riddle_showAnswer
+
+    elif (riddles[2]["rw"] >= 3 and current_riddle == 2):
+        l "As much as I admire your persistence, it's probably best to stop here or have me tell you the answer."
+        menu:
+            "You're right, let's stop here.":
+                $ riddles[current_riddle]["riddleAnswers"] = "Skipped"
                 jump chinese_riddle_evaluation
+
+            "Tell me the answer.":
+                jump chinese_riddle_showAnswer
+        
+    return
 
 label riddle_tryAgain_loop:
     if riddle_loop == 0:
@@ -368,12 +1042,12 @@ label riddle_tryAgain_loop:
 
 label demetrius_unanswered_chat:
     de "There's not a chance, besides, in it's state I think it's going to read this instead of listening in on it."
-    $ adriel_talk = renpy.input("Unite the two halves.")
+    $ adriel_talk = player_input("Unite the two halves.")
     $ adriel_talk = adriel_talk.strip()
     $ adriel_talk = adriel_talk.lower()
     if adriel_talk == "a shame really, it has such potential. It reminds me of Amber, Gregory, Lisa and Steven.":
         de "Do not mention those names here! If anyone might be listening in it's them, they found the true path to godhood after all."
-        $ adriel_talk = renpy.input("Unite the two halves.")
+        $ adriel_talk = player_input("Unite the two halves.")
         $ adriel_talk = adriel_talk.strip()
         $ adriel_talk = adriel_talk.lower()
         if adriel_talk == "oh did they really do that? Now that you mention it, I remember hearing they rejected the false gods and became gods worth a follow themselves. How did they manage to do that?":
@@ -382,17 +1056,17 @@ label demetrius_unanswered_chat:
 
 label adriel_unanswered_chat:
     ad "Demetrius, do you think it can hear us right now?"
-    $ dem_talk = renpy.input("Unite the two halves.")
+    $ dem_talk = player_input("Unite the two halves.")
     $ dem_talk = dem_talk.strip()
     $ dem_talk = dem_talk.lower()
     if dem_talk == "there's not a chance, besides, in it's state I think it's going to read this instead of hearing us speak.":
         ad "A shame really, It has such potential. It reminds me of Amber, Gregory, Lisa and Steven."
-        $ dem_talk = renpy.input("Unite the two halves.")
+        $ dem_talk = player_input("Unite the two halves.")
         $ dem_talk = dem_talk.strip()
         $ dem_talk = dem_talk.lower()
         if dem_talk == "do not mention those names here! If anyone might hear our little chat it's them, they found the true path to godhood after all":
                 ad "Oh did they really do that? Now that you mention it, I remember hearing they rejected the False Gods and became Gods worth a follow themselves. How did they manage to do that?"
-                $ dem_talk = renpy.input("Unite the two halves.")
+                $ dem_talk = player_input("Unite the two halves.")
                 $ dem_talk = dem_talk.strip()
                 $ dem_talk = dem_talk.lower()
                 if dem_talk == "you know we can't discuss that, what if it found our conversation? now let us never speak about this again and hope that it won't notice us":
@@ -400,49 +1074,161 @@ label adriel_unanswered_chat:
                         return
 
 label chinese_riddle_evaluation:
-    $ rw_total = rw1 + rw2 + rw3
-    if rw_total == 0:
-        l "Wow, you got them all right, color me impressed!"
-        if persistent.r1_knowledge == False and persistent.r2_knowledge == False and persistent.r3_knowledge == False and nmDetect == False:
-                        $ mDetect = True
+    #TODO: Quality control
+    $ chinese_riddle_narrator_used = []
+    $ riddle_answer_time  = int(riddle_answer_time)
+    $ rw_total = sum(riddle["rw"] for riddle in riddles)
+    $ unique_wrong_riddles = sum(1 for riddle in riddles if riddle["rw"] > 0)
+    $ riddle_answers_right = sum(1 for riddle in riddles if riddle["riddleAnswers"] == "Right")
+    $ riddle_answers_told = sum(1 for riddle in riddles if riddle["riddleAnswers"] == "Told")
+    $ riddle_answers_skipped = sum(1 for riddle in riddles if riddle["riddleAnswers"] == "Skipped")
+    $ unique_riddle_answers = set(riddle_answer_history)
+    $ duplicate_answer_total = sum(riddle_answer_history.count(answer) for answer in unique_riddle_answers if riddle_answer_history.count(answer) > 1)
+    $ duplicate_answer_groups = sum(1 for answer in unique_riddle_answers if riddle_answer_history.count(answer) > 1)
+    $ top_duplicate_answer = max(unique_riddle_answers, key=lambda answer: riddle_answer_history.count(answer)) if len(unique_riddle_answers) > 0 else ""
+    $ top_duplicate_count = riddle_answer_history.count(top_duplicate_answer) if top_duplicate_answer != "" else 0
+    $ skipped_after_retries = sum(1 for riddle in riddles if riddle["riddleAnswers"] == "Skipped" and riddle["rw"] >= 2)
+    #TODO: Continue writing this, try to account for as many situations as you can.
+    if riddle_answer_time < 39:
+        l "Wow, you really blitzed through those riddles!" 
+        if rw_total == 0:
+            l "Not a single one wrong too!"
+            l "It's almost as if you read my mind or had the answers prepped beforehand."
+            n "[date_sub!c] [conj('date', 'lets', 'let')] out a chuckle."
+            l "I guess you are just that good. I have to say I'm very impressed."
+        elif rw_total < 3:
+            l "Although I do wonder, if you had taken a little bit more time, would you have done even better?"
+            #TODO: Fill further in
+        elif rw_total < 5:
+            l "Although it kind of shows..."
+            l "Perhaps if you took a bit of a breather between each attempt things could have gone more your way?"
+            l "Thinking things through carefully can really pay off."
+            if duplicate_answer_total >= 2:
+                if len(unique_riddle_answers) == 0:
+                    if duplicate_answer_groups == 1:
+                        l "Especially since you kept repeating the same exact answer."
+                        l "You just kept answering \"[top_duplicate_answer]\"."
+                    else:
+                        l "Especially since you did repeat a lot of your answers."
+                        l "Mostly you just kept saying \"[top_duplicate_answer]\"."
+                    if riddle_answers_right == 0:
+                        l "You can't really keep bashing your head against the wall until it gives away [persistent.name]."
+                        l "Nothing will change if you don't change anything."
+                    elif riddle_answers_right == 1:
+                        $ replaceableWord = "one"
+                    elif riddle_answers_right == 2:
+                        $ replaceableWord = "two"
+                    elif riddle_answers_right == 3:
+                        $ replaceableWord = "all"
+                    if not riddle_answers_right == 0:
+                        l "However, in the end you still got [replaceableWord] of them right eventually."
+
+                elif len(unique_riddle_answers) > duplicate_answer_groups:
+                    l "Inbetween your regular guesses you must have accidentally repeated a few."
+                    l "Like \"[top_duplicate_answer]\" for example."
+                elif len(unique_riddle_answers) <= duplicate_answer_groups:
+                    l "You just mostly repeated a lot of your guesses with a few unique ones sprinkled inbetween."
+                    l "You said \"[top_duplicate_answer]\" quite a few times for example."
+                if riddle_answers_right == 0:
+                    "Filler"
+                elif riddle_answers_right == 1:
+                    $ replaceableWord = "one"
+                elif riddle_answers_right == 2:
+                    $ replaceableWord = "two"
+                elif riddle_answers_right == 3:
+                    $ replaceableWord = "all"
+                if riddle_answers_right == 0:
+                    l "Maybe if you didn't you'd have had a better shot at them?"
+                else:
+                    l "Then again, you did get [replaceableWord] of them right eventually."
+                if riddle_answers_right == 3:
+                    l "So that's still really impressive either way!"
+                    l "Maybe you were even messing with me."
+                    n "[date_sub!c] [conj('date', 'chuckles', 'chuckle')]."
+                    l "I guess you sure defied my expectations."
+
+        elif rw_total < 9:
+            l "Although it shows in the results..."
+            l "It's never a bad idea to take your time a little more."
+            l "Our life already goes by so fast we do not need to run to get to the finish even faster."
+            if duplicate_answer_total == 0:
+                l "Still, you did really give it a good shot!"
+                l "These riddles weren't easy on you at all so I appreciate you trying so hard anyway."
+            else:
+                l "Especially since if we rush often the quality of our work suffers."
+                l "For example, you repeated \"[top_duplicate_answer]\" quite a few times."
+
+        else:
+            l "Although it really shows in the results..."
+            l "Perhaps you should not have rushed as much?"
+            l "Either way, I suppose it's still quite commendable just how persistent you are."
+            $ get_lilith_current_loop_memory("chinese")["lilithCalledPlayerPersistent"] = True
+            l "You just kept at it, I think if it was up to you we'd still be going at it."
+            if len(unique_riddle_answers) == 0:
+                l "However, even with all the persistence in the world, I don't think picking the same answer each time would have brought you any closer to victory."
+            else:
+                l "Who knows? Maybe with a few more tries you would have gotten it?"
+                l "However, it's a very important skill to know when to quit something."
+                l "Sometimes you'd lose focus from what truly matters by just persisting blindly."
+                l "Like this date for example! As much as I like asking you these riddles it can't be the only thing we do together."
     else:
-        $ nmDetect = True
-        if rw_total == 1:
-            l "Only one riddle wrong, not shabby at all!"
-        elif rw_total <= 3:
-            l "You did pretty great, you gave it your best shot!"
-        elif rw_total <= 5:
-            l "You are pretty determined, I like that!"
-        elif rw_total >= 6:
-            l "Oh, did I make my riddles too hard?"
+        l "Wow, you really gave that a lot of thought, didn't you?"
+        if rw_total == 0:
+            l "It really seemed to pay off though!"
+            l "You got all of them right on your first try."
+        elif rw_total < 5:
+            if duplicate_answer_total == 0:
+                l "Sure, you had to try a few times."
+                if not riddle_answers_right == 0:
+                    if riddle_answers_right == 1:
+                        $ changeableWord = "one"
+                    elif riddle_answers_right == 2:
+                        $ changeableWord = "two"
+                    elif riddle_answers_right == 3:
+                        $ changeableWord = "all"
+                    l "But in the end you still got [changeableWord] of them right."
+                    if riddle_answers_right == 1:
+                        l "I might have made them a bit too hard... so if anything, it's still quite impressive you got one right."
+                    elif riddle_answers_right == 2:
+                        if riddles[0]["riddleAnswers"] != "Right":
+                            l "The first riddle made me fear I made them too hard but after that one you did great on the others!"
+                        elif riddles[2]["riddleAnswers"] != "Right":
+                            l "The last riddle gave you some trouble but other than that you did great!"
+                        else:
+                            l "The middle riddle gave you a little bit of a hard time, but who remembers the middle?"
+                            l "It's truly the start and end that matter the most. So you did great where it counted!"
+
+                    else:
+                        l "That's really impressive either way! You really handled those riddles like a champ."
+                        l "You must be a pretty big fan of mythology."
+                        l "That was a lot of fun! Maybe next time we could switch things up and have you ask me some riddles instead."
+
 
     l "What did you think of my riddles [persistent.name]?"
     menu:
-        "You call those riddles? They were way too easy. Even a pre-schooler could answer them." if rw_total == 0:
+        "You call those riddles? They were way too easy. Even a pre-schooler could answer them." if rw_total == 0 and not sum(1 for r in riddles if r["riddleAnswers"] == "Skipped") == 3:
             $ easy_rude = True
             jump chinese_riddle_easy
 
-        "They were pretty fun! I didn't have a hard time with them and yet still had to think about them." if rw_total == 0:
+        "They were pretty fun! I didn't have a hard time with them and yet still had to think about them." if rw_total == 0 and not sum(1 for r in riddles if r["riddleAnswers"] == "Skipped") == 3:
 
             jump chinese_riddle_easy
 
         "They were pretty well made, I like them a lot!":
             jump chinese_riddle_good
 
-        "To be honest those riddles were really hard." if rw_total > 0:
-
+        "To be honest those riddles were really hard." if unique_wrong_riddles >= 2 or sum(1 for r in riddles if r["riddleAnswers"] == "Told") + sum(1 for r in riddles if r["riddleAnswers"] == "Skipped") == 3:
             jump chinese_riddle_hard
 
-        "How was I ever supposed to get those riddles? You made them way too hard. Not everyone has a degree in folklore and mythology" if rw_total > 0:
+        "How was I ever supposed to get those riddles? You made them way too hard. Not everyone has a degree in folklore and mythology." if unique_wrong_riddles == 3 or sum(1 for r in riddles if r["riddleAnswers"] == "Told") + sum(1 for r in riddles if r["riddleAnswers"] == "Skipped") == 3:
             $ hard_rude = True
             jump chinese_riddle_hard
 
 label chinese_riddle_easy:
+    #TODO: Probably rewrite this section and add a bit more dialogue
     if easy_rude == True:
-        n "[persistent.date] seems to be saddened by your remark."
-        n "[date_sub!c] just [conj('date', 'stares', 'stare')] at the table for a second and then speaks again."
-        l "Oh I see... I was fearing that I made my questions too hard. At the very least that wasn't the case."
-        l "{size=*0.5}But you didn't have to act so high and mighty about it [persistent.name]...{/size}"
+        n "[persistent.date] falls quiet, [date_pos] smile fading."
+        l "I'm glad they weren't too hard for you. I just wish you didn't have to put me down to say so."
         $ love_points = -2
         $ love_meter_updater(False)
     else:
@@ -452,24 +1238,50 @@ label chinese_riddle_easy:
             n "You sure do, don't you player? Who knew that timeloops could be so educational?"
     jump chinese_riddle_railroad
 
+
 label chinese_riddle_hard:
+    #TODO: Write more dialogue for this.
     if hard_rude == True:
         $ love_points = -2
         $ love_meter_updater(False)
-        l "Oh I suppose they are quite hard..."
-        l "{size=*0.5}Still did you have to be so rude about it?....{/size}"
+        l "Oh... I suppose I did make them too hard..."
+        l "Still, I did make them just for you."
+        l "{size=*0.5}I really wish you weren't so rude about it...{/size}"
+        menu:
+            "I'm not rude, I'm just saying it like it is.":
+                l "{size=*2}No.{/size}"
+                l "That is {b}not{/b} what you were doing [persistent.name]."
+                l "It is one thing to just say the riddles were hard, that's totally fine and honestly deserved."
+                l "But the way you went about it..."
+                l "If you will act like that even for something simple and small I think it's best I end things here before I have to find out how you'd react to something big."
+                $ love_points = -1
+                $ love_meter_updater(True)
+
+            "You're right, I'm sorry. I guess I just felt a bit inadequate and that made me frustrated.":
+                "filler"
+               
         
     else:
         l "I see, that makes total sense [persistent.name]."
         l "Sometimes I forget that not everyone is as into Greek and Roman myths as I am."
         l "I hope you had fun trying to answer my riddles though!"
+        menu:
+            "I definitely did, but for our next date I'll have to read up on mythology.":
+                l "Oh? Next... date?"
+                l "So you'd like to do this again sometime?"
+                n "[date_sub!c] [conj('date', 'blushes', 'blush')] beetred."
+                n "Then, surprisingly smoothly [date_sub] [conj('date', 'continues', 'continue')] without skipping a beat."
+                l "It's on! Don't think I will go easy on you next time though. {size=*0.5}Okay, maybe a little easier...{/size}"
+                l "Either way, I'm looking forward to it."
+                l "Perhaps for our next date we could visit the cafe? I'm dying to finally see those aquariums!"
+
     jump chinese_riddle_railroad
+
 
 label chinese_riddle_good:
     l "I'm really happy to hear that you liked them!"
     l "I was kind of scared that I might have made them too hard."
-
-    if rw_total == 0:
+    if riddle_answers_right == 3 and rw_total == 0:
         l "However you seem like a natural with riddles. It also seems as if you're very well versed in Greek and Roman myths."
         if persistent.chineseRiddlesSeenXTimesCounter >= 3:
             n "I guess those previous attempts must have helped you out, didn't they?"
@@ -483,17 +1295,22 @@ label chinese_riddle_good:
             n "[date_sub!c] [conj('date', 'is', 'are')] right, you know."
             n "You have seen [date_obj] die over and over. [persistent.lildeaths] times to be precise."
             n "Most people would probably have given up by now, but not you."
-            n "That is your strength and yet I can't help but wonder if it might also be your weakness?"
-    else:
+            n "That is your strength and yet I can't help but wonder, is it also be your weakness?"
+    elif rw_total > 0:
         l "However you seem to like a challenge."
         if persistent.lildeaths >= 9:
             n "Perhaps that is why you keep retrying? Just to see if you can somehow win?"
             n "I'm curious if you will, I suppose I would do good to keep an eye on your progress."
-        
+    else:
+        l "I'm glad you enjoyed hearing them, even if you didn't want to guess every answer."
     jump chinese_riddle_railroad
+
 
 label chinese_riddle_railroad:
     if persistent.rockMode == True:
+        if love_meter < 2:
+            jump rockMode_lowLoveDefault
+
         l "You know, I wanted to thank you [persistent.name]. I haven't gone out for so long lately."
         l "This place is absolutely worth it, but I just never had anyone to visit it with."
         l "I'm glad I finally have an excuse to visit it. ...It's strange, in a way it feels very... nostalgic to me?"
@@ -569,12 +1386,12 @@ label chinese_riddle_railroad:
         else:
             n "[persistent.date] is really quiet, [date_sub] [conj('date', 'is', 'are')] just scrolling on [date_pos] phone now, barely paying you any attention."
             n "It does not seem like [date_sub] [conj('date', 'is', 'are')] having a good time at all."
+            l "I'm sorry, I don't really have the energy to talk right now."
+            n "The silence settles back in, and you let [date_obj] have some space."
             jump chinese_phoneScene
 
 label chinese_riddle_talk_abbyMemory:
-    if persistent.tracker == 2:
-        $ persistent.tracker2 = True
-    #The code above this works for an easteregg
+    $ mark_tracker_scene(2)
     l "I think I have a story you'll find quite funny, just stop me if I'm talking too much, alright?"
     l "[persistent.date_sis] was like five years old at the time of our story, it happened one night in the bunk bed bedroom we shared."
     l "One night [sis_sub] shook me awake. [sis_sub!c] told me [sis_sub] heard whispering and laughing coming from underneath our bed and begged me to go investigate it."
@@ -596,11 +1413,11 @@ label chinese_riddle_talk_abbyMemory:
             l "... I just don't want to lose [sis_obj], you know?"
             n "[persistent.date] gives you a saddened look."
             menu:
-                "I understand, I have someone I never want to lose, but it seems like I am always on the verge of losing [date_obj]." if persistent.lildeaths > 0:
+                "I understand, I have someone I don't want to lose, but it seems like I am always on the verge of losing [date_obj]." if persistent.lildeaths > 0:
                     n "[persistent.date] tries [date_pos] best to give you a comforting smile and [date_sub] [conj('date', 'half-succeeds', 'half-succeed')]."
                     l "I see, so then you can relate to how I feel about [persistent.date_sis]. I always try to give [sis_obj] my all so that won't happen."
                     l "If your situation with that person is even slightly similar I'm sure you'll figure something out!"
-                    n "[date_sub!c] [conj('date', 'gives', 'give')] you a big smile, her teeth reflecting off the light of the paper lanterns cozily flickering."
+                    n "[date_sub!c] [conj('date', 'gives', 'give')] you a big smile, the light of the paper lanterns cozily flickering reflecting off [date_pos] teeth."
                     if persistent.lildeaths < 4:
                         n "[persistent.date]'s words fill your heart with hope, maybe there is a way to save [date_obj] afterall."
                     
@@ -611,8 +1428,9 @@ label chinese_riddle_talk_abbyMemory:
                         n "You try to hold back your tears as to not alert [date_obj] to something being wrong. You have seen [date_obj] die so many times.
                         Reliving [date_pos] deaths over and over while only being able to slightly change the way to inevitably reach them again is really messing with you."
                     jump chinese_phoneScene
+                
                 "Have you already lost someone close to you?":
-                #TODO: Give the player the ability to say "Like [persistent.date_ghost]?" if he has learned about him. Then you can tell her that you heard about it when it happened since it is a small town but [persistent.date] will say that her mom, [persistent.date_sis_nickname] and her moved away from her hometown so that you couldn't know.
+                
                     l "...Is it that obvious?"
                     menu:
                         "Well, I just kind of assumed...":
@@ -640,10 +1458,19 @@ label chinese_riddle_talk_abbyMemory:
                                                 "This might sound strange but it almost feels as if I've known you for a while now." if persistent.lildeaths > 6:
                                                     l "Now that you mention it, I did notice that."
                                                     l "Since the last time we spoke you seem to know me a lot better..."
-                                                    if love_meter >= 2:
+                                                    if love_meter >= 4 and persistent.lildeaths > 12:
                                                         l "As weird as it might be, somehow I feel the same. It's hard to explain, but it's a very distant feeling? Almost as if we have met eachother in a dream or something."
                                                         l "Still, as nice as that is it doesn't mean I can just tell you everything, not yet."
                                                         l "Those things take time, and lots of trust [persistent.name], I hope you understand."
+                                                        #TODO: Here have a choice where you can push her or agree, if you push lose a love point, if you agree gain one.
+                                                        jump chinese_phoneScene
+                                                        
+                                                    elif love_meter >= 2 and persistent.lildeaths > 4:
+                                                        l "That should be strange and yet somehow it weirdly makes sense..."
+                                                        l "It's a little like how in dreams even the most incomprehensible things can feel completely normal."
+                                                        l "However, as much as you might somehow have began knowing me better, I still barely know you."
+                                                        l "Not to the point where I'd feel comfortable sharing everything with you."
+                                                        #TODO: Add one of those choices here aswell where you can push her or agree except agreeing doesn't give you a love point, you can only lose one.
                                                         jump chinese_phoneScene
                                                     else:
                                                         l "You have to admit that's rather creepy..."
@@ -654,11 +1481,27 @@ label chinese_riddle_talk_abbyMemory:
                                                             n "The alternative is telling [date_obj] that this date is a loop, and that [date_sub] [conj('date', 'ends', 'end')] up dead in all of them."
                                                         else:
                                                             n "The alternative is telling [date_obj] that this date is a loop, and that [date_sub] [conj('date', 'ends', 'end')] up dead in most of them."
-                                                        n "Something tells me [date_sub] [conj('date', 'would', 'would')] not take that well, not right now anyway."
+                                                        n "Something tells me [date_sub] [conj('date', 'would', 'would')] not take that well, let alone believe it... not right now anyway."
                                                         l "...Look [persistent.name], I'm not sure what is going on, but I don't feel comfortable with this date anymore."
                                                         l "I think I'm just going to leave."
                                                         jump car_death
 
+                "Like [persistent.date_ghost]?":
+                    label ghostComparison:
+                        #TODO:Make sure this is only an option if the player knows about James.
+                        l "..."
+                        l "What do you- How do you even know about that?"
+                        #TODO: If the burger scene happened you could kind of say you infered it based on the dialogue with rose.
+                        menu:
+                            "It's a small town, the word went around...":
+                                l "...We didn't live here at the time. We used to live in the neighboring city."
+                                l "One that is big enough for news like that to be buried underneath the rest."
+                                l "Surely that cannot be how you would have known about it, I can see it on your face."
+                                l "There is something you're not telling me..."
+                                l "Have you been keeping tabs on me, on us?"
+                                l "I- I cannot take this..."
+                                jump car_death
+                    
 label chinese_riddle_talk_abbyHobbies:
     n "[persistent.date] chuckles slightly."
     $ persistent.quest_knowledge = True
@@ -697,7 +1540,6 @@ label chinese_riddle_talk_abbyHobbies:
             l "I totally would understand if you want to talk about something else instead now."
             menu:
                 "I don't mind at all, in fact I think it's interesting. Feel free to talk about the second game!":
-                    #TODO: Maybe make this fit a bit better with the themes of the first game she made and the game in general.
                     l "The second game has a bigger scope for it's location."
                     l "It's about a ravenprince who needs to climb a mountain with its wings bound together."
                     l "On its way the raven constantly meets new characters."
@@ -712,6 +1554,9 @@ label chinese_riddle_talk_abbyHobbies:
                     l "I must have \"completed\" that game atleast ten times, each time always ending the same way no matter whether I picked different choices or not."
                     l "I'm not sure at all what those games actually mean."
                     l "Do you know what they might be about?"
+                    #TODO: If you have met the censor man or the trinity and or are called Raven by the trinity you can mention that this contains references to them and talk about them.
+                    #If her love is high enough she won't outright leave at the mention of this and will entertain it, even if only slightly.
+                    #You can also confront abigail about these similiair themes in her games but after having this conversation you can specificially ask her about her connection to the censor man.
                     label chinese_abby_game_theme:
                         menu:
                             "They seem to share a theme about loops.":
@@ -729,10 +1574,13 @@ label chinese_riddle_talk_abbyHobbies:
                                         l "Who knows? Maybe that's all there is to it."
                                         n "[persistent.date] grows more somber and begins to slightly frown."
                                         l "Although I can't shake the feeling that there is something more going on with [sis_obj], something I'm not noticing."
+                                        $ get_lilith_current_loop_memory("chinese")["lilithSharedSisterInsecurity"] = True
                                         l "There's this voice in my head that keeps telling me I'm not good enough, that I failed [sis_obj] and that I destroy everything I touch."
                                         l "I would love to tell you that I didn't believe that voice in the slightest but that would be a lie."
                                         l "I don't want to lose [sis_obj] [persistent.name], I can't go through all of that again."
                                         l "Tears begin streaming down [date_pos] face as [date_sub] [conj('date', 'stares', 'stare')] at you with a defeated look in [date_pos] eyes."
+                                        #TODO: Maybe add an option where the player can push to know what she means with "again" if the player knows about James have them ask "like with james?"
+                                        #For the "like with james" part, there is another one here where the player can ask this, use the same logic and dialog for this since she leaves anyway if the player asks this.
                                         menu:
                                             "I know that voice is hard to ignore but for whatever it is worth, I really like you [persistent.date].":
                                                 n "[date_sub!c] [conj('date', 'lets', 'let')] out a small, almost apologetic chuckle."
@@ -751,7 +1599,7 @@ label chinese_riddle_talk_abbyHobbies:
                                                         jump chinese_abby_selfdoubt_knowYouWell
                                                     "I do but I think you are the one who needs to believe that for it to work.":
                                                         jump chinese_abby_selfdoubt_IDo
-                                               
+                #TODO: Add a choice where you can tell her to stop talking instead. Add a small additional topic in that case?                               
 label chinese_abby_game_theme_nonsense:
     l "Do you really think so?"
     n "[persistent.date] softly scratches [date_pos] head, a pensive look on [date_pos] face."
@@ -800,9 +1648,9 @@ label chinese_lostSomeone_questions:
 label chinese_phoneScene:
     if persistent.rockMode == False:
         n "[persistent.date] [conj('date', 'gets', 'get')] up from [date_pos] chair and pushes it back under the table."
+        $ chinese_lilith_breakup_pending = love_meter == 1
         if love_meter == 1:
             n "You notice a strange look on [date_obj] face which disappears before you can decipher it."
-            $ chinese_lilithBreakupTrigger = 2
             l "I just need to use the bathroom real quick."
         else:
             l "I'll be right back [persistent.name], I just need to go to the bathroom real quick."
@@ -850,7 +1698,7 @@ label chinese_phone_peek:
                     n "Everyone seems to be too busy enjoying their food to pay you any attention. You are saved by the excellent cuisine."
                     n "Just as you let out a sigh of relief [persistent.date] comes back to your table."
                     l "Hey [persistent.name], I'm back. Did they bring our food? Not yet?"
-                    if chinese_lilithBreakupTrigger == 0:
+                    if not chinese_lilith_breakup_pending:
                         l "That's okay, I'm just really looking forward to it, the food here is to die for."
                         if persistent.chinese_death_1 == True:
                             n "It indeed seems to be that way doesn't it [persistent.name]?"
@@ -880,29 +1728,33 @@ label chinese_phone_peek:
                                     n "You try to ignore your guilt as best as you can to focus on enjoying your remaining time with [date_obj]."
                                     jump chinese_phone_noPeek
                                 else: 
-                                    if major_love_offence == False:
-                                        l "{size=*0.5}That actually might explain your behaviour somewhat...{/size}"
-                                        l "{size=*0.5}Although it's definetly no excuse.{/size}"
-                                        l "Is that why you are acting quite \"tough\" [persistent.name]?"
-                                        l "If I can give you a small piece of advice, I don't really like being treated like that."
-                                        l "You seemed way nicer when we first met. So I know there's someone nice underneath that mask you are wearing, or perhaps that was the mask?"
-                                        l "Let's hope it's not the latter..."
-                                        menu:
-                                            "You're right. Sorry for hurting you by trying to act more tough.":
-                                                l "It's okay [persistent.name]! This doesn't make everything alright but apologizing is a good first step."
-                                                l "You don't have to prove yourself to me. After all, I came here to go on a date with {i}you{/i}, didn't I? Not whatever role you were playing."
-                                                l "I know insecurities can be hard to deal with, sometimes they manifest in ways that harm ourselves and other people." #TODO: if she told you about how she feels insecure about her not being good enough for ehr sister have her refference this.
-                                                l "Just know that if you feel a thought like that pop up again you can always talk to me about it, alright?"
-                                                l "I've been going through something similair a while ago and I find that talking it through really tends to help." #TODO: Do not show this line if she already used the other example as a reference
-                                                l "I won't pretend that's a total fix. In fact, I often still struggle with it. Still, it helps to control my own insecurity a little better."
-                                                menu:
-                                                    "Thank you for being so patient with me. That means a lot.":
-                                                        n "[persistent.date] gives you a cute smile."
-                                                        l "Hey, don't mention it [persistent.name]. I know I wouldn't be the same person if others didn't have patience with me."
-                                                        l "I'm just glad that I was able to get through to you."
-                                                        jump chinese_phone_noPeek
+                                        if get_lilith_current_loop_memory("attitude").get("major_love_offence", 0) == 0:
+                                            l "{size=*0.5}That actually might explain your behaviour somewhat...{/size}"
+                                            l "{size=*0.5}Although it's definetly no excuse.{/size}"
+                                            l "Is that why you are acting quite \"tough\" [persistent.name]?"
+                                            l "If I can give you a small piece of advice, I don't really like being treated like that."
+                                            l "You seemed way nicer when we first met. So I know there's someone nice underneath that mask you are wearing, or perhaps that was the mask?"
+                                            l "Let's hope it's not the latter..."
+                                            menu:
+                                                "You're right. Sorry for hurting you by trying to act more tough.":
+                                                    l "It's okay [persistent.name]! This doesn't make everything alright but apologizing is a good first step."
+                                                    l "You don't have to prove yourself to me. After all, I came here to go on a date with {i}you{/i}, didn't I? Not whatever role you were playing."
+                                                    l "I know insecurities can be hard to deal with, sometimes they manifest in ways that harm ourselves and other people."
+                                                    l "Just know that if you feel a thought like that pop up again you can always talk to me about it, alright?"
+                                                    if not get_lilith_current_loop_memory("chinese").get("lilithSharedSisterInsecurity", False):
+                                                        l "I've been going through something similair a while ago and I find that talking it through really tends to help."
+                                                    else:
+                                                        l "After all, you also listened to my worries about [persistent.sister_name] didn't you? That really meant a lot to me."
+                                                        l "Talking these things through really helps a lot, so I hope it also helps you."
+                                                    l "I won't pretend that's a total fix. In fact, I often still struggle with it. Still, it helps to control my own insecurity a little better."
+                                                    menu:
+                                                        "Thank you for being so patient with me. That means a lot.":
+                                                            n "[persistent.date] gives you a cute smile."
+                                                            l "Hey, don't mention it [persistent.name]. I know I wouldn't be the same person if others didn't have patience with me."
+                                                            l "I'm just glad that I was able to get through to you."
+                                                            jump chinese_phone_noPeek
                                                         
-                                    #TODO: Alternate version where she gets mad at you for treating her really badly and leaves.
+                                        #TODO: Alternate version where she gets mad at you for treating her really badly and leaves.
 
                             "Okay, I'll be honest. I was going through your phone to try learning more about you, but I have a good reason!":
                                 menu: 
@@ -923,7 +1775,7 @@ label chinese_phone_peek:
             "*Try a code anyway.*":
                 jump chinese_phone_peek_code
     label chinese_phone_peek_code:
-        $ phonecode = renpy.input("Enter the password", length=5)
+        $ phonecode = player_input("Enter the password", length=5)
         $ phonecode = phonecode.strip()
         if phonecode == "81155":
             n "The code is correct."
@@ -991,6 +1843,8 @@ label chinese_phone_peek:
                                 n "At this point I'm wondering if this is just a personal attack against me or something."
                             n "That's right, I'm keeping track."
                             n "All of these times, no matter what you did, it always ends the same."
+                            if get_lilith_current_loop_memory("chinese").get("lilithCalledPlayerPersistent", False):
+                                n "[persistent.date] was right on calling you persistent... but you know who else is persistent? Cockroaches."
                             n "So why do you keep coming back?"
                             $ narrator_dialogue_mark_seen("chinese.pass_wrong.streak_callout")
 
@@ -1005,14 +1859,11 @@ label chinese_phone_peek:
                     n "Avoiding the wrong passwords you remember from your previous attempts you manage to somehow luck yourself into typing the correct password after a couple of tries."
                     n "It is 81155."
                     $ persistent.pass_knowledge = True
-                    if chinese_lilithBreakupTrigger > 0:
-                        #TODO: I'm honestly not even very sure anymore what this trigger even is needed for and if there isn't a simpler way to do it.
-                        $ chinese_lilithBreakupTrigger -= 1
-                    if chinese_lilithBreakupTrigger == 0:
-                        jump chinese_phone_caught 
-                    else:
+                    if chinese_lilith_breakup_pending:
                         jump chinese_phone_peek_numbers
-                elif chinese_lilithBreakupTrigger == 0:
+                    else:
+                        jump chinese_phone_caught
+                elif not chinese_lilith_breakup_pending:
                     n "None of the other codes seem to result in anything either. You are not sure how many you tried, you decide to close the phone in case [persistent.date] will come back."
                     jump chinese_phone_caught
                 else:
@@ -1022,8 +1873,12 @@ label chinese_phone_peek:
 label chinese_phone_caught:
     if peeked_phone_temp == True:
         $ persistent.peeked_phone = True
-        if persistent.playerCalledAbigail == False and persistent.playerCalledDavid == False and persistent.playerCalledJames == False and persistent.playerCalledLila == False:
-            n "You think you sucessfully memorised the phone-number, I guess only time will tell." #TODO: This line can also trigger if the player needs to put the phone back because he can't learn anymore numbers. In that case this line really doesn't make any sense.
+        if not chinese_learned_number_temp and persistent.abigail_call_knowledge and persistent.david_call_knowledge and persistent.james_call_knowledge and persistent.lila_call_knowledge:
+            n "You suddenly remember you actually already know all the numbers you could need. Or perhaps you merely wanted to check if there was anything you missed?"
+        elif not chinese_learned_number_temp:
+            n "You decide not to learn any more numbers. I wonder why you even bothered looking at the phone in that case?"
+        elif persistent.playerCalledAbigail == False and persistent.playerCalledDavid == False and persistent.playerCalledJames == False and persistent.playerCalledLila == False:
+            n "You think you sucessfully memorised the phone-number, I guess only time will tell."
             n "Because if you've already gone this far you will only go further, right?"
             
         else:
@@ -1034,29 +1889,65 @@ label chinese_phone_caught:
                 n "You succesfully memorised the number of the next person you are going to involve into this already way too complicated situation."
                 n "Do you really think that that's a good idea?"
     n "No need to answer that, it was rhetorical. What you need to do is close that phone."
-    n "Right as you do so you can see [persistent.date] approaching. You also see a very angry expression on [date_pos] face."
-    n "As [date_sub] [conj('date', 'walks', 'walk')] up to the table [date_sub] [conj('date', 'grabs', 'grab')] [date_pos] phone and jams it in [date_pos] handbag"
-    l "What you just did was inexcusable [persistent.name]! I really didn't expect this from you."
-    l "I'm leaving, goodbye and do not ever contact me again."
-    if persistent.chinese_phone_noretry == True:
-        n "Yet here you are once again, making the same mistake you've already made. All the while [persistent.date] is none the wiser."
-        n "Is that why you came back to do the same thing [date_sub] told you [date_sub] didn't want you to do? Would you have acted differently if [date_sub] could remember every action you took?"
-        n "Don't worry [persistent.name], this is just all a game, right? Your actions here don't mean anything at all, right?"
-        n "..."
+    n "Right as you do so you can see [persistent.date] approaching."
+    if love_meter == 1:
+        n "[date_pos!c] face is pretty unreadable, you're not quite sure what is going through [date_pos] mind."
+    elif love_meter < 4:
+        n "What you can also see is a very angry expression on [date_pos] face."
     else:
-        $ persistent.chinese_phone_noretry = True
+        n "You also see a look of disbelief plastered across [date_pos] face."
+    n "As [date_sub] [conj('date', 'walks', 'walk')] up to the table [date_sub] [conj('date', 'grabs', 'grab')] [date_pos] phone and jams it in [date_pos] handbag"
+    if love_meter == 1:
+        l "I really should have trusted my guts earlier. I can't say I'm suprised you would pull something like this [persistent.name]."
+        l "Although this makes what comes next all the easier."
+        l "I do not want to see you anymore. Never."
+        $ angryLilith
+        
+    elif love_meter < 4:
+        l "What you just did was inexcusable [persistent.name]! I really didn't expect this from you."
+        l "I'm leaving, goodbye and do not ever contact me again."
+        if persistent.chinese_phone_noretry == True:
+            n "Yet here you are once again, making the same mistake you've already made. All the while [persistent.date] is none the wiser."
+            n "Is that why you came back to do the same thing [date_sub] told you [date_sub] didn't want you to do? Would you have acted differently if [date_sub] could remember every action you took?"
+            n "Don't worry [persistent.name], this is just all a game, right? Your actions here don't mean anything at all, right?"
+            n "..."
+        else:
+            $ persistent.chinese_phone_noretry = True
+    else:
+        l "...Why?..."
+        l "I really thought you cared about me. I thought I could trust you."
+        n "The tears begin to well up in [date_pos] eyes."
+        l "Was all of it just an act? Or have I been ignoring the signs all this time?"
+        l "Was I truly that desperate?..."
+        n "[date_sub!c] [conj('date', 'wipes', 'wipe')] away the tears using [date_pos] strap."
+        l "No more."
+   
+    
     jump car_death
 
 label chinese_phone_noPeek:
-    if persistent.peeked_phone == False and persistent.lildeaths >= 2 :
+    if persistent.peeked_phone == False and persistent.lildeaths >= 8 :
         n "It's probably best not to look. Even if it might have info on it that could help [date_obj] survive. "
         n "Still... you are thinking about it aren't you?"
         n "If you weren't before, now you most definitely are."
+    else:
+        if persistent.lildeaths == 0:
+            n "That's for the best, it would be really rude to invade someone's privacy like that."
+            n "Also, I can't imagine it would look very good on you if you were caught..."
+            n "I wonder which one of those two deterents holds you back the most."
+            n "Either way, it seems you have decided to play the role of decent human for a little while longer."
+
+        else:
+            n "You're probably right. Surely there are other ways to save [date_obj] without resorting to this."
+            n "I wonder though, when you either find them lacking or not to your liking, will you come back here?"
+    
     jump restaurant_death_1 #Lilith walks back from the bathroom and will die.
 
 label chinese_phone_peek_numbers:
 
     n "You see a section of[date_pos] phone numbers, labeled with \"family:\". It has four names underneath."
+    #TODO: Here, have a reference to if you did in fact learn a number or involve someone after the restraining order. If you did have it say something like "but that did not stop you last time, did it?"
+    #THen have another reference to it if the player has seen that one "but that has never stopped you before, has it?"
     if persistent.restrainingorderfamily_knowledge == True:
         n "You remember [persistent.date] told you to not involve them."
         n "[date_sub!c] probably wouldn't appreciate this."
@@ -1067,28 +1958,33 @@ label chinese_phone_peek_numbers:
         n "You might just have enough time to learn one phone-number."
 
     $ peeked_phone_temp = True
+    $ chinese_learned_number_temp = False
     menu chinese_learnNumberChoice:
         "Learn [persistent.date_sis]'s phone number." if not persistent.abigail_call_knowledge:
             $ persistent.abigail_call_knowledge = True
+            $ chinese_learned_number_temp = True
             jump chinese_phone_loop
         "Learn [persistent.date_dad]'s phone number." if not persistent.david_call_knowledge:
             $ persistent.david_call_knowledge = True
+            $ chinese_learned_number_temp = True
             jump chinese_phone_loop
         "Learn [persistent.date_ghost]' phone number." if not persistent.james_call_knowledge:
             $ persistent.james_call_knowledge = True
+            $ chinese_learned_number_temp = True
             jump chinese_phone_loop
         "Learn [persistent.date_mom]'s phone number." if not persistent.lila_call_knowledge: 
             $ persistent.lila_call_knowledge = True
+            $ chinese_learned_number_temp = True
             jump chinese_phone_loop
         "Put the phone back." if persistent.abigail_call_knowledge and persistent.david_call_knowledge and persistent.james_call_knowledge and persistent.lila_call_knowledge:
             $ persistent.restrainingorderfamily_violation_counter -= 1
-            if chinese_lilithBreakupTrigger > 0:
+            if chinese_lilith_breakup_pending:
                 jump chinese_phone_peek_putPhoneBack
             else:
                 jump chinese_phone_caught
 
 label chinese_phone_loop:
-    if chinese_lilithBreakupTrigger > 0:
+    if chinese_lilith_breakup_pending:
         if not persistent.abigail_call_knowledge or not persistent.david_call_knowledge or not persistent.james_call_knowledge or persistent.lila_call_knowledge:
             n "You feel as if you have enough time to learn an extra phone number before [date_sub] will come back."
         jump chinese_learnNumberChoice
@@ -1097,7 +1993,7 @@ label chinese_phone_loop:
 
 label chinese_riddle_decline:
     l "No worries at all [persistent.name]!"
-    l "Maybe you'd like giving one instead?"
+    l "Maybe you'd like asking one instead?"
     menu: 
         "Sure, that sounds good.":
             menu:
@@ -1209,5 +2105,9 @@ label chinese_riddle_decline:
                     l "The start of every second is the end of the previous one."
                     l "Our lives are filled with constant endings in a way, so maybe it's the same with the ring?"
 
+        "I can't think of a riddle right now. Could we talk about something else?":
+            l "Of course. I didn't mean to put you on the spot."
+            n "[persistent.date] glances at the menu, searching for another way to keep the conversation going."
+            jump chinese_riddle_railroad
     jump chinese_riddle_railroad
 return

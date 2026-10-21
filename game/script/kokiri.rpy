@@ -236,7 +236,7 @@ label kokiri_explanation_game:
                             $ kokiri_norealname = 1
                             $ kokiri_realname = True
                             l "Oh I see! Let's reintroduce ourselves in that case. Hello, my name is [persistent.date], what is your name?"
-                            $ persistent.name_real = renpy.input("What is your real name?")
+                            $ persistent.name_real = player_input("What is your real name?")
                             $  persistent.name_real = persistent.name_real.strip() or "Max"
                             $ persistent.name_real = persistent.name_real.capitalize()
                             l "Well, it's nice to finally meet you for real [persistent.name_real]!"
@@ -251,7 +251,7 @@ label kokiri_explanation_game:
                             l "All these different roles form a web of half-truths and lies, and in the center of it all you can find our true self."
                             l "Not the self we think we are, not the self others see us as, but the self we inevitably are."
                             l "Speaking about that self, what do you really do for a living? I'd like to get to know you better, the one playing this game."
-                            $ player_job = renpy.input("I (your answer) for a living.")
+                            $ player_job = player_input("I (your answer) for a living.")
                             $ player_job = player_job.strip()
                             $ player_job = player_job.lower()
                             if player_job == "teach":
@@ -1327,8 +1327,7 @@ label kokiri_gamegoal_succesful_IdoNotKnow:
 
 
 label kokiri_scenery:
-    if persistent.tracker == 3:
-        $ persistent.tracker3 = True
+    $ mark_tracker_scene(3)
     if kokiri_alternateplace == False:
         $ persistent.kokiri_watchedScenery = True
         n "From the spot you picked on the hill you have a gorgeous view of the village where most of your dates with [persistent.date] took place."
@@ -2020,6 +2019,13 @@ label kokiri_scenery_allOver:
             n "[date_sub!c] [conj('date', 'grows', 'grow')] quiet in contemplation once more. The two of you gaze up at the stars a little longer in pure silence. They are absolutely marvelous. "
             n "After a while of just enjoying this precious moment you catch a glimpse of a falling star."
             l "Oh, did you see that falling star? Let's make a wish!"
+            l "You first!"
+            n "What should you wish for?"
+            #TODO: Use this to have it be the part where you can wish for the CheDDAr For the true wish you can make the narrator blocks them all with cheeses but if you wish for cheddar you unlock it.
+            #This version of cheddar needs specific cheatcodes to gain access to certain features.
+            menu:
+                "Filler":
+                    "Filler"
             n "[persistent.date] closes [date_pos] eyes, a soft smile appears on [date_pos] face."
             n "A moment later [date_sub] [conj('date', 'looks', 'look')] at you once again and [conj('date', 'places', 'place')] [date_pos] hand on yours."
             l "What did you wish for?"
@@ -2457,7 +2463,7 @@ label kokiri_death_dialogue_stillDying:
                                                                     l "We’re breaking the death loop together, enjoying the view."
                                                                     l "What could be better?"
                                                                     l "...What does that ending you read look like?"
-                                                                    $ renpy.input("...")
+                                                                    $ player_input("...")
                                                                     n "[date_sub!c] [conj('date', 'sighs', 'sigh')] contentedly, shifting slightly on your lap."
                                                                     l "Wow... that sounds beautiful. Almost makes all the suffering worth it."
                                                                     l "Almost."
@@ -2887,7 +2893,7 @@ label kokiri_notTheSameYou:
                 l "You remember [persistent.date] telling you it was Heraclitus who said that."
             menu:
                 "Oh yeah, the one who said that is...":
-                    $ r1 = renpy.input("Place your answer here.")
+                    $ r1 = player_input("Place your answer here.")
                     $ r1 = r1.strip()
                     $ r1 = r1.lower()
                     if r1 == "heraclitus":
@@ -3134,7 +3140,7 @@ label kokiri_thereIsMore:
                             l "Could you do me a favor [persistent.name]?"
                             l "Could you tell me how you would imagine our good ending would look like?"
                             l "I could really use some distraction from what is to come."
-                            $ kokiri_imagined_good_ending = renpy.input("It would look something like this...")
+                            $ kokiri_imagined_good_ending = player_input("It would look something like this...")
                             l "That's beautiful [persistent.name]..."
                             l "I'll try to think of this when..."
                             l "You know, when {b}it{/b} happens."
@@ -3168,7 +3174,7 @@ label kokiri_thereIsMore:
                         l "To be honest I'm quite surprised."
                         l "Deep down I never thought this game would have an ending like that."
                         l "I wonder though, what does the ending you found look like?"
-                        $ renpy.input("It looked like this...")
+                        $ player_input("It looked like this...")
                         l "That sounds wonderful, I'm happy to hear we could share such a moment somewhere inside this game."
                         l "Maybe we didn't share it, but hypothetically we did, and that's more than enough for me."
                         l "I'm glad that it is enough for you aswell, that way we can just enjoy this moment and move on from this cycle of death."
@@ -3306,7 +3312,7 @@ label kokiri_scenery_choice:
                                                 l "You- we've been through a lot haven't we? It's comforting that we get to do this together."
                                                 l "In a way you know me better than a lot of people in my life. Even though it's a shame I don't get to know you like that, I'm glad you're here."
                                                 $ love_points += 1
-                                                $ love_meter_updater()
+                                                $ love_meter_updater(False)
                                                 
 
 
@@ -3673,7 +3679,7 @@ label silentconversationsbackontrack:
                 n "The forest looks quite different for some reason..."
                 
                 n "You can go south, west and east."
-                $ result = renpy.input("Which direction would you like to go?")
+                $ result = player_input("Which direction would you like to go?")
                 $ result = result.lower()
 
                 if "west" in result or "w" == result:
@@ -3687,7 +3693,7 @@ label silentconversationsbackontrack:
     
             elif forest_place == 1:
                 n "You can go further east or go back to the west. (E1)"
-                $ result = renpy.input("Which direction would you like to go?")
+                $ result = player_input("Which direction would you like to go?")
                 $ result = result.lower()
 
                 if "west" in result or "w" == result or "back" in result:
@@ -3699,7 +3705,7 @@ label silentconversationsbackontrack:
   
             elif forest_place == 2:
                 n "You can go north or go back to the west. (E2)"
-                $ result = renpy.input("Which direction would you like to go?")
+                $ result = player_input("Which direction would you like to go?")
                 $ result = result.lower()
 
                 if "west" in result or "w" == result or "back" in result:
@@ -3713,7 +3719,7 @@ label silentconversationsbackontrack:
                 n "You can go further north or back to the south. (N1)"
                 
                 # Convert user input to lowercase for comparison
-                $ result = renpy.input("Which direction would you like to go?")
+                $ result = player_input("Which direction would you like to go?")
                 $ result = result.lower()
 
                 if "north" in result or "n" == result or "further" in result:
@@ -3727,7 +3733,7 @@ label silentconversationsbackontrack:
                 n "This is where the lake was supposed to be, but it's a seemingly botomless pit.<br/>This whole place is wrong."
             
                 pit "The pit demands a sacrifice. Jump."
-                $ result = renpy.input("Which direction would you like to go?")
+                $ result = player_input("Which direction would you like to go?")
                 $ result = result.lower()
                 if "jump" in result:
                     n "As you tumble into the pit you fall for what feels like an eternity."
@@ -3906,7 +3912,7 @@ label silentconversationsbackontrack:
         $ player.remember_result = ""
         n "The trees are very dense in this part of the forest. >You can't go any other way than south, well you can go north I suppose."
         # Capture player input
-        $ player.remember_result = renpy.input("What direction would you like to go?").lower()
+        $ player.remember_result = player_input("What direction would you like to go?").lower()
 
         # Flags and counters
         $ nonorth = False
@@ -3977,7 +3983,7 @@ label silentconversationsbackontrack:
             n "It seems like they are forming a maze that keeps changing, it might not be wise to enter unless you know the layout of the maze."
             n "You can go back to the east or proceed towards the west into the maze."
 
-            $ result = renpy.input("Which direction would you like to go?").lower()
+            $ result = player_input("Which direction would you like to go?").lower()
 
             if "east" in result or "e" == result or "back" in result:
                 jump Forest_nightmare
@@ -3990,7 +3996,7 @@ label silentconversationsbackontrack:
             n "The maze seems to change too fast, you probably need to run to make it in time but you're not sure where to go."
             n "Or you can go back east and leave the maze."
 
-            $ result = renpy.input("What do you do?").lower()
+            $ result = player_input("What do you do?").lower()
 
             if result == "east" or result == "e" or result == "back":
                 jump Forest_nightmare_west1
@@ -4004,7 +4010,7 @@ label silentconversationsbackontrack:
             n "When you are looking at the door a voice begins speaking."
             cbv "Greetings, what is the password?"
 
-            $ cabinpass = renpy.input("Enter the password:")
+            $ cabinpass = player_input("Enter the password:")
 
             "[cabinpass]"
             "Ah yes, I remember..."

@@ -537,7 +537,7 @@ label beach_waterPark:
     n "Each row contains 99 lockers, some bigger than the others."
     n "It seems that every row also has it's own letter, starting from A going up to I."
     n "Which locker should you pick?"
-    $ locker_choice = renpy.input("A-39", length=4)
+    $ locker_choice = player_input("A-39", length=4)
     $ locker_choice = locker_choice.strip()
 
     if len(locker_choice) == 0:
@@ -578,7 +578,7 @@ label beach_waterPark:
         n "This locker seems to already be in use. You can hear some muffled sounds coming from inside. Is that... {b}{i}quacking{/i}{/b}?"
     elif locker_choice == "C-83":
         n "This locker seems to use a 4-digit code."
-        $ locker_code = renpy.input("Enter the 4-digit code:")
+        $ locker_code = player_input("Enter the 4-digit code:")
         $ locker_code = locker_code.strip()
         if locker_code == "1234":
             n "The keypad flashes green and locker C-83 clicks open."

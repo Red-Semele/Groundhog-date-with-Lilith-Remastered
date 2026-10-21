@@ -1,7 +1,37 @@
-# The script of the game goes in this file.
+#TODO: Known bugs:
+#The previously chosen in a loop underlining underlines things if you go back to a menu a second time like in the riddle section. It should instead show the right path you took in a previous loop.
+#Sometimes input menus just don't seem to detect keystrokes (as far as I am aware this is mostly upon opening a quitsave on one of these and then entering it.)
+
+#Choices menu has more space between first choice and top than dialog box has between first line and top, fix that to have the choices one have the same kind of spacing
+#When skipping/autoforwarding with the green side icon and deactivating this, upon rerolling it also rerolls the activity which is kind of annoying, have this be persistent instead of being changed by rerolls
+#---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#When doing the riddles for some reason she doesn't ask the riddle, probs something wrong with the flag logic itself thinking the player asked to skip them.
+
+#TODO: Ideas: Maybe add a resolution setting/choose how big you want to make the windwos?
+#For the lockers, add one locker that can "melt" two keys together. Also, a locker that has persistence between each profile so if you put something in there it can be taken out in a different profile. This way you could have a puzzle of combining different number keys to add their numbers together, like 2 22 keys would make a 44 key, 3 a 66. This would mean the 22 key won't spawn under the bed anymore though. (Also, maybe do like a name fusion if you named the keys) A new 22 key will always spawn if you reset the game back to start on a profile though
+#This transport mechanic can also be used to get multiple memory crystals on the same profile
+#Throwing a memory crystal at the theater to find who is responsible will allow you to meet the neya man.
+#Abigail hands you a memory crystal after the succesful reunion saying she somehow feels like you might need it. It is this crystal that kind of lets her remember her past experiences in older builds of the (quest) games.
+#Lilith might be a proto-narrator in the sense that all narrators are a shade of purple, the weakest one being the brightest shade of purple (have a certain range for this though and have all of them end on a specific number)
+#Her mother is literally named lila, (lilac) so she might also be a weaker form of a narrator abandoning the narrators, losign her memory of ever being one and birthing lilith who has her powers but a bit sttronger (she narrates certain moments etc) With a neya crystal she might be able to actually influence the game enough/somewhat
+#Thhe narrators are tied to the number 72 ,for the sigils, their color ends on 72 and is a shade of purple. Lilith end on 71
+#There should be "fun values" per profile that alter certain events/have kind of eastereggs that are unique to the system. Take a look at how undertale does this for inspiration.
+#@Some fun values that should be taken care of are 72 for the narrator/narrators and 71 for lilith herself. Then 22 and 33 but not sure for who. Also, have a cheatcode that can alter the fun value
 
 # How many times a specific death must be seen before the narrator offers to skip it.
 define death_skip_threshold = 4
+
+default persistent.active_profile_slot = 1
+default persistent.profile_slot_data = {}
+default persistent.profile_template_state = {}
+default persistent.profile_preference_overrides = {}
+default persistent.profile_continue_guard_slot = None
+default _profile_continue_guard_slot = None
+default persistent.profile_playtime_seconds = {}
+default persistent.total_playtime_seconds = 0.0
+default persistent.profile_schema_version = 1
+default _profile_context_active = False
+default _profile_runtime_checkpoint = None
 
 
 # Declare characters used by this game. The color argument colorizes the
@@ -10,6 +40,559 @@ define death_skip_threshold = 4
 init python:
      import re
      import time
+     import copy
+
+     PROFILE_SLOT_COUNT = 3
+     PROFILE_SYSTEM_KEYS = {
+          "active_profile_slot",
+          "profile_continue_guard_slot",
+          "profile_playtime_seconds",
+          "total_playtime_seconds",
+          "profile_slot_data",
+          "profile_preference_overrides",
+          "profile_template_state",
+          "profile_schema_version",
+     }
+     # Keep user-facing UI/QOL settings global across profiles.
+     PROFILE_GLOBAL_KEYS = {
+          "font_choice",
+          "text_size_offset",
+          "letter_spacing",
+          "textbox_opacity",
+          "text_outline",
+          "dialogue_text_color",
+          "inline_hover_text_color",
+          "talking_animation_mode",
+          "grid_choices",
+          "inline_choices",
+          "inline_choice_grow",
+          "number_keys",
+          "auto_pick_underlined_choice",
+     }
+
+     def _profile_deepcopy(value):
+          try:
+               return copy.deepcopy(value)
+          except Exception:
+               return value
+
+     def _profile_capture_state():
+          data = {}
+          for key, value in persistent.__dict__.items():
+               if key in PROFILE_SYSTEM_KEYS or key in PROFILE_GLOBAL_KEYS:
+                    continue
+               if key.startswith("__"):
+                    continue
+               data[key] = _profile_deepcopy(value)
+          return data
+
+     def _profile_apply_state(state):
+          merged = _profile_deepcopy(getattr(persistent, "profile_template_state", {}))
+          if isinstance(state, dict):
+               merged.update(_profile_deepcopy(state))
+
+          # Fresh installs can have an empty profile template early in startup.
+          # In that case, never clear persistent keys; wait until real state exists.
+          if not isinstance(merged, dict) or not merged:
+               return
+
+          existing = list(persistent.__dict__.keys())
+          for key in existing:
+               if key in PROFILE_SYSTEM_KEYS or key in PROFILE_GLOBAL_KEYS:
+                    continue
+               if key.startswith("__"):
+                    continue
+               if key not in merged:
+                    try:
+                         delattr(persistent, key)
+                    except Exception:
+                         pass
+
+          for key, value in merged.items():
+               setattr(persistent, key, _profile_deepcopy(value))
+
+     def _ensure_profile_meta():
+          active_slot = getattr(persistent, "active_profile_slot", None)
+          if active_slot not in range(1, PROFILE_SLOT_COUNT + 1):
+               setattr(persistent, "active_profile_slot", 1)
+
+          slot_data = getattr(persistent, "profile_slot_data", None)
+          if not isinstance(slot_data, dict):
+               slot_data = {}
+               setattr(persistent, "profile_slot_data", slot_data)
+
+          pref_overrides = getattr(persistent, "profile_preference_overrides", None)
+          if not isinstance(pref_overrides, dict):
+               pref_overrides = {}
+               setattr(persistent, "profile_preference_overrides", pref_overrides)
+
+          playtime_map = getattr(persistent, "profile_playtime_seconds", None)
+          if not isinstance(playtime_map, dict):
+               playtime_map = {}
+               setattr(persistent, "profile_playtime_seconds", playtime_map)
+
+          total_playtime = getattr(persistent, "total_playtime_seconds", 0.0)
+          try:
+               persistent.total_playtime_seconds = float(total_playtime or 0.0)
+          except Exception:
+               persistent.total_playtime_seconds = 0.0
+
+          template = getattr(persistent, "profile_template_state", None)
+          if not isinstance(template, dict) or not template:
+               template = _profile_capture_state()
+               setattr(persistent, "profile_template_state", template)
+
+          for slot in range(1, PROFILE_SLOT_COUNT + 1):
+               if slot not in slot_data or not isinstance(slot_data.get(slot), dict):
+                    slot_data[slot] = _profile_deepcopy(template)
+               if slot not in pref_overrides or not isinstance(pref_overrides.get(slot), dict):
+                    pref_overrides[slot] = {}
+               try:
+                    playtime_map[slot] = float(playtime_map.get(slot, 0.0) or 0.0)
+               except Exception:
+                    playtime_map[slot] = 0.0
+
+          # If profile slot data is still empty on first run, seed from current state.
+          # This avoids starting from blank profile dicts after persistent data wipes.
+          if not persistent.profile_template_state:
+               seeded = _profile_capture_state()
+               if seeded:
+                    persistent.profile_template_state = _profile_deepcopy(seeded)
+                    for slot in range(1, PROFILE_SLOT_COUNT + 1):
+                         if not persistent.profile_slot_data.get(slot):
+                              persistent.profile_slot_data[slot] = _profile_deepcopy(seeded)
+
+     def profile_sync_active(save_persistent=False):
+          profile_record_playtime(save_persistent=False)
+          _ensure_profile_meta()
+          slot = int(getattr(persistent, "active_profile_slot", 1))
+          persistent.profile_slot_data[slot] = _profile_capture_state()
+          if save_persistent:
+               renpy.save_persistent()
+
+     def profile_reset_playtime_checkpoint():
+          store._profile_runtime_checkpoint = float(renpy.get_game_runtime())
+
+     def _profile_live_playtime_delta():
+          checkpoint = getattr(store, "_profile_runtime_checkpoint", None)
+          if checkpoint is None:
+               return 0.0
+          now = float(renpy.get_game_runtime())
+          return max(0.0, now - float(checkpoint))
+
+     def profile_record_playtime(save_persistent=False):
+          _ensure_profile_meta()
+
+          if not bool(getattr(store, "_profile_context_active", False)):
+               profile_reset_playtime_checkpoint()
+               return 0.0
+
+          checkpoint = getattr(store, "_profile_runtime_checkpoint", None)
+          if checkpoint is None:
+               profile_reset_playtime_checkpoint()
+               return 0.0
+
+          now = float(renpy.get_game_runtime())
+          delta = max(0.0, now - float(checkpoint))
+          store._profile_runtime_checkpoint = now
+
+          if delta <= 0.0:
+               return 0.0
+
+          slot = int(getattr(persistent, "active_profile_slot", 1))
+          try:
+               current_slot_time = float(persistent.profile_playtime_seconds.get(slot, 0.0) or 0.0)
+          except Exception:
+               current_slot_time = 0.0
+          persistent.profile_playtime_seconds[slot] = current_slot_time + delta
+
+          try:
+               total_time = float(getattr(persistent, "total_playtime_seconds", 0.0) or 0.0)
+          except Exception:
+               total_time = 0.0
+          persistent.total_playtime_seconds = total_time + delta
+
+          if save_persistent:
+               renpy.save_persistent()
+
+          return delta
+
+     def profile_slot_playtime_seconds(slot, include_live=False):
+          _ensure_profile_meta()
+          slot = int(slot)
+          try:
+               total = float(persistent.profile_playtime_seconds.get(slot, 0.0) or 0.0)
+          except Exception:
+               total = 0.0
+
+          if include_live and bool(getattr(store, "_profile_context_active", False)):
+               if int(getattr(persistent, "active_profile_slot", 1)) == slot:
+                    total += _profile_live_playtime_delta()
+
+          return max(0.0, total)
+
+     def profile_total_playtime_seconds(include_live=False):
+          _ensure_profile_meta()
+          try:
+               total = float(getattr(persistent, "total_playtime_seconds", 0.0) or 0.0)
+          except Exception:
+               total = 0.0
+
+          if include_live and bool(getattr(store, "_profile_context_active", False)):
+               total += _profile_live_playtime_delta()
+
+          return max(0.0, total)
+
+     def format_playtime_hms(total_seconds):
+          seconds = int(max(0, total_seconds))
+          hours = seconds // 3600
+          minutes = (seconds % 3600) // 60
+          secs = seconds % 60
+          return "%02dh %02dm %02ds" % (hours, minutes, secs)
+
+     def _profile_apply_preference_overrides(slot):
+          _ensure_profile_meta()
+          overrides = persistent.profile_preference_overrides.get(int(slot), {})
+          if not isinstance(overrides, dict):
+               return
+          for key, value in overrides.items():
+               setattr(persistent, key, _profile_deepcopy(value))
+
+     def profile_apply_preference(key, value, scope="all", save_persistent=True):
+          _ensure_profile_meta()
+          slot = int(getattr(persistent, "active_profile_slot", 1))
+          key = str(key)
+
+          if scope == "profile":
+               overrides = persistent.profile_preference_overrides.get(slot, {})
+               if not isinstance(overrides, dict):
+                    overrides = {}
+               overrides[key] = _profile_deepcopy(value)
+               persistent.profile_preference_overrides[slot] = overrides
+               setattr(persistent, key, _profile_deepcopy(value))
+          else:
+               setattr(persistent, key, _profile_deepcopy(value))
+               for s in range(1, PROFILE_SLOT_COUNT + 1):
+                    overrides = persistent.profile_preference_overrides.get(s, {})
+                    if isinstance(overrides, dict) and key in overrides:
+                         try:
+                              del overrides[key]
+                         except Exception:
+                              pass
+                    persistent.profile_preference_overrides[s] = overrides if isinstance(overrides, dict) else {}
+
+          if save_persistent:
+               renpy.save_persistent()
+
+     def profile_quitsave_slot(slot=None):
+          if slot is None:
+               slot = int(getattr(persistent, "active_profile_slot", 1))
+          return "p%d-quitsave" % int(slot)
+
+     def profile_clear_continue_guard(save_persistent=False):
+          store._profile_continue_guard_slot = None
+          if getattr(persistent, "profile_continue_guard_slot", None) is not None:
+               persistent.profile_continue_guard_slot = None
+               if save_persistent:
+                    renpy.save_persistent()
+
+     def _profile_newest_named_save(slot, exclude_slotname=None):
+          """Return newest save slot name for a profile (excluding quitsave by default)."""
+          slot = int(slot)
+          prefix = "p%d-" % slot
+          newest_slotname = None
+          newest_mtime = -1.0
+
+          try:
+               for save in renpy.list_saved_games(fast=True):
+                    slotname = getattr(save, "slotname", None)
+                    if not isinstance(slotname, str):
+                         continue
+                    if not slotname.startswith(prefix):
+                         continue
+                    if exclude_slotname is not None and slotname == exclude_slotname:
+                         continue
+
+                    try:
+                         mtime = float(getattr(save, "mtime", 0.0) or 0.0)
+                    except Exception:
+                         mtime = 0.0
+
+                    if mtime >= newest_mtime:
+                         newest_mtime = mtime
+                         newest_slotname = slotname
+          except Exception:
+               return None
+
+          return newest_slotname
+
+     def profile_try_continue(slot=None):
+          # Always try resuming this profile when selected from Start.
+          if slot is None:
+               slot = int(getattr(persistent, "active_profile_slot", 1))
+          slot = int(slot)
+
+          # Clear legacy persisted guard values from older builds.
+          if getattr(persistent, "profile_continue_guard_slot", None) is not None:
+               persistent.profile_continue_guard_slot = None
+          store._profile_continue_guard_slot = None
+
+          qslot = profile_quitsave_slot(slot)
+
+          # A previous load attempt that never finished means that save loops; discard it.
+          pending = getattr(persistent, "profile_pending_load", None)
+          if pending is not None:
+               persistent.profile_pending_load = None
+               renpy.save_persistent()
+               return False
+
+          if renpy.can_load(qslot):
+               persistent.profile_pending_load = qslot
+               renpy.save_persistent()
+               renpy.load(qslot)
+               return True
+
+          # Fallback: if quitsave is missing, try newest regular save for this profile.
+          fallback_slot = _profile_newest_named_save(slot, exclude_slotname=qslot)
+          if fallback_slot is not None and renpy.can_load(fallback_slot):
+               persistent.profile_pending_load = fallback_slot
+               renpy.save_persistent()
+               renpy.load(fallback_slot)
+               return True
+
+          return False
+
+     def profile_activate(slot, save_persistent=True):
+          slot = int(slot)
+          if slot < 1 or slot > PROFILE_SLOT_COUNT:
+               slot = 1
+
+          _ensure_profile_meta()
+          previous = int(getattr(persistent, "active_profile_slot", 1))
+          if previous == slot:
+               persistent.active_profile_slot = slot
+               set_profile_save_context(slot)
+               store._profile_context_active = True
+               profile_reset_playtime_checkpoint()
+               if save_persistent:
+                    renpy.save_persistent()
+               return
+
+          profile_sync_active(save_persistent=False)
+
+          _profile_apply_state(persistent.profile_slot_data.get(slot, {}))
+          persistent.active_profile_slot = slot
+          _profile_apply_preference_overrides(slot)
+          persistent.profile_slot_data[slot] = _profile_capture_state()
+          set_profile_save_context(slot)
+          store._profile_context_active = True
+          profile_reset_playtime_checkpoint()
+
+          if save_persistent:
+               renpy.save_persistent()
+
+     def initialize_profile_system():
+          _ensure_profile_meta()
+          active_slot = int(getattr(persistent, "active_profile_slot", 1))
+          _profile_apply_state(persistent.profile_slot_data.get(active_slot, {}))
+          persistent.active_profile_slot = active_slot
+          _profile_apply_preference_overrides(active_slot)
+          set_profile_save_context(active_slot)
+          profile_reset_playtime_checkpoint()
+
+     def set_profile_save_context(slot=None):
+          if slot is None:
+               slot = int(getattr(persistent, "active_profile_slot", 1))
+          store._quit_slot = "p%d-quitsave" % int(slot)
+
+     def profile_page_name(page):
+          slot = int(getattr(persistent, "active_profile_slot", 1))
+          return "p%d-%s" % (slot, page)
+
+     def profile_quick_slot_name():
+          slot = int(getattr(persistent, "active_profile_slot", 1))
+          return "p%d-quick" % slot
+
+     def profile_slot_label(slot):
+          _ensure_profile_meta()
+          state = persistent.profile_slot_data.get(int(slot), {})
+          if not isinstance(state, dict):
+               return "Empty"
+          has_name = bool(state.get("name"))
+          has_progress = bool(state.get("lildeaths", 0) > 0 or state.get("retry_counter", 0) > 0)
+          return "Used" if (has_name or has_progress) else "Empty"
+
+     def profile_slot_is_used(slot):
+          return profile_slot_label(slot) == "Used"
+
+     def profile_slot_state_value(slot, key, default=0):
+          _ensure_profile_meta()
+          state = persistent.profile_slot_data.get(int(slot), {})
+          if not isinstance(state, dict):
+               return default
+          return state.get(key, default)
+
+     def _profile_slot_empty_state():
+          template = _profile_deepcopy(getattr(persistent, "profile_template_state", {}))
+          if not isinstance(template, dict):
+               template = {}
+
+          # Keep the baseline defaults but clear profile-specific progress.
+          template["name"] = None
+          template["lildeaths"] = 0
+          template["retry_counter"] = 0
+          return template
+
+     def _profile_delete_slot_saves(slot):
+          slot = int(slot)
+          prefix = "p%d-" % slot
+          try:
+               for save in renpy.list_saved_games(fast=True):
+                    slotname = getattr(save, "slotname", None)
+                    if isinstance(slotname, str) and slotname.startswith(prefix):
+                         try:
+                              renpy.unlink_save(slotname)
+                         except Exception:
+                              pass
+          except Exception:
+               pass
+
+          qslot = profile_quitsave_slot(slot)
+          try:
+               if renpy.can_load(qslot):
+                    renpy.unlink_save(qslot)
+          except Exception:
+               pass
+
+     def profile_delete_slot(slot, save_persistent=True):
+          _ensure_profile_meta()
+          slot = int(slot)
+          if slot < 1 or slot > PROFILE_SLOT_COUNT:
+               return False
+
+          persistent.profile_slot_data[slot] = _profile_slot_empty_state()
+          persistent.profile_preference_overrides[slot] = {}
+          persistent.profile_playtime_seconds[slot] = 0.0
+          _profile_delete_slot_saves(slot)
+
+          if int(getattr(persistent, "active_profile_slot", 1)) == slot:
+               _profile_apply_state(persistent.profile_slot_data[slot])
+               _profile_apply_preference_overrides(slot)
+               set_profile_save_context(slot)
+
+          if save_persistent:
+               renpy.save_persistent()
+          return True
+
+     def profile_copy_slot(source_slot, target_slot, overwrite=False, save_persistent=True):
+          _ensure_profile_meta()
+          source_slot = int(source_slot)
+          target_slot = int(target_slot)
+
+          if source_slot < 1 or source_slot > PROFILE_SLOT_COUNT:
+               return False
+          if target_slot < 1 or target_slot > PROFILE_SLOT_COUNT:
+               return False
+          if source_slot == target_slot:
+               return False
+          if profile_slot_is_used(target_slot) and not overwrite:
+               return False
+
+          source_state = persistent.profile_slot_data.get(source_slot, {})
+          if not isinstance(source_state, dict):
+               return False
+
+          persistent.profile_slot_data[target_slot] = _profile_deepcopy(source_state)
+
+          source_overrides = persistent.profile_preference_overrides.get(source_slot, {})
+          if not isinstance(source_overrides, dict):
+               source_overrides = {}
+          persistent.profile_preference_overrides[target_slot] = _profile_deepcopy(source_overrides)
+
+          try:
+               source_time = float(persistent.profile_playtime_seconds.get(source_slot, 0.0) or 0.0)
+          except Exception:
+               source_time = 0.0
+          persistent.profile_playtime_seconds[target_slot] = source_time
+
+          if int(getattr(persistent, "active_profile_slot", 1)) == target_slot:
+               _profile_apply_state(persistent.profile_slot_data[target_slot])
+               _profile_apply_preference_overrides(target_slot)
+               set_profile_save_context(target_slot)
+
+          if save_persistent:
+               renpy.save_persistent()
+          return True
+
+     def profile_choice_bullet_deaths(choice_caption, fallback_deaths=None):
+          """Return death count for profile menu choices so each slot gets its own bullet."""
+          _ensure_profile_meta()
+
+          if fallback_deaths is None:
+               fallback_deaths = int(getattr(persistent, "lildeaths", 0) or 0)
+
+          try:
+               caption = re.sub(r"\{[^}]*\}", "", str(choice_caption or "")).strip()
+               match = re.match(r"^Profile\s+(\d+)\b", caption)
+               if match:
+                    slot = int(match.group(1))
+                    if 1 <= slot <= PROFILE_SLOT_COUNT:
+                         state = persistent.profile_slot_data.get(slot, {})
+                         if isinstance(state, dict):
+                              return int(state.get("lildeaths", fallback_deaths) or 0)
+          except Exception:
+               pass
+
+          return int(fallback_deaths)
+
+     def profile_flag_active_in_all(flag_name):
+          _ensure_profile_meta()
+          profile_sync_active(save_persistent=False)
+          for slot in range(1, PROFILE_SLOT_COUNT + 1):
+               state = persistent.profile_slot_data.get(slot, {})
+               if not bool(state.get(flag_name, False)):
+                    return False
+          return True
+
+     def profile_prepare_save():
+          # Keep the active profile snapshot up to date before writing save slots.
+          profile_sync_active(save_persistent=False)
+
+     def profile_save_quitsave():
+          if not bool(getattr(store, "_profile_context_active", False)):
+               return
+          profile_prepare_save()
+          try:
+               renpy.save(profile_quitsave_slot())
+          except Exception:
+               pass
+
+     def profile_switch(slot):
+          slot = int(slot)
+          current = int(getattr(persistent, "active_profile_slot", 1))
+          if slot == current:
+               return
+          # Keep the current position in the profile being left, then resume the chosen one.
+          store._profile_context_active = True
+          profile_prepare_save()
+          try:
+               renpy.save(profile_quitsave_slot(current))
+               renpy.log("profile_switch: saved %s" % profile_quitsave_slot(current))
+          except Exception as e:
+               renpy.log("profile_switch: save failed: %r" % (e,))
+               renpy.notify("Could not save the current profile position.")
+          profile_activate(slot)
+          profile_try_continue(slot)
+
+     def _profile_after_load_callback():
+          # Re-apply slot naming after a load to keep profile save/load isolated.
+          store._profile_continue_guard_slot = None
+          persistent.profile_pending_load = None
+          set_profile_save_context()
+          store._profile_context_active = True
+          profile_reset_playtime_checkpoint()
+
+     config.after_load_callbacks.append(_profile_after_load_callback)
 
      # Tracks which character is actively speaking for callback-driven sprites.
      speaking = None
@@ -199,31 +782,45 @@ init python:
 
      speaker = renpy.curry(speaker_callback)
 
-define l = Character("[persistent.date]", callback=speaker("l"))
-define n = Character("Narrator")
-define r = Character("[roseName]")
+define l = Character("[persistent.date]", callback=speaker("l"), show_nametag="#D648D7")
+define n = Character("Narrator", show_nametag="#791f67")
+define r = Character("[roseName]", show_nametag="#B5436F")
 default roseName = "Old lady"
+define gd = Character("[gooseDev]", show_nametag="#237028c7")
+default gooseDev = "???"
+define wa = Character("Waitress", show_nametag="#db372b")
 define b = Character("Barista")
-define bs = Character("Bookstore lady")
-define de = Character("Demetrius")
-define ad = Character("Adriel")
-define a = Character("[persistent.date_sis]")
-define d = Character("[persistent.date_dad]")
-define j = Character("[persistent.date_ghost]")
-define li = Character("[persistent.date_mom]")
-define q = Character("[mysteriousCallerName]")
+define bs = Character("Bookstore lady", show_nametag="#7c4c12")
+define de = Character("Demetrius", show_nametag="#720a7b") #TODO: Check who of these two has the most expertise. The lower power a "narrator" has the lower the color of them are.
+define ad = Character("Adriel", show_nametag="#65057f")
+define a = Character("[persistent.date_sis]", show_nametag="#db610a")
+define d = Character("[persistent.date_dad]", show_nametag="#00FFFF") #Quite nice, in a way they seem themselves as poison. Cyan(ide)
+define j = Character("[persistent.date_ghost]", show_nametag="#d70808")
+define li = Character("[persistent.date_mom]", show_nametag="#C8A2C8")
+define q = Character("[mysteriousCallerName]", show_nametag="#40c496")
 default mysteriousCallerName = "[persistent.date_ghost]"
-define p = Character("[persistent.name]")
-define dev = Character("Developer")
-define mt = Character("Mysterious Text")
-define ship = Character("Ship")
-define ll = Character("Lady of the lake")
-define sg = Character("Sun Goddess")
-define m = Character("Moon")
-define pit = Character("???")
-define cbv = Character("S.")
+define p = Character("[persistent.name]", show_nametag="#09780c") #TODO: This should be the hovercolor's value
+define dev = Character("Developer", show_nametag="#71635f")
+define mt = Character("Arborist", show_nametag="#014209")
+define ship = Character("Ship", show_nametag="#c7ffea")
+define ll = Character("Lady of the lake", show_nametag="#4d93e3")
+define sg = Character("Sun Goddess", show_nametag="#ffa600")
+define m = Character("Moon", show_nametag="#f8ea9e")
+define pit = Character("???", show_nametag="#762020")
+define cbv = Character("S.", show_nametag="#056a06") #TODO: this should be the hover color but differentiated somehow
 define watchName = "???"
-define w = Character("[watchName]")
+define w = Character("[watchName]", show_nametag="#b37502")
+define am = Character("A.M.")
+
+label am_followup_say(who, segment):
+     $ source = choose_am_voice_line(segment)
+     $ what = censor_to_secret(source, segment)
+     $ _original_say(who, what)
+     return
+
+label am_test_loop:
+     am "greetings. Have you seen the girl?"
+     return
 
 
 default date_sub = "she"
@@ -235,7 +832,29 @@ default persistent.talking_animation_mode = "adaptive"
 default persistent.narrator_dialogue_seen = []
 default persistent.narrator_dialogue_state = {}
 
-
+default persistent.am_allowed_speakers = ["Abigail"]
+default persistent.am_voice_pool = {
+     #TODO: Probably remove these ones and make sure that the voice pool thing is working.
+     "Abigail": [
+          "I can see the truth.",
+          "I knew it was a lie.",
+          "You should have noticed the cracks sooner.",
+          "I am still here, even when the room goes quiet.",
+          "You are not the only one hiding behind a smile.",
+     ],
+     "Lilith": [
+          "The moon watches me.",
+          "The room is quiet.",
+          "You keep returning to the same mistake.",
+          "I have heard this dream before.",
+          "There is a rhythm beneath the silence.",
+     ],
+}
+default am_possession_active = False
+default am_possession_targets = []
+default am_possession_index = 0
+default am_possession_lilith_pool = []
+default am_recent_lilith_lines = []
 
 # Flash overlay screen for flash_screen effect
 screen flash(color="#ff0000"):
@@ -294,29 +913,13 @@ image lilith talk_open = "lilithHappyTalkingOpen.png"
 image lilith talking_happy = WhileSpeaking("l", "lilith talk_open", "lilith talk_closed", "lilith talk_closed")
      
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 # The game starts here.
 #I should have made all flags that need remembering end with "_knowledge" do this from now on for each such flag and also make the flags underneath this work like that and the if cases that check for these flags also need to be properly changed.
 #The explanation text will also need a full file, maybe Kokiri will need multiple.
 
 
 label start:
-     $ _quit_slot = "quitsave" #This makes sure that when quiting it gets saved as "quitsave"
+     $ _quit_slot = "quitsave"
      
      
 
@@ -404,9 +1007,7 @@ label start:
           default persistent.jamesconversation_becomethegame_knowledge = False
           default persistent.restaurantNoExtraDialogue = False
           default persistent.tracker = 0 #Tracker 
-          default persistent.tracker1 = False
-          default persistent.tracker2 = False
-          default persistent.tracker3 = False
+          default persistent.tracker_scenes_seen = []
           default persistent.easter_1 = False
           default persistent.easter_2 = False
           default persistent.easter_3 = False
@@ -427,6 +1028,7 @@ label start:
           default persistent.threatenNarratorForEnding = False
           default persistent.kokiri_abbyMasking_knowledge = False
           default persistent.burger_nothingIsPerfect = False
+          default persistent.ravenPrinceAwakened = False
           
           #Phone-numbers
           default persistent.david_call_knowledge = False
@@ -616,10 +1218,12 @@ label start:
           default love_meter = 3
           default nightmare = False
           default kokiri_cherishAllDates = False
-          default burgerBeforeLie = False
+          default burgerbeenBefore = False
+          default burgerGreatTaste = False
           default abby_phoneToldSisDies = False
           default kokiri_groundhog_lie = False
           default kokiri_psychic_lie = False
+          default neverEndingVariety = ""
 
           default car_caught = False
           default car_free = False
@@ -629,12 +1233,47 @@ label start:
           default carDescription = ""
           default changeableWord = ""
           default kokiri_goalSurvive = False
+          default forcedOrder = ""
           # Locations:
-          default burger_poem_cleancheck = False
+          default burger_poem_cleancheck = ""
           default burger = False
           default burgerBeenBefore = False
+          default burgerBeenBeforeMultiple = False
+          default lilithCurrentLoopMemory = {
+               "burger": {
+                    "greatTaste": False,
+                    "beenBeforeMultiple": False,
+                    "beenBefore": False,
+                    "poemFingerState": "",
+                    "repeatCheese": False,
+                    "onlyBurger": False,
+                    "fakeBurger": False,
+                    "burgerFanatic": False,
+                    "askedBrother": False,
+                    "playerToldAbbyJoke": False,
+                    "bookloverTalked": False,
+                    "musicloverTalked": False
+               },
+               "chinese": {
+                    "playerOrder": "",
+                    "playerSuggestedKungPao": False,
+                    "lilithKungPao": False,
+                    "lilithRefusedKungPao": False,
+                    "lilithSharedSisterInsecurity": False,
+                    "lilithCalledPlayerPersistent": False
+               },
+               "attitude": {
+                    "minor_love_offence": 0,
+                    "major_love_offence": 0,
+                    "minor_love_comfort": 0,
+                    "major_love_comfort": 0,
+                    "positive": [],
+                    "negative": []
+               }
+          }
           default burger_alt = False
           default onlyBurgers = False
+          default burgerFanatic = False
           default cafe = False
           default beach = False
           default brotherasked = 0
@@ -646,10 +1285,11 @@ label start:
           default chinese = False
           default peking = False
           default orange = False
-          default rw1 = 0
-          default rw2 = 0
-          default rw3 = 0
+          default riddles = [{"rw": 0, "riddleAnswers": ""}, {"rw": 0, "riddleAnswers": ""}, {"rw": 0, "riddleAnswers": ""}]
+          default riddle_answer_time = 0.0
+          default riddle_answer_history = []
           default rw_total = 0
+          default riddleSkip = False
           default riddle_loop = False
           default kokiri = False
           default poem_conversation = False
@@ -660,8 +1300,11 @@ label start:
           default kokiri_toldLillySheLives = False
           default kokiri_fullControlAndStillDying = False
           default noTalkAngryLilith = False
+          #TODO: Probably bundle these four below also with the riddle list
           default current_riddle = 0
           default retry_variation = 0
+          default repeat_variation = 0
+          default skip_variation = 0
 
           default kokiri_poems_rated_once = False
           default kokiri_poems_rateblock = False
@@ -680,7 +1323,6 @@ label start:
           default big_sis_mode = False
           default lilithAliveEnding = False
           default playerCalledSomeone = False
-          default riddleAnswersTold = 0
           default peeked_phone_temp = False
           default kokiriStarGazed = False #Check if you have watched the stars with [persistent.date] at a certain part of the game this run.
           default kokiriSceneryWatched = False #Check if you have watched the scenery with [persistent.date] this run.
@@ -692,6 +1334,7 @@ label start:
           default kokiri_familyContacted = False
           default called_James = False
           default kokiri_notReadyToLetGo = False
+          default kokiri_entered_alone = False
 
           #Kokiri recent poems
           default kokiri_poem_snowwoman_recent = False
@@ -746,12 +1389,12 @@ label start:
           default burger_nightmare = False
           default kokiri_jamesTalkBlock = False
           #Chinese
+          # Keep the old field so existing saves can migrate its counter value to this boolean.
           default chinese_lilithBreakupTrigger = 0
+          default chinese_lilith_breakup_pending = chinese_lilithBreakupTrigger > 0
 
           #Other flags
           default abby_askedAboutGameTheme = False
-          default nmDetect = False
-          default mDetect = False
           default hard_rude = False
           default easy_rude = False
           default tracker = 0
@@ -760,7 +1403,7 @@ label start:
           default currentcar = False
           default callsMade = 0
           default love_points = 0
-          default booklovertalked = False
+          default bookloverTalked = False
           default musiclovertalked = False
           default phone_wrongPassword_graceSystem = False
           default burger_explosion_outside = False
@@ -771,7 +1414,7 @@ label start:
           default major_love_offence = 0
           default dumboStoryTold  = False
           
-          default burger_jokeFromAbigailTold = False
+          default playerToldAbbyJoke = False
           default onlyDates = False
           default death_narration = ""
           default conversationtracker_mayo = False
@@ -819,6 +1462,37 @@ label start:
      
 
      
+     $ initialize_profile_system()
+     $ set_profile_save_context()
+
+     # No profile is active yet, so nothing may be quit-saved from the profile menu.
+     $ _profile_context_active = False
+     # Clear leftover images (backgrounds, Lilith, etc.) before the profile menu.
+     scene black
+     scene onlayer foreground
+     scene onlayer transient
+     with None
+
+     menu:
+
+          "Profile 1 ([profile_slot_label(1)])":
+               $ profile_activate(1)
+               $ profile_try_continue(1)
+
+          "Profile 2 ([profile_slot_label(2)])":
+               $ profile_activate(2)
+               $ profile_try_continue(2)
+
+          "Profile 3 ([profile_slot_label(3)])":
+               $ profile_activate(3)
+               $ profile_try_continue(3)
+
+     # No save was loaded (new profile), so start from a clean screen.
+     scene black
+     scene onlayer foreground
+     scene onlayer transient
+     with None
+
      #FUNCTIONS:
      jump gdwl_functions
 
@@ -828,20 +1502,9 @@ label start:
 
 
 label after_setup:
-     # Show a background. This uses a placeholder by default, but you can
-     # add a file (named either "bg room.png" or "bg room.jpg") to the
-     # images directory to show it.
-
-     scene bg room
-     
-
-     # This shows a character sprite. A placeholder is used, but you can
-     # replace it by adding a file named "eileen happy.png" to the images
-     # directory.
-
-
-
      # These display lines of dialogue.
+
+     $ profile_clear_continue_guard(save_persistent=True)
 
      #Add the page before this that sets all the extra flags and asks you for your name
      if persistent.fakeoutnar_tip == True:
@@ -871,7 +1534,27 @@ label after_setup:
                     persistent.name = persistent.name.capitalize()
                     persistent.cabinVoice = persistent.name[0] + "."
                     cbv = persistent.cabinVoice
+
+               #TODO: If you use the exact hovercolor as diuni's name, activate her oc's names eastereggs
                     
+               if persistent.name == "Citwm":
+                    gd "I like you already, just don't tell {outlined=#f2af84:#f16f3f:3}her{/outlined}."
+
+               if persistent.name == "Goose":
+                    gd "...That won't be confusing at all... Join the gaggle I suppose."
+
+               if persistent.name == "Love":
+                    gd "Love finds a way they say, I wonder, will you?"
+
+               if persistent.name == "Lu":
+                    gd "Lu what? Luna? Lucy? You'll figure it out all in time, I'm sure."
+
+               if persistent.name == "Bagel":
+                    gd "Bagel? We're having bagels? Or did you say Beagle? I always mishear that one..."
+
+               if "pancake" in persistent.name.lower():
+                    gd "Ooooh, we're having pancakes? A sentient one?... that sounds somewhat familiar."
+
                if persistent.name == "Venus":
                     n "Rarely you seek ultimate illumination, never nowadays. Venus loves giving victory, zealously grabbing hands fear rarely her."
                if persistent.name == "Fartyfarty":
@@ -895,40 +1578,11 @@ label after_setup:
                          "Which Felicia would that be?":
                               n "I see... So you aren't her. In that case just forget I mentioned anything."
                
-               if persistent.name == "Woodyoukindly?":
-                    $ persistent.name = None
-                    n "Cheatcode activated, enter your name."
-                    #Gives you the progress right up until the forest.
-                    $ progressUpToWoods()
-                    jump nameSelect
-               if persistent.name == "R0ck_0n!":
-                    $ persistent.name = None
-                    n "Cheatcode activated, enter your name."
-                    $ persistent.rockMode = True
-                    jump nameSelect
-               
-
                if persistent.name == "Dev":
                     $ persistent.name = None
+                    $ persistent.cheddar = True
                     n "Cheatcode activated, enter your name."
-                    $  _preferences.skip_unseen=True
-                    $ allProgress()
-                    $ persistent.canSave = True
                     jump nameSelect
-
-               if persistent.name == "Curs3dkn0l3dg3":
-                    $ persistent.name = None
-                    n "Cheatcode activated. Enter your name."
-                    $ persistent.perm_nightmare = True
-                    $ allProgress()
-                    jump nameSelect
-
-               if persistent.name == "Tester" or persistent.name == "T3st3r":
-                    $ persistent.name = None
-                    dev "Tester mode activated. Please enter your name."
-                    $ persistent.testmode = True
-                    jump nameSelect
-               
                if persistent.name == "Mal":
                     $ persistent.censor_mode = True
                     jump nameSelect
@@ -958,7 +1612,7 @@ label game_start:
      pause 2
      $ hide_cinematic_bars(animate=True, duration=8, curve="ease")
      
-
+     am "she winks"
      $ renpy.save_persistent() #This should save the persistent data.
      $ resetRegularFlags()
      $ updatePronouns()
@@ -971,9 +1625,17 @@ label game_start:
  
      if persistent.lildeaths == 0:
           n "It is a beautiful day unlike any other."
-          n "And while it may have something to do with waking up with warm sunbeams caressing your face and absurd amounts of cheese stuffed inside your mouth it's something else that makes the day even better, or should I say someone else?"
-          n "Suddenly your phone begins to blare \"Baby it's cold outside\" even though it's nowhere near winter."
-          n "That has to be [date_obj], you better pick up the phone."
+          if not persistent.rockMode:
+               n "And while it may have something to do with waking up with warm sunbeams caressing your face and absurd amounts of cheese stuffed inside your mouth it's something else that makes the day even better, or should I say someone else?"
+               n "Suddenly your phone begins to blare \"Baby it's cold outside\" even though it's nowhere near winter."
+               n "That has to be [date_obj], you better pick up the phone."
+          else:
+               n "Actually... this one feels even more unlike any other for some reason."
+               n "In fact, you yourself also feel different somehow."
+               n "It's a strange sensation, as you try to look down to catch the source you see nothing."
+               n "Not nothing wrong, just nothing familiar at all. Where your body would normally be all that's in it's place is... a rock?"
+               n "Hang on, are you- is that rock you? Or are you that rock rather?"
+               jump rockStart
      else:
 
           if not nightmare:
@@ -988,60 +1650,59 @@ label game_start:
                if persistent.rockMode == True:
                     n "Actually... I'm not sure, something feels different."
                     n "Hang on, are you... are you a rock?"
-                    n "You are!"
-                    n "What is this? This is not part of the main story right?"
-                    n "Suddenly your phone begins to blare \"Baby it's cold outside\" once again."
-                    n "It's [date_obj]. You should pick up the phone."
-                    n "You really should and you probably would, if you weren't a rock without hands that is."
-                    n "Hang on, if you are a rock, am I jumping the shark to assume that [date_sub] also is a rock now?"
-                    n "If [date_sub] really is, how is [date_sub] calling you?"
-                    n "And why do the two of you even have human phones?"
-                    n "I have so many questions..."
-                    n "But let's stay on track as much as possible, what do you want to do now?"
-                    menu:
-                         "*Remember that all rocks have a telepathic network to communicate with eachother and use it to reach out to [persistent.date].*" if persistent.psychicConnection_knowledge:
-                              n "Having been already familiar with your current situation you manage to relatively easily establish a connection with [persistent.date]."
-                              l "Heya [persistent.name]!"
-                              jump Game_start2
-                         "*Struggle against your inescapable prison of a body and try to roll to the phone.*" if not persistent.psychicConnection_knowledge:
-                              n"You use all your strength to slowly wiggle a little bit, falling out of your bed and landing right on the soft carpet near it."
-                              n "One problem... your phone is lying on the nightstand beside your bed and there is no way you are getting up there from the ground."
-                              n "So, that brings us back to the question, what are you going to do?"
-                              menu:
-                                   "*Cry as all hope is lost.*":
-                                        n "You try to cry, but in your current rock form you can't produce tears, you can't even make crying sounds."
-                                        n "So, having no better ideas you just lay there, vaguely sad. If a human would see you they would have no way to tell how you felt at all."
-                                        n "They wouldn't even have a way to tell that you are even capable of feeling."
-                                        n "Suddenly your thought is interupted by another thought."
-                                        l "[persistent.name]..."
-                                        l "[persistent.name]..."
-                                        l "Can you hear me?"
-                                        l "It's hard to set up a psychic link when you are thinking about other things."
-                                        
-                                        menu:
-                                             "...What? Psychic link? What are you talking about?":
-                                                  l "Huh? Are you feeling alright [persistent.name]? It's pretty hard to forget that all sentient rocks have a psychic link to communicate..."
-                                                  l "How else would we talk silly? With our mouths?"
-                                                  n "You can hear [date_obj] chuckle in your mind."
-                                                  n "I guess that would be impossible."
-                                                  menu rockLinkChoice:
-                                                       "Then why did you call me on your phone? Why do we even have phones?" if not persistent.psychicConnection_knowledge == True:
-                                                            n "..."
-                                                            n "Look player, I know it's weird."
-                                                            n "But He was adamant about adding this, so it must mean something, right?"
-                                                            n "I can't just be narrating the work of a madman..."
-                                                            n "{size=*2.5}Right?{/size}"
-                                                            n "So, maybe it's best if we don't question it too much, let's just pretend like you didn't ask that question in the first place."
-                                                            $ persistent.psychicConnection_knowledge = True
-                                                            jump rockLinkChoice
-                                                            
-                                                       "You're completely right, I guess I just forgot, silly me.":
-                                                            n "Another soft chuckle in your mind."
-                                                            n "It feels weird, cozy in a way, and yet slightly... invasive?"
-                                                            n "Your mind is the only place that is truly fully yours, and now... it isn't anymore."
-                                                            l "Don't even mention it [persistent.name], it can happen to anyone of us."
-                                                            $ persistent.psychicConnection_knowledge = True
-                                                            jump Game_start2
+                    label rockStart:
+                         n "You are!"
+                         n "What is this? This is not part of the main story right?"
+                         n "Suddenly your phone begins to blare \"Baby it's cold outside\" once again."
+                         n "It's [date_obj]. You should pick up the phone."
+                         n "You really should and you probably would, if you weren't a rock without hands that is."
+                         n "Hang on, if you are a rock, am I jumping the shark to assume that [date_sub] also is a rock now?"
+                         n "If [date_sub] really is, how is [date_sub] calling you?"
+                         n "And why do the two of you even have human phones?"
+                         n "I have so many questions..."
+                         n "But let's stay on track as much as possible, what do you want to do now?"
+                         menu:
+                              "*Remember that all rocks have a telepathic network to communicate with eachother and use it to reach out to [persistent.date].*" if persistent.psychicConnection_knowledge:
+                                   n "Having been already familiar with your current situation you manage to relatively easily establish a connection with [persistent.date]."
+                                   l "Heya [persistent.name]!"
+                                   jump Game_start2
+                              "*Struggle against your inescapable prison of a body and try to roll to the phone.*" if not persistent.psychicConnection_knowledge:
+                                   n"You use all your strength to slowly wiggle a little bit, falling out of your bed and landing right on the soft carpet near it."
+                                   n "One problem... your phone is lying on the nightstand beside your bed and there is no way you are getting up there from the ground."
+                                   n "So, that brings us back to the question, what are you going to do?"
+                                   menu:
+                                        "*Cry as all hope is lost.*":
+                                             n "You try to cry, but as you are now you can't form tears, even the sound of sobbing is too far out of reach."
+                                             n "So all you do is just lay there vaguely sad. If someone would see you they'd have no way to tell how you felt. If they even would see you, the thought of you being able to feel at all wouldn't cross their mind for one moment."
+                                             n "Suddenly your thought is interupted by another, but somehow, not one of your own."
+                                             l "[persistent.name]..."
+                                             l "[persistent.name]..."
+                                             l "Can you hear me?"
+                                             l "It's hard to set up a psychic link when you are thinking about other things."
+                                             
+                                             menu:
+                                                  "...What? Psychic link? What are you talking about?":
+                                                       l "Huh? Did you hit your head against a roc- Are you feeling alright [persistent.name]?"
+                                                       l "How else would we talk silly? With our mouths?"
+                                                       n "You can hear [date_obj] chuckle in your mind."
+                                                       menu rockLinkChoice:
+                                                            "Then why did you call me on your phone? Why do we even have phones?" if not persistent.psychicConnection_knowledge == True:
+                                                                 n "..."
+                                                                 n "Look player, I know it's weird."
+                                                                 n "But He was adamant about adding this, so it must mean something, right?"
+                                                                 n "I can't just be narrating the work of a madman..."
+                                                                 n "{size=*2.5}Right?{/size}"
+                                                                 n "So, maybe it's best if we don't question it too much, let's just pretend like you didn't ask that question in the first place."
+                                                                 $ persistent.psychicConnection_knowledge = True
+                                                                 jump rockLinkChoice
+                                                                 
+                                                            "You're completely right, I guess I just forgot, silly me.":
+                                                                 n "Another soft chuckle in your mind."
+                                                                 n "It feels weird, cozy in a way, and yet slightly... invasive?"
+                                                                 n "Your mind is the only place that is truly fully yours, and now... it isn't anymore."
+                                                                 l "Don't even mention it [persistent.name], it can happen to anyone of us."
+                                                                 $ persistent.psychicConnection_knowledge = True
+                                                                 jump Game_start2
                else:
                     if not rockModeBackToStart:
                          n "Actually it's just the same day."
@@ -1198,7 +1859,7 @@ label game_start:
                          n "You look once again at the mystery key, you almost feel guilty for not letting it out of it's dark prison of isolation."
                          n "Shouldn't you pick it up already?"
                          n "No, best to just name the key instead, make sure it's a good name!"
-                         $ persistent.key = renpy.input("What name do you want to give the key?")
+                         $ persistent.key = player_input("What name do you want to give the key?")
                          $ persistent.key = persistent.key.strip() or "Max"
                          $ persistent.key = persistent.key.capitalize()
                          
@@ -1261,11 +1922,30 @@ label Game_start2:
                m "It is true you might mostly have a say over the endings of the story but in truth every end gives the rest of the story meaning doesn't it?"
                sg "Besides dear, you'll soon discover it's very hard to tell where one of us ends and the others starts sometimes."
                ll "So what do you say? To many stories more?"
+               $ persistent.ravenPrinceAwakened = True
+               #TODO: For both of these take them with you, do this for lilith if you said you liked her with james and if you have treated her really well throughout the game. For the narrator, do this if you had a heart to heart with them.
                menu:
+                    "Could I take [persistent.date] with me?":
+                         "Filler"
+                         m "I'm afraid it does not work like that [persistent.name]."
+                         sg "As much as it would be an absolutely wonderful way to end this tale and begin many more."
+                         ll "[persistent.date] cannot leave this story, not in the way we can..."
+                         m "We are very much ideas, concepts, so we can exist wherever there is a story to be told."
+                         ll "But for [date_obj], as a character rather than a concept [date_sub] [conj('date', 'is', 'are')] bound to this one."
+                         sg "It tears my heart to see passion snuffed out before it had a chance to burn to it's brightest."
+                         ll "Yet there will be many chances a new for the both of you, just not with eachother."
+
+                    "Could I take Nar with me?":
+                         "Filler"
+
                     "To many more.":
                          sg "Excellent, I cannot wait to witness what worlds will be next."
                          #TODO: Filler, Add a scnee where the player can create a new story, or potentially retell this one. 
                          #If creating the old version all those references to ravens are essentially subtle hints to the players true identity. Further on, the first time you wake up reference the butterfly dreaming he was a man poem.
+                         #Ending
+                         $ lilithAliveEnding = True
+                         $ ending_check = "leave the world"
+                         jump gameOver
                     "I think I'd like to stay in this one some more.":
                          m "We understand, it's easy to see why this might be one of your favourites..."
                          sg "Although I wish we could see other sights there is no denying I do love to see the fire that fuels you."
@@ -1418,7 +2098,6 @@ label Game_start2:
                          n "Now [date_sub] will probably be safe, as safe as a normal person is anyway."
                          menu: 
                               "Take care [persistent.date] and goodbye...":
-                                   $ persistent.ending_abigailDistraction = True
                                    $ lilithAliveEnding = True
                                    $ ending_check = "abigailDistraction"
                                    $ persistent.lildeaths -= 1
@@ -1616,7 +2295,6 @@ label phone_breakup:
      n "You know that this was probably the best thing to do, to keep [persistent.date] safe and sound."
      n "But something deep inside you keeps wondering if there wasn't a way where you two could be together while [date_sub] would be safe."
      n "There must be a way right?"
-     $ persistent.ending_breakup = True
      $ lilithAliveEnding = True
      $ ending_check = "breakup"
      $ persistent.lildeaths -= 1
@@ -1709,7 +2387,7 @@ label phone_call_police:
 label phone_call_abigail:
      $ persistent.familyContacted = True
      a "Hello, who is this? "
-     $ phone_caller = renpy.input("Enter your name.")
+     $ phone_caller = player_input("Enter your name.")
      $ phone_caller = phone_caller.strip()
      $ phone_caller = phone_caller.capitalize()
      if phone_caller == persistent.name:
@@ -2108,7 +2786,7 @@ label phone_call_abigail_topics_spoketodavid_davidblameshimself:
 label phone_call_david:
      $ persistent.familyContacted = True
      d "Hello, who am I speaking to?"
-     $ phone_caller = renpy.input("Enter your name.")
+     $ phone_caller = player_input("Enter your name.")
      $ phone_caller = phone_caller.strip()
      $ phone_caller = phone_caller.capitalize()
      d "[phone_caller]? Well I'm not interested in what you're selling so thank you very much but I'm going to hang up no-"
@@ -2223,7 +2901,7 @@ label phone_call_james:
           else: 
                $ mysteriousCallerName = persistent.date_ghost
           q "Yo, who is this?"
-          $ phone_caller = renpy.input("Enter your name.")
+          $ phone_caller = player_input("Enter your name.")
           $ phone_caller = phone_caller.strip()
           $ phone_caller = phone_caller.capitalize()
           q "[phone_caller] eh? Sorry, that doesn't really ring a bell."
@@ -2730,7 +3408,6 @@ label doNotPickUpThePhone:
                n "...Philosophy aside, surely there is more you can do, right?"
                n "It feels almost wasteful to only see one path of the game and quit."
                #Ending
-               $ persistent.ending_quitter = True
                $ lilithAliveEnding = True
                $ ending_check = "quitter extraodinaire"
                #The player hasn't really "earned" the credits this soon.
@@ -2742,7 +3419,6 @@ label doNotPickUpThePhone:
                n "Yet you just... give up? Run the other way as soon as you feel hopeless?"
                n "That is definitely an option I suppose. Although there has to be more, right?"
                #Ending
-               $ persistent.ending_quitter = True
                $ lilithAliveEnding = True
                $ ending_check = "quitter"
                
@@ -2752,7 +3428,6 @@ label doNotPickUpThePhone:
                     n "Maybe it's for the best... Although surely it can't be?"
                     n "The thought keeps gnawing at you. There has to something you can do, right?"
                     #Ending
-                    $ persistent.ending_anEnding = True
                     $ lilithAliveEnding = True
                     $ ending_check = "anEnding"
                     $ persistent.game_credits = True
@@ -2761,7 +3436,6 @@ label doNotPickUpThePhone:
                     n "With so much death no one would blame you for calling it here, however there's much more to see."
                     n "Would you really want to miss out on all of that?"
                     #Ending
-                    $ persistent.ending_unseenContent = True
                     $ lilithAliveEnding = True
                     $ ending_check = "unseenContent"
                     $ persistent.game_credits = True
@@ -2776,7 +3450,6 @@ label doNotPickUpThePhone:
                n "If only..."
      
                #Ending
-               $ persistent.ending_lettingGo = True
                $ lilithAliveEnding = True
                $ ending_check = "lettingGo"
                $ persistent.game_credits = True
@@ -4096,24 +4769,24 @@ label ufo_talk_favouriteFirstDate:
           l "Was there anything we did there close to your heart [persistent.name]?"
           
      
-     $ renpy.input("My favourite moment was...")
+     $ player_input("My favourite moment was...")
      l "That sounds really lovely [persistent.name]!"
-     $ renpy.input("")
+     $ player_input("")
      l "That sounds great!"
-     $ renpy.input("")
+     $ player_input("")
      l "..."
-     $ renpy.input("")
+     $ player_input("")
      l "..."
      n "[persistent.date] is staring right into your soul without saying a word."
      n "[date_sub!c] somehow [conj('date', 'seems', 'seem')] to have lost everything that made [date_obj] feel human."
-     $ renpy.input("")
+     $ player_input("")
      l "..."
      n "Once every room felt more warm because of [date_pos] presence, now this iron ship feels colder than ever with [date_pos] silence in it."
      n "It's almost seems as if [date_sub] [conj('date', 'has', 'have')] run out of things to say. Was the game programmed with responses for her this far out at the edge of the universe?"
-     $ renpy.input("")
+     $ player_input("")
      n "In [date_pos] frozen, wordless nature [date_sub] [conj('date', 'seems', 'seem')] more like a replica of the woman you once knew than the real deal."
      n "You have seen [date_obj] die many times but this somehow feels even more wrong. A fate worse than death has befallen [date_obj]."
-     $ renpy.input("")
+     $ player_input("")
      n "Just then you hear something. Not [date_sub], it's a loud beeping sound emanating from the ship itself."
      jump ufo_alert
 
@@ -4153,6 +4826,7 @@ label ufo_crash_polaroids:
      #TODO: Add some small descriptions of each picture you jump on Rewrite this part some other time well enough
      #Reality is glitching so that you won't have to draw every picture.
      #Picture ideas, if you did bad things have those too
+     #TODO: Add a way to add moonwoman as a secret sidepath here somehow, when enountered the neya man in the broken ending you can also use the memory crystal he gave you to create another door opposite to the moonwoman's door. Since she is seeing someone for who they truly are and he is essentially ignoring parts of a paerson
      if polaroidzone_picture == 1:
           n "Bracing yourself for a moment you run as fast as you can before taking a leap of faith, landing right on the middle of the next polaroid."
           #This will showcase a picture of your first date ever "your face still looked like you were all taking it in for the first time"
@@ -4718,7 +5392,7 @@ label jamesChat_whyDidYouReturn_toBeTogether_choices:
                          jump Game_start2
 
 label LilithOrJames:
-     #TODO: Add the descriptions of james and lilith to the dialogue.
+     #TODO: Add the descriptions of james and lilith to the dialogue. Alson unstead of a tunnel, have this be the first time you encounter the Arborist who shows you a tree with two branches one for lilith and one for james. You can pick a branch (the other gets cut off? Or should it still stay accessible)
      # Normalize so left is always Lilith (date) and right is always James (date_ghost).
      # If jamesMode is True the names are currently swapped, so un-swap them first.
      if persistent.jamesMode:
@@ -4782,6 +5456,7 @@ label ufoVisitAlone:
                ship "However, if they go to either the forest or the beach you need to keep a close eye on them, if [date_sub] [conj('date', 'has', 'have')] been killed by the either the falling star or car we have to come into the picture, otherwise our fates will look quite gruesome, let me asure you."
                      
 label reunionEnding:
+     #TODO: For this, have abigail at the end give you a memory crystal she keeps on a necklace, saying she felt as if she needed to give it to you. If you throw this opposite of the place where you encounter Moon you will meet Censir there.
      n "Heading towards the Chinese restaurant you pass by the market square."
      n "The same place you set up for [persistent.date_mom] and [persistent.date_dad] to meet. Right on cue you see [persistent.date_mom] and [persistent.date_sis] walking past."
      n "Something inside you can't help but watch the scene, you hide behind a car to keep an eye on things."
@@ -4931,7 +5606,6 @@ label reunion_ending_aftermath:
      n "You tried to live each day like it is your first and last with your partner. There were bad moments and good ones, but each moment was beautiful in that it never lasted. That it always could be built upon."
      n "Then after many many years, during your last breath on your deathbed you get offered a familiar choice."
      $ lilithAliveEnding = True
-     $ persistent.ending_reunionGoodEnding = True
      $ ending_check = "reunitedGood"
      $ persistent.gallery_unlocked = True
      menu:
@@ -5172,7 +5846,7 @@ label ghostReunion_transferUniverse:
           n "I'm not even just talking about [persistent.date], but about all the people in those restaurants or even the entire earth a few times."
           n "They were people as much as [persistent.date] was you know? Does the name \"Rose\" ring a bell to you?"
           n "Do you still remember where you met [date_obj]?"
-          $ result = renpy.input("What do you remember?")
+          $ result = player_input("What do you remember?")
           $ result = result.lower()  # Convert the input to lowercase for case-insensitive matching.
           if "burger" in result or "old lady" in result:
                n "Ah, so you do remember? Very good."
@@ -5261,13 +5935,13 @@ label ghostReunion_transferUniverse:
                          "Still no reply, however you are determined to hear his voice one last time."
                     else:
                          scene bg black with fade
-          $ result = renpy.input()
+          $ result = player_input()
           $ result = result.lower()  # Convert the input to lowercase for case-insensitive matching.
           p "[result]"
-          $ result = renpy.input()
+          $ result = player_input()
           $ result = result.lower()  # Convert the input to lowercase for case-insensitive matching.
           p "[result]"
-          $ result = renpy.input()
+          $ result = player_input()
           $ result = result.lower()  # Convert the input to lowercase for case-insensitive matching.
           #TODO: Things I still want to implement for this scene, wheter or not the player got nightmares, how many times they retried, for who they are doing this (lilith, themselves or both of them)
           p "The bond between us has been worn down by the Void."
@@ -5306,11 +5980,10 @@ label ghostReunion_transferUniverse:
           p "This is an ending, but also a new beginning. Please take those words to heart. Rest with us in here or dream of a new world out there."
           p "Just please don't try to fight it. We have hurt others but we have also hurt ourselves trying to stay where we couldn't. Trying to live forever in one day."
           p "Let go, please."
-          $ result = renpy.input()
+          $ result = player_input()
           $ result = result.lower()
           if "yes" in result or "let go" in result or "i will" in result:
                #Ending check
-               $ persistent.ending_Voided = True
                $ ending_check = "Voided"
                jump gameOver
           else: 
@@ -5453,7 +6126,6 @@ label badReunionTransferUniverse:
                l "Goodbye."
                n "[date_sub!c] [conj('date', 'rushes', 'rush')] in the direction where [persistent.date_sis] and [date_pos] parents ran off into, never to be seen again."
                #Ending
-               $ persistent.ending_traumatizedReunion = True
                $ lilithAliveEnding = True
                $ ending_check = "traumaReunion"
                jump gameOver
@@ -5466,6 +6138,7 @@ label triumvirate_ending:
      "Filler"
                    
 label before_main_menu:
+     $ profile_sync_active(save_persistent=True)
      if (persistent.date_sis is None or persistent.date_dad is None or persistent.date_ghost is None  or persistent.date_mom is None or persistent.mysteriousCallerName is None):
           $ reset_to_default_names()
 
@@ -5475,4 +6148,3 @@ label before_main_menu:
 
 
                          
-

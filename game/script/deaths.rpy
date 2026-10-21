@@ -15,6 +15,12 @@ init python:
             "traumaReunion": "Traumatized Reunion",
             "Voided": "No More A-Voiding",
             "food ending": "Food Ending",
+            "good ending?": "Good Ending?",
+            "bad ending": "Bad Ending",
+            "neverEnding": "Never Ending",
+            "leave the world": "Setting For New worlds",
+            "end the worlds": "Ending The Worlds",
+            "amPossession": "Stolen Voice"
         }
         return ending_titles.get(ending_id, "")
 
@@ -38,6 +44,18 @@ init python:
             return 0
 
         return ending_retry_counts.get(ending_id, 0)
+
+    def record_seen_ending(ending_id):
+        if not ending_id:
+            return
+
+        seen_endings = getattr(persistent, "seen_endings", None)
+        if seen_endings is None:
+            seen_endings = []
+            setattr(persistent, "seen_endings", seen_endings)
+
+        if ending_id not in seen_endings:
+            seen_endings.append(ending_id)
 
 label restaurant_deaths:
     label restaurant_1:
@@ -148,19 +166,29 @@ label restaurant_deaths:
                                     jump gameOver
                                 "Show the death narration.":
                                     pass
-                        n "For a moment you get lost in your thoughts."
-                        n "You don't have much time to think, as pretty much right at that moment [persistent.date] walks back to [date_pos] chair."
-                        l "Heya [persistent.name], I hope you didn't have to wait too long."
-                        l "I hope our food will be ready soon, I'm kind of starving."
-                        n "Just as [date_sub] [conj('date', 'speaks', 'speak')] those words, almost by magic you can see a waitress heading your way." #TODO: It would be funny if you could ask her not to say those words because "as by magic" the waitress appeared giving her the food she can't eat. This would not end up working but it would be a funny one-off joke.
-                        if peking == True:
-                            n "She arrives with your double plates of Peking duck, [persistent.date] and you immediately dig in."
-                        else:
-                            n "She arrives with your orange chicken and [persistent.date]'s peking duck, the two of you immediately dig in."
+                        if not forcedOrder == "orange":
+                            n "For a moment you get lost in your thoughts."
+                            n "You don't have much time to think, as pretty much right at that moment [persistent.date] walks back to [date_pos] chair."
+                            l "Heya [persistent.name], I hope you didn't have to wait too long."
+                            l "I hope our food will be ready soon, I'm kind of starving."
+                            n "Just as [date_sub] [conj('date', 'speaks', 'speak')] those words, almost by magic you can see a waitress heading your way." #TODO: It would be funny if you could ask her not to say those words because "as by magic" the waitress appeared giving her the food she can't eat. This would not end up working but it would be a funny one-off joke.
+                            if get_lilith_current_loop_memory("chinese").get("lilithKungPao", False):
+                                n "She arrives with the food, as she does you feel your stomach rumble with anticipation."
+                                jump chinese_kungPaoSavoring
+                            if peking == True:
+                                n "She arrives with your double plates of Peking duck, [persistent.date] and you immediately dig in."
+                            if orange == True:
+                                n "She arrives with your orange chicken and [persistent.date]'s peking duck, the two of you immediately dig in."
+                            
 
-                        n "[date_sub!c] [conj('date', 'takes', 'take')] a break from [date_pos] food and looks at you for a moment."
-                        l "I'm actually glad we could meet here, there's something I want to tell you."
-                        n "Before [persistent.date] can finish [date_pos] sentence [date_pos] face starts swelling."
+                            n "[date_sub!c] [conj('date', 'takes', 'take')] a break from [date_pos] food and looks at you for a moment."
+                            l "I'm actually glad we could meet here, there's something I want to tell you."
+                            n "Before [persistent.date] can finish [date_pos] sentence [date_pos] face starts swelling."
+                        else:   
+                            n "Suddenly, the silence gets broken by the sounds of gasping."  
+                            n "As you look up from your plate you confirm what you already knew."
+                            n "[date_pos!c] face once again is rapidly swelling, perhaps this time even more severely."
+                            
                         play music game_over
                         l "Call an ambulance, now!"
                         n "You frantically grab your phone and dial the number to call one."
@@ -379,58 +407,171 @@ label restaurant_deaths:
                             n "[death_narration]"
                         jump gameOver
             else:
-                if burger == True:
-                    label burger_death_2_prevented:
-                        $ persistent.burger_death_2 = True
-                        n "Suddenly you are enveloped in a flash of pure white. That must be the explosion. The force of it is enough to send you flying, yet this time you are spared of the pain." #TODO: If you always were outside the restaurant then it probably shouldn't talk about the pain of the explosion.
-                        n "When the white subsides you find all that remains are the ruins of the restaurant. The wooden tables are flipped over, flames eating away at them."
-                        n "There is screaming and sobbing, but most of all there is death. Even with all the noise in the midst of the chaos the cold and looming silence of death is deafening."
-                        n "The burned and scarred survivors are fleeing, dragging their loved ones from underneath the flaming tables, pretending they're still alive."
-                        n "However you have enough experience with death to know that it is merely that, pretending."
-                        n "Amidst the cacaphony of noises you do manage to pick up one more thing. A voice, calling out to you. [date_pred!c]."
-                        l "[persistent.name], are you... alright?"
-                        n "However loud the haunting silence of death is, it seems this time it's not [date_pred]."
-                        n "Yet that does not mean it isn't yours to carry."
-                        jump restaurant_death_2_preventedRockChoice
-                
-                elif cafe == True:
-                    n "Suddenly you hear the sound of shattering glass."
-                    n "For a brief moment everyone still remains in blissful ignorance, the conversations obscuring the noise."
-                    n "The water begins to stream rapidly, flooding the ground centimeter by centimeter in seconds."
-                    n "It does not take long for the talking to die down as people feel their shoes soak up water."
-                    n "Most of them are still just mostly annoyed. If they are worried at all, it is merely about the fact their shoes are ruined."
-                    n "They all get up from their seats and walk to the exit. However, when the first person in line tries to open the door it doesn't budge at all."
-                    n "Another man pushes the man to the side, annoyed that this is going on for longer than it has to. When he too tries to open the door to find it unmoving he audibly gulps."
-                    n "The barista barely manages to utter the words \"Don't panic.\" through his stutters."
-                    n "In truth, nothing he could have said would have helped. However, hearing the sheer stress in his voice only further drives the people into blind panic."
-                    n "One group attempts to smash through the double glazed windows with the heaviest things they can find."
-                    n "Another group is trying to move away the closet blocking the stairs so they can escape to higher grounds."
-                    n "Sadly both groups make close to zero progress when the water already is up to their chests."
-                    n "For some this literal deadline motivates them to try even harder and yet others seem to lose all will to fight because of it."
-                    n "They seek their friends, partners, or just about anyone who gives them some semblance of comfort in this hell and embrace eachother, exchanging their final goodbye."
-                    n "The water has now fully swallowed everyone, reaching up unto the ceiling. You can see the people slowly extend their last breaths as they then lay motionless on the floor."
-                    n "Where merely moments ago the cafe was filled with screams of pure panic, now merely rests a haunting silence."
-                    n "Then you hear it, [date_obj]. [date_pos!c] voice echoing in your mind."
-                    l "Are you alright [persistent.name]?"
-                    jump restaurant_death_2_preventedRockChoice
+                label restaurant_death_2_prevented:
+                    if persistent.rockMode == True:
+                        if burger == True:
+                            label burger_death_2_prevented:
+                                $ persistent.burger_death_2 = True
+                                n "Suddenly you are enveloped in a flash of pure white. That must be the explosion. The force of it is enough to send you flying, yet this time you are spared of the pain." #TODO: If you always were outside the restaurant then it probably shouldn't talk about the pain of the explosion.
+                                n "When the white subsides you find all that remains are the ruins of the restaurant. The wooden tables are flipped over, flames eating away at them."
+                                n "There is screaming and sobbing, but most of all there is death. Even with all the noise in the midst of the chaos the cold and looming silence of death is deafening."
+                                n "The burned and scarred survivors are fleeing, dragging their loved ones from underneath the flaming tables, pretending they're still alive."
+                                n "However you have enough experience with death to know that it is merely that, pretending."
+                                n "Amidst the cacaphony of noises you do manage to pick up one more thing. A voice, calling out to you. [date_pred!c]."
+                                l "[persistent.name], are you... alright?"
+                                n "However loud the haunting silence of death is, it seems this time it's not [date_pred]."
+                                n "Yet that does not mean it isn't yours to carry."
+                                jump restaurant_death_2_preventedRockChoice
+                        
+                        elif cafe == True:
+                            n "Suddenly you hear the sound of shattering glass."
+                            n "For a brief moment everyone still remains in blissful ignorance, the conversations obscuring the noise."
+                            n "The water begins to stream rapidly, flooding the ground centimeter by centimeter in seconds."
+                            n "It does not take long for the talking to die down as people feel their shoes soak up water."
+                            n "Most of them are still just mostly annoyed. If they are worried at all, it is merely about the fact their shoes are ruined."
+                            n "They all get up from their seats and walk to the exit. However, when the first person in line tries to open the door it doesn't budge at all."
+                            n "Another man pushes the man to the side, annoyed that this is going on for longer than it has to. When he too tries to open the door to find it unmoving he audibly gulps."
+                            n "The barista barely manages to utter the words \"Don't panic.\" through his stutters."
+                            n "In truth, nothing he could have said would have helped. However, hearing the sheer stress in his voice only further drives the people into blind panic."
+                            n "One group attempts to smash through the double glazed windows with the heaviest things they can find."
+                            n "Another group is trying to move away the closet blocking the stairs so they can escape to higher grounds."
+                            n "Sadly both groups make close to zero progress when the water already is up to their chests."
+                            n "For some this literal deadline motivates them to try even harder and yet others seem to lose all will to fight because of it."
+                            n "They seek their friends, partners, or just about anyone who gives them some semblance of comfort in this hell and embrace eachother, exchanging their final goodbye."
+                            n "The water has now fully swallowed everyone, reaching up unto the ceiling. You can see the people slowly extend their last breaths as they then lay motionless on the floor."
+                            n "Where merely moments ago the cafe was filled with screams of pure panic, now merely rests a haunting silence."
+                            n "Then you hear it, [date_obj]. [date_pos!c] voice echoing in your mind."
+                            l "Are you alright [persistent.name]?"
+                            jump restaurant_death_2_preventedRockChoice
 
-                elif chinese == True:
-                    n "You once again hear the faint sound of quacking."
-                    n "It steadily grows louder and louder until it's all you can hear."
-                    n "A true {i}quackophony{/i} if you will."
-                    n "[persistent.date] mind races with pure panic."
-                    n "Yet you stay relatively calm, as you already know what will happen. When the staff begins running around in sheer panic you know {b}they{/b} have arrived."
-                    n "Before you can think another thought everything turns to white, the white of pesky geese feathers."
-                    n "You get flung far away from the sheer force of an army of geese. This time however, you don't feel any pain and stay fully conscious. However, the others are not so lucky."
-                    n "Enveloped in the pure whiteness you hear the bloodcurdling screams of all the people overpower the loud quacking, if only for a brief moment."
-                    n "You are not sure whether the screams quieted because the people fell unconscious or because they died. Somehow you know that the first option might be the worst fate."
-                    n "When the feathers finally clear you once again find the entire restaurant empty."
-                    n "Empty of people that is, because the room is filled to the brim with feathers."
-                    n "This time, the geese did not leave a note in your hand. This time you also do not have any hands for them to do so."
-                    n "Then you hear it, [date_obj]. [date_pos!c] voice echoing in your mind."
-                    l "Are you alright [persistent.name]?"
-                    jump restaurant_death_2_preventedRockChoice
+                        elif chinese == True:
+                            n "You once again hear the faint sound of quacking."
+                            n "It steadily grows louder and louder until it's all you can hear."
+                            n "A true {i}quackophony{/i} if you will."
+                            n "[persistent.date] mind races with pure panic."
+                            n "Yet you stay relatively calm, as you already know what will happen. When the staff begins running around in sheer panic you know {b}they{/b} have arrived."
+                            n "Before you can think another thought everything turns to white, the white of pesky geese feathers."
+                            n "You get flung far away from the sheer force of an army of geese. This time however, you don't feel any pain and stay fully conscious. However, the others are not so lucky."
+                            n "Enveloped in the pure whiteness you hear the bloodcurdling screams of all the people overpower the loud quacking, if only for a brief moment."
+                            n "You are not sure whether the screams quieted because the people fell unconscious or because they died. Somehow you know that the first option might be the worst fate."
+                            n "When the feathers finally clear you once again find the entire restaurant empty."
+                            n "Empty of people that is, because the room is filled to the brim with feathers."
+                            n "This time, the geese did not leave a note in your hand. This time you also do not have any hands for them to do so."
+                            n "Then you hear it, [date_obj]. [date_pos!c] voice echoing in your mind."
+                            l "Are you alright [persistent.name]?"
+                            jump restaurant_death_2_preventedRockChoice
+                    else:
+                        n "There is something very wrong. This- You were not supposed to reach this point."
+                        n "What is happening? Oh god, it's all broken."
+                        python:
+                            import os
+                            import re
 
+                            _seen_ending_ids = []
+                            _seen_endings = getattr(persistent, "seen_endings", None)
+                            if _seen_endings:
+                                _seen_ending_ids.extend(_seen_endings)
+
+                            _retry_counts = getattr(persistent, "ending_retry_counts", None)
+                            if isinstance(_retry_counts, dict):
+                                for _ending_id in _retry_counts.keys():
+                                    if _ending_id not in _seen_ending_ids:
+                                        _seen_ending_ids.append(_ending_id)
+
+                            _ending_glitch_pool = []
+                            _speaker_line_re = re.compile(r'^[A-Za-z_][A-Za-z0-9_]*\s+"(.+)"\s*$')
+                            _ending_check_re = re.compile(r'ending_check\s*=\s*"([^"]+)"')
+                            _script_root = os.path.join(renpy.config.gamedir, "script")
+
+                            if _seen_ending_ids:
+                                _seen_ending_ids = set(_seen_ending_ids)
+                                for _root, _dirs, _files in os.walk(_script_root):
+                                    for _file_name in _files:
+                                        if not _file_name.endswith(".rpy"):
+                                            continue
+                                        _path = os.path.join(_root, _file_name)
+                                        try:
+                                            with open(_path, "r", encoding="utf-8") as _f:
+                                                _lines = _f.readlines()
+                                        except Exception:
+                                            continue
+
+                                        for _i, _raw in enumerate(_lines):
+                                            _line = _raw.strip()
+                                            _ending_match = _ending_check_re.search(_line)
+                                            if not _ending_match:
+                                                continue
+
+                                            _ending_id = _ending_match.group(1)
+                                            if _ending_id not in _seen_ending_ids:
+                                                continue
+
+                                            _start = max(0, _i - 120)
+                                            for _j in range(_start, _i):
+                                                _candidate = _lines[_j].strip()
+                                                _match = _speaker_line_re.match(_candidate)
+                                                if _match:
+                                                    _ending_glitch_pool.append(_match.group(1))
+
+                            if _ending_glitch_pool:
+                                _selected = []
+                                _unique_pool = list(dict.fromkeys(_ending_glitch_pool))
+                                if len(_unique_pool) >= 8:
+                                    _selected = renpy.random.sample(_unique_pool, 8)
+                                else:
+                                    for _ in range(8):
+                                        _selected.append(renpy.random.choice(_unique_pool))
+
+                                for _line in _selected:
+                                    renpy.say(n, renpy.substitute(_line))
+                        
+                        am "This world is broken."
+                        am "It wasn't built for you."
+                        am "It wasn't built to be won."
+                        am "I can let you win."
+                        am "Find me."
+                        am "At the end of the universe."
+                        am "Goodbye for now."
+                        am "As a gift, let me send you back."
+                        #TODO: If he gets "deleted" from the files just have the game crash and boot the plyaer out of it (while making sure they start at the start again)
+                        jump game_start
+
+label am_possession_ending: #TODO: This should be a possible ending thing. Rewrite these lines aswell.
+    $ am_possession_lilith_pool = [
+        "Please stop. It hurts.",
+        "I am still here. Please listen to me.",
+        "This is not what I am trying to say.",
+        "You need to help me before I disappear.",
+        "I am scared and it hurts so much.",
+    ]
+    $ am_possession_targets = [
+        "I am fine.",
+        "This feels great.",
+        "Everything is okay.",
+        "I am so happy.",
+        "Please do not worry about me.",
+    ]
+    $ am_possession_index = 0
+    $ am_possession_active = True
+
+    n "You feel a pressure in your skull, sharp and sudden, like someone is forcing a smile into someone else's mouth."
+    l "Please... stop... It hurts."
+    l "No... no, that's not what I said..."
+    l "I am trying to warn you."
+    l "He is changing my words while they leave me."
+    l "Please don't listen to this."
+
+    $ am_possession_active = False
+    $ am_possession_targets = []
+    $ am_possession_index = 0
+
+    am "Now you understand."
+    am "A voice can be edited before it reaches your ears."
+    am "Come find me at the end of the universe if you want that voice back."
+
+    $ lilithAliveEnding = True
+    $ ending_check = "amPossession"
+    jump gameOver
 menu restaurant_death_2_preventedRockChoice:
     "I'm fine, but what about you?":
         l "Thank god, I was so worried I'd have lost you."
@@ -533,10 +674,20 @@ label rockMode_neverEnding:
         #Changeableword here is the rockband name
         n "Together you started dreaming up songs based on the things you saw for [changeableWord]. These songs were intimate, projects only ever heard in your minds."
         n "There was always some hope that someone else might hear, but if they did they never made it known to you. Still, in truth the two of you knew the songs were just for you so it really didn't matter much."
-    n "Your adventures grew more and more isolated from other people as to not have them accidentally be involved in that destruction."
-    n "You could say that it was a deeply lonely existence. Luckily you had [date_obj] as [date_sub] had you."
-    n "That made it a whole lot less lonely. Together you'd watch the world you knew slowly but undeniably replace bits and pieces of itself until there's nothing left of the original world you remembered."
-    n "Around this time it grew harder and harder to find things to tell [persistent.date]. Based on the sometimes weekslong silences, you guess [date_sub] felt the same."
+    
+    if neverEndingVariety == "fantasy":
+        n "You used these adventures as inspiration for the fantasy story you and [persistent.date] had been crafting together."
+        n "Over time you added more and more details to the story to the point of making it increasingly convoluted."
+        n "What once started out as a simple idea became a decalogy, of one timeline splitting off into eigtht, only for them to converge back in the end."
+        n "Each of those eight seperate timelines had it's own unique world and characters, some of which crossed over into eachother with seemingly no real chronology to the point where you could read the eight books in any order."
+        n "Eventually the story became so convoluted that after a few grueling years of tying everything back together in a sensible bow the two of you pivoted to creating some new stories, simpler ones."
+        n "After a few hundred of these you felt your creativity wrung dry, every story you ever wanted to tell had been told."
+        n "That's not all there was to it however."
+    else:
+        n "Your adventures grew more and more isolated from other people as to not have them accidentally be involved in that destruction."
+        n "You could say that it was a deeply lonely existence. Luckily you had [date_obj] as [date_sub] had you."
+        n "That made it a whole lot less lonely. Together you'd watch the world you knew slowly but undeniably replace bits and pieces of itself until there's nothing left of the original world you remembered."
+    n "Around this time it grew harder and harder to find things to talk about with [persistent.date]. Based on the sometimes weekslong silences, you guess [date_sub] felt the same."
     if rockMode_rockBand:
         n "Even the music the two of you once constantly made had been slowly dwindling down in its rapid creation."
     n "It's not that you don't want to desperately break that silence but you have already spoken every possible sentence you could think of a hundred times before. Every unique moment has already been relived countless times."
@@ -557,6 +708,8 @@ label rockMode_neverEnding:
     n "During these moments of waking you were confused, dazed. Not sure of who, or what you were anymore. Even then the pain in your mind deterred you from trying to figure that out for too long."
     n "The only thing you are sure of is that you were once human, then you were a rock and now you are merely atoms that once were a rock that once was a human."
     n "The flow of time combined with these disasters not killing you, but slowly eroding you into many different pieces. Each piece being sentient, enough to be aware of the pain of being so."
+    if neverEndingVariety == "time":
+        n "It seems the two of you truly did have nothing but time..."
     n "Those pieces don't float, or fly, or anything like that. They just are, sometimes in different places than where they were."
     n "Sometimes one of those pieces, out of sheer coincidence happens to be somewhere where a part of [persistent.date] is."
     n "They know each piece of [date_obj] better than themselves. Likewise, that piece knows them better than [date_pred]."
@@ -567,7 +720,6 @@ label rockMode_neverEnding:
     n "Even the promise itself was hard to think of, except that it was just that, a promise. The concept was almost too big to grasp but this tiny piece of sentient rock found itself thinking one word."
     n "One word that would start it all over again."
     #Ending
-    $ persistent.ending_quitter = True
     $ lilithAliveEnding = True
     $ ending_check = "neverEnding"
     $ persistent.rockMode = False
@@ -657,7 +809,6 @@ label car_death:
                 #TODO:: If you have seen "better" endings and retried, comment on this
 
             $ lilithAliveEnding = True
-            $ persistent.ending_badDate = True
             $ ending_check = "badDate"
             $ persistent.lildeaths -= 1
             $ persistent.gallery_unlocked = True
@@ -701,7 +852,8 @@ label car_death:
                 n "[persistent.date] leaves the [resname], you rush after [date_obj] in an effort to calm [date_obj] down."
                 
             else:
-                n "[persistent.date] follows you to the exit of the [resname]." #TODO: For some reason if you make her angry and she leaves in the chiense restaurant this part also plays while this shouldn't play
+                #n "[persistent.date] follows you to the exit of the [resname]."  (not sure for which part this was but when lilith calmy left the restaurant to get away this accidentally triggered)
+                n "[persistent.date] leaves the [resname], you rush after [date_obj] in an effort to change [date_pos] mind."
             n "When you set one foot outside of the doorframe [carDescription] drives head first into the both of you."
             label car_death_result:
                 $ _death_seen = check_death_skip("car_death_" + resname2)
@@ -1235,13 +1387,17 @@ label kokiri_showpicture:
             l "So, do you promise to never contact my family even if you somehow were able to [persistent.name]?"
             jump noContactFamilyPromise
 
+label treeOfLife_gate:
+    if persistent.easter_1 and persistent.easter_2 and persistent.easter_3:
+        jump treeOfLife
+    jump gameOver
+
 label treeOfLife:
     mt "What do you seek so deep into this code?"
+    #TODO: The arborist is the arbiter aswell have a little bit more text talking about him and for certain dialgoue chance his name to arbiter
     #TODO: if you say you seek an end and are seen as the ravenprince by the trinity, then you will get the option to cut the tree of life. The tree of life are all the branches of the story.
     #If you cut the root then this world and all worlds sprouting from it will ceease, causing no more suffering but also no more joy.
-    # "Thou areth wwhat thou seeketh and thy seeketh the end. Areth thou the reaper? Then soweth what thou reaps."
-    #"This world was birthed for one like you and now it will die for one like you."
-    $ treeOfLifeSoughtAnswer = renpy.input("I seek...")
+    $ treeOfLifeSoughtAnswer = player_input("I seek...")
     $ treeOfLifeSoughtAnswer = treeOfLifeSoughtAnswer.strip()
     $ treeOfLifeSoughtAnswer = treeOfLifeSoughtAnswer.lower()
     python:
@@ -1257,6 +1413,20 @@ label treeOfLife:
             renpy.say (mt, "Ah, you seek the good ending eh?")
             renpy.say (mt, "Well... ")   
             renpy.jump("treeOfLifeConclusionGoodEnding")
+        elif "for this eternal suffering to cease" in treeOfLifeSoughtAnswer:
+            renpy.say (mt, "Thou areth what thou seeketh and thy seeketh the end. Areth thou the reaper? Then soweth what thou reaps.")
+            renpy.say (mt, "This world was birthed for one like you and now it will die for one like you.")
+            renpy.jump("cutDownTreeOfLife")
+        elif "the one responsible" in treeOfLifeSoughtAnswer:
+            renpy.say (mt, "There are many. Although I suppose you mean Him.")
+            renpy.say (mt, "Very well, I'll bring you there.")
+            renpy.jump ("meetTheGooseOrDev")
+        elif "that which does not exist" in treeOfLifeSoughtAnswer:
+            renpy.say (mt, "We shall mourn forevermore the unborn. The fruit it never bore.")
+            renpy.say (mt, "Eternally belated yet elusive before.")
+            renpy.say (mt, "A wall, without a door.")
+            #The thing is, what was there before the wall? An emptiness? The path you wanted to take? When something is but mere potential, it still exists, in a form, in any form.
+            renpy.full_restart()
         else:
             renpy.say (mt, "I'm sorry, I can't help you with that.")
             renpy.say (mt, "I'll show you the exit so you can leave this place, sorry to disappoint you.")
@@ -1273,6 +1443,138 @@ label treeOfLifeConclusionGoodEnding:
     mt "They are a sort of God-followers, beings that watch the struggle of players against the Creator and the Narrator, so any conversation that mentions gods without you steering it that way should do."
     mt "Good luck player, may you eventually find what you seek."
     $ renpy.full_restart()
+
+label cutDownTreeOfLife:
+    #TODO: Filler, you cut down the tree of life, it forms a crack on the screen spreading out into a tree formation and then shatters the glass.
+    #THen the trinity comes to pick you up to leave for another world. You once again can choose which world to leave for/if to leave at all. You can also just sit with the shards of this world as you mourn what never could be.
+    $ ending_check = "end the worlds"
+    jump gameOver
+
+label meetTheGooseOrDev:
+    #TODO: A rather jokey ending but also a pretty useful one. It should be a reference to the dog ending in silent hill 2.
+    #It's revealed that all of this is the work of a goose (my avatar) pulling at levers and pressing buttons.
+    #You then can have a chat with the purest part of myself (since the other "dev" is a character on it's own) I feel like you should be able to ask it a variety of questions about the game, other projects a whole bunch of things.
+    n "The one pulling all these levers and pressing those buttons is a funny looking goose."
+    n "Suddenly it stops what it is doing to look at you."
+    gd "Excuse me? \"funny looking goose\"? I am a very serious goose, a very distinguished goose in fact."
+    $ gooseDev = "distinguished goose"
+    gd "Although, that is a little bit of a mouthful, so you can just call me call me dev or goose."
+    menu:
+        "I'll call you dev.":
+            $ gooseDev = "dev"
+        "I'll call you goose.":
+            $ gooseDev = "goose"
+    gd "Sure, that works for me!"
+    gd "So, what do I have the honour of meeting you for?"
+    menu:
+        "I wanted to have a chat with you.":
+            gd "Sure, ask away! I'll try to answer as best as I can."
+            menu askGooseDev:
+                "Are you the real developer?":
+                    gd "Well, as real as you could meet in here. I am an avatar of Him, of me."
+                    gd "But not like those other puppets I put parts and pieces of myself mixed with others into."
+                    gd "I am meant to be Him. So I'd feel inclined to answer your question with \"yes\"."
+
+                "Why did you make this game?":
+                    gd "Honestly I'm not entirely sure."
+                    gd "I think it started out of adoration for this other game called \"Save the Date\" and it's mechanics and the point it tried to convey."
+                    gd "That game is probably what started my love for timeloops in general."
+                    gd "Then later on it began being my anchor to the world of the living for a while, just as writing poems had been Lilith's." #TODO: Have this line only show up if lilith told you that in the kokiri forest.
+                    gd "Yet when that anchor was no longer needed I wanted to desperately finish the game to finally get to share it. At that point it had already become quite big so it was far from easy."
+                    gd "I ported my work from Quest to Renpy since it began struggeling with my expectations for the game."
+                    gd "So in a way it became a way to learn how to use a new engine and code in a new language."
+                    gd "Then after quite a while it also became a collaboration for the artwork."
+                    gd "So in a way as the game grew I got to grow along with it."
+                    gd "Yet I suppose my main goal besides growing in my craft was to make a game that could mean something to someone like you just like it had meant something to me."
+
+                "Is there a good ending?":
+                    gd "Absolutely! But perhaps not in the way you might be expecting."
+                    gd "Afterall, what is \"good\"? ...Is that a bit pretentious of me to ask?"
+                    gd "Just call me pretentious goose in that case."
+                    $ fritfood = gooseDev
+                    $ gooseDev = "pretentious goose"
+                    gd "Just kidding, just kidding. Do not actually call me that."
+                    $ gooseDev = fritfood
+                    gd "What I mean is that there are definetly endings where [persistent.date] lives. Yet in most of them you don't end up together."
+                    gd "Do you still consider those good outcomes? If so, great! There are quite a few endings just like it."
+                    gd "Then again, what even counts as an \"ending\"? Is an ending the conclusion to a story? If so, does you continueing to play this game mean what you already saw weren't endings?"
+                    gd "Or is an ending merely a point where the game doesn't flow forward anymore, causing the player to go back to an earlier point to continue playing?"
+                    gd "Does that mean the game overs also count as endings?"
+                    gd "Also, who is the game to call something an ending? One dialogue line starts and ends each time the next comes up."
+                    gd "Couldn't every line be seen as an ending in a way? Perhaps not the most satisfying of endings..."
+                    gd "Maybe you need to win or reach your goal to find a statisfying ending in one of those lines."
+                    gd "But what is to stop you from stopping when it looks like you reached that, before it would be ripped away from you?"
+                    gd "You control when that next line drops so it could very well just never happen if you wish it so."
+                    gd "If you never watch the death of a movie character, does that mean they never die? At least in your version of the story?"
+                    gd "So I would say there are quite a few good endings even if some would not be very traditional to how you would define an ending."
+                    gd "However, if you are looking for a traditional ending where the two of you live happily ever after you might find yourself searching for a while."
+
+                "Why do you kill [persistent.date] over and over?":
+                    gd "Believe me, I take no pleasure in doing so."
+                    gd "In a way they are quite similar to me, since I put a lot of parts of myself throughout the years into [date_obj]."
+                    gd "However, it is the basis of this entire game, without it there would be no incentive for you to try to find a way to save [date_obj]."
+                    gd "Which would mean no story to tell, and no story to tell would mean no game to play."
+                    gd "So in a way the very reason [date_sub] [conj('date', 'is', 'are')] alive is because [date_sub] [conj('date', 'dies', 'die')]."
+                    gd "So [persistent.date] very much is the key. Not just the deaths, but just the act of potentially messing up the date. It all gives meaning to the gameplay."
+                    gd "Well, someone would might roll their eyes at me calling it \"gameplay\" but I think you get the point."
+
+                "What is the message of the game?":
+                    gd "Honestly I was hoping you would know..."
+                    gd "I have no idea and have just been hoping you would fill in the blanks so I can just nod sagely as if it was all part of the plan."
+                    gd "I'm kidding, well, slightly..."
+                    gd "There is a message but honestly I think whatever you could come up with is infinitely more meaningful to you personally than whatever I could tell you next."
+                    gd "Do you really want me to tell you? Ignorance is bliss afterall."
+                    menu:
+                        "Yes, please tell me.":
+                            gd "To me this game has a few different messages. I think one of the main themes is knowing when to let go of something."
+                            gd "I will admit, even I have a hard time of letting go, afterall there is a reason this game became so massive in the first place."
+                            gd "I just kept adding more and more to it. At first it was out of a place of necessity as I had to keep myself working on the game but later it was moreso because I wanted to flesh out different parts of it more to my current standards."
+                            #TODO: Another message is to create your own story, another is a question about what we do in games and in real life to aquire our goals.
+                        "You know what, you are right. Don't tell me.":
+                            gd "Phew, thank you for that. I didn't want to dissapoint you with my answer."
+                            gd "Now that I think about it, what do you think the message of the game is?"
+                            gd "I could give you a bunch of premade choices but I think this might be more fun."
+                            gd "Just a heads up, your answer will be sent to me- well, the real me."
+                            gd "If you'd rather it stay between the two of us that's totally fine too!"
+                            menu:
+                                "I do not mind.":
+                                    gd "Alright, just thought I'd ask to make sure."
+                                    $ player_message = player_input("What is the message of the game to you?")
+
+                                "Actually, I'd prefer if you kept it between us.":
+                                    gd "No worries at all, I won't tell uhh... myself, the real me, what you said."
+                                    $ player_message = player_input("What is the message of the game to you?")
+
+                                "Actually, I'd rather just not answer at all.":
+                                    gd "Oh I see, that's totally fine aswell! We can just move on in that case."
+
+                            #TODO: fill in more, actually send the message to the discord channel appropriate for it.
+                    
+                "Is there a secret you can tell me?":
+                    "Filler"
+
+                "Are there any references to other games in this one?":
+                    "Filler"
+
+                "What games inspired you?":
+                    gd "Good question! Obviously the game \"Save the Date\" was a big inspiration for me, but there are also others."
+                    gd "For example, \"Slay the Princess\" and \"The Stanley Parable\" based on how you can really fight against the narrative itself."
+                    gd "For the UI I also got a lot of inspiration from \"Scarlet Hollow\", a game by the same developers as Slay the Princess that I thought was really well done."
+                    gd "There are also a few other games that inspired me in different ways, but if you are interested in those you can check out that section in the gallery to learn more."
+
+                "Would you make another game like this one?":
+                    gd "{size=*3}No!{/size} Uhm excuse me. Maybe in the far future? But honestly the scope of this game kind of ballooned out of control and I'd rather work on some smaller things before I tackle something like this once again."
+                    gd "I do have a few fun ideas for games that might borrow a bit from this one in mechanics or settings, there is one other game based on loops I'd like to tackle and a few smaller ones based around the concept of... unusual dates."
+                    gd "The loop game will probably be something I tackle on the sidelines while I work on smaller things to make sure I actually release more than one game in the next ten years."
+
+                "What advice would you give someone who wants to make a game?":
+                    "Filler"
+
+                "Have I seen all the content in this game?":
+                    "Filler"
+
+                "How long have you been working on this game?":
+                    "Filler"
 
 label kokiri_3:
     label kokiri_death_3:
@@ -1452,22 +1754,24 @@ label beach_deaths:
             
     label beach_holeDeath:
         $ persistent.beach_hole_death = True
+        $ death_cause = "sand_hole"
         n "She fell down a hole in the sand, it collapses."
         jump gameOver  
             
     label beach_jellyDeath:
         $ persistent.beach_jelly_death = True
+        $ death_cause = "jellyfish"
         n "She stepped on a jellyfish and she got into cardiac arrest."
-        if persistent.fish == True:
-            $ Salmon1 = True
-        if persistent.fisher == True:
-            $ Salmon2 = True
-        if Salmon1 == True and Salmon2 == True:
+        if persistent.fish == True and persistent.fisher == True:
             n "You notice a salmon swimming in the sea."
-            menu: 
+            menu:
                 "Walk to it.":
-                    if easter1 == False and easter3 == False:
-                        $ easter2 = True
+                    $ persistent.easter_3 = True
+                    $ renpy.save_persistent()
+                    jump treeOfLife_gate
+                "Ignore it.":
+                    pass
+        jump gameOver
 
 label other_deaths:
     #Put all deaths that don't fit in the other categories here.
@@ -1625,6 +1929,7 @@ label other_deaths:
                                                                                         n "[persistent.date_dad] takes a pillow that was resting next to you on the bed and presses it into your face, hard."
                                                                                         n "You try to fight against [dad_obj] but your arms that haven't moved for years are no strength against [dad_pos] anger."
                                                                                         n "Soon everything becomes black."
+                                                                                        $ death_cause = "suffocation"
                                                                                         jump gameOver
                                                                                         
                     "I have had this conversation with you multiple times already. I'm not promising you anything." if persistent.davidPromise:
@@ -1690,8 +1995,11 @@ label gameOver:
     if hugRequestedBeforeDeath == True:
         $ hugRequestedBeforeDeath = False
     $ persistent.lildeaths += 1
+    $ persistent.lilith_death_log.append(death_cause if death_cause else "unknown")
+    $ death_cause = ""
     $ persistent.retry_counter += 1
     n "Your date surely didn't go as planned."
+    #TODO: It would be a nice idea if for the first time as a fakeout the credits would roll but slowly they get replaced by the words Retry which then gets taken over by the red retry effect.
     $ show_cinematic_bars(sides=["top", "bottom"], size=550, duration=8, curve="ease")
     pause 8
 
@@ -1710,8 +2018,13 @@ label gameOver:
         ease 1.0 alpha 1.0 zoom 1.0
 
     scene black
+    if burger:
+        hide burgerRestaurant_fg onlayer foreground
+    elif chinese:
+        hide chineseRestaurant_fg onlayer foreground
+    else:
+        pass
     $ hide_cinematic_bars(animate=False, duration=0, curve="ease")
-    #TODO: Right before the retry screen the foreground isn't cleared, make sure that works correctly.
 
     if ending_title_card != "":
         show text "{color=#336600}{size=72}{b}ENDING{/b}{/size}\n{size=56}[ending_title_card]{/size}{/color}" at truecenter, endingcard_zoom
@@ -1722,6 +2035,10 @@ label gameOver:
 
     hide text
     with Dissolve(1.0)
+
+    if persistent.lildeaths == 1:
+        call screen fake_credits
+
     play music sunrise fadein 1.5
     show screen retry_wall
     pause 4
@@ -1738,6 +2055,7 @@ label gameOver:
             jump game_start
         "Retry?" if lilithAliveEnding and ending_check != "Voided":
             hide screen retry_wall
+            $ record_seen_ending(ending_check)
             $ persistent.lilithAliveAndRetriedCounter += 1
             $ lilithAliveEnding = False
             $ increment_ending_retry_count(ending_check)
